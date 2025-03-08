@@ -1,9 +1,171 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"tabBar": {
+		"custom": true,
+		"height": "0px",
+		"list": [
+			{
+				"pagePath": "pages/home/index"
+			},
+			{
+				"pagePath": "pages/quotes/index"
+			},
+			{
+				"pagePath": "pages/contract/index"
+			},
+			{
+				"pagePath": "pages/trade/index"
+			},
+			{
+				"pagePath": "pages/myAssets/index"
+			}
+		]
+	},
+	"pages": [
 		{
-			"path": "pages/index/index",
+			"path": "pages/home/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "首页",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/quotes/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "行情页",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/contract/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "合约页面",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/trade/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "交易页面",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/myAssets/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "我的资产",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/welcomPage/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "欢迎页"
+			}
+		},
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "登录页面",
+				"backgroundColor": "#f7f8fa"
+			}
+		},
+		{
+			"path": "pages/register/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "注册页面",
+				"backgroundColor": "#f7f8fa"
+			}
+		},
+		{
+			"path": "pages/userInfo/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "userInfo"
+			}
+		},
+		{
+			"path": "pages/securitySettings/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "securitySettings"
+			}
+		},
+		{
+			"path": "pages/IdentityAuth/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "IdentityAuth"
+			}
+		},
+		{
+			"path": "pages/generalSettings/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "generalSettings"
+			}
+		},
+		{
+			"path": "pages/searchMore/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "searchMore"
+			}
+		},
+		{
+			"path": "pages/currencyDetails/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "currencyDetails"
+			}
+		},
+		{
+			"path": "pages/recharge/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "recharge"
+			}
+		},
+		{
+			"path": "pages/withdrawal/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "withdrawal"
+			}
+		},
+		{
+			"path": "pages/transfer/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "transfer"
+			}
+		},
+		{
+			"path": "pages/AssetRecord/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "AssetRecord"
+			}
+		},
+		{
+			"path": "pages/assetDetail/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "assetDetail"
+			}
+		},
+		{
+			"path": "pages/InviteFriends/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "InviteFriends"
 			}
 		}
 	],

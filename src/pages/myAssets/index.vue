@@ -1,0 +1,197 @@
+<template>
+  <div class="assets-index">
+    <div class="header w-100 text-center text-black fs-22 pt-15 pb-15">Assets</div>
+    <div class="assetsInfo">
+      <p class="fs-14 text-gray">总资产折合</p>
+      <p class="mt-5 flex items-baseline">
+        <span class="fs-32 fw-b text-black mr-10">0.00</span>
+        <span class="fs-14 fw-b text-black">USD</span>
+        <image
+          class="downArrow"
+          src="/static/images/down.png"
+          mode="scaleToFill"
+        />
+      </p>
+      <div class="flex justify-between items-end">
+        <p class="text-gray">
+          <text>
+            ≈ 0.00000000  BTC
+          </text>
+          <image
+            class="grayImage"
+            src="/static/images/exMarkGray.png"
+            mode="scaleToFill"
+          />
+        </p>
+        <p class="flex items-center">
+          <image
+            class="ProfitAndLossImg"
+            src="/static/images/ProfitAndLoss.png"
+            mode="scaleToFill"
+          />
+          <text class="text-gray fs-14">单日盈亏 23.69</text>
+        </p>
+      </div>
+    </div>
+    <div class="pb-10 ribbonBox">
+      <div class="flex justify-between items-center px-5 py-5 ribbon">
+        <div class="contentBox flex-col items-center justify-center" @click="goRecharge">
+          <van-image class="MyVanImage" src="/static/svg/home/recharge.svg" />
+          <p class="mt-5 text-by-black fs-12 fw-b">Recharge</p>
+        </div>
+        <div class="contentBox flex-col items-center justify-center" @click="goTransfer">
+          <van-image src="/static/svg/home/transfer.svg" />
+          <p class="mt-5 text-by-black fs-12 fw-b">transfer</p>
+        </div>
+        <div class="contentBox flex-col items-center justify-center" @click="goWithdraw">
+          <van-image width="28" hidden="28" src="/static/svg/home/withdraw.svg" />
+          <p class="mt-5 text-by-black fs-12 fw-b">withdraw</p>
+        </div>
+        <div class="contentBox flex-col items-center justify-center" @click="goInvite">
+          <van-image src="/static/svg/home/invite.svg" />
+          <p class="mt-5 text-by-black fs-12 fw-b">Invite</p>
+        </div>
+      </div>
+    </div>
+    <div class="mt-5 content bg-white">
+      <van-tabs
+        class="fw-b"
+        title-active-color="#333333"
+        title-inactive-color="#B0B0B0"
+        v-model:active="active"
+        shrink
+        sticky
+      >
+        <van-tab title="In stock">
+          <div v-if="true" class="px-20">
+            <assetsModule></assetsModule>
+          </div>
+          <div v-else class="defaultTemp">
+            <dataDefault></dataDefault>
+          </div>
+        </van-tab>
+        <van-tab title="Contract">
+          Contract
+        </van-tab>
+        <van-tab title="Gold">
+          Gold
+        </van-tab>
+      </van-tabs>
+    </div>
+    <CustomNavBar></CustomNavBar>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { ref } from 'vue';
+import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼峰命名
+import dataDefault from '@/components/dataDefault/index.vue'
+import assetsModule from '@/components/assetsModule/index.vue'
+
+const active = ref(0);
+
+const goRecharge = () => {
+  uni.navigateTo({
+    url: '/pages/recharge/index'
+  })
+}
+
+const goTransfer = () => {
+  uni.navigateTo({
+    url: '/pages/transfer/index'
+  })
+}
+
+const goWithdraw = () => {
+  uni.navigateTo({
+    url: '/pages/withdrawal/index'
+  })
+}
+
+const goInvite = () => {
+  uni.navigateTo({
+    url: '/pages/InviteFriends/index',
+  })
+}
+
+</script>
+
+<style lang="scss" scoped>
+.assets-index {
+  background: #F6F8FC;  height: 100%;
+  .assetsInfo {
+    background: #FFFFFF;
+    box-shadow: 0px 0px 6px 1px rgba(0,8,242,0.08);
+    border-radius: 16px 16px 16px 16px;
+    margin: 19px 19px 14px 19px;
+    padding: 24px 14px 19px 15px;
+    .downArrow {
+      margin-left: 2px;
+      width: 7px;
+      height: 5px;
+    }
+    .grayImage {
+      width: 11px;
+      height: 11px;
+    }
+    .ProfitAndLossImg {
+      width: 12px;
+      height: 13px;
+      margin-right: 7px;
+    }
+  }
+  .ribbonBox {
+    padding-left: 18px;
+    padding-right: 18px;
+    .ribbon {
+      gap: 10px;
+      overflow-x: scroll;
+      // 隐藏滚动条新增样式
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE/Edge */
+      &::-webkit-scrollbar {
+        display: none; /* Chrome/Safari/Webkit */
+        width: 0;
+        height: 0;
+      }
+
+      /* 移动端优化（可选） */
+      -webkit-overflow-scrolling: touch; /* 启用弹性滚动 */
+
+
+      .contentBox {
+        width: 24%;
+        aspect-ratio: 1/1;
+        min-width: 70px;
+        // min-height: 84px;
+        padding: 10px;
+        background: #FFFFFF;
+        box-shadow: 0px 0px 6px 1px rgba(0,8,242,0.08);
+        border-radius: 16px 16px 16px 16px;
+        ::deep(.MyVanImage) {
+          width: 50% !important; /* 图片宽度相对父容器 */
+          height: auto !important;
+
+        }
+        // .MyVanImage {
+        //   width: 50% !important; /* 图片宽度相对父容器 */
+        //   height: auto !important;
+        // }
+      }
+    }
+  }
+  .content {
+    .defaultTemp {
+      margin-top: 90px;
+      padding-bottom: 120px;
+    }
+  }
+  :deep(.van-tabs) {
+    .van-sticky {
+      .van-tabs__wrap {
+        border-bottom: 2px solid #f6f7fb !important;
+      }
+    }
+  }
+}
+</style>

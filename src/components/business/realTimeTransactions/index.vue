@@ -1,0 +1,327 @@
+<template>
+  <div class="realTimeTransactions-index">
+    <div class="sellAndBuyTemp flex justify-between">
+      <div 
+        class="trapezoidLeft"
+        :style="{ width: leftWidth + '%', 'min-width': '15%'  }"
+      >
+        <div class="leftBox flex items-center pr-5">
+          <image
+            src="/static/images/buyImg.png"
+            mode="scaleToFill"
+          />
+          <div class="fs-12 ml-5">{{ leftWidth }}%</div>
+        </div>
+      </div>
+      <div 
+        class="trapezoidRight text-right"
+        :style="{ width: rightWidth + '%', 'min-width': '15%'  }"
+      >
+        <div class="rightBox flex items-center pl-5">
+          <div class="fs-12 mr-5">{{ rightWidth }}%</div>
+          <image
+            src="/static/images/sellImg.png"
+            mode="scaleToFill"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="sellAndBuyTip text-gray fs-14 mt-5 flex justify-between">
+      <div class="fs-14 text-gray">买入</div>
+      <div class="fs-14 text-gray">卖出</div>
+      <div class="fs-14">0.1</div>
+    </div>
+    <div class="contentTip text-gray fs-14 flex justify-between mt-20">
+      <div class="fs-12">数量(BTC)</div>
+      <div class="fs-12">价格(USDT)</div>
+      <div class="fs-12">数量(BTC)</div>
+    </div>
+    <div class="contentBuySell w-100 flex justify-between mt-15">
+      <div class="tempBox w-100">
+        <div v-for="index in 50" :key="index" class="buyTemp pos-relative flex flex-1 justify-between">
+          <div class="fs-12 text-black">3.666</div>
+          <div class="fs-12 text-light-green">85,888.88</div>
+          <!-- 绿色背景层 -->
+          <div 
+            class="bg-layer pos-absolute"
+            :style="{ 'width': buyWidth +'%' }"
+          ></div>
+        </div>
+      </div>
+      <div class="tempBox w-100">
+        <div v-for="index in 50" :key="index" class="sellTemp pos-relative flex flex-1 justify-between">
+          <div class="fs-12 text-red">86,888.88</div>
+          <div class="fs-12 text-black">3.666</div>
+          <!-- 红色背景层 -->
+          <div 
+            class="bg-layer pos-absolute"
+            :style="{ 'width': sellWidth + '%' }"
+          ></div>
+        </div>
+      </div>
+    </div>
+    <div class="btnBox pos-fixed w-100 flex">
+      <van-button class="buyBtn flex-1" type="success">Buy</van-button>
+      <van-button class="sellBtn flex-1" type="danger">Sell</van-button>
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { ref } from 'vue'
+
+const leftWidth = ref(50)
+const rightWidth = ref(50)
+
+const buyWidth = ref(100)
+const sellWidth = ref(100)
+
+const getRandomInt = (min:number, max:number) => {
+  min = Math.ceil(min); // 确保最小值是整数
+  max = Math.floor(max); // 确保最大值是整数
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// 模拟数据变化（根据实际业务逻辑修改）
+setInterval(() => {
+  leftWidth.value = getRandomInt(1, 100)
+  rightWidth.value = 100 - leftWidth.value
+
+  buyWidth.value = getRandomInt(1, 100)
+  sellWidth.value = getRandomInt(1, 100)
+}, 1500)
+
+</script>
+
+<style lang="scss" scoped>
+.realTimeTransactions-index {
+  margin-top: 18px;
+  .sellAndBuyTemp {
+    padding: 0px 8px;
+    // 容器设置过渡
+    transition: all 0.3s ease-in-out;
+    width: 100%;
+    height: 23px;
+
+    [class^="trapezoid"] {
+      transition: all 0.3s ease-in-out;
+      height: 100%;
+      position: relative;
+      // background: #409eff;
+      display: flex;
+      align-items: center;
+      color: white;
+
+      &::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: rgba(255,255,255,0.5);
+      }
+    }
+
+    .trapezoidLeft {
+      background: #e0f5ec;
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+      color: #0FB668;
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        calc(100% - 5px) 100%, // 10%宽度偏移
+        0 100%
+      );
+      // padding-left: 12%; // 动态补偿
+      justify-content: flex-start;
+      .leftBox {
+        height: 23px;
+        line-height: 23px;
+        image {
+          width: 23px;
+          height: 23px;
+        }
+      }
+    }
+
+    .trapezoidRight {
+      background: #fff0f2;
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+      color: #FF3E47;
+      clip-path: polygon(
+        5px 0, // 10%宽度偏移
+        100% 0,
+        100% 100%,
+        0 100%
+      );
+      // padding-right: 12%; // 动态补偿
+      justify-content: flex-end;
+      .rightBox {
+        height: 23px;
+        line-height: 23px;
+        image {
+          width: 23px;
+          height: 23px;
+        }
+      }
+    }
+  }
+  .sellAndBuyTip {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .contentTip {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .contentBuySell {
+    gap: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 148px;
+    isolation: isolate; // 创建新的层叠上下文
+    backface-visibility: hidden; // 避免字体模糊
+    contain: layout; // 限制重排范围
+    .tempBox {
+      // height: 28px;
+      // line-height: 28px;
+    }
+
+    // 通用样式
+    // [class$="Temp"] {
+    //   overflow: hidden; // 新增隐藏溢出
+    //   perspective: 1000px; // 开启3D加速
+    //   height: 28px;
+    //   line-height: 28px;
+    //   .bg-layer {
+    //     height: 28px;
+    //     width: 100% !important; // 固定最大宽度
+    //     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    //     will-change: transform;
+        
+    //     // 买入动画方向
+    //     .buyTemp & {
+    //       transform: translateX(calc((1 - var(--progress, 1)) * 100%));
+    //       transform-origin: right center;
+    //     }
+        
+    //     // 卖出动画方向
+    //     .sellTemp & {
+    //       transform: translateX(calc((var(--progress, 0) - 1) * 100%));
+    //       transform-origin: left center;
+    //     }
+    //   }
+    // }
+    .buyTemp, .sellTemp {
+      overflow: hidden; // 新增隐藏溢出
+      perspective: 1000px; // 开启3D加速
+      height: 28px;
+      line-height: 28px;
+      .bg-layer {
+        height: 28px;
+        // width: 100% !important; // 固定最大宽度
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        will-change: transform;
+
+        // 买入动画方向
+        .buyTemp & {
+          transform: translateX(calc((1 - var(--progress, 1)) * 100%));
+          transform-origin: right center;
+        }
+
+        // 卖出动画方向
+        .sellTemp & {
+          transform: translateX(calc((var(--progress, 0) - 1) * 100%));
+          transform-origin: left center;
+        }
+      }
+    }
+    // 优化视觉细节
+    .buyTemp .bg-layer {
+      background: linear-gradient(to left,
+        rgba(15,182,104,0.1) 80%,
+        rgba(15,182,104,0.05) 100%
+      );
+    }
+
+    .sellTemp .bg-layer {
+      background: linear-gradient(to right,
+        rgba(255,62,71,0.05) 0%,
+        rgba(255,62,71,0.1) 20%
+      );
+    }
+
+    .bg-layer {
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: rgba(255,255,255,0.3);
+        animation: trail 0.8s ease-out;
+
+        // 方向适配
+        .buyTemp & {
+          right: 0;
+          transform: translateX(100%);
+        }
+        .sellTemp & {
+          left: 0;
+          transform: translateX(-100%);
+        }
+      }
+    }
+
+    @keyframes trail {
+      0% { opacity: 0; }
+      20% { opacity: 1; }
+      100% {
+        opacity: 0;
+        transform: translateX(0);
+      }
+    }
+
+    // 买入样式
+    .buyTemp {
+      .bg-layer {
+        right: 0;
+        height: 100%;
+        background: linear-gradient(90deg, rgba(15,182,104,0.1) 80%, rgba(15,182,104,0.05));
+        border-radius: 4px 0 0 4px;
+      }
+    }
+    // 卖出样式
+    .sellTemp {
+      .bg-layer {
+        left: 0;
+        height: 100%;
+        background: linear-gradient(90deg, rgba(255,62,71,0.05), rgba(255,62,71,0.1) 20%);
+        border-radius: 0 4px 4px 0;
+      }
+    }
+  }
+  .btnBox {
+    padding: 8px;
+    bottom: 100px;
+    left: 0px;
+    right:0px;
+    gap: 7px;
+    height: 50px;
+    background: #fff;
+    .van-button {
+      border-radius: 6px;
+      height: 40px;
+    }
+    .buyBtn {
+      background: #18B86D;
+    }
+    .sellBtn {
+      background: #FF454E;
+    }
+  }
+}
+</style>

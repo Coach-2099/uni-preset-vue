@@ -1,0 +1,346 @@
+<template>
+  <div class="home-index">
+    <van-sticky>
+      <div class="flex justify-between items-center pl-15 pr-15 headerTemp">
+        <div @click="goUser" class="flex items-center home_icon">
+           <image src="/static/svg/home/user.svg" />
+        </div>
+        <div class="fw-b fs-26 text-black ml-20">BYBIT</div>
+        <div class="flex justify-between">
+          <div class="flex items-center home_right_icon mr-20">
+            <image
+              src="/static/svg/home/c_service.svg"
+              mode="scaleToFill"
+            />
+          </div>
+          <div class="flex items-center home_right_icon">
+             <image
+              src="/static/svg/home/msg.svg"
+              mode="scaleToFill"
+             />
+          </div>
+        </div>
+      </div>
+    </van-sticky>
+    <div class="assetsInfo">
+      <p class="fs-14 text-gray">总资产折合</p>
+      <p class="mt-15">
+        <span class="fs-32 fw-b text-black mr-10">0.00</span>
+        <span class="fs-14 text-black">USD</span>
+      </p>
+      <div class="flex justify-between items-end">
+        <p class="text-gray mt-15">≈ 0.00000000  BTC</p>
+        <van-button type="primary" class="fw-b fs-14 deposit-btn">存款</van-button>
+      </div>
+    </div>
+    <div class="pl-20 pr-20 pt-5 pb-5 pt-25 walletInfo">
+      <div class="flex items-center">
+        <van-image width="17.45" height="16" src="/static/svg/home/horn.svg" />
+        <p 
+          style="background: #F6F7FB;
+          border-radius: 5px 5px 5px 5px;"
+          class="w-100 ml-5 pl-5 fs-14 bg-warning text-black">
+          This is Broadcast
+        </p>
+      </div>
+    </div>
+    <div class="pl-20 pr-20 pt-15 pb-10 bg-white">
+      <div class="pl-20 pr-20 pt-15 pb-15 flex justify-between ribbon">
+        <div class="flex-col items-center" @click="sendMessage">
+          <van-image width="28" hidden="30" src="/static/svg/home/recharge.svg" />
+          <p class="mt-5 text-by-black" style="font-size: 3.2vw;">Recharge</p>
+        </div>
+        <div class="flex-col items-center" @click="goTest">
+          <van-image width="28" hidden="30" src="/static/svg/home/transfer.svg" />
+          <p class="mt-5 text-by-black" style="font-size: 3.2vw;">transfer</p>
+        </div>
+        <div class="flex-col items-center">
+          <van-image width="28" hidden="28" src="/static/svg/home/withdraw.svg" />
+          <p class="mt-5 text-by-black" style="font-size: 3.2vw;">withdraw</p>
+        </div>
+        <div class="flex-col items-center">
+          <van-image width="28" hidden="30" src="/static/svg/home/invite.svg" />
+          <p class="mt-5 text-by-black" style="font-size: 3.2vw;">Invite</p>
+        </div>
+      </div>
+    </div>
+    <div class="pl-5 pr-10 quotes bg-white">
+      <van-tabs 
+        v-model:active="tabType" 
+        shrink 
+        class="fw-b"
+        title-active-color="#333333"
+        title-inactive-color="#B0B0B0"
+      >
+        <van-tab title="热榜">
+          <van-tabs
+            v-model:active="active" 
+            shrink
+            class="mt-20"
+            title-active-color="#333333"
+            title-inactive-color="#B0B0B0"
+          >
+            <van-tab title="币种">
+              <div class="mt-10 ml-15 mr-10 flex justify-between">
+                <div class="flex-1 text-gray fs-12">Trading Pairs</div>
+                <div class="flex-1 flex justify-end text-gray fs-12">
+                  <div class="flex-1 text-right mr-20 ">Last Price</div>
+                  <div class="flex-1 text-right">24H Change</div>
+                </div>
+              </div>
+              <div v-for="(item, index) in 5" :key="index">
+                <div class="mt-20 ml-15 mr-10 pb-10 flex ff-biance fw-b justify-between items-center">
+                  <div class="flex-1">
+                    <text class="fs-16">BTC</text>
+                    <text class="fs-12 text-gray">/ USDT</text>
+                    <div>
+                      <text class="fs-12 text-gray">3.21B USDT</text>
+                    </div>
+                  </div>
+                  <div class="flex-1 flex justify-end items-center">
+                    <div class="flex-1 text-right items-center mr-20">95792.20</div>
+                    <van-button class="flex-1 text-right rises_falls_btn" style="width: 22.4vw;" type="success" size="small">
+                      <text class="fs-14">+0.22%</text>
+                    </van-button>
+                  </div>
+                </div>
+              </div>
+              <div class="moreTemp flex justify-center items-center">
+                <p class="fs-12">View More</p>
+                <van-image class="ml-5" width="8" height="10" src="/static/images/right.png" />
+              </div>
+            </van-tab>
+            <van-tab title="合约">
+              <div class="mt-10 ml-15 flex justify-between">
+                <div class="flex-1 text-gray fs-12">Trading Pairs</div>
+                <div class="flex-1 flex justify-end text-gray fs-12">
+                  <div class="flex-1 text-right mr-10 ">Last Price</div>
+                  <div class="flex-1 text-right">24H Change</div>
+                </div>
+              </div>
+              <div v-for="(item, index) in 5" :key="index">
+                <div class="mt-20 ml-15 pb-10 flex ff-biance fw-b justify-between items-center">
+                  <div class="flex-1">
+                    <text class="fs-16">BTC</text>
+                    <text class="fs-12 text-gray">/ USDT</text>
+                    <div>
+                      <text class="fs-12 text-gray">3.21B USDT</text>
+                    </div>
+                  </div>
+                  <div class="flex-1 flex justify-end items-center">
+                    <div class="flex-1 text-right items-center mr-10">95792.20</div>
+                    <van-button class="flex-1 text-right rises_falls_btn" style="width: 22.4vw;" type="success" size="small">
+                      <text class="fs-14">+0.22%</text>
+                    </van-button>
+                  </div>
+                </div>
+              </div>
+              <div class="moreTemp flex justify-center items-center">
+                <p class="fs-12">View More</p>
+                <van-image class="ml-5" width="8" height="10" src="/static/images/right.png" />
+              </div>
+            </van-tab>
+          </van-tabs>
+        </van-tab>
+        <van-tab title="新币榜">新币榜</van-tab>
+        <van-tab title="涨幅榜">涨幅榜</van-tab>
+        <van-tab title="跌幅榜">跌幅榜</van-tab>
+        <van-tab title="成交额">成交额</van-tab>
+      </van-tabs>
+    </div>
+    <div class="mt-5 pt-10 bg-white news">
+      <van-tabs v-model:active="tabType" shrink>
+        <van-tab title="探索">
+          <div class="newsTemp mt-20 ml-15 mr-15 ">
+            <div class="title flex justify-start items-center">
+              <div class="Dot"></div>
+              <text class="ml-10 fs-14 fw-b text-balck">2025年2月22日</text>
+            </div>
+          </div>
+          <div class="article ml-15 mr-15">
+            <div class="entry">
+              <div class="time flex items-center text-gray fs-12">
+                <div style="
+                  width: 5px;
+                  height: 5px;
+                  border-radius: 50%;
+                  background: #B0B0B0;"
+                ></div>
+                <text class="ml-15">20:33</text>
+              </div>
+              <div class="title ml-15 fw-b text-black mt-10 fs-16">美聯儲官員下週密集發聲，市場注核心PCE物價指數</div>
+              <div class="mt-20">
+                <a href="#" class="view-source ml-15 fs-12">查看原文</a>
+              </div>
+            </div>
+
+            <div class="entry mt-25">
+              <div class="time flex items-center text-gray fs-12">
+                <div style="
+                  width: 5px;
+                  height: 5px;
+                  border-radius: 50%;
+                  background: #B0B0B0;"
+                ></div>
+                <text class="ml-15">20:33</text>
+              </div>
+              <div class="title ml-15 fw-b text-black mt-10 fs-16">美聯儲官員下週密集發聲，市場注核心PCE物價指數</div>
+              <div class="mt-20">
+                <a href="#" class="view-source ml-15 fs-12">查看原文</a>
+              </div>
+            </div>
+          </div>
+        </van-tab>
+        <van-tab title="关注中"></van-tab>
+        <van-tab title="公告"></van-tab>
+        <van-tab title="新闻"></van-tab>
+      </van-tabs>
+    </div>
+    <CustomNavBar></CustomNavBar>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
+import { useSocket } from '@/utils/socket';
+import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼峰命名
+
+const active = ref(0);
+const tabType = ref(0)
+
+const isConnected = ref(false);
+const messages = ref<string[]>([]);
+const socketService = useSocket('wss://demo.piesocket.com/v3/channel_1?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9VRiaV&notify_self');
+
+  // Connect to the socket server
+  onMounted(() => {
+    socketService.connect();
+
+    // Listen for connection status changes
+    socketService.on('connect', () => {
+      isConnected.value = true;
+    });
+
+    socketService.on('disconnect', () => {
+      isConnected.value = false;
+    });
+
+    // Listen for custom events
+    socketService.on('message', (data: string) => {
+      messages.value.push('接收到消息了：',data);
+    });
+  });
+
+  // Disconnect from the socket server when the component is unmounted
+  onUnmounted(() => {
+    socketService.disconnect();
+  });
+
+  const goTest = () => {
+    uni.navigateTo({
+      url: '/pages/test/index',
+    });
+  };
+
+  const goUser = () => {
+    uni.navigateTo({
+      url: '/pages/userInfo/index',
+    });
+  };
+  // Function to send a message
+  const sendMessage = () => {
+    console.log('发送消息')
+    socketService.emit('message', 'Hello from client');
+  };
+</script>
+
+<style lang="scss" scoped>
+.home-index {
+  height: 100%;
+  background: #F6F8FC;
+  .headerTemp {
+    height: 50px;
+    line-height: 50px;
+    background: #ffffff;
+    .home_icon {
+      width: 28px;
+      height: 28px;
+      image {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .home_right_icon {
+      width: 22px;
+      height: 22px;
+      image {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+  .my-swipe .van-swipe-item {
+    color: #000;
+    font-size: 20px;
+    height: 25vh;
+    line-height: 150px;
+    text-align: center;
+    background-color: #fff;
+  }
+  .assetsInfo {
+    padding-top: 42px;
+    padding-left: 22px;
+    padding-right: 18px;
+    background-color: #ffffff;
+    .deposit-btn {
+      width: 84px;
+      height: 28px;
+    }
+  }
+  .walletInfo {
+    background: #fff;
+  }
+  .ribbon {
+    background: #FFFFFF;
+    box-shadow: 0px 0px 6px 1px rgba(0,8,242,0.08);
+    border-radius: 16px 16px 16px 16px;
+    // color: #fff;
+  }
+  .quotes {
+    padding-top: 29px;
+    background: #fff;
+    .rises_falls_btn {
+      width: 84px;
+      height: 28px;
+      border-radius: 6px 6px 6px 6px;
+    }
+  }
+  .news {
+    padding-bottom: 110px;
+    .newsTemp {
+      .Dot {
+        width: 8px;
+        height: 8px;
+        background: #1777FF;
+        border-radius: 50%;
+      }
+    }
+    .article {
+      .entry:not(:first-child)::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        border-left: 1px dashed #ccc;
+      }
+    }
+  }
+  .moreTemp {
+    height: 10.8vw;
+    line-height: 10.8vw;
+    border-top: 1px solid #f5f7fa;
+    color: #81858c;
+  }
+}
+</style>

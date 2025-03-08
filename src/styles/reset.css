@@ -1,0 +1,182 @@
+/* 移动端重置样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* 确保 padding 和 border 不会影响元素的宽度和高度 */
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 使用系统默认字体 */
+  font-size: 16px;
+  line-height: 1.5; /* 设置行高 */
+  color: #333; /* 默认字体颜色 */
+  background-color: #fff; /* 默认背景颜色 */
+  -webkit-text-size-adjust: 100%; /* 防止横屏模式下字体缩放，同时允许用户手动缩放 */
+  -webkit-tap-highlight-color: transparent; /* 移除 iOS 上的点击高亮效果 */
+  /* 解决IOS默认滑动很卡的情况 */
+  -webkit-overflow-scrolling : touch;
+}
+
+/* 移除默认的列表样式 */
+ul, ol {
+  list-style: none;
+}
+
+/* 移除默认的链接样式 */
+a {
+  text-decoration: none; /* 移除下划线 */
+  color: inherit; /* 继承父元素的颜色 */
+}
+
+/* 移除默认的按钮样式 */
+button, input, select, textarea {
+  margin: 0;
+  padding: 0;
+  border: none; /* 移除边框 */
+  outline: none; /* 移除轮廓线 */
+  background: none; /* 移除背景 */
+  font-family: inherit; /* 继承字体 */
+  font-size: inherit; /* 继承字体大小 */
+  color: inherit; /* 继承字体颜色 */
+  -webkit-appearance: none; /* 移除 iOS 上的默认样式 */
+  -moz-appearance: none; /* 移除 Firefox 上的默认样式 */
+  appearance: none; /* 移除默认样式 */
+}
+
+/* 移除默认的输入框样式 */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea {
+  -webkit-appearance: none; /* 移除 iOS 上的默认样式 */
+  -moz-appearance: none; /* 移除 Firefox 上的默认样式 */
+  appearance: none; /* 移除默认样式 */
+}
+
+/* 移除默认的图片样式 */
+img {
+  max-width: 100%; /* 图片最大宽度为父元素的宽度 */
+  height: auto; /* 高度自适应 */
+  display: block; /* 将图片设置为块级元素 */
+  border: 0; /* 移除边框 */
+}
+
+/* 移除默认的表格样式 */
+table {
+  border-collapse: collapse; /* 合并表格边框 */
+  border-spacing: 0; /* 移除单元格间距 */
+}
+
+/* 移除默认的表单样式 */
+fieldset {
+  border: 0; /* 移除边框 */
+  margin: 0; /* 移除外边距 */
+  padding: 0; /* 移除内边距 */
+}
+
+/* 移除默认的引用样式 */
+blockquote, q {
+  quotes: none; /* 移除引用符号 */
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: ''; /* 移除引用符号 */
+  content: none;
+}
+
+/* 移除默认的代码样式 */
+pre, code {
+  font-family: monospace, monospace; /* 使用等宽字体 */
+  font-size: 1em; /* 设置字体大小 */
+}
+
+/* 移除默认的水平线样式 */
+hr {
+  border: 0; /* 移除边框 */
+  height: 1px; /* 设置高度 */
+  background-color: #ccc; /* 设置背景颜色 */
+  margin: 1em 0; /* 设置外边距 */
+}
+
+/* 移除默认的 iframe 样式 */
+iframe {
+  border: 0; /* 移除边框 */
+}
+
+/* 移除默认的 details 样式 */
+details {
+  display: block; /* 设置为块级元素 */
+}
+
+/* 移除默认的 summary 样式 */
+summary {
+  display: list-item; /* 设置为列表项 */
+}
+
+/* 移除默认的 dialog 样式 */
+dialog {
+  display: block; /* 设置为块级元素 */
+  position: absolute; /* 绝对定位 */
+  left: 0;
+  right: 0;
+  margin: auto; /* 居中显示 */
+  border: 1px solid; /* 设置边框 */
+  padding: 1em; /* 设置内边距 */
+  background: white; /* 设置背景颜色 */
+}
+
+/* 移除默认的 meter 和 progress 样式 */
+meter, progress {
+  vertical-align: baseline; /* 垂直对齐基线 */
+}
+
+/* 移除默认的 select 箭头 */
+select::-ms-expand {
+  display: none; /* 隐藏 IE 上的箭头 */
+}
+
+/* 移除默认的 textarea 缩放 */
+textarea {
+  resize: none; /* 禁止缩放 */
+}
+
+/* 移除默认的按钮焦点轮廓 */
+button:focus {
+  outline: none; /* 移除焦点轮廓 */
+}
+
+/* 移除默认的输入框占位符颜色 */
+input::placeholder,
+textarea::placeholder {
+  color: #999; /* 设置占位符颜色 */
+  opacity: 1; /* Firefox 上的占位符透明度 */
+}
+
+/* 移除默认的输入框自动填充背景 */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important; /* 设置自动填充背景为白色 */
+}
+
+/* 隐藏滚动条 */
+::-webkit-scrollbar {
+  /* Chrome, Safari, Opera */
+  display: none; 
+}
+
+/* 隐藏滚动条 */
+html, body {
+  /* IE and Edge */
+  -ms-overflow-style: none; 
+  /* Firefox */
+  scrollbar-width: none; 
+}
