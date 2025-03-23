@@ -39,24 +39,57 @@
           brightness is uniform.
         </p>
         <div class="mt-15 flex justify-between">
-          <van-uploader class="mr-15" v-model="fileList" multiple :max-count="1" >
-            <div class="upuloadTemp flex-col items-center">
+          <div class="pos-relative">
+            <van-uploader
+              class="mr-15"
+              v-model="fileListFront"
+              :max-count="1"
+              reupload
+              preview-size="9rem"
+              :after-read="afterReadFront"
+              :click-upload="clickUpload"
+            >
+              <div class="upuloadTemp flex-col items-center">
+                <image
+                  src="/static/svg/tools/upload.svg"
+                  mode="scaleToFill"
+                />
+                <p class="mt-15 fs-12">Front photo of ID card</p>
+              </div>
+            </van-uploader>
+            <div v-if="fileFront" class="myPreview bg-white flex-col items-center pos-absolute">
               <image
-                src="/static/svg/tools/upload.svg"
+                class="myPreviewImg"
+                :src="fileFront"
                 mode="scaleToFill"
               />
-              <p class="mt-15 fs-12">Front photo of ID card</p>
             </div>
-          </van-uploader>
-          <van-uploader v-model="fileList" multiple :max-count="1">
-            <div class="upuloadTemp flex-col items-center">
+          </div>
+          <div class="pos-relative">
+            <van-uploader
+              v-model="fileListBack"
+              :max-count="1"
+              reupload
+              preview-size="9rem"
+              :after-read="afterReadBack"
+              :click-upload="clickUpload"
+            >
+              <div class="upuloadTemp flex-col items-center">
+                <image
+                  src="/static/svg/tools/upload.svg"
+                  mode="scaleToFill"
+                />
+                <p class="mt-15 fs-12 text-black">Reverse photo of ID card</p>
+              </div>
+            </van-uploader>
+            <div v-if="fileBack" class="myPreview bg-white flex-col items-center pos-absolute">
               <image
-                src="/static/svg/tools/upload.svg"
+                class="myPreviewImg"
+                :src="fileBack"
                 mode="scaleToFill"
               />
-              <p class="mt-15 fs-12 text-black">Front photo of ID card</p>
             </div>
-          </van-uploader>
+          </div>
         </div>
       </div>
     </div>
@@ -65,7 +98,7 @@
         BYBIT will encrypt information to ensure
         real-time information security.
       </p>
-      <van-button class="uploadBtn w-100 mt-15">
+      <van-button class="uploadBtn w-100 mt-15" @click="uploadFun">
         <text class="fs-20 text-white fw-b">Upload</text>
       </van-button>
     </div>
@@ -75,12 +108,17 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import navigationBar from '@/components/navigationBar/index.vue'
+import { uploadImage } from '@/api/app'
+import { userKyc } from '@/api/account'
 
 const firstName = ref('')
 const lastName = ref('')
 const idNuber = ref('')
+const fileFront = ref('')
+const fileBack = ref('')
 
-const fileList = ref([])
+const fileListFront = ref([])
+const fileListBack = ref([])
 const inputfirstName = () => {
   console.log('firstName', firstName.value)
 }
@@ -91,6 +129,34 @@ const inputlastName = () => {
 
 const inputIdNumber = () => {
   console.log('idNuber', idNuber.value)
+}
+
+const afterReadFront = (file: any) => {
+  console.log('file', file)
+  fileFront.value = file.content
+}
+
+
+const afterReadBack = (file: any) => {
+  console.log('file', file)
+  fileBack.value = file.content
+}
+
+const clickUpload = () => {
+  console.log('点击上传了')
+}
+
+const uploadFun = async () => {
+  const params = {
+    name: '',
+    idCard: '',
+    lastName: '',
+    type: '',
+    zmImg: '',
+    fmImg: ''
+  }
+  const data = await userKyc(params)
+  console.log('data', data)
 }
 
 </script>
@@ -124,6 +190,18 @@ const inputIdNumber = () => {
       image {
         width: 3.49rem;
         height: 2.82rem;
+      }
+    }
+    .myPreview {
+      height: 9.22rem;
+      width: 9.77rem;
+      border: 1px dashed #237eff;
+      pointer-events: none;
+      top: 0;
+      left: 0;
+      .myPreviewImg {
+        width: 100%;
+        height: 100%;
       }
     }
   }

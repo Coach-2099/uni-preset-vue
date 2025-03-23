@@ -98,14 +98,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, watch } from 'vue';
+
+import { useControlStore } from '@/stores/control'
+import { storeToRefs } from 'pinia'
+
+const controlStore = useControlStore();
+const { inputShow } = storeToRefs(controlStore);
 
 const fluctuationWidth = ref(10);
 const leftWidth = ref(50);
 const rightWidth = ref(50);
 
 // 新增响应式数据
-const dynamicEntryCount = ref(7);
+const dynamicEntryCount = ref(8);
+
+watch(inputShow, (newVal, oldVal) => {
+  if (newVal) {
+    dynamicEntryCount.value = 11
+  } else {
+    dynamicEntryCount.value = 8
+  }
+})
 
 const getRandomInt = (min:number, max:number) => {
   min = Math.ceil(min); // 确保最小值是整数

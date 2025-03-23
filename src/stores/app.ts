@@ -5,8 +5,7 @@ interface AppSate {
     config: Record<string, any>
 }
 
-export const useAppStore = defineStore({
-    id: 'appStore',
+export const useAppStore = defineStore('appStore', {
     state: (): AppSate => ({
         config: {}
     }),

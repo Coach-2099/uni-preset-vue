@@ -39,9 +39,9 @@
           <van-button class="myBtn flex-1" type="default">
             <text class="fs-12 text-gray">设置止盈止损</text>
           </van-button>
-          <van-button class="myBtn flex-1" type="default">
+          <!-- <van-button class="myBtn flex-1" type="default">
             <text class="fs-12 text-gray">追踪出场</text>
-          </van-button>
+          </van-button> -->
           <van-button class="myBtn flex-1" type="default">
             <text class="fs-12 text-gray">平仓</text>
           </van-button>
@@ -57,7 +57,7 @@
 <style lang="scss" scoped>
 .position-temp {
   padding: 0 8px;
-  padding-bottom: 110px;
+  padding-bottom: 90px;
   .box {
     border-bottom: 2px solid #f9fafc;
     .positionData {

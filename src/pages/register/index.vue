@@ -4,23 +4,13 @@
       <van-icon class="animate__animated animate__rotateIn" name="cross" size="25" @click="goBack"/>
     </div>
     <div class="fs-24 mt-25 mb-25 fw-b">register in bybit</div>
-    <!-- <div class="inputBox">
-      <div class="inputTitle fw-b mb-5">Email</div>
-      <input
-        v-model="email"
-        class="base-input"
-        placeholder="eg: xxxx@gmail.com"
-        placeholder-class="input-placeholder"
-        @input="inputPhone"
-      />
-    </div> -->
     <van-tabs v-moiphonedel:active="active" background="#f8f8f8" shrink>
       <van-tab title="phone">
         <div class="inputBox mt-20">
           <div class="inputTitle fw-b mb-5">Phone</div>
           <div class="flex">
             <div class="countryBox">
-              <van-button type="default" style="width: 60px;" @click="checkCountry">
+              <van-button type="default" style="width: 60px;" @click="checkCountryFun">
                 <template #default>
                   +{{ countryCode }}
                 </template>
@@ -45,8 +35,10 @@
               class="flex-1 base-input"
               placeholder="enter phone number"
               placeholder-class="input-placeholder"
-              @input="inputPhone"
             />
+            <div class="codeBtnBox ml-5">
+              <van-button @click="getCode" type="primary">获取验证码</van-button>
+            </div>
           </div>
         </div>
         <div class="inputBox mt-20">
@@ -59,22 +51,24 @@
               placeholder-class="input-placeholder"
               @input="inputPhoneCode"
             />
-            <div class="codeBtnBox ml-5">
-              <van-button type="primary">获取验证码</van-button>
-            </div>
           </div>
         </div>
       </van-tab>
       <van-tab title="email">
         <div class="inputBox mt-20">
           <div class="inputTitle fw-b mb-5">Email</div>
-          <input
-            v-model="email"
-            class="base-input"
-            placeholder="eg: xxxx@gmail.com"
-            placeholder-class="input-placeholder"
-            @input="inputPhone"
-          />
+          <div class="flex">
+            <input
+              v-model="email"
+              class="flex-1 base-input"
+              placeholder="eg: xxxx@gmail.com"
+              placeholder-class="input-placeholder"
+              @input="inputPhone"
+            />
+            <div class="codeBtnBox ml-5">
+              <van-button type="primary">获取验证码</van-button>
+            </div>
+          </div>
         </div>
         <div class="inputBox mt-20">
           <div class="inputTitle fw-b mb-5">Code</div>
@@ -86,9 +80,6 @@
               placeholder-class="input-placeholder"
               @input="inputPhoneCode"
             />
-            <div class="codeBtnBox ml-5">
-              <van-button type="primary">获取验证码</van-button>
-            </div>
           </div>
         </div>
 
@@ -134,22 +125,24 @@
 </template>
 
 <script lang="ts" setup>
-
 import { ref } from 'vue'
+
+import { chkAccount, sendmsg, register } from '@/api/account'
 
 const active = ref(0)
 const showPicker = ref(false)
-const countryCode = ref(86)
-const pickVal = ref([])
+const countryCode = ref('86')
+const pickVal = ref<number[]>([])
+const checkCountry = ref({ value: '86', text: 'China +86', name: 'CN', flag: '/static/images/flags/CN.png' })
 
 // 使用 ref 创建响应式数据
 const countryCodeArray = [
-  { value: 1, text: 'USA +1', flag: '/static/images/flags/US.png' },
-  { value: 81, text: 'Japan +81', flag: '/static/images/flags/JP.png' },
-  { value: 82, text: 'Korea +82', flag: '/static/images/flags/KR.png' },
-  { value: 86, text: 'China +86', flag: '/static/images/flags/CN.png' },
-  { value: 852, text: 'Hong Kong +852', flag: '/static/images/flags/HK.png' },
-  { value: 886, text: 'Taiwan +886', flag: '/static/images/flags/TW.png' }
+  { value: '1', text: 'USA +1', name: 'USA', flag: '/static/images/flags/US.png' },
+  { value: '81', text: 'Japan +81', name: "JP", flag: '/static/images/flags/JP.png' },
+  { value: '82', text: 'Korea +82', name: 'KR', flag: '/static/images/flags/KR.png' },
+  { value: '86', text: 'China +86', name: 'CN', flag: '/static/images/flags/CN.png' },
+  { value: '852', text: 'Hong Kong +852', name: 'HK', flag: '/static/images/flags/HK.png' },
+  { value: '886', text: 'Taiwan +886', name: 'TW', flag: '/static/images/flags/TW.png' }
 ];
 
 const email = ref('')
@@ -162,7 +155,22 @@ const password = ref()
 
 const InvitationCode = ref()
 
-const showPassword = ref(false)
+const showPassword = ref(true)
+
+// 获取验证码
+const getCode = async () => {
+  if (!phone.value) return uni.showToast({ title: '请输入手机号', icon: 'none' })
+  const params = {
+    sendMsgType: '', // 手机或者邮箱
+    userName: phone.value,
+    countryCode: countryCode.value,
+  }
+  const data = await sendmsg(params)
+  uni.showToast({
+    title: '验证码已发送,请查收',
+    icon: 'none'
+  })
+}
 
 const goBack = () => {
   uni.navigateTo({
@@ -174,6 +182,14 @@ const inputPhone = () => {
   console.log('phone', phone.value)
 }
 
+
+// 检查手机号-帐号-邮箱是否存在
+const checkAccount = async () => {
+  const data = await chkAccount(phone.value);
+  // 如果后续需要使用 data，可以在这里添加相应逻辑
+  console.log('data', data);
+};
+
 const inputPhoneCode = () => {
   console.log('phoneCode', phoneCode.value)
 }
@@ -183,7 +199,7 @@ const inputInvitationCode = () => {
 
 }
 
-const checkCountry = () => {
+const checkCountryFun = () => {
   console.log('选择区号')
   showPicker.value = true
 }
@@ -206,13 +222,26 @@ const onConfirm = ({ selectedValues, selectedOptions }: PickerConfirmEvent) => {
   console.log('selectedValues', selectedValues);
   console.log('selectedOptions', selectedOptions[0]);
   countryCode.value = selectedOptions[0].value;
+  checkCountry.value = selectedOptions[0];
+  console.log('checkCountry:', checkCountry.value)
+  // 修复类型错误，将 pickVal 的类型定义为 number[]
   pickVal.value = selectedValues;
   showPicker.value = false;
-  console.log('countryCode', countryCode.value)
 }
 
-const signUp = () => {
-  console.log('sign up')
+const signUp = async () => {
+  const params = {
+    username: phone.value ,
+    password: password.value,
+    countryName: '',
+    countryCode: '',
+    // countryName: checkCountry.value.name,
+    // countryCode: checkCountry.value.value,
+    code: '111111',
+    inviteCode: ''
+  }
+  const data = await register(params)
+  console.log('data', data)
 }
 
 </script>

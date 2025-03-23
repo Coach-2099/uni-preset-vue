@@ -123,7 +123,7 @@ const switchTab = (path: string) => {
 
 .tabbar-content {
   display: flex;
-  height: 100px;
+  height: 80px;
   contain: strict; /* 限制重绘范围 */
   justify-content: space-around;
 }

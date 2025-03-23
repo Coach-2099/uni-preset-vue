@@ -16,6 +16,7 @@
       <div class="divLine mt-25 mb-25 bg-white pos-relative">
         <van-divider>
           <image
+            @click="exchange"
             class="pos-absolute exchangeIcon"
             src="/static/svg/tools/exchange.svg"
             mode="scaleToFill"
@@ -106,6 +107,10 @@ const address = ref('');
 const inputAddress = (e) => {
   console.log(e.target.value);
 };
+
+const exchange = () => {
+  console.log('交换上下')
+}
 
 </script>
 

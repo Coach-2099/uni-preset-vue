@@ -5,6 +5,7 @@ const list = ['navigateTo', 'redirectTo', 'reLaunch', 'switchTab']
 list.forEach((item) => {
     uni.addInterceptor(item, {
         invoke(e) {
+            console.log('error--e:', e)
             // 获取要跳转的页面路径（url去掉"?"和"?"后的参数）
             const url = e.url.split('?')[0]
             const currentRoute = routes.find((item) => {

@@ -1,4 +1,4 @@
-import { getUserCenter } from '@/api/user'
+import { getUserInfo } from '@/api/account'
 import { TOKEN_KEY } from '@/enums/cacheEnums'
 import cache from '@/utils/cache'
 import { defineStore } from 'pinia'
@@ -8,8 +8,7 @@ interface UserSate {
     token: string | null
     temToken: string | null
 }
-export const useUserStore = defineStore({
-    id: 'userStore',
+export const useUserStore = defineStore('userStore', {
     state: (): UserSate => ({
         userInfo: {},
         token: cache.get(TOKEN_KEY) || null,
@@ -20,7 +19,7 @@ export const useUserStore = defineStore({
     },
     actions: {
         async getUser() {
-            const { data } = await getUserCenter()
+            const { data } = await getUserInfo()
             this.userInfo = data
         },
         login(token: string) {

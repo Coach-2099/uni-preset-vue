@@ -26,7 +26,8 @@
 			"style": {
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "首页",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": false,
+				"disableScroll": true
 			}
 		},
 		{
@@ -34,7 +35,8 @@
 			"style": {
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "行情页",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": false,
+				"disableScroll": true
 			}
 		},
 		{
@@ -42,7 +44,8 @@
 			"style": {
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "合约页面",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": false,
+				"disableScroll": true
 			}
 		},
 		{
@@ -50,7 +53,8 @@
 			"style": {
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "交易页面",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": false,
+				"disableScroll": true
 			}
 		},
 		{
@@ -58,7 +62,8 @@
 			"style": {
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "我的资产",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": false,
+				"disableScroll": true
 			}
 		},
 		{
@@ -167,7 +172,49 @@
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "InviteFriends"
 			}
-		}
+		},
+		{
+			"path": "pages/transactionOrder/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "transactionOrder"
+			}
+		},
+		{
+			"path": "pages/transactionOrderDetail/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "transactionOrderDetail"
+			}
+		},
+		{
+			"path": "pages/messageList/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "messageList"
+			}
+		},
+		{
+			"path": "pages/modifyPwd/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "modifyPwd"
+			}
+		},
+		{
+			"path": "pages/modifyEmail/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "modifyEmail"
+			}
+		},
+		{
+			"path": "pages/modifyFundPassword/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "modifyFundPassword"
+			}
+		},
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

@@ -60,10 +60,6 @@
         </div>
       </div>
     </div>
-    <div class="btnBox pos-fixed w-100 flex">
-      <van-button class="buyBtn flex-1" type="success">Buy</van-button>
-      <van-button class="sellBtn flex-1" type="danger">Sell</van-button>
-    </div>
   </div>
 </template>
 
@@ -181,7 +177,7 @@ setInterval(() => {
     gap: 12px;
     padding-left: 8px;
     padding-right: 8px;
-    padding-bottom: 148px;
+    padding-bottom: 128px;
     isolation: isolate; // 创建新的层叠上下文
     backface-visibility: hidden; // 避免字体模糊
     contain: layout; // 限制重排范围
@@ -306,7 +302,7 @@ setInterval(() => {
   }
   .btnBox {
     padding: 8px;
-    bottom: 100px;
+    bottom: 80px;
     left: 0px;
     right:0px;
     gap: 7px;

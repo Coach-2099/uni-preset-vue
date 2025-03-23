@@ -1,29 +1,5 @@
 <template>
   <div class="userInfo-index">
-    <!-- <van-sticky>
-      <div class="flex justify-between items-center pl-15 pr-15 headerTemp">
-        <div @click="goUser" class="flex items-center back-arrow">
-          <image
-            src="/static/svg/tools/left.svg"
-            mode="scaleToFill"
-          />
-        </div>
-        <div class="flex justify-between">
-          <div class="flex items-center home_right_icon mr-15">
-            <image
-              src="/static/svg/home/c_service.svg"
-              mode="scaleToFill"
-            />
-          </div>
-          <div class="flex items-center home_right_icon">
-             <image
-              src="/static/svg/tools/setting.svg"
-              mode="scaleToFill"
-             />
-          </div>
-        </div>
-      </div>
-    </van-sticky> -->
     <navigationBar title="">
       <template #right>
         <div class="flex justify-between">
@@ -62,19 +38,27 @@
       </div>
       <div class="tabInfo pl-20 pr-20 pb-20 pt-15 bg-white">
         <div class="flex items-center">
-          <div @click="clickTab(0)" class="text-black fw-b fs-12 tabBox mr-15 text-center pos-relative">
+          <!-- @click="clickTab(0)" -->
+          <div class="text-black fw-b fs-12 tabBox mr-15 text-center pos-relative">
             <div>普通用户</div>
-            <div v-if="tabVal == 0" class="triangle-up-border pos-absolute"></div>
+            <!-- <div v-if="tabVal == 0" class="triangle-up-border pos-absolute"></div> -->
           </div>
           <div @click="clickTab(1)" class="text-black fw-b fs-12 tabBox mr-15 text-center pos-relative">
             <div class="certification">
               <image class="mr-5" src="/static/svg/tools/ex_mark.svg" />
               未完成身份认证
-            </div>
+            </div> 
             <div v-if="tabVal == 1" class="triangle-up-border pos-absolute"></div>
           </div>
         </div>
-        <div class="infoBox mt-10"></div>
+        <div class="infoBox mt-10 px-10 pt-25">
+          <div class="text-black fs-14">完成身份认证以进行充值和交易</div>
+          <div class="CertificationBox mt-5">
+            <van-button class="BtnBox" color="#1777FF">
+              <text class="fw-b fs-14">认证</text>
+            </van-button>
+          </div>
+        </div>
       </div>
       <div class="optionBox bg-white mt-5">
         <div class="pl-20 pr-20 pt-20">
@@ -114,7 +98,7 @@
               />
             </div>
           </div>
-          <div class="pt-25 flex justify-between">
+          <div class="pt-25 flex justify-between" @click="goCustomerService">
             <div class="flex items-center">
               <image
                 class="leftIcon mr-10"
@@ -171,6 +155,10 @@ const goIdentityAuth = () => {
   });
 };
 
+const goCustomerService = () => {
+  console.log('前往客服中心')
+}
+
 </script>
 
 <style lang="scss">
@@ -218,7 +206,7 @@ const goIdentityAuth = () => {
       .triangle-up-border {
         width: 0;
         height: 0;
-        bottom: -10px;
+        bottom: -11px;
         left: 50%;
         border-left: 7px solid transparent;
         border-right: 7px solid transparent;
@@ -230,6 +218,11 @@ const goIdentityAuth = () => {
       min-height: 125px;
       background: #F6F7FB;
       border-radius: 5px 5px 5px 5px;
+      .BtnBox {
+        width: 64px;
+        height: 32px;
+        border-radius: 6px;
+      }
     }
   }
   .optionBox {

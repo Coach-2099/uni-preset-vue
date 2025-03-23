@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
+    <!-- 防止将数字识别为电话号码 -->
+    <meta name="format-detection" content="telephone=no">
+    <!-- 防止将邮箱识别为可以点击的链接 -->
+    <meta name="format-detection" content="email=no">
+    <!-- 设置禁止缩放以及比例 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 设置标题 -->
+    <meta name="apple-mobile-web-app-title" content="Bybit">
+    <!-- 设置icon -->
+    <!-- <link rel="apple-touch-icon" href="/path/to/icon.png"> -->
     <script>
       var coverSupport = 'CSS' in window && typeof CSS.supports === 'function' && (CSS.supports('top: env(a)') ||
         CSS.supports('top: constant(a)'))

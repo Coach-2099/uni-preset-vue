@@ -14,6 +14,8 @@ export enum RequestMethodsEnum {
 
 export enum RequestCodeEnum {
   SUCCESS = 200, //成功
+  BUSINESS_FAIL_CODE = 1, // 请求成功，业务失败
+  BUSINESS_SUCCESS_CODE = 0, // 请求成功，业务成功
   FAILED = 300, // 失败
   PARAMS_VALID_ERROR = 310, //参数校验错误
   PARAMS_TYPE_ERROR = 311, //参数类型错误

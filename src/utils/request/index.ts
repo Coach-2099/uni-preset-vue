@@ -1,6 +1,6 @@
 import HttpRequest from './http'
 import { merge } from 'lodash-es'
-import { HttpRequestOptions, RequestHooks } from './type'
+import type { HttpRequestOptions, RequestHooks } from './type'
 import { getToken } from '../auth'
 import { RequestCodeEnum, RequestMethodsEnum } from '@/enums/requestEnums'
 import { adaptationUrl } from '@/utils/util'
@@ -36,27 +36,40 @@ const requestHooks: RequestHooks = {
     },
     async responseInterceptorsHook(response) {
         const { statusCode, data } = response as any
+        console.log('statusCode', statusCode)
         switch (statusCode) {
             case RequestCodeEnum.SUCCESS:
-                return response.data
+                if (data.code == RequestCodeEnum.BUSINESS_SUCCESS_CODE) return data.data
+                if (data.code == RequestCodeEnum.BUSINESS_FAIL_CODE) {
+                    if (data.msg) return uni.showToast({title: data.msg, icon: 'none'})
+                    return uni.showToast({title: '请求失败', icon: 'none'})
+                }
             case RequestCodeEnum.REQUEST_424_ERROR:
                 uni.navigateTo({
-                    url: '/pages/login/login'
+                    url: '/pages/login/index'
                 })
                 return Promise.reject()
             case RequestCodeEnum.REQUEST_CODE_ERROR:
             case RequestCodeEnum.REQUEST_401_ERROR:
                 return Promise.reject(data.msg)
             case RequestCodeEnum.SYSTEM_ERROR:
-                uni.$u.toast('系统错误')
+                if (data.msg) uni.showToast({ title: data.msg, icon: 'none' });
+                if (!data.msg) uni.showToast({ title: '请求失败，请稍后重试', icon: 'none' });
                 return Promise.reject(response.data)
             default:
-                return data
+                // return data
+                return uni.showToast({
+                    title: data.msg,
+                    icon: 'none'
+                })
         }
     },
     async responseInterceptorsCatchHook(options, error) {
         if (options.method?.toUpperCase() == RequestMethodsEnum.POST) {
-            uni.$u.toast('请求失败，请重试')
+            uni.showToast({
+                title: '请求失败，请重试',
+                icon: 'none'
+            })
         }
         return Promise.reject(error)
     }

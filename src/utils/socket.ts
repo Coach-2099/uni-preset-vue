@@ -17,6 +17,9 @@ class SocketService {
   private retryCount = 0;                            // 当前重试次数
   private maxRetry = 3;                              // 最大重试次数（默认3次）
 
+  private subscriptions = new Set<string>(); // 存储已订阅主题
+  private userSubscriptions = new Set<string>(); // 存储用户主题订阅
+
   /**
    * 构造函数
    * @param url - WebSocket服务器地址
@@ -77,6 +80,70 @@ class SocketService {
     this.eventHandlers.forEach((handler, event) => {
       this.socket?.on(event, handler);
     });
+  }
+
+  /**
+   * 通用订阅方法
+   * @param topicType - 主题类型 (ticker/depth)
+   * @param symbols - 交易对数组
+   */
+  subscribe(topicType: 'ticker' | 'depth', symbols: string[]) {
+    const topic = `${topicType}_${symbols.join(',')}`;
+    if (!this.subscriptions.has(topic)) {
+      this.emit('subscribe', {
+        type: topicType,
+        symbols
+      });
+      this.subscriptions.add(topic);
+    }
+  }
+
+  /**
+   * 通用取消订阅方法
+   * @param topicType - 主题类型 (ticker/depth)
+   * @param symbols - 交易对数组
+   */
+  unsubscribe(topicType: 'ticker' | 'depth', symbols: string[]) {
+    const topic = `${topicType}_${symbols.join(',')}`;
+    if (this.subscriptions.has(topic)) {
+      this.emit('unsubscribe', {
+        type: topicType,
+        symbols
+      });
+      this.subscriptions.delete(topic);
+    }
+  }
+
+  /**
+   * 用户主题订阅
+   * @param userId - 用户ID
+   * @param topics - 订阅主题数组
+   */
+  subscribeUser(userId: string, topics: string[]) {
+    const topicKey = `${userId}_${topics.join(',')}`;
+    if (!this.userSubscriptions.has(topicKey)) {
+      this.emit('subscribe_user', {
+        user_id: userId,
+        topics
+      });
+      this.userSubscriptions.add(topicKey);
+    }
+  }
+
+   /**
+   * 用户主题取消订阅
+   * @param userId - 用户ID
+   * @param topics - 取消订阅主题数组
+   */
+   unsubscribeUser(userId: string, topics: string[]) {
+    const topicKey = `${userId}_${topics.join(',')}`;
+    if (this.userSubscriptions.has(topicKey)) {
+      this.emit('unsubscribe_user', {
+        user_id: userId,
+        topics
+      });
+      this.userSubscriptions.delete(topicKey);
+    }
   }
 
   /**

@@ -1,4 +1,4 @@
-import { RequestTask } from './type'
+import type { RequestTask } from './type'
 
 const cancelerMap = new Map<string, RequestTask>()
 

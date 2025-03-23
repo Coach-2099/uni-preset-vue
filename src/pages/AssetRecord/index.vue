@@ -9,7 +9,8 @@
         shrink
       >
         <van-tab title="Deposit">
-          <div class="assetList mt-15">
+          <assetList :data-list="dataList" @refresh="refreshFun"></assetList>
+          <!-- <div class="assetList mt-15">
             <div 
               v-for="index in 5" 
               :key="index" 
@@ -31,7 +32,7 @@
                 <div class="rightIcon"></div>
               </div>
             </div>
-          </div>
+          </div> -->
         </van-tab>
         <van-tab title="Withdraw">
           Deposit
@@ -47,46 +48,34 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue'
+import assetList from '@/components/business/assetList/index.vue'
+import { getRechargeList } from '@/api/asset'
 
 const active = ref(0);
+const dataList = ref([]);
+const pages = ref({
+  current:1,
+  size:10
+})
 
-const goAssetDetail = () => {
-  uni.navigateTo({
-    url: '/pages/assetDetail/index'
-  })
-};
+const refreshFun = () => {
+  console.log('刷新充值记录')
+  loadData()
+}
+
+const loadData = async () => {
+  const params = {
+    ...pages,
+    symbol: 'USDT'
+  }
+  const data = await getRechargeList(params)
+  dataList.value = data.records
+}
 
 </script>
 
 <style lang="scss" scoped>
 .AssetRecord-index {
-  .assetSingle {
-    padding-left: 18px;
-    padding-right: 18px;
-  }
-
-  .dot {
-    width: 3px;
-    height: 3px;
-    background: #00B200;
-  }
-
-  .rightIcon {
-    position: relative;
-    width: 5px;
-    height: 10px;
-    cursor: pointer;
-  }
-  .rightIcon:before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border: solid #333;
-    border-width: 0 2px 2px 0;
-    transform: translate(-50%, -50%) rotate(-45deg);
-    position: absolute;
-    left: 50%;
-    top: 70%;
-  }
+  
 }
 </style>

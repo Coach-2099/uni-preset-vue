@@ -13,7 +13,7 @@
               mode="scaleToFill"
             />
           </div>
-          <div class="flex items-center home_right_icon">
+          <div class="flex items-center home_right_icon" @click="goMessageList">
              <image
               src="/static/svg/home/msg.svg"
               mode="scaleToFill"
@@ -22,7 +22,7 @@
         </div>
       </div>
     </van-sticky>
-    <div class="assetsInfo">
+    <div v-if="false" class="assetsInfo">
       <p class="fs-14 text-gray">总资产折合</p>
       <p class="mt-15">
         <span class="fs-32 fw-b text-black mr-10">0.00</span>
@@ -31,6 +31,22 @@
       <div class="flex justify-between items-end">
         <p class="text-gray mt-15">≈ 0.00000000  BTC</p>
         <van-button type="primary" class="fw-b fs-14 deposit-btn">存款</van-button>
+      </div>
+    </div>
+    <div v-else class="noLoginTemp bg-white py-25">
+      <div class="noLoginBox  w-100 flex-col items-center">
+        <div class="fw-b fs-16 text-black">
+          注册解锁高达<text class="text-light-blue">$5050</text>奖励
+        </div>
+        <div class="mt-15">
+          <van-button
+            class="myBtn"
+            type="primary"
+            @click="goRegister"
+          >
+            <text class="fs-14 text-white py-5">注册/登录</text>
+          </van-button>
+        </div>
       </div>
     </div>
     <div class="pl-20 pr-20 pt-5 pb-5 pt-25 walletInfo">
@@ -50,102 +66,90 @@
           <van-image width="28" hidden="30" src="/static/svg/home/recharge.svg" />
           <p class="mt-5 text-by-black" style="font-size: 3.2vw;">Recharge</p>
         </div>
-        <div class="flex-col items-center" @click="goTest">
+        <div class="flex-col items-center" @click="goTransfer">
           <van-image width="28" hidden="30" src="/static/svg/home/transfer.svg" />
           <p class="mt-5 text-by-black" style="font-size: 3.2vw;">transfer</p>
         </div>
-        <div class="flex-col items-center">
+        <div class="flex-col items-center" @click="goWithdraw">
           <van-image width="28" hidden="28" src="/static/svg/home/withdraw.svg" />
           <p class="mt-5 text-by-black" style="font-size: 3.2vw;">withdraw</p>
         </div>
-        <div class="flex-col items-center">
+        <div class="flex-col items-center" @click="goInvite">
           <van-image width="28" hidden="30" src="/static/svg/home/invite.svg" />
           <p class="mt-5 text-by-black" style="font-size: 3.2vw;">Invite</p>
         </div>
       </div>
     </div>
     <div class="pl-5 pr-10 quotes bg-white">
-      <van-tabs 
-        v-model:active="tabType" 
-        shrink 
-        class="fw-b"
+      <van-tabs
+        v-model:active="active" 
+        shrink
+        class="mt-20"
         title-active-color="#333333"
         title-inactive-color="#B0B0B0"
       >
-        <van-tab title="热榜">
-          <van-tabs
-            v-model:active="active" 
-            shrink
-            class="mt-20"
-            title-active-color="#333333"
-            title-inactive-color="#B0B0B0"
-          >
-            <van-tab title="币种">
-              <div class="mt-10 ml-15 mr-10 flex justify-between">
-                <div class="flex-1 text-gray fs-12">Trading Pairs</div>
-                <div class="flex-1 flex justify-end text-gray fs-12">
-                  <div class="flex-1 text-right mr-20 ">Last Price</div>
-                  <div class="flex-1 text-right">24H Change</div>
+        <van-tab title="币种">
+          <quoteList type="hot"></quoteList>
+          <!-- <div class="mt-10 ml-15 mr-10 flex justify-between">
+            <div class="flex-1 text-gray fs-12">Trading Pairs</div>
+            <div class="flex-1 flex justify-end text-gray fs-12">
+              <div class="flex-1 text-right mr-20 ">Last Price</div>
+              <div class="flex-1 text-right">24H Change</div>
+            </div>
+          </div>
+          <div v-for="(item, index) in 5" :key="index">
+            <div class="mt-20 ml-15 mr-10 pb-10 flex ff-biance fw-b justify-between items-center">
+              <div class="flex-1">
+                <text class="fs-16">BTC</text>
+                <text class="fs-12 text-gray">/ USDT</text>
+                <div>
+                  <text class="fs-12 text-gray">3.21B USDT</text>
                 </div>
               </div>
-              <div v-for="(item, index) in 5" :key="index">
-                <div class="mt-20 ml-15 mr-10 pb-10 flex ff-biance fw-b justify-between items-center">
-                  <div class="flex-1">
-                    <text class="fs-16">BTC</text>
-                    <text class="fs-12 text-gray">/ USDT</text>
-                    <div>
-                      <text class="fs-12 text-gray">3.21B USDT</text>
-                    </div>
-                  </div>
-                  <div class="flex-1 flex justify-end items-center">
-                    <div class="flex-1 text-right items-center mr-20">95792.20</div>
-                    <van-button class="flex-1 text-right rises_falls_btn" style="width: 22.4vw;" type="success" size="small">
-                      <text class="fs-14">+0.22%</text>
-                    </van-button>
-                  </div>
-                </div>
+              <div class="flex-1 flex justify-end items-center">
+                <div class="flex-1 text-right items-center mr-20">95792.20</div>
+                <van-button class="flex-1 text-right rises_falls_btn" style="width: 22.4vw;" type="success" size="small">
+                  <text class="fs-14">+0.22%</text>
+                </van-button>
               </div>
-              <div class="moreTemp flex justify-center items-center">
-                <p class="fs-12">View More</p>
-                <van-image class="ml-5" width="8" height="10" src="/static/images/right.png" />
-              </div>
-            </van-tab>
-            <van-tab title="合约">
-              <div class="mt-10 ml-15 flex justify-between">
-                <div class="flex-1 text-gray fs-12">Trading Pairs</div>
-                <div class="flex-1 flex justify-end text-gray fs-12">
-                  <div class="flex-1 text-right mr-10 ">Last Price</div>
-                  <div class="flex-1 text-right">24H Change</div>
-                </div>
-              </div>
-              <div v-for="(item, index) in 5" :key="index">
-                <div class="mt-20 ml-15 pb-10 flex ff-biance fw-b justify-between items-center">
-                  <div class="flex-1">
-                    <text class="fs-16">BTC</text>
-                    <text class="fs-12 text-gray">/ USDT</text>
-                    <div>
-                      <text class="fs-12 text-gray">3.21B USDT</text>
-                    </div>
-                  </div>
-                  <div class="flex-1 flex justify-end items-center">
-                    <div class="flex-1 text-right items-center mr-10">95792.20</div>
-                    <van-button class="flex-1 text-right rises_falls_btn" style="width: 22.4vw;" type="success" size="small">
-                      <text class="fs-14">+0.22%</text>
-                    </van-button>
-                  </div>
-                </div>
-              </div>
-              <div class="moreTemp flex justify-center items-center">
-                <p class="fs-12">View More</p>
-                <van-image class="ml-5" width="8" height="10" src="/static/images/right.png" />
-              </div>
-            </van-tab>
-          </van-tabs>
+            </div>
+          </div> -->
+          <div class="moreTemp flex justify-center items-center" @click="viewMore">
+            <p class="fs-12">View More</p>
+            <van-image class="ml-5" width="8" height="10" src="/static/images/right.png" />
+          </div>
         </van-tab>
-        <van-tab title="新币榜">新币榜</van-tab>
-        <van-tab title="涨幅榜">涨幅榜</van-tab>
-        <van-tab title="跌幅榜">跌幅榜</van-tab>
-        <van-tab title="成交额">成交额</van-tab>
+        <van-tab title="合约">
+          <quoteList type="hot"></quoteList>
+          <!-- <div class="mt-10 ml-15 flex justify-between">
+            <div class="flex-1 text-gray fs-12">Trading Pairs</div>
+            <div class="flex-1 flex justify-end text-gray fs-12">
+              <div class="flex-1 text-right mr-10 ">Last Price</div>
+              <div class="flex-1 text-right">24H Change</div>
+            </div>
+          </div>
+          <div v-for="(item, index) in 5" :key="index">
+            <div class="mt-20 ml-15 pb-10 flex ff-biance fw-b justify-between items-center">
+              <div class="flex-1">
+                <text class="fs-16">BTC</text>
+                <text class="fs-12 text-gray">/ USDT</text>
+                <div>
+                  <text class="fs-12 text-gray">3.21B USDT</text>
+                </div>
+              </div>
+              <div class="flex-1 flex justify-end items-center">
+                <div class="flex-1 text-right items-center mr-10">95792.20</div>
+                <van-button class="flex-1 text-right rises_falls_btn" style="width: 22.4vw;" type="success" size="small">
+                  <text class="fs-14">+0.22%</text>
+                </van-button>
+              </div>
+            </div>
+          </div> -->
+          <div class="moreTemp flex justify-center items-center" @click="viewMore">
+            <p class="fs-12">View More</p>
+            <van-image class="ml-5" width="9" height="7" src="/static/images/right.png" />
+          </div>
+        </van-tab>
       </van-tabs>
     </div>
     <div class="mt-5 pt-10 bg-white news">
@@ -202,45 +206,98 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import { onLaunch } from "@dcloudio/uni-app";
 import { useSocket } from '@/utils/socket';
 import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼峰命名
+import quoteList from '@/components/business/quoteList/index.vue'; // 使用大驼峰命名
+
 
 const active = ref(0);
 const tabType = ref(0)
 
-const isConnected = ref(false);
-const messages = ref<string[]>([]);
-const socketService = useSocket('wss://demo.piesocket.com/v3/channel_1?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9VRiaV&notify_self');
+// 新增响应式数据存储
+const tickerData = ref<Record<string, any>>({});
+const depthData = ref<Record<string, any>>({});
+const userData = ref({
+  balance: 0,
+  orders: [] as any[]
+});
+
+const socketService = useSocket('ws://172.20.10.12:8888/webSocket');
+
+  onLaunch(() => {
+    uni.hideTabBar();
+  })
 
   // Connect to the socket server
   onMounted(() => {
     socketService.connect();
 
-    // Listen for connection status changes
-    socketService.on('connect', () => {
-      isConnected.value = true;
+    // 订阅BTC/USDT的实时行情
+    socketService.subscribe('ticker', ['BTC/USDT']);
+
+    // 订阅ETH/USDT的深度数据
+    socketService.subscribe('depth', ['ETH/USDT']);
+
+    // 当用户登录后订阅用户相关数据
+    const userId = 'user123'; // 从登录状态获取实际用户ID
+    socketService.subscribeUser(userId, ['orders', 'balance']);
+
+    // 添加行情数据监听
+    socketService.on('ticker', (data: any) => {
+      console.log('收到行情数据:', data);
+      // 示例数据结构处理：{ symbol: 'BTC/USDT', price: 50000, change: 0.22 }
+      tickerData.value[data.symbol] = data;
     });
 
-    socketService.on('disconnect', () => {
-      isConnected.value = false;
+    // 添加深度数据监听
+    socketService.on('depth', (data: any) => {
+      console.log('收到深度数据:', data);
+      // 示例数据结构处理：{ symbol: 'ETH/USDT', bids: [], asks: [] }
+      depthData.value[data.symbol] = data;
     });
 
-    // Listen for custom events
-    socketService.on('message', (data: string) => {
-      messages.value.push('接收到消息了：',data);
+    // 添加用户数据监听
+    socketService.on('user_update', (data: any) => {
+      console.log('用户数据更新:', data);
+      if (data.type === 'balance') {
+        userData.value.balance = data.value;
+      } else if (data.type === 'orders') {
+        userData.value.orders = data.value;
+      }
     });
+
   });
 
   // Disconnect from the socket server when the component is unmounted
   onUnmounted(() => {
+    // 取消所有订阅
+    socketService.unsubscribe('ticker', ['BTC/USDT']);
+    socketService.unsubscribe('depth', ['ETH/USDT']);
+    
+    const userId = 'user123';
+    socketService.unsubscribeUser(userId, ['orders', 'balance']);
+    
     socketService.disconnect();
   });
 
-  const goTest = () => {
+  const goTransfer = () => {
     uni.navigateTo({
-      url: '/pages/test/index',
+      url: '/pages/transfer/index',
     });
   };
+
+  const goWithdraw = () => {
+    uni.navigateTo({
+      url: '/pages/withdrawl/index',
+    });
+  }
+
+  const goInvite = () => {
+    uni.navigateTo({
+      url: '/pages/invite/index',
+    });
+  }
 
   const goUser = () => {
     uni.navigateTo({
@@ -252,6 +309,24 @@ const socketService = useSocket('wss://demo.piesocket.com/v3/channel_1?api_key=V
     console.log('发送消息')
     socketService.emit('message', 'Hello from client');
   };
+
+  const viewMore = () => {
+    uni.switchTab({
+      url: '/pages/quotes/index',
+    });
+  }
+
+  const goRegister = () => {
+    uni.navigateTo({
+      url: '/pages/register/index',
+    });
+  }
+  const goMessageList = () => {
+    uni.navigateTo({
+      url: '/pages/messageList/index',
+    });
+  }
+
 </script>
 
 <style lang="scss" scoped>
@@ -297,6 +372,19 @@ const socketService = useSocket('wss://demo.piesocket.com/v3/channel_1?api_key=V
       height: 28px;
     }
   }
+  .noLoginTemp {
+    .noLoginBox {
+      background-image: url('/static/images/homeBg.png');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      height: 80px;
+      .myBtn {
+        border-radius: 6px;
+        height: 28px;
+        width: 167px;
+      }
+    }
+  }
   .walletInfo {
     background: #fff;
   }
@@ -316,7 +404,7 @@ const socketService = useSocket('wss://demo.piesocket.com/v3/channel_1?api_key=V
     }
   }
   .news {
-    padding-bottom: 110px;
+    padding-bottom: 90px;
     .newsTemp {
       .Dot {
         width: 8px;

@@ -63,18 +63,19 @@
         sticky
       >
         <van-tab title="In stock">
-          <div v-if="true" class="px-20">
-            <assetsModule></assetsModule>
-          </div>
-          <div v-else class="defaultTemp">
-            <dataDefault></dataDefault>
+          <div class="px-20">
+            <assetsModule type="basic"></assetsModule>
           </div>
         </van-tab>
         <van-tab title="Contract">
-          Contract
+          <div class="px-20">
+            <assetsModule type="basic"></assetsModule>
+          </div>
         </van-tab>
         <van-tab title="Gold">
-          Gold
+          <div class="px-20">
+            <assetsModule type="basic"></assetsModule>
+          </div>
         </van-tab>
       </van-tabs>
     </div>
@@ -85,8 +86,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼峰命名
-import dataDefault from '@/components/dataDefault/index.vue'
-import assetsModule from '@/components/assetsModule/index.vue'
+import assetsModule from '@/components/business/assetsModule/index.vue'
+
 
 const active = ref(0);
 
@@ -178,12 +179,6 @@ const goInvite = () => {
         //   height: auto !important;
         // }
       }
-    }
-  }
-  .content {
-    .defaultTemp {
-      margin-top: 90px;
-      padding-bottom: 120px;
     }
   }
   :deep(.van-tabs) {

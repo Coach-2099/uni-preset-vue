@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia'
 
-interface ControlSate {
+interface ControlStae {  // 修正拼写错误
   inputShow: boolean
 }
 
-export const useControlStore = defineStore({
-  id: 'controlStore',
-  state: (): ControlSate => ({
+export const useControlStore = defineStore('controlStore', {
+  state: (): ControlStae => ({
     inputShow: false
   }),
   getters: {

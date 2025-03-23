@@ -5,11 +5,11 @@
     </div>
     <div class="fs-24 mt-25 mb-25 fw-b">sign in to bybit</div>
     <div class="inputBox">
-      <div class="inputTitle fw-b mb-5">Email</div>
+      <div class="inputTitle fw-b mb-5">Account</div>
       <input
-        v-model="email"
+        v-model="account"
         class="base-input"
-        placeholder="eg: xxxx@gmail.com"
+        placeholder="Email or Mobile Number"
         placeholder-class="input-placeholder"
         @input="inputEmail"
       />
@@ -50,20 +50,44 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { accountLogin } from '@/api/account';
+import { useUserStore } from '@/stores/user';
 
-const email = ref('');
+const userStore = useUserStore();
+
+const account = ref('');
 const password = ref('');
 const showPassword = ref(false)
 const inputEmail =() => {
-  console.log('input Email', email.value)
+  console.log('input Email', account.value)
 }
 
 const inputPassword =() => {
   console.log('input Password', password.value)
 }
 
-const signIn = () => {
+const signIn = async () => {
   console.log('sign in')
+  if (!account.value) return uni.showToast({ title: '请输入账号', icon: 'none' })
+  if (!password.value) return uni.showToast({ title: '请输入密码', icon: 'none' })
+  const params = {
+    username: account.value,
+    password: password.value,
+  }
+  const data = await accountLogin(params)
+  if (data) {
+    loginHandle(data) 
+  }
+}
+
+const loginHandle = async (data: any) => {
+  console.log('data', data)
+  const { access_token } = data
+  userStore.login(access_token)
+  await userStore.getUser()
+  uni.navigateTo({
+    url: '/pages/home/index'
+  })
 }
 
 const goBack = () => {

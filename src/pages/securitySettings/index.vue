@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="reviseInfo mt-5 pl-20 pr-20 bg-white">
-      <div class="pt-20 flex justify-between">
+      <div class="pt-20 flex justify-between" @click="goModifyPwd">
         <div class="">
           <text class="text-black fs-16">修改登录密码</text>
         </div>
@@ -35,7 +35,7 @@
           />
         </div>
       </div>
-      <div class="pt-25 flex justify-between">
+      <div class="pt-25 flex justify-between" @click="gomodifyEmail">
         <div class="">
           <text class="text-black fs-16">邮箱</text>
         </div>
@@ -61,7 +61,7 @@
           />
         </div>
       </div>
-      <div class="pt-25 flex justify-between">
+      <div class="pt-25 flex justify-between" @click="goModifyFundPassword">
         <div class="">
           <text class="text-black fs-16">资金密码</text>
         </div>
@@ -79,15 +79,34 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue'
 import navigationBar from '@/components/navigationBar/index.vue'
 
-import { ref } from 'vue'
+const goModifyPwd = () => {
+  uni.navigateTo({
+    url: '/pages/modifyPwd/index'
+  })
+}
+
+const goModifyFundPassword = () => {
+  uni.navigateTo({
+    url: '/pages/modifyFundPassword/index'
+  })
+}
+
+const gomodifyEmail = () => {
+  uni.navigateTo({
+    url: '/pages/modifyEmail/index'
+  })
+}
 
 const goUser = () => {
   uni.navigateBack({
     delta: 1
   })
 }
+
+
 </script>
 
 <style lang="scss" scoped>
