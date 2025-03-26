@@ -5,15 +5,26 @@
       <p class="text-black fs-16">账户活动</p>
       <p class="text-gray fs-12 pt-20">上次登录时间：2025-02-23  11:43:05</p>
       <p class="text-gray fs-12 pt-10">登录设备：ios</p>
-      <p class="text-balck fs-16 pt-25">安全级别 <span class="text-red">低</span></p>
+      <p class="text-balck fs-16 pt-25">安全级别 
+        <span v-if="userInfo.securityLevel == 1" class="text-red">低</span>
+        <span v-if="userInfo.securityLevel == 2" class="text-orange">中</span>
+        <span v-if="userInfo.securityLevel == 3" class="text-green">高</span>
+      </p>
       <div>
-        <van-progress color="#ee0a24" :percentage="40" :show-pivot="false" />
+        <van-progress v-if="userInfo.securityLevel == 1" color="#ee0a24" :percentage="40" :show-pivot="false" />
+        <van-progress v-else-if="userInfo.securityLevel == 2" color="#FFA500" :percentage="60" :show-pivot="false" />
+        <van-progress v-else-if="userInfo.securityLevel == 3" color="#00B200" :percentage="100" :show-pivot="false" />
       </div>
       <div class="unsafeLevelBox mt-15 fs-12 text-gray">
-        <div>账户安全等级低，请至少开启<span class="text-red">1</span>项安全验证。</div>
+        <div>
+          账户安全等级
+          <text v-if="userInfo.securityLevel == 1">低，请至少开启<span class="text-red">1</span>项安全验证。</text>
+          <text v-else-if="userInfo.securityLevel == 2">中</text>
+          <text v-else-if="userInfo.securityLevel == 3">高</text>
+        </div>
         <div class="iconTip">
           <image
-            class="mr-5 mt-15"
+            class="mt-15"
             src="/static/svg/tools/ex_mark.svg"
             mode="scaleToFill"
           />
@@ -66,7 +77,7 @@
           <text class="text-black fs-16">资金密码</text>
         </div>
         <div>
-          <text class="fs-12 text-gray mr-5">未设置</text>
+          <text v-if="userInfo.hasTradePwd == 0" class="fs-12 text-gray mr-5">未设置</text>
           <image
             class="rightIcon"
             src="/static/svg/tools/right.svg"
@@ -81,6 +92,15 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import navigationBar from '@/components/navigationBar/index.vue'
+import { useUserStore } from '@/stores/user';
+
+const userStore = useUserStore();
+const DEFAULT_USER_INFO = {
+  securityLevel: 3,
+  hasTradePwd: 0
+}
+
+const userInfo = userStore.userInfo;
 
 const goModifyPwd = () => {
   uni.navigateTo({

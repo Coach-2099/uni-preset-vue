@@ -9,3 +9,8 @@ export function getBanner(data: any) {
 export function getNotice(data: any) {
   return request.get({ url: "/admin/common/notice", data })
 }
+
+// 获取客服链接
+export function getCustomerService(header?: any) {
+  return request.get({ url: "/admin/common/getCustomerService", header });
+}

@@ -22,7 +22,7 @@
         </div>
       </div>
     </van-sticky>
-    <div v-if="false" class="assetsInfo">
+    <div v-if="userStore.userInfo" class="assetsInfo">
       <p class="fs-14 text-gray">总资产折合</p>
       <p class="mt-15">
         <span class="fs-32 fw-b text-black mr-10">0.00</span>
@@ -87,6 +87,7 @@
         class="mt-20"
         title-active-color="#333333"
         title-inactive-color="#B0B0B0"
+         @click-tab="onClickTab"
       >
         <van-tab title="币种">
           <quoteList type="hot"></quoteList>
@@ -120,7 +121,7 @@
           </div>
         </van-tab>
         <van-tab title="合约">
-          <quoteList type="hot"></quoteList>
+          <quoteList ref="" type="hot"></quoteList>
           <!-- <div class="mt-10 ml-15 flex justify-between">
             <div class="flex-1 text-gray fs-12">Trading Pairs</div>
             <div class="flex-1 flex justify-end text-gray fs-12">
@@ -205,12 +206,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { onLaunch } from "@dcloudio/uni-app";
 import { useSocket } from '@/utils/socket';
 import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼峰命名
 import quoteList from '@/components/business/quoteList/index.vue'; // 使用大驼峰命名
+import { useUserStore } from '@/stores/user';
 
+const userStore = useUserStore();
 
 const active = ref(0);
 const tabType = ref(0)
@@ -231,6 +234,10 @@ const socketService = useSocket('ws://172.20.10.12:8888/webSocket');
 
   // Connect to the socket server
   onMounted(() => {
+    onClickTab()
+
+
+    // 连接socket 服务器
     socketService.connect();
 
     // 订阅BTC/USDT的实时行情
@@ -308,6 +315,10 @@ const socketService = useSocket('ws://172.20.10.12:8888/webSocket');
   const sendMessage = () => {
     console.log('发送消息')
     socketService.emit('message', 'Hello from client');
+  };
+
+  const onClickTab = (name: string) => {
+    console.log('点击了标签页', name);
   };
 
   const viewMore = () => {

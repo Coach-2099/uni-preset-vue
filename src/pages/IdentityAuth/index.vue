@@ -32,6 +32,18 @@
           @input="inputIdNumber"
         />
       </div>
+      <div class="flex justify-between items-center mt-20">
+        <div class="label">Identity Type</div>
+        <div class="w-100 base-input">
+          <picker
+            @change="bindPickerChange"
+            :value="checkType"
+            :range="typeArray"
+            range-key="text">
+						<view class="uni-input">{{typeArray[checkType].text}}</view>
+					</picker>
+        </div>
+      </div>
 
       <div class="uploadBox">
         <p class="fs-16 text-black">Please take/upload xxx's personal ID card.</p>
@@ -47,7 +59,6 @@
               reupload
               preview-size="9rem"
               :after-read="afterReadFront"
-              :click-upload="clickUpload"
             >
               <div class="upuloadTemp flex-col items-center">
                 <image
@@ -72,7 +83,6 @@
               reupload
               preview-size="9rem"
               :after-read="afterReadBack"
-              :click-upload="clickUpload"
             >
               <div class="upuloadTemp flex-col items-center">
                 <image
@@ -114,11 +124,19 @@ import { userKyc } from '@/api/account'
 const firstName = ref('')
 const lastName = ref('')
 const idNuber = ref('')
+
 const fileFront = ref('')
 const fileBack = ref('')
 
+const fileFrontSrc = ref('')
+const fileBackSrc = ref('')
+
 const fileListFront = ref([])
 const fileListBack = ref([])
+
+const typeArray = ref([{text: '身份证', value: 'IDCARD'}, {text: '护照', value: 'PASSPORT'}, {text: '驾照', value: 'DRVING_LICENSE'}])
+const checkType = ref(0)
+
 const inputfirstName = () => {
   console.log('firstName', firstName.value)
 }
@@ -131,32 +149,39 @@ const inputIdNumber = () => {
   console.log('idNuber', idNuber.value)
 }
 
-const afterReadFront = (file: any) => {
-  console.log('file', file)
+const afterReadFront = async (file: any) => {
+  const data = await uploadImage(file.content)
   fileFront.value = file.content
+  fileFrontSrc.value = data?.url
 }
 
 
-const afterReadBack = (file: any) => {
-  console.log('file', file)
+const afterReadBack = async (file: any) => {
+  const data = await uploadImage(file.content)
   fileBack.value = file.content
+  fileBackSrc.value = data?.content
 }
 
-const clickUpload = () => {
-  console.log('点击上传了')
+const bindPickerChange = (e:any) => {
+  console.log('e', e)
+  checkType.value = e.detail.value
+
 }
 
 const uploadFun = async () => {
   const params = {
-    name: '',
-    idCard: '',
-    lastName: '',
-    type: '',
-    zmImg: '',
-    fmImg: ''
+    name: firstName.value,
+    lastName: lastName.value,
+    idCard: idNuber.value,
+    type: typeArray.value[checkType.value].text, // IDCARD:身份证,PASSPORT:护照,DRVING_LICENSE:驾照
+    zmImg: fileFrontSrc.value,
+    fmImg: fileBackSrc.value
   }
-  const data = await userKyc(params)
-  console.log('data', data)
+  await userKyc(params)
+  uni.showToast({ title: '认证成功', icon: 'none' })
+  uni.redirectTo({
+    url: '/pages/userInfo/index'
+  })
 }
 
 </script>

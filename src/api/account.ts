@@ -60,3 +60,4 @@ export function userKyc(data: Record<string, any>) {
 export function updatepwd(data: Record<string, any>) {
   return request.put({ url: "/admin/user/updatepwd", data });
 }
+

@@ -44,7 +44,7 @@ onMounted(() => {
 })
 
 const loadData = async () => {
-  const res = await getNotice(pages)
+  const res = await getNotice({pages: pages.value})
   list.value = res.data.records
   console.log(res)
 }

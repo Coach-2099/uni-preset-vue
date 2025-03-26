@@ -39,7 +39,13 @@ const requestHooks: RequestHooks = {
         console.log('statusCode', statusCode)
         switch (statusCode) {
             case RequestCodeEnum.SUCCESS:
-                if (data.code == RequestCodeEnum.BUSINESS_SUCCESS_CODE) return data.data
+                console.log('data!!!!!', data)
+                // 判断为登录接口
+                if (data.access_token) return data
+                if (data.code == RequestCodeEnum.BUSINESS_SUCCESS_CODE) {
+                    console.log('6666')
+                    return data.data
+                }
                 if (data.code == RequestCodeEnum.BUSINESS_FAIL_CODE) {
                     if (data.msg) return uni.showToast({title: data.msg, icon: 'none'})
                     return uni.showToast({title: '请求失败', icon: 'none'})
@@ -51,10 +57,14 @@ const requestHooks: RequestHooks = {
                 return Promise.reject()
             case RequestCodeEnum.REQUEST_CODE_ERROR:
             case RequestCodeEnum.REQUEST_401_ERROR:
-                return Promise.reject(data.msg)
-            case RequestCodeEnum.SYSTEM_ERROR:
                 if (data.msg) uni.showToast({ title: data.msg, icon: 'none' });
                 if (!data.msg) uni.showToast({ title: '请求失败，请稍后重试', icon: 'none' });
+                return Promise.reject(data.msg)
+            case RequestCodeEnum.REQUEST_404_ERROR:
+                uni.showToast({ title: '请求接口不存在', icon: 'none' });
+            case RequestCodeEnum.SYSTEM_ERROR:
+                if (data.msg) uni.showToast({ title: data.msg, icon: 'none' });
+                if (!data.msg) uni.showToast({ title: '接口异常，请刷新后重试', icon: 'none' });
                 return Promise.reject(response.data)
             default:
                 // return data

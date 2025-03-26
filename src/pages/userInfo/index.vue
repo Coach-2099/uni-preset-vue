@@ -29,9 +29,9 @@
           />
         </div>
         <div class="ml-10">
-          <p class="fs-20 fw-b text-balck">用户姓名</p>
+          <p class="fs-20 fw-b text-balck">{{ userInfo.username }}</p>
           <div class="fs-12 flex mt-10 text-gray">
-            <text>UID:123456</text>
+            <text>UID:{{ userInfo.userId }}</text>
             <div class="ml-5"><van-image src="/static/svg/tools/copy.svg" /></div>
           </div>
         </div>
@@ -45,17 +45,23 @@
           </div>
           <div @click="clickTab(1)" class="text-black fw-b fs-12 tabBox mr-15 text-center pos-relative">
             <div class="certification">
-              <image class="mr-5" src="/static/svg/tools/ex_mark.svg" />
-              未完成身份认证
+              <image v-if="userInfo.isValid !== 2" class="mr-5" src="/static/svg/tools/ex_mark.svg" />
+              <image v-else-if="userInfo.isValid === 2" class="mr-5" src="/static/images/success.png" mode="scaleToFill" />
+              <text v-if="userInfo.isValid === 0">未完成身份认证</text>
+              <text v-else-if="userInfo.isValid === 1">身份认证中</text>
+              <text v-else-if="userInfo.isValid === 2">身份已认证</text>
             </div> 
             <div v-if="tabVal == 1" class="triangle-up-border pos-absolute"></div>
           </div>
         </div>
-        <div class="infoBox mt-10 px-10 pt-25">
+        <div v-if="userInfo.isValid !== 2" class="infoBox mt-10 px-10 pt-25">
           <div class="text-black fs-14">完成身份认证以进行充值和交易</div>
           <div class="CertificationBox mt-5">
-            <van-button class="BtnBox" color="#1777FF">
-              <text class="fw-b fs-14">认证</text>
+            <van-button @click="goIdentityAuth" v-if="userInfo.isValid == 0" class="BtnBox" color="#1777FF">
+              <text  class="fw-b fs-14">认证</text>
+            </van-button>
+            <van-button v-if="userInfo.isValid == 1" class="BtnBox" color="#1777FF">
+              <text class="fw-b fs-14">认证中</text>
             </van-button>
           </div>
         </div>
@@ -73,7 +79,9 @@
               <text class="text-black fs-16">身份认证</text>
             </div>
             <div>
-              <text class="fs-12 text-gray mr-5">尚未认证</text>
+              <text v-if="userInfo.isValid == 0" class="fs-12 text-gray mr-5">尚未认证</text>
+              <text v-if="userInfo.isValid == 1" class="fs-12 text-gray mr-5">认证中</text>
+              <text v-if="userInfo.isValid == 2" class="fs-12 text-gray mr-5">已认证</text>
               <image
                 class="rightIcon"
                 src="/static/svg/tools/right.svg"
@@ -123,9 +131,33 @@
 
 <script lang="ts" setup>
 import navigationBar from '@/components/navigationBar/index.vue'
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, createApp } from 'vue';
+import { useUserStore } from '@/stores/user';
+const DEFAULT_USER_INFO = {
+  username: '未登录用户',
+  userId: '--',
+  isValid: 0
+}
 
-const tabVal = ref(0);
+const userStore = useUserStore();
+const userInfo = ref({...DEFAULT_USER_INFO})
+
+const tabVal = ref(1);
+
+
+onMounted(() => {
+  getUser()
+})
+
+const getUser = async () => {
+  await userStore.getUser()
+  userInfo.value = {
+    username: userStore.userInfo.username || DEFAULT_USER_INFO.username,
+    userId: userStore.userInfo.userId || DEFAULT_USER_INFO.userId,
+    isValid: userStore.userInfo.isValid || DEFAULT_USER_INFO.isValid
+  }
+}
+
 const clickTab = (val: number) => {
   tabVal.value = val;
 }
@@ -219,7 +251,7 @@ const goCustomerService = () => {
       background: #F6F7FB;
       border-radius: 5px 5px 5px 5px;
       .BtnBox {
-        width: 64px;
+        width: 84px;
         height: 32px;
         border-radius: 6px;
       }

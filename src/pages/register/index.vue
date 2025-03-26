@@ -66,7 +66,7 @@
               @input="inputPhone"
             />
             <div class="codeBtnBox ml-5">
-              <van-button type="primary">获取验证码</van-button>
+              <van-button @click="getCode" type="primary">获取验证码</van-button>
             </div>
           </div>
         </div>

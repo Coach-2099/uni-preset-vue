@@ -11,7 +11,6 @@
         class="base-input"
         placeholder="Email or Mobile Number"
         placeholder-class="input-placeholder"
-        @input="inputEmail"
       />
     </div>
     <div class="inputBox mt-20">
@@ -27,7 +26,6 @@
           class="flex-1"
           placeholder="enter your password"
           :password="showPassword"
-          @input="inputPassword"
         />
         <text class="uni-icon flex justify-center items-center pr-5 right-icon">
           <van-icon name="eye" @click="changePassword"/>
@@ -58,13 +56,7 @@ const userStore = useUserStore();
 const account = ref('');
 const password = ref('');
 const showPassword = ref(false)
-const inputEmail =() => {
-  console.log('input Email', account.value)
-}
 
-const inputPassword =() => {
-  console.log('input Password', password.value)
-}
 
 const signIn = async () => {
   console.log('sign in')
@@ -75,6 +67,7 @@ const signIn = async () => {
     password: password.value,
   }
   const data = await accountLogin(params)
+  console.log('data', data)
   if (data) {
     loginHandle(data) 
   }
@@ -85,9 +78,8 @@ const loginHandle = async (data: any) => {
   const { access_token } = data
   userStore.login(access_token)
   await userStore.getUser()
-  uni.navigateTo({
-    url: '/pages/home/index'
-  })
+  await userStore.getCustomerServiceFun()
+  uni.switchTab({ url: '/pages/home/index' })
 }
 
 const goBack = () => {
