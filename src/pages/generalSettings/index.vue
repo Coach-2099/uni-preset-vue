@@ -6,8 +6,8 @@
         <div class="">
           <text class="text-black fs-16">头像</text>
         </div>
-        <div>
-          <text class="fs-12 text-gray mr-5">尚未认证</text>
+        <div @click="goModifyUserInfo">
+          <text v-if="!userInfo.userInfo" class="fs-12 text-gray mr-5">尚未上传</text>
           <image
             class="rightIcon"
             src="/static/svg/tools/right.svg"
@@ -19,7 +19,7 @@
         <div class="">
           <text class="text-black fs-16">昵称</text>
         </div>
-        <div>
+        <div @click="goModifyUserInfo">
           <image
             class="rightIcon"
             src="/static/svg/tools/right.svg"
@@ -71,6 +71,9 @@ const getUser = async () => {
   }
 }
 
+const goModifyUserInfo = () => {
+  uni.navigateTo({ url: '/pages/modifyUserInfo/index' })
+}
 
 </script>
 

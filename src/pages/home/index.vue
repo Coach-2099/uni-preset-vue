@@ -11,7 +11,7 @@
             <image
               src="/static/svg/home/c_service.svg"
               mode="scaleToFill"
-            />
+          />
           </div>
           <div class="flex items-center home_right_icon" @click="goMessageList">
              <image
@@ -165,7 +165,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue';
 import { onLaunch } from "@dcloudio/uni-app";
 import { useSocket } from '@/utils/socket';
 import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼峰命名
@@ -187,7 +187,8 @@ const userData = ref({
 
 const spotQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const futuresQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
-const socketService = useSocket('ws://172.20.10.12:8888/webSocket');
+const socketService = computed(() => userStore.socketService);
+// const socketService = useSocket('ws://172.20.10.12:8888', { path: '/webSocket', allowEIO3: true });
 
   onLaunch(() => {
     uni.hideTabBar();
@@ -195,41 +196,38 @@ const socketService = useSocket('ws://172.20.10.12:8888/webSocket');
 
   // Connect to the socket server
   onMounted(() => {
-    console.log('这里112')
     // 切换类型时请求
     nextTick(() => {
       onClickTab({name: 0})
     })
 
-    // 连接socket 服务器
-    socketService.connect();
 
     // 订阅BTC/USDT的实时行情
-    socketService.subscribe('ticker', ['BTC/USDT']);
+    socketService.value.subscribe('ticker', ['BTC/USDT']);
 
     // 订阅ETH/USDT的深度数据
-    socketService.subscribe('depth', ['ETH/USDT']);
+    socketService.value.subscribe('depth', ['ETH/USDT']);
 
     // 当用户登录后订阅用户相关数据
     const userId = 'user123'; // 从登录状态获取实际用户ID
-    socketService.subscribeUser(userId, ['orders', 'balance']);
+    socketService.value.subscribeUser(userId, ['orders', 'balance']);
 
     // 添加行情数据监听
-    socketService.on('ticker', (data: any) => {
+    socketService.value.on('ticker', (data: any) => {
       console.log('收到行情数据:', data);
       // 示例数据结构处理：{ symbol: 'BTC/USDT', price: 50000, change: 0.22 }
       tickerData.value[data.symbol] = data;
     });
 
     // 添加深度数据监听
-    socketService.on('depth', (data: any) => {
+    socketService.value.on('depth', (data: any) => {
       console.log('收到深度数据:', data);
       // 示例数据结构处理：{ symbol: 'ETH/USDT', bids: [], asks: [] }
       depthData.value[data.symbol] = data;
     });
 
     // 添加用户数据监听
-    socketService.on('user_update', (data: any) => {
+    socketService.value.on('user_update', (data: any) => {
       console.log('用户数据更新:', data);
       if (data.type === 'balance') {
         userData.value.balance = data.value;
@@ -241,16 +239,16 @@ const socketService = useSocket('ws://172.20.10.12:8888/webSocket');
   });
 
   // Disconnect from the socket server when the component is unmounted
-  onUnmounted(() => {
-    // 取消所有订阅
-    socketService.unsubscribe('ticker', ['BTC/USDT']);
-    socketService.unsubscribe('depth', ['ETH/USDT']);
+  // onUnmounted(() => {
+  //   // 取消所有订阅
+  //   socketService.unsubscribe('ticker', ['BTC/USDT']);
+  //   socketService.unsubscribe('depth', ['ETH/USDT']);
     
-    const userId = 'user123';
-    socketService.unsubscribeUser(userId, ['orders', 'balance']);
+  //   const userId = 'user123';
+  //   socketService.unsubscribeUser(userId, ['orders', 'balance']);
     
-    socketService.disconnect();
-  });
+  //   socketService.disconnect();
+  // });
 
   const goTransfer = () => {
     uni.navigateTo({

@@ -215,6 +215,13 @@
 				"navigationBarTitleText": "modifyFundPassword"
 			}
 		},
+		{
+			"path": "pages/modifyUserInfo/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "modifyUserInfo"
+			}
+		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

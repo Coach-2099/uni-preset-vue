@@ -5,17 +5,17 @@ import { ref } from "vue";
 type EventCallback<T = any> = (data: T) => void;
 
 class SocketService {
-  private socket: Socket | null = null;              // Socket.io实例
-  private eventHandlers = new Map<string, EventCallback>(); // 事件处理器映射表
-  public isConnected = ref(false);                   // 连接状态响应式变量
+  private ws: WebSocket | null = null;
+  private eventHandlers = new Map<string, EventCallback>();
+  public isConnected = ref(false);
 
   // 心跳机制相关属性
-  private heartbeatInterval = 30000;                 // 心跳发送间隔（默认30秒）
-  private heartbeatTimeout = 5000;                   // 心跳响应超时时间（默认5秒）
-  private heartbeatTimer: number | null = null;      // 心跳定时器
-  private heartbeatTimeoutTimer: number | null = null; // 心跳超时定时器
-  private retryCount = 0;                            // 当前重试次数
-  private maxRetry = 3;                              // 最大重试次数（默认3次）
+  private heartbeatInterval = 30000;
+  private heartbeatTimeout = 5000;
+  private heartbeatTimer: number | null = null;
+  private retryCount = 0;
+  private maxRetry = 3;
+
 
   private subscriptions = new Set<string>(); // 存储已订阅主题
   private userSubscriptions = new Set<string>(); // 存储用户主题订阅
@@ -29,7 +29,6 @@ class SocketService {
     private readonly url: string,
     options: SocketOptions = {}
   ) {
-    // 合并配置参数
     this.heartbeatInterval = options.heartbeatInterval || 30000;
     this.heartbeatTimeout = options.heartbeatTimeout || 5000;
     this.maxRetry = options.maxRetry || 3;
@@ -41,46 +40,55 @@ class SocketService {
   connect() {
     console.log('链接地址：', this.url);
 
-    // 初始化Socket.io实例
-    this.socket = io(this.url, {
-      transports: ["websocket"],       // 强制使用WebSocket传输
-      reconnection: true,              // 启用自动重连
-      reconnectionAttempts: 3,         // 最大重连尝试次数
-      reconnectionDelay: 3000,         // 重连延迟时间
-    });
-
-    // 监听服务器pong响应（心跳检测）
-    this.socket.on("pong", () => {
-      this.clearHeartbeatTimeout();    // 收到响应后清除超时计时器
-      this.retryCount = 0;             // 重置重试计数器
-    });
+    this.ws = new WebSocket(this.url);
 
     // 基础事件监听
-    this.socket.on("connect", () => {
-      this.isConnected.value = true;   // 更新连接状态
-    });
-
-    this.socket.on("disconnect", () => {
-      console.log('socket disconnected???')
-      this.isConnected.value = false;  // 更新断开状态
-    });
-
-    this.socket.on("error", (error) => {
-      console.error("Socket error:", error); // 错误日志输出
-    });
-
-    // 连接成功回调
-    this.socket.on("connect", () => {
+    this.ws.onopen = () => {
+      console.log('WebSocket连接成功');
       this.isConnected.value = true;
-      console.log('链接成功回调!!!')
-      this.startHeartbeat();           // 启动心跳检测
-    });
+      this.startHeartbeat();
+      // 重连时恢复订阅
+      this.restoreSubscriptions();
+    };
 
-    // 注册已保存的事件监听器
-    this.eventHandlers.forEach((handler, event) => {
-      this.socket?.on(event, handler);
-    });
+    this.ws.onclose = (e) => {
+      console.log('连接关闭', e.reason);
+      this.isConnected.value = false;
+      // 原代码中没有handleReconnection方法，推测此处应该调用handleDisconnect方法
+      this.handleDisconnect()
+    };
+
+    this.ws.onerror = (error) => {
+      console.error('WebSocket错误:', error);
+    };
+
+    this.ws.onmessage = (event) => {
+      this.handleMessage(event.data);
+    };
   }
+
+  // 消息处理核心方法
+  private handleMessage(data: string) {
+    try {
+      const { event, payload } = JSON.parse(data);
+      const handler = this.eventHandlers.get(event);
+      handler?.(payload);
+      
+      // 心跳响应处理
+      if (event === 'pong') {
+        this.clearHeartbeatTimeout();
+        this.retryCount = 0;
+      }
+    } catch (e) {
+      console.error('消息解析失败', e);
+    }
+  }
+
+  // 恢复订阅
+  private restoreSubscriptions() {
+    // 实现原有的订阅恢复逻辑...
+  }
+
 
   /**
    * 通用订阅方法
@@ -152,12 +160,13 @@ class SocketService {
    * @param data - 发送数据
    */
   emit<T = any>(event: string, data?: T) {
-    if (!this.socket) {
-      console.warn("Socket not connected");
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+      console.warn("WebSocket未连接");
       return;
     }
-    this.socket.emit(event, data);
+    this.ws.send(JSON.stringify({ event, data }));
   }
+
 
   /**
    * 注册事件监听
@@ -166,7 +175,12 @@ class SocketService {
    */
   on<T = any>(event: string, callback: EventCallback<T>) {
     this.eventHandlers.set(event, callback); // 保存处理器
-    this.socket?.on(event, callback);        // 注册监听
+    // 由于类中没有socket属性，这里应使用WebSocket实例ws来处理事件
+    // 原代码中没有使用socket的需求，将其替换为ws
+    // 但是WebSocket本身没有on方法，可通过监听message事件并在handleMessage中处理
+    // 这里不需要额外代码，因为事件处理逻辑已在handleMessage中实现
+    // 因此，此代码行可移除
+    // this.socket?.on(event, callback);
   }
 
   /**
@@ -175,7 +189,10 @@ class SocketService {
    */
   off(event: string) {
     this.eventHandlers.delete(event);  // 移除处理器
-    this.socket?.off(event);           // 取消监听
+    // 由于类中没有socket属性，这里应使用WebSocket实例ws来处理事件
+    // WebSocket本身没有off方法，可通过移除事件处理器来实现取消监听
+    // 原代码中已经在上面通过 this.eventHandlers.delete(event) 移除了处理器，因此此行代码多余，应移除
+    // this.socket?.off(event);           // 取消监听
   }
 
   //------------------- 心跳机制私有方法 -------------------
@@ -195,8 +212,10 @@ class SocketService {
    * 发送心跳包
    */
   private sendHeartbeat() {
-    if (this.socket?.connected) {
-      this.socket.emit("ping", Date.now()); // 发送当前时间戳
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+        this.ws.send(JSON.stringify({ event: "ping", data: Date.now() })); // 发送当前时间戳
+      }
     }
   }
 
@@ -205,7 +224,7 @@ class SocketService {
    */
   private setHeartbeatTimeout() {
     this.clearHeartbeatTimeout();
-    this.heartbeatTimeoutTimer = setTimeout(() => {
+    this.heartbeatTimeout = setTimeout(() => {
       if (this.retryCount < this.maxRetry) {
         this.retryCount++;
         this.sendHeartbeat();         // 重试发送心跳
@@ -221,9 +240,10 @@ class SocketService {
    * 清除超时计时器
    */
   private clearHeartbeatTimeout() {
-    if (this.heartbeatTimeoutTimer) {
-      clearTimeout(this.heartbeatTimeoutTimer);
-      this.heartbeatTimeoutTimer = null;
+    // 修改为使用已存在的属性
+    if (this.heartbeatTimeout) {
+      clearTimeout(this.heartbeatTimeout);
+      this.heartbeatTimeout = null;
     }
   }
 
@@ -251,21 +271,21 @@ class SocketService {
    * 主动断开连接
    */
   disconnect() {
-    this.stopHeartbeat(); // 停止心跳检测
-    if (this.socket) {
-      this.socket.disconnect();
-      this.socket = null;
+    console.log('主动断开连接');
+    this.stopHeartbeat();
+    if (this.ws) {
+      this.ws.close(1000, '正常关闭');
+      this.ws = null;
       this.isConnected.value = false;
     }
   }
 }
-
 // 配置项接口定义
+// 更新配置接口
 interface SocketOptions {
-  heartbeatInterval?: number; // 心跳间隔（毫秒）
-  heartbeatTimeout?: number;  // 心跳超时时间（毫秒）
-  maxRetry?: number;          // 最大重试次数
-  autoReconnect?: boolean;    // 是否自动重连（未实现）
+  heartbeatInterval?: number;
+  heartbeatTimeout?: number;
+  maxRetry?: number;
 }
 
 /**
@@ -273,6 +293,6 @@ interface SocketOptions {
  * @param url - WebSocket服务器地址
  * @returns SocketService实例
  */
-export const useSocket = (url: string) => {
-  return new SocketService(url);
+export const useSocket = (url: string, options?: SocketOptions) => {
+  return new SocketService(url, options);
 };
