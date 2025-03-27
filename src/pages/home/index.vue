@@ -30,7 +30,6 @@
       </p>
       <div class="flex justify-between items-end">
         <p class="text-gray mt-15">≈ 0.00000000  BTC</p>
-        <van-button type="primary" class="fw-b fs-14 deposit-btn">存款</van-button>
       </div>
     </div>
     <div v-else class="noLoginTemp bg-white py-25">
@@ -87,65 +86,25 @@
         class="mt-20"
         title-active-color="#333333"
         title-inactive-color="#B0B0B0"
-         @click-tab="onClickTab"
+        @click-tab="onClickTab"
       >
         <van-tab title="币种">
-          <quoteList type="hot"></quoteList>
-          <!-- <div class="mt-10 ml-15 mr-10 flex justify-between">
-            <div class="flex-1 text-gray fs-12">Trading Pairs</div>
-            <div class="flex-1 flex justify-end text-gray fs-12">
-              <div class="flex-1 text-right mr-20 ">Last Price</div>
-              <div class="flex-1 text-right">24H Change</div>
-            </div>
-          </div>
-          <div v-for="(item, index) in 5" :key="index">
-            <div class="mt-20 ml-15 mr-10 pb-10 flex ff-biance fw-b justify-between items-center">
-              <div class="flex-1">
-                <text class="fs-16">BTC</text>
-                <text class="fs-12 text-gray">/ USDT</text>
-                <div>
-                  <text class="fs-12 text-gray">3.21B USDT</text>
-                </div>
-              </div>
-              <div class="flex-1 flex justify-end items-center">
-                <div class="flex-1 text-right items-center mr-20">95792.20</div>
-                <van-button class="flex-1 text-right rises_falls_btn" style="width: 22.4vw;" type="success" size="small">
-                  <text class="fs-14">+0.22%</text>
-                </van-button>
-              </div>
-            </div>
-          </div> -->
+          <quoteList
+            ref="spotQuoteListRefs"
+            type="SPOT"
+            :needPullRefresh="false"
+          ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
             <p class="fs-12">View More</p>
             <van-image class="ml-5" width="8" height="10" src="/static/images/right.png" />
           </div>
         </van-tab>
         <van-tab title="合约">
-          <quoteList ref="" type="hot"></quoteList>
-          <!-- <div class="mt-10 ml-15 flex justify-between">
-            <div class="flex-1 text-gray fs-12">Trading Pairs</div>
-            <div class="flex-1 flex justify-end text-gray fs-12">
-              <div class="flex-1 text-right mr-10 ">Last Price</div>
-              <div class="flex-1 text-right">24H Change</div>
-            </div>
-          </div>
-          <div v-for="(item, index) in 5" :key="index">
-            <div class="mt-20 ml-15 pb-10 flex ff-biance fw-b justify-between items-center">
-              <div class="flex-1">
-                <text class="fs-16">BTC</text>
-                <text class="fs-12 text-gray">/ USDT</text>
-                <div>
-                  <text class="fs-12 text-gray">3.21B USDT</text>
-                </div>
-              </div>
-              <div class="flex-1 flex justify-end items-center">
-                <div class="flex-1 text-right items-center mr-10">95792.20</div>
-                <van-button class="flex-1 text-right rises_falls_btn" style="width: 22.4vw;" type="success" size="small">
-                  <text class="fs-14">+0.22%</text>
-                </van-button>
-              </div>
-            </div>
-          </div> -->
+          <quoteList
+            ref="futuresQuoteListRefs"
+            type="FUTURES"
+            :needPullRefresh="false"
+          ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
             <p class="fs-12">View More</p>
             <van-image class="ml-5" width="9" height="7" src="/static/images/right.png" />
@@ -206,7 +165,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { onLaunch } from "@dcloudio/uni-app";
 import { useSocket } from '@/utils/socket';
 import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼峰命名
@@ -226,6 +185,8 @@ const userData = ref({
   orders: [] as any[]
 });
 
+const spotQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
+const futuresQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const socketService = useSocket('ws://172.20.10.12:8888/webSocket');
 
   onLaunch(() => {
@@ -234,8 +195,11 @@ const socketService = useSocket('ws://172.20.10.12:8888/webSocket');
 
   // Connect to the socket server
   onMounted(() => {
-    onClickTab()
-
+    console.log('这里112')
+    // 切换类型时请求
+    nextTick(() => {
+      onClickTab({name: 0})
+    })
 
     // 连接socket 服务器
     socketService.connect();
@@ -317,8 +281,15 @@ const socketService = useSocket('ws://172.20.10.12:8888/webSocket');
     socketService.emit('message', 'Hello from client');
   };
 
-  const onClickTab = (name: string) => {
-    console.log('点击了标签页', name);
+  // 切换标签
+  const onClickTab = (e: any) => {
+    console.log('点击了标签页', e);
+    nextTick(() => {
+      const currentRef = active.value === 0 ? spotQuoteListRefs : futuresQuoteListRefs;
+      console.log('currentRef', currentRef.value)
+      currentRef.value?.clearData();
+      currentRef.value?.loadData();
+    })
   };
 
   const viewMore = () => {

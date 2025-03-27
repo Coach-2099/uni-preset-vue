@@ -1,8 +1,11 @@
 import request from "@/utils/request";
 
 // 获取所有交易对最新行情列表
-export function getSymbolsLastPrice(header?: any) {
-  return request.get({ url: '/admin/kline/getSymbolsLastPrice', header })
+export function getSymbolsLastPrice(data?: any) {
+  return request.get(
+    { url: '/admin/kline/getSymbolsLastPrice', data },
+    { withToken: false }
+  )
 }
 
 // 获取交易对的成交数据

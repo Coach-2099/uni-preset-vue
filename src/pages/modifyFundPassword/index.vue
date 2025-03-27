@@ -2,60 +2,39 @@
   <div class="modifyFundPassword-index">
     <navigationBar title="资金密码"></navigationBar>
     <div class="inputTemp mt-25 px-20">
-      <van-tabs v-moiphonedel:active="active" shrink>
-        <van-tab title="phone">
-          <div class="mt-10">
-            <div class="flex justify-between items-center">
-              <p class="fs-14 text-black">手机</p>
-            </div>
-            <div class="baseInput mt-5 flex justify-between items-center">
-              <input
-                v-model="password"
-                class="myInput flex-1 px-10 py-10 w-100"
-                placeholder="enter your password"
-                @input="inputPassword"
-              />
-              <div class="codeBtnBox ml-5" @click="getCode">
-                <van-button type="primary">获取验证码</van-button>
-              </div>
-            </div>
-          </div>
-        </van-tab>
-        <van-tab title="email">
-          <div class="mt-10">
-            <div class="flex justify-between items-center">
-              <p class="fs-14 text-black">邮箱</p>
-            </div>
-            <div class="baseInput mt-5 flex justify-between items-center">
-              <input
-                v-model="password"
-                class="myInput flex-1 px-10 py-10 w-100"
-                placeholder="enter your password"
-                @input="inputPassword"
-              />
-              <div class="codeBtnBox ml-5" @click="getCode">
-                <van-button type="primary">获取验证码</van-button>
-              </div>
-            </div>
-          </div>
-        </van-tab>
-      </van-tabs>
       <div class="mt-10">
         <div class="flex justify-between items-center">
-          <p class="fs-14 text-black">验证码</p>
+          <p class="fs-14 text-black">{{ $t('common.account') }}</p>
         </div>
         <div class="baseInput mt-5 flex justify-between items-center">
           <input
-            v-model="password"
+            v-model="accountNumber"
             class="myInput flex-1 px-10 py-10 w-100"
-            placeholder="enter your password"
+            placeholder="enter your account"
+          />
+          <div class="codeBtnBox ml-5" @click="getCode">
+            <van-button type="primary" :disabled="countdown > 0" >
+              {{ countdown > 0 ? `${countdown}${$t('common.tryAgain')}`  : $t('common.getVCode') }}
+            </van-button>
+          </div>
+        </div>
+      </div>
+      <div class="mt-10">
+        <div class="flex justify-between items-center">
+          <p class="fs-14 text-black">{{ $t('common.vCode') }}</p>
+        </div>
+        <div class="baseInput mt-5 flex justify-between items-center">
+          <input
+            v-model="verificationCode"
+            class="myInput flex-1 px-10 py-10 w-100"
+            placeholder="enter verification code"
             @input="inputPassword"
           />
         </div>
       </div>
       <div class="mt-10">
         <div class="flex justify-between items-center">
-          <p class="fs-14 text-black">资金密码</p>
+          <p class="fs-14 text-black">{{ $t('common.fundPassword') }}</p>
         </div>
         <div class="baseInput mt-5 flex justify-between items-center">
           <input
@@ -63,25 +42,10 @@
             class="myInput flex-1 px-10 py-10 w-100"
             placeholder="enter your password"
             :password="showPassword"
-            @input="inputPassword"
           />
           <text class="uni-icon flex justify-center items-center pr-5 right-icon">
             <van-icon name="eye" @click="changePassword"/>
           </text>
-        </div>
-      </div>
-      <div class="mt-10">
-        <div class="flex justify-between items-center">
-          <p class="fs-14 text-black">旧资金密码</p>
-        </div>
-        <div class="baseInput mt-5 flex justify-between items-center">
-          <input
-            v-model="password"
-            class="myInput flex-1 px-10 py-10 w-100"
-            placeholder="enter your password"
-            :password="showPassword"
-            @input="inputPassword"
-          />
         </div>
       </div>
     </div>
@@ -90,7 +54,9 @@
         class="confirmBtn w-100 fw-b fs-20"
         type="primary"
         @click="confirmFun"
-      >confirm</van-button>
+      >
+        {{ $t('common.confirm') }}
+      </van-button>
     </div>
   </div>
 </template>
@@ -98,17 +64,60 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue';
+import { sendmsg } from '@/api/account'
+import { setTradepwd } from '@/api/user'
 
-const showPassword = ref(false);
+const countdown = ref(0); // 倒计时响应式变量
+let timer: number | null = null;  // 计时器引用
+
+const accountNumber = ref('')
 const password = ref('')
-const active = ref('phone')
+const verificationCode = ref('')
+const showPassword = ref(true);
 
 const inputPassword = () => {
   console.log(password.value)
 }
 
-const confirmFun = () => {
-  console.log('确定')
+const confirmFun = async () => {
+  const params = {
+    username: accountNumber.value,
+    code: '',
+    password: ''
+  }
+  await setTradepwd(params)
+  uni.showToast({
+    title: $t('tips.success'),
+    icon: 'none'
+  })
+}
+
+const getCode = async () => {
+  if (!accountNumber.value) return uni.showToast({ title: $t('tips.enterAccount'), icon: 'none' })
+  
+  // 启动倒计时
+  countdown.value = 60;
+  timer = setInterval(() => {
+    countdown.value--;
+    if (countdown.value <= 0 && timer) {
+      clearInterval(timer);
+      timer = null;
+    }
+  }, 1000);
+
+  const params = {
+    userName: accountNumber.value,
+    countryCode: '',
+  }
+  await sendmsg(params)
+  uni.showToast({
+    title: $t('tips.vCodeSend'),
+    icon: 'none'
+  })
+}
+
+const changePassword = () => {
+  showPassword.value = !showPassword.value;
 }
 
 </script>
@@ -131,7 +140,7 @@ const confirmFun = () => {
         border-radius: 0px 8px 8px 0px;
       }
       .right-icon {
-        min-height: 52px;
+        min-height: 46px;
         margin-left: -5px;
         background: #F6F7FB;
       }

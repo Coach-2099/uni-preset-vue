@@ -90,7 +90,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import navigationBar from '@/components/navigationBar/index.vue'
 import { useUserStore } from '@/stores/user';
 
@@ -100,7 +100,13 @@ const DEFAULT_USER_INFO = {
   hasTradePwd: 0
 }
 
-const userInfo = userStore.userInfo;
+const userInfo = computed(() => {
+  return userStore.userInfo || DEFAULT_USER_INFO;
+});
+
+onMounted(() => {
+  console.log('userInfo', userInfo.value)
+})
 
 const goModifyPwd = () => {
   uni.navigateTo({
