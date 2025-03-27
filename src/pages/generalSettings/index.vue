@@ -32,7 +32,7 @@
           <text class="text-black fs-16">UID</text>
         </div>
         <div>
-          <text class="fs-12 text-gray mr-5">123456789</text>
+          <text class="fs-12 text-gray mr-5">{{ userInfo.userId }}</text>
           <image
             class="rightIcon"
             src="/static/svg/tools/copy.svg"
@@ -45,7 +45,32 @@
 </template>
 
 <script lang="ts" setup>
+import { onMounted } from 'vue';
+import { useUserStore } from '@/stores/user';
 import navigationBar from '@/components/navigationBar/index.vue'
+
+const DEFAULT_USER_INFO = {
+  username: '未登录用户',
+  avatar: '/static/svg/home/user.svg',
+  userId: 0
+}
+
+const userStore = useUserStore();
+const userInfo = userStore.userInfo;
+
+onMounted(() => {
+  getUser()
+})
+
+const getUser = async () => {
+  await userStore.getUser()
+  userInfo.value = {
+    username: userStore.userInfo.username || DEFAULT_USER_INFO.username,
+    userId: userStore.userInfo.userId || DEFAULT_USER_INFO.userId,
+    avatar: userStore.userInfo.avatar || DEFAULT_USER_INFO.avatar
+  }
+}
+
 
 </script>
 
