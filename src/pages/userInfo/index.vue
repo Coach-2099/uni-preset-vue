@@ -123,7 +123,11 @@
               />
             </div>
           </div>
+          
         </div>
+      </div>
+      <div>
+        <van-button type="primary" @click="loginOut">安全登出</van-button>
       </div>
     </div>
   </div>
@@ -189,6 +193,11 @@ const goIdentityAuth = () => {
 
 const goCustomerService = () => {
   console.log('前往客服中心')
+}
+
+// 登出
+const loginOut = () => {
+  userStore.logout();
 }
 
 </script>

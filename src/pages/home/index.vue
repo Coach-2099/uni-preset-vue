@@ -201,15 +201,11 @@ const socketService = computed(() => userStore.socketService);
       onClickTab({name: 0})
     })
 
-
     // 订阅BTC/USDT的实时行情
     socketService.value.subscribe('ticker', ['BTC/USDT']);
 
-    // 订阅ETH/USDT的深度数据
-    socketService.value.subscribe('depth', ['ETH/USDT']);
-
     // 当用户登录后订阅用户相关数据
-    const userId = 'user123'; // 从登录状态获取实际用户ID
+    const userId = userStore.userInfo.userId; // 从登录状态获取实际用户ID
     socketService.value.subscribeUser(userId, ['orders', 'balance']);
 
     // 添加行情数据监听
@@ -239,16 +235,20 @@ const socketService = computed(() => userStore.socketService);
   });
 
   // Disconnect from the socket server when the component is unmounted
-  // onUnmounted(() => {
-  //   // 取消所有订阅
-  //   socketService.unsubscribe('ticker', ['BTC/USDT']);
-  //   socketService.unsubscribe('depth', ['ETH/USDT']);
+  onUnmounted(() => {
+    // 取消所有订阅
+    socketService.value.unsubscribe('ticker', ['BTC/USDT']);
+    socketService.value.unsubscribe('depth', ['ETH/USDT']);
     
-  //   const userId = 'user123';
-  //   socketService.unsubscribeUser(userId, ['orders', 'balance']);
+    const userId = 'user123';
+    socketService.value.unsubscribeUser(userId, ['orders', 'balance']);
     
-  //   socketService.disconnect();
-  // });
+    socketService.value.disconnect();
+  });
+
+  const subscribeFun = () => {
+    
+  }
 
   const goTransfer = () => {
     uni.navigateTo({
@@ -276,7 +276,7 @@ const socketService = computed(() => userStore.socketService);
   // Function to send a message
   const sendMessage = () => {
     console.log('发送消息')
-    socketService.emit('message', 'Hello from client');
+    socketService.value.emit('message', 'Hello from client');
   };
 
   // 切换标签

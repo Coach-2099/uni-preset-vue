@@ -26,7 +26,6 @@ export const useUserStore = defineStore('userStore', {
     actions: {
         async getUser() {
             const data = await getUserInfo()
-            console.log('走这', data)
             this.userInfo = data
         },
         async getCustomerServiceFun() {
@@ -40,21 +39,7 @@ export const useUserStore = defineStore('userStore', {
 
             // 开启socket 连接
             this.socketService = useSocket('ws://172.20.10.12:8888/webSocket')
-            // this.socketService?.connect();
-
-            // 添加连接状态监听
-            this.socketService?.on('connect_error', (err: Error) => {
-                console.error('连接错误:', err , err.message);
-            });
-
-            // 带延迟的异步连接
-            setTimeout(() => {
-                this.socketService?.connect();
-                console.log('启动socket连接');
-            }, 500);  // 延迟500ms确保组件初始化完成
-
-            // 订阅用户相关数据
-            // this.socketService.subscribeUser(this.userInfo.id, ['orders', 'balance']);
+            this.socketService?.connect();
         },
         logout() {
             if (this.socketService) {

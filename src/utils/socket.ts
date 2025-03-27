@@ -45,7 +45,7 @@ class SocketService {
     // 基础事件监听
     this.ws.onopen = () => {
       console.log('WebSocket连接成功');
-      this.isConnected.value = true;
+      // this.isConnected.value = true;
       this.startHeartbeat();
       // 重连时恢复订阅
       this.restoreSubscriptions();
@@ -53,7 +53,7 @@ class SocketService {
 
     this.ws.onclose = (e) => {
       console.log('连接关闭', e.reason);
-      this.isConnected.value = false;
+      // this.isConnected.value = false;
       // 原代码中没有handleReconnection方法，推测此处应该调用handleDisconnect方法
       this.handleDisconnect()
     };
@@ -97,12 +97,20 @@ class SocketService {
    * @param symbols - 交易对数组
    */
   subscribe(topicType: 'ticker' | 'depth', symbols: string[]) {
-    const topic = `${topicType}_${symbols.join(',')}`;
+    let topic  = ''
+    if (!symbols || symbols.length === 0) {
+      topic = `${topicType}`
+    } else {
+      // 组合式
+      topic = `${symbols.join(',')}-${topicType}`;
+    }
     if (!this.subscriptions.has(topic)) {
-      this.emit('subscribe', {
-        type: topicType,
-        symbols
-      });
+      // {"event":"subscribe","data":"ticker"}
+      this.ws?.send(JSON.stringify({ event: 'subscribe', data: topic }));
+      // this.emit('subscribe', {
+      //   event: topicType,
+      //   data:symbols
+      // });
       this.subscriptions.add(topic);
     }
   }
@@ -113,7 +121,7 @@ class SocketService {
    * @param symbols - 交易对数组
    */
   unsubscribe(topicType: 'ticker' | 'depth', symbols: string[]) {
-    const topic = `${topicType}_${symbols.join(',')}`;
+    const topic = `${symbols.join(',')}-${topicType}`;
     if (this.subscriptions.has(topic)) {
       this.emit('unsubscribe', {
         type: topicType,
@@ -131,10 +139,7 @@ class SocketService {
   subscribeUser(userId: string, topics: string[]) {
     const topicKey = `${userId}_${topics.join(',')}`;
     if (!this.userSubscriptions.has(topicKey)) {
-      this.emit('subscribe_user', {
-        user_id: userId,
-        topics
-      });
+      this.emit('subscribe_user', userId);
       this.userSubscriptions.add(topicKey);
     }
   }
@@ -176,12 +181,6 @@ class SocketService {
    */
   on<T = any>(event: string, callback: EventCallback<T>) {
     this.eventHandlers.set(event, callback); // 保存处理器
-    // 由于类中没有socket属性，这里应使用WebSocket实例ws来处理事件
-    // 原代码中没有使用socket的需求，将其替换为ws
-    // 但是WebSocket本身没有on方法，可通过监听message事件并在handleMessage中处理
-    // 这里不需要额外代码，因为事件处理逻辑已在handleMessage中实现
-    // 因此，此代码行可移除
-    // this.socket?.on(event, callback);
   }
 
   /**
@@ -190,10 +189,6 @@ class SocketService {
    */
   off(event: string) {
     this.eventHandlers.delete(event);  // 移除处理器
-    // 由于类中没有socket属性，这里应使用WebSocket实例ws来处理事件
-    // WebSocket本身没有off方法，可通过移除事件处理器来实现取消监听
-    // 原代码中已经在上面通过 this.eventHandlers.delete(event) 移除了处理器，因此此行代码多余，应移除
-    // this.socket?.off(event);           // 取消监听
   }
 
   //------------------- 心跳机制私有方法 -------------------
@@ -244,7 +239,8 @@ class SocketService {
     // 修改为使用已存在的属性
     if (this.heartbeatTimeout) {
       clearTimeout(this.heartbeatTimeout);
-      this.heartbeatTimeout = null;
+      // 修改为 null 是因为类型不匹配，修改为 undefined 以符合类型定义
+      this.heartbeatTimeout = undefined;
     }
   }
 
@@ -277,7 +273,7 @@ class SocketService {
     if (this.ws) {
       this.ws.close(1000, '正常关闭');
       this.ws = null;
-      this.isConnected.value = false;
+      // this.isConnected.value = false;
     }
   }
 }
