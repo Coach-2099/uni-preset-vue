@@ -69,6 +69,7 @@ class SocketService {
 
   // 消息处理核心方法
   private handleMessage(data: string) {
+    if (data === 'ok') return; // 过滤服务端确认消息
     try {
       const { event, payload } = JSON.parse(data);
       const handler = this.eventHandlers.get(event);
