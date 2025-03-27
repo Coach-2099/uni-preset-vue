@@ -1,4 +1,3 @@
-import { io, Socket } from "socket.io-client";
 import { ref } from "vue";
 
 // 事件回调类型定义

@@ -6,13 +6,13 @@
     <div class="quotesList">
       <van-tabs v-model:active="active" @click-tab="onClickTab" sticky shrink>
         <van-tab title="现货">
-          <quoteList ref="quoteListRefs" type="SPOT"></quoteList>
+          <quoteList ref="spotQuoteListRefs" type="SPOT"></quoteList>
         </van-tab>
         <van-tab title="合约">
-          <quoteList ref="quoteListRefs" type="FUTURES"></quoteList>
+          <quoteList ref="futuresQuoteListRefs" type="FUTURES"></quoteList>
         </van-tab>
         <van-tab title="黄金">
-          <quoteList ref="quoteListRefs" type="METALS"></quoteList>
+          <quoteList ref="metalsQuoteListRefs" type="METALS"></quoteList>
         </van-tab>
       </van-tabs>
     </div>
@@ -25,7 +25,7 @@ import { ref, onMounted, nextTick } from 'vue'
 import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼峰命名
 import quoteList from '@/components/business/quoteList/index.vue'; // 使用大驼峰命名
 
-const quoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
+const spotQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 
 const value = ref('')
 const active = ref(0)
@@ -43,9 +43,10 @@ onMounted(() => {
 
 const onClickTab = (name: any) => {
   console.log('点击了标签页', name);
-  console.log('quoteListRefs.value', quoteListRefs.value)
-  quoteListRefs.value?.clearData()
-  quoteListRefs.value?.loadData()
+  console.log('quoteListRefs.value', spotQuoteListRefs.value)
+  
+  spotQuoteListRefs.value?.clearData()
+  spotQuoteListRefs.value?.loadData()
 };
 
 const goSearchMore = () => {
