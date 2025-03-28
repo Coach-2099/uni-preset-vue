@@ -38,8 +38,9 @@ export const useUserStore = defineStore('userStore', {
             cache.set(TOKEN_KEY, token)
 
             // 开启socket 连接
-            this.socketService = useSocket('ws://172.20.10.12:8888/webSocket')
-            this.socketService?.connect();
+            // this.socketService = useSocket('ws://172.20.10.12:8888/webSocket')
+            // this.socketService?.connect();
+            this.initSocket() // 初始化socket 连接
         },
         logout() {
             if (this.socketService) {
@@ -49,6 +50,13 @@ export const useUserStore = defineStore('userStore', {
             this.token = ''
             this.userInfo = {}
             cache.remove(TOKEN_KEY)
+        },
+        initSocket() {
+            if (this.isLogin && !this.socketService) {
+                this.socketService = useSocket('ws://172.20.10.12:8888/webSocket')
+                this.socketService?.connect();
+            }
         }
     }
 })
+

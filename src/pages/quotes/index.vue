@@ -26,6 +26,8 @@ import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼�
 import quoteList from '@/components/business/quoteList/index.vue'; // 使用大驼峰命名
 
 const spotQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
+const futuresQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
+const metalsQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 
 const value = ref('')
 const active = ref(0)
@@ -44,10 +46,14 @@ onMounted(() => {
 const onClickTab = (name: any) => {
   console.log('点击了标签页', name);
   console.log('quoteListRefs.value', spotQuoteListRefs.value)
-  
-  spotQuoteListRefs.value?.clearData()
-  spotQuoteListRefs.value?.loadData()
-};
+
+  nextTick(() => {
+    const currentRef = active.value === 0 ? spotQuoteListRefs : active.value === 1 ? futuresQuoteListRefs : metalsQuoteListRefs;
+    console.log('currentRef', currentRef.value)
+    currentRef.value?.clearData();
+    currentRef.value?.loadData();
+  })
+ };
 
 const goSearchMore = () => {
   uni.navigateTo({

@@ -11,6 +11,8 @@ import { Icon } from 'vant'
 // 系统所需插件
 import plugins from './plugins'
 
+// 进行socket连接
+import { useUserStore } from '@/stores/user';
 export function createApp() {
   const app = createSSRApp(App);
 
@@ -18,6 +20,10 @@ export function createApp() {
   app.use(Vant)
   app.use(Icon)
   app.use(plugins)
+
+  // 页面加载时自动初始化WebSocket
+  const userStore = useUserStore();
+  userStore.initSocket();
 
   return {
     app,
