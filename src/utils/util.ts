@@ -206,3 +206,21 @@ export function encryptionBase64(rawStr: string) {
   let wordArray = CryptoJS.enc.Utf8.parse(rawStr);
   return CryptoJS.enc.Base64.stringify(wordArray);
 }
+
+/**
+ * 获取URL参数
+ * @param url 可选参数，默认使用当前页面的URL
+ * @returns 包含所有参数的键值对对象
+ */
+export function getUrlParams(url?: string): Record<string, string> {
+  const params: Record<string, string> = {};
+  const search = url ? url.split('?')[1] : window.location.search;
+  
+  if (!search) return params;
+
+  new URLSearchParams(search).forEach((value, key) => {
+    params[key] = decodeURIComponent(value);
+  });
+
+  return params;
+}

@@ -50,6 +50,9 @@ export const useUserStore = defineStore('userStore', {
             this.token = ''
             this.userInfo = {}
             cache.remove(TOKEN_KEY)
+            uni.navigateTo({
+                url: '/pages/login/index'
+            })
         },
         initSocket() {
             if (this.isLogin && !this.socketService) {

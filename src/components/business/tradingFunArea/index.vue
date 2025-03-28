@@ -9,7 +9,7 @@
               mode="scaleToFill"
             />
           </div>
-          <div>BTC/USDT</div>
+          <div>{{ symbolInfo }}</div>
         </div>
         <div class="increaseAndDecreaseBox">
           <text class="text-red fs-12">-3.37%</text>
@@ -45,9 +45,16 @@ import buyAndSell from '@/components/business/buyAndSell/index.vue';
 import priceFluctuations from '@/components/business/priceFluctuations/index.vue';
 import buyAndSellContract from '@/components/business/buyAndSellContract/index.vue';
 import floatingPanelProps from '@/components/business/floatingPanelSpot/index.vue'
+import { useControlStore } from '@/stores/control';
 
 import { getSymbolInfo } from '@/api/trade'
+import { onShow } from '@dcloudio/uni-app';
 
+// stores
+const controlStore = useControlStore();
+
+// 默认BTC/USDT
+const symbolInfo = ref('BTC/USDT')
 const showFLoatingPanel = ref(false)
 const floatingPanelPropsRef: any = ref(null)
 const showChart = ref(false)
@@ -55,11 +62,18 @@ const showChart = ref(false)
 const props = defineProps({
   buyAndSellType: {
     type: String,
-    default: 'spot'
+    default: 'SPOT'
   }
 })
 
+onShow(() => {
+  console.log('onshow')
+  symbolInfo.value = 'BTC/USDT'
+  if (controlStore.quotesData.symbol) symbolInfo.value = controlStore.quotesData.symbol
+})
+
 onMounted(() => {
+  console.log('onMounted')
   console.log('buyAndSellType: ', props.buyAndSellType)
   // 进入页面请求获取配置的接口
   // 默认BTC/USDT

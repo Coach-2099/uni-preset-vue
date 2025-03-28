@@ -69,7 +69,7 @@
           </div>
           <!-- 行情列表 -->
           <div v-for="(item, index) in listData" :key="index">
-            <div class="mt-5 ml-15 mr-15 pb-5 flex ff-biance fw-b justify-between items-center">
+            <div @click="goDetail(item)" class="mt-5 ml-15 mr-15 pb-5 flex ff-biance fw-b justify-between items-center">
               <div class="flex-1">
                 <text class="fs-16">{{ item.symbol1 }}</text>
                 <text class="fs-12 text-gray">/ {{ item.symbol2 }}</text>
@@ -147,7 +147,10 @@
         </div>
         <!-- 行情列表 -->
         <div v-for="(item, index) in listData" :key="index">
-          <div class="mt-5 ml-15 mr-15 pb-5 flex ff-biance fw-b justify-between items-center">
+          <div
+            @click="goDetail(item)"
+            class="mt-5 ml-15 mr-15 pb-5 flex ff-biance fw-b justify-between items-center"
+          >
             <div class="flex-1">
               <text class="fs-16">{{ item.symbol1 }}</text>
               <text class="fs-12 text-gray">/ {{ item.symbol2 }}</text>
@@ -175,9 +178,14 @@
 
 <script setup lang="ts">
 import { onMounted, defineProps, defineEmits, computed, ref, watch, nextTick } from 'vue';
-import basePullRefresh from '@/components/basePullRefresh/index.vue'
+import basePullRefresh from '@/components/basePullRefresh/index.vue';
 
 import { getSymbolsLastPrice } from '@/api/quotes'
+
+import { useControlStore } from '@/stores/control';
+
+// stores
+const controlStore = useControlStore();
 
 // 组件内部状态
 const listData = ref<any[]>([])
@@ -189,7 +197,7 @@ const loadingData = ref(true)
 const props = defineProps({
   type: {
     type: String,
-    default: 'hot'
+    default: 'SPOT'
   },
   // 新增下拉刷新控制参数
   needPullRefresh: {
@@ -250,6 +258,22 @@ const clearData = () => {
   listData.value = []
 }
 
+const goDetail = (v: any) => {
+  console.log('前往购买详情', v)
+  console.log('类型', props.type)
+  // store 存储数据
+  controlStore.setQuotesData({
+    symbol: v.symbol,
+    activeType: 'right'
+  })
+  // 现货
+  if (props.type === 'SPOT') return uni.switchTab({ url: `/pages/trade/index` })
+  // 合约
+  if (props.type === 'FUTURES') return uni.switchTab({ url: `/pages/contract/index` })
+  // 贵金属
+  // if (props.type === 'METALS') return uni.switchTab({ url: `/pages/futures/index?symbol=${v.symbol}` })
+}
+
 // 自包含排序逻辑
 const toggleSort = (field: string) => {
   if (sortField.value !== field) {
@@ -259,10 +283,8 @@ const toggleSort = (field: string) => {
     sortDirection.value = 
       sortDirection.value === 'asc' ? 'desc' :
       sortDirection.value === 'desc' ? '' : 'asc'
-    
     if (!sortDirection.value) sortField.value = ''
   }
-  
   loadData() // 触发数据刷新
 }
 

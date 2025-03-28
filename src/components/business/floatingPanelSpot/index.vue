@@ -16,7 +16,7 @@
         shrink
       >
         <van-tab title="热门">
-          <selectSpot></selectSpot>
+          <selectSpot ref="spotSelectSpotRef" type="SPOT"></selectSpot>
         </van-tab>
         <van-tab title="新币榜">新币榜</van-tab>
         <van-tab title="涨幅榜">涨幅榜</van-tab>
@@ -28,15 +28,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import selectSpot from '@/components/business/selectSpot/index.vue'
+import { ref } from 'vue';
+import type { Component } from 'vue';
+import selectSpot from '@/components/business/selectSpot/index.vue';
 
+const spotSelectSpotRef = ref<InstanceType<typeof selectSpot> | null>(null);
 const value = ref('')
 const active = ref(0)
 const showBottom = ref(false)
 
 const  showFLoatingPanel = () => {
   showBottom.value = !showBottom.value
+  if(showBottom.value) {
+    console.log('触发什么？？')
+    spotSelectSpotRef.value?.loadData()
+  }
 }
 
 // 将方法暴露给父组件

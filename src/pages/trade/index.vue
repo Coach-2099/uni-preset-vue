@@ -53,24 +53,38 @@
 
 <script lang="ts" setup>
 import { onMounted, ref, computed } from 'vue'
-import { onLaunch } from "@dcloudio/uni-app";
+import { onLaunch, onShow } from "@dcloudio/uni-app";
 import CustomNavBar from '@/components/customNavBar/index.vue';
 import trendChart from '@/components/trendChart/index.vue';
 import realTimeTransactions from '@/components/business/realTimeTransactions/index.vue'
 import transactionOrder from '@/components/business/transactionOrder/index.vue'
 import positionOrder from '@/components/business/positionOrder/index.vue'
 import tradingFunArea from '@/components/business/tradingFunArea/index.vue'
+import { useControlStore } from '@/stores/control';
+
+// stores
+const controlStore = useControlStore();
 
 const active = ref(0)
 
 const activeTab = ref<'left' | 'right'>('left')
-const switchTab = (tab: 'left' | 'right') => {
-  activeTab.value = tab
-}
+
+onShow(() => {
+  console.log('params', controlStore.quotesData.symbol)
+  console.log('params', controlStore.quotesData.activeType)
+  // 修正类型错误，确保赋值为 'left' 或 'right'
+  activeTab.value = controlStore.quotesData.activeType || 'left';
+})
+
+onMounted(() => {})
 
 onLaunch(() => {
   uni.hideTabBar();
 })
+
+const switchTab = (tab: 'left' | 'right') => {
+  activeTab.value = tab
+}
 
 const sliderStyle = computed(() => ({
   transform: `translateX(${activeTab.value === 'left' ? '0' : '100%'})`,

@@ -126,9 +126,9 @@
           
         </div>
       </div>
-      <div>
-        <van-button type="primary" @click="loginOut">安全登出</van-button>
-      </div>
+    </div>
+    <div class="loginOutBtn pos-fixed bg-white pt-20 w-100 px-20">
+      <van-button class="w-100" type="primary" @click="loginOut">安全登出</van-button>
     </div>
   </div>
 </template>
@@ -276,6 +276,11 @@ const loginOut = () => {
       width: 8px;
       height: 8px;
     }
+  }
+  .loginOutBtn {
+    bottom: 50px;
+    left: 0px;
+    right: 0px;
   }
 }
 </style>
