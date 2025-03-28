@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import { getSymbolsLastPrice } from '@/api/quotes';
 
 const props = defineProps({
@@ -82,22 +82,25 @@ const listData = ref<any[]>([]); // 从API获取的真实数据
 const loadingData = ref(true); // 加载状态
 
 const loadData = async () => {
-  console.log('触发')
   loadingData.value = true;
   try {
+    // 使用解构赋值确保响应式更新
     listData.value = []
     const params = {
       klineType: props.type,
     }
+    // 添加await强制等待
     const data = await getSymbolsLastPrice(params)
-    listData.value.push(...data)
-    listData.value.forEach((item: any) => {
-      item.symbol1 = item.symbol.split('/')[0]
-      item.symbol2 = item.symbol.split('/')[1]
-    })
+    // 使用数组解构保持响应性
+    listData.value = data.map((item: any) => ({
+      ...item,
+      symbol1: item.symbol.split('/')[0],
+      symbol2: item.symbol.split('/')[1]
+    }))
   } catch (error) {
     console.error('Error fetching data:', error);
   } finally {
+    // 移除setTimeout直接更新状态
     loadingData.value = false;
   }
 };

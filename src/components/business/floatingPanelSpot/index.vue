@@ -28,20 +28,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import type { Component } from 'vue';
 import selectSpot from '@/components/business/selectSpot/index.vue';
 
-const spotSelectSpotRef = ref<InstanceType<typeof selectSpot> | null>(null);
+const spotSelectSpotRef: any = ref(null)
 const value = ref('')
 const active = ref(0)
 const showBottom = ref(false)
 
 const  showFLoatingPanel = () => {
-  showBottom.value = !showBottom.value
+  showBottom.value = !showBottom.value;
   if(showBottom.value) {
-    console.log('触发什么？？')
-    spotSelectSpotRef.value?.loadData()
+    nextTick(() => {
+      spotSelectSpotRef.value?.loadData()
+    })
   }
 }
 

@@ -89,7 +89,6 @@ const getBuyAndSellConfig = async () => {
 }
 
 const checkBit = () => {
-  console.log('触发')
   floatingPanelPropsRef.value?.showFLoatingPanel()
 }
 
