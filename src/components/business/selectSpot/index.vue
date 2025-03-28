@@ -68,18 +68,28 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, nextTick } from 'vue';
+import { ref, nextTick, watch } from 'vue';
 import { getSymbolsLastPrice } from '@/api/quotes';
+import { getTicker } from '@/api/quotes';
 
 const props = defineProps({
   type: {
     type: String,
     default: 'SPOT'
   },
+  searchVal: {
+    type: String,
+    default: ''
+  }
 });
 
 const listData = ref<any[]>([]); // 从API获取的真实数据
 const loadingData = ref(true); // 加载状态
+
+watch(() => props.searchVal, (newVal, oldVal) => {
+  console.log('newVal', newVal)
+  console.log('oldVal', oldVal)
+})
 
 const loadData = async () => {
   loadingData.value = true;
@@ -105,6 +115,34 @@ const loadData = async () => {
   }
 };
 
+const searchFun = async () => {
+  loadingData.value = true;
+  try {
+    // 使用解构赋值确保响应式更新
+    listData.value = []
+    const params = {
+      klineType: props.type,
+      symbol: props.searchVal
+    }
+    // 添加await强制等待
+    const data = await getTicker(params)
+    // 使用数组解构保持响应性
+    listData.value = [data].map((item: any) => ({
+      ...item,
+      symbol1: item.symbol.split('/')[0],
+      symbol2: item.symbol.split('/')[1]
+    }))
+    console.log('7788', listData.value)
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  } finally {
+    // 移除setTimeout直接更新状态
+    loadingData.value = false;
+  }
+
+  
+}
+
 const formatVolume = (volume:any) => {
   const num = Number(volume)
   if (num >= 1000000) {
@@ -124,7 +162,8 @@ const formatChange = (change:any) => {
 }
 
 defineExpose({
-  loadData
+  loadData,
+  searchFun
 })
 
 </script>

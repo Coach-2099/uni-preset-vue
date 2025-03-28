@@ -7,8 +7,17 @@
     lazy-render
     :style="{ height: '90%', display: 'flex', flexDirection: 'column'}"
   >
-    <div class="searchModule bg-white pt-15 pos-fixed w-100">
-      <van-search v-model="value" placeholder="BTC/USDT" />
+    <div class="searchModule bg-white pt-15 pos-fixed w-100 pr-5">
+      <van-search
+        show-action
+        v-model="searchValue"
+        placeholder="BTC/USDT"
+        @search="onClickButton"
+      >
+        <template #action>
+          <div class="text-black fs-14" @click="onClickButton">搜索</div>
+        </template>
+      </van-search>
     </div>
     <div class="quotesList" style="flex: 1; overflow-y: auto;">
       <van-tabs
@@ -16,7 +25,11 @@
         shrink
       >
         <van-tab title="热门">
-          <selectSpot ref="spotSelectSpotRef" type="SPOT"></selectSpot>
+          <selectSpot
+            ref="spotSelectSpotRef"
+            type="SPOT"
+            v-model:searchVal="searchValue"
+          ></selectSpot>
         </van-tab>
         <van-tab title="新币榜">新币榜</van-tab>
         <van-tab title="涨幅榜">涨幅榜</van-tab>
@@ -33,7 +46,7 @@ import type { Component } from 'vue';
 import selectSpot from '@/components/business/selectSpot/index.vue';
 
 const spotSelectSpotRef: any = ref(null)
-const value = ref('')
+const searchValue = ref('')
 const active = ref(0)
 const showBottom = ref(false)
 
@@ -44,6 +57,10 @@ const  showFLoatingPanel = () => {
       spotSelectSpotRef.value?.loadData()
     })
   }
+}
+
+const onClickButton = () => {
+  spotSelectSpotRef.value?.searchFun()
 }
 
 // 将方法暴露给父组件

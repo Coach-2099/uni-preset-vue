@@ -14,13 +14,16 @@ export function getTradeDetail(header?: any) {
 }
 
 // 获取单个交易对最新的实时ticker数据
-export function getTicker(header?: any) {
-  return request.get({ url: '/admin/kline/getTicker', header })
+export function getTicker(data?: any) {
+  return request.get(
+    { url: '/admin/kline/getTicker', data },
+    {  withToken: false }
+  )
 }
 
 // 获取K线历史行情数据
-export function getKlineHistory(header?: any) {
-  return request.get({ url: '/admin/kline/getKlineHistory', header })
+export function getKlineHistory(data?: any) {
+  return request.get({ url: '/admin/kline/getKlineHistory', data })
 }
 
 // 获取交易对的深度数据

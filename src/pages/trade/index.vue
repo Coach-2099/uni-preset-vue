@@ -53,7 +53,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref, computed } from 'vue'
-import { onLaunch, onShow } from "@dcloudio/uni-app";
+import { onLaunch, onLoad, onShow } from "@dcloudio/uni-app";
 import CustomNavBar from '@/components/customNavBar/index.vue';
 import trendChart from '@/components/trendChart/index.vue';
 import realTimeTransactions from '@/components/business/realTimeTransactions/index.vue'
@@ -69,7 +69,7 @@ const active = ref(0)
 
 const activeTab = ref<'left' | 'right'>('left')
 
-onShow(() => {
+onLoad(() => {
   console.log('params', controlStore.quotesData.symbol)
   console.log('params', controlStore.quotesData.activeType)
   // 修正类型错误，确保赋值为 'left' 或 'right'
