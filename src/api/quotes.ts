@@ -27,6 +27,9 @@ export function getKlineHistory(data?: any) {
 }
 
 // 获取交易对的深度数据
-export function getDepth(header?: any) {
-  return request.get({ url: '/admin/kline/getDepth', header })
+export function getDepth(data?: any) {
+  return request.get(
+    { url: '/admin/kline/getDepth', data },
+    {  withToken: false }
+  )
 }

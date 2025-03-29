@@ -3,11 +3,11 @@
     <div class="pt-25">
       <van-icon class="animate__animated animate__rotateIn" name="cross" size="25" @click="goBack"/>
     </div>
-    <div class="fs-24 mt-25 mb-25 fw-b">register in bybit</div>
+    <div class="fs-24 mt-25 mb-25 fw-b">{{ $t('homeIndex.login.registerIn') }}</div>
     <van-tabs v-moiphonedel:active="active" background="#f8f8f8" shrink>
       <van-tab title="phone">
         <div class="inputBox mt-20">
-          <div class="inputTitle fw-b mb-5">Phone</div>
+          <div class="inputTitle fw-b mb-5">{{ $t('common.phone') }}</div>
           <div class="flex">
             <div class="countryBox">
               <van-button type="default" style="width: 60px;" @click="checkCountryFun">
@@ -33,7 +33,7 @@
             <input
               v-model="phone"
               class="flex-1 base-input"
-              placeholder="enter phone number"
+              :placeholder="$t('tips.enterPhone')"
               placeholder-class="input-placeholder"
             />
             <div class="codeBtnBox ml-5">
@@ -42,12 +42,12 @@
           </div>
         </div>
         <div class="inputBox mt-20">
-          <div class="inputTitle fw-b mb-5">code</div>
+          <div class="inputTitle fw-b mb-5">{{ $t('common.vCode') }}</div>
           <div class="flex outerCodeBox">
             <input
               v-model="phoneCode"
               class="flex-1 base-input"
-              placeholder="phone number code"
+              :placeholder="$t('tips.enterVCode')"
               placeholder-class="input-placeholder"
               @input="inputPhoneCode"
             />
@@ -56,7 +56,7 @@
       </van-tab>
       <van-tab title="email">
         <div class="inputBox mt-20">
-          <div class="inputTitle fw-b mb-5">Email</div>
+          <div class="inputTitle fw-b mb-5">{{ $t('common.email') }}</div>
           <div class="flex">
             <input
               v-model="email"
@@ -66,12 +66,12 @@
               @input="inputPhone"
             />
             <div class="codeBtnBox ml-5">
-              <van-button @click="getCode" type="primary">获取验证码</van-button>
+              <van-button @click="getCode" type="primary">{{ $t('common.getVCode') }}</van-button>
             </div>
           </div>
         </div>
         <div class="inputBox mt-20">
-          <div class="inputTitle fw-b mb-5">Code</div>
+          <div class="inputTitle fw-b mb-5">{{ $t('common.vCode') }}</div>
           <div class="flex outerCodeBox">
             <input
               v-model="phoneCode"
@@ -87,7 +87,7 @@
     </van-tabs>
 
     <div class="inputBox mt-20">
-      <div class="inputTitle fw-b mb-5">Password</div>
+      <div class="inputTitle fw-b mb-5">{{ $t('common.password') }}</div>
       <div class="flex outerBox">
         <input
           v-model="password"
@@ -97,7 +97,7 @@
           padding-left: 10px;
           border-radius: 5px;"
           class="flex-1"
-          placeholder="enter your password"
+          :placeholder="$t('tips.enterPassword')"
           :password="showPassword"
           @input="inputPassword"
         />
@@ -108,18 +108,18 @@
     </div>
 
     <div class="inputBox mt-20 animate__animated animate__headShake">
-      <div class="inputTitle fw-b mb-5 text-red">Invitation Code*</div>
+      <div class="inputTitle fw-b mb-5 text-red">{{ $t('common.iCode') }}*</div>
       <input
         v-model="InvitationCode"
         class="flex-1 base-input "
-        placeholder="phone number code"
+        :placeholder="$t('tips.enterICode')"
         placeholder-class="input-placeholder"
         @input="inputInvitationCode"
       />
     </div>
 
     <div class="mt-25">
-      <van-button class="w-100" type="primary" @click="signUp">sign up</van-button>
+      <van-button class="w-100" type="primary" @click="signUp">{{ $t('common.register') }}</van-button>
     </div>
   </div>
 </template>
@@ -167,7 +167,7 @@ const getCode = async () => {
   }
   const data = await sendmsg(params)
   uni.showToast({
-    title: '验证码已发送,请查收',
+    title: $t('tips.vCodeHasSent'),
     icon: 'none'
   })
 }

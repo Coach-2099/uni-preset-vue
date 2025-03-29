@@ -38,9 +38,9 @@
     </div>
     <div class="contentBuySell w-100 flex justify-between mt-15">
       <div class="tempBox w-100">
-        <div v-for="index in 50" :key="index" class="buyTemp pos-relative flex flex-1 justify-between">
-          <div class="fs-12 text-black">3.666</div>
-          <div class="fs-12 text-light-green">85,888.88</div>
+        <div v-for="(item, index) in bidsList" :key="index" class="buyTemp pos-relative flex flex-1 justify-between">
+          <div class="fs-12 text-black">{{item[1]}}</div>
+          <div class="fs-12 text-light-green">{{item[0]}}</div>
           <!-- 绿色背景层 -->
           <div 
             class="bg-layer pos-absolute"
@@ -49,9 +49,9 @@
         </div>
       </div>
       <div class="tempBox w-100">
-        <div v-for="index in 50" :key="index" class="sellTemp pos-relative flex flex-1 justify-between">
-          <div class="fs-12 text-red">86,888.88</div>
-          <div class="fs-12 text-black">3.666</div>
+        <div v-for="(item, index) in asksList" :key="index" class="sellTemp pos-relative flex flex-1 justify-between">
+          <div class="fs-12 text-red">{{ item[0] }}</div>
+          <div class="fs-12 text-black">{{ item[1] }}</div>
           <!-- 红色背景层 -->
           <div 
             class="bg-layer pos-absolute"
@@ -65,6 +65,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { getDepth } from '@/api/quotes'
 
 const leftWidth = ref(50)
 const rightWidth = ref(50)
@@ -72,6 +73,32 @@ const rightWidth = ref(50)
 const buyWidth = ref(100)
 const sellWidth = ref(100)
 
+const bidsList = ref([]) // 买单
+const asksList = ref([]) // 卖单
+
+const loadData = async () => {
+  console.log('loadData realTimeTransactionsIndex')
+  const params = {
+    klineType: 'SPOT',
+    symbol: 'BTC/USDT'
+  }
+  const data = await getDepth(params)
+  bidsList.value = data.bids
+  asksList.value = data.asks
+
+  // 新增计算逻辑
+  const bidsTotal = bidsList.value.reduce((sum, item) => sum + Number(item[1]), 0)
+  const asksTotal = asksList.value.reduce((sum, item) => sum + Number(item[1]), 0)
+  const total = bidsTotal + asksTotal
+
+  // 计算百分比（保留两位小数）
+  leftWidth.value = total > 0
+    ? Number(((asksTotal / total) * 100).toFixed(2))
+    : 50 // 默认值防止除零错误
+    rightWidth.value = 100 - leftWidth.value
+
+}
+ 
 const getRandomInt = (min:number, max:number) => {
   min = Math.ceil(min); // 确保最小值是整数
   max = Math.floor(max); // 确保最大值是整数
@@ -80,12 +107,16 @@ const getRandomInt = (min:number, max:number) => {
 
 // 模拟数据变化（根据实际业务逻辑修改）
 setInterval(() => {
-  leftWidth.value = getRandomInt(1, 100)
-  rightWidth.value = 100 - leftWidth.value
+  // leftWidth.value = getRandomInt(1, 100)
+  // rightWidth.value = 100 - leftWidth.value
 
-  buyWidth.value = getRandomInt(1, 100)
-  sellWidth.value = getRandomInt(1, 100)
+  // buyWidth.value = getRandomInt(1, 100)
+  // sellWidth.value = getRandomInt(1, 100)
 }, 1500)
+
+defineExpose({
+  loadData
+})
 
 </script>
 

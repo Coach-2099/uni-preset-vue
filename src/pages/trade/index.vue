@@ -31,7 +31,7 @@
     <div class="bottom pos-relative bg-white mt-5 px-10">
       <van-tabs v-model:active="active" offset-top="74" shrink sticky>
         <van-tab title="订单">
-          <realTimeTransactions></realTimeTransactions>
+          <realTimeTransactions ref="realTimeTransactionsRef"></realTimeTransactions>
         </van-tab>
         <van-tab v-if="activeTab === 'left'" title="成交">
           <transactionOrder></transactionOrder>
@@ -69,11 +69,17 @@ const active = ref(0)
 
 const activeTab = ref<'left' | 'right'>('left')
 
+const realTimeTransactionsRef: any = ref(null)
+
 onLoad(() => {
   console.log('params', controlStore.quotesData.symbol)
   console.log('params', controlStore.quotesData.activeType)
   // 修正类型错误，确保赋值为 'left' 或 'right'
   activeTab.value = controlStore.quotesData.activeType || 'left';
+})
+
+onShow(() => {
+  realTimeTransactionsRef.value?.loadData()
 })
 
 onMounted(() => {})

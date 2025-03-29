@@ -3,18 +3,18 @@
     <div class="pt-25">
       <van-icon class="animate__animated animate__rotateIn" name="cross" size="25" @click="goBack"/>
     </div>
-    <div class="fs-24 mt-25 mb-25 fw-b">sign in to bybit</div>
+    <div class="fs-24 mt-25 mb-25 fw-b">{{ $t('homeIndex.login.signBy') }}</div>
     <div class="inputBox">
-      <div class="inputTitle fw-b mb-5">Account</div>
+      <div class="inputTitle fw-b mb-5">{{ $t('common.account') }}</div>
       <input
         v-model="account"
         class="base-input"
-        placeholder="Email or Mobile Number"
+        :placeholder="$t('homeIndex.login.emailOrPhone')"
         placeholder-class="input-placeholder"
       />
     </div>
     <div class="inputBox mt-20">
-      <div class="inputTitle fw-b mb-5">Password</div>
+      <div class="inputTitle fw-b mb-5">{{ $t('common.password') }}</div>
       <div class="flex outerBox">
         <input
           v-model="password"
@@ -24,7 +24,7 @@
           padding-left: 10px;
           border-radius: 5px;"
           class="flex-1"
-          placeholder="enter your password"
+          :placeholder="$t('tips.enterPassword')"
           :password="showPassword"
         />
         <text class="uni-icon flex justify-center items-center pr-5 right-icon">
@@ -35,13 +35,13 @@
 
     <div class="notes flex justify-between">
       <!-- 忘记密码 -->
-      <div class="text-blue">Forgot password</div>
+      <div class="text-blue">{{ $t('common.forgetPassword') }}</div>
       <!-- 隐私政策 -->
-      <div @click="goPrivacy" class="text-blue">Privacy policy</div>
+      <div @click="goPrivacy" class="text-blue">{{ $t('common.privacypolicy') }}</div>
     </div>
 
     <div class="signBtn">
-      <van-button class="w-100" type="primary" @click="signIn">sign in</van-button>
+      <van-button class="w-100" type="primary" @click="signIn">{{ $t('common.login') }}</van-button>
     </div>
   </div>
 </template>
@@ -60,8 +60,8 @@ const showPassword = ref(false)
 
 const signIn = async () => {
   console.log('sign in')
-  if (!account.value) return uni.showToast({ title: '请输入账号', icon: 'none' })
-  if (!password.value) return uni.showToast({ title: '请输入密码', icon: 'none' })
+  if (!account.value) return uni.showToast({ title: $t('tips.enterAccount'), icon: 'none' })
+  if (!password.value) return uni.showToast({ title: $t('tips.enterPassword'), icon: 'none' })
   const params = {
     username: account.value,
     password: password.value,
@@ -74,7 +74,6 @@ const signIn = async () => {
 }
 
 const loginHandle = async (data: any) => {
-  console.log('data', data)
   const { access_token } = data
   userStore.login(access_token)
   await userStore.getUser()

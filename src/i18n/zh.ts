@@ -19,6 +19,8 @@ export default {
     email: '邮箱',
     password: '密码',
     vCode: '验证码',
+    iCode: '邀请码',
+    privacypolicy: '隐私政策',
     fundPassword: '资金密码',
     remember: '记住密码',
     forgetPassword: '忘记密码',
@@ -45,11 +47,18 @@ export default {
     enterPhone: '请输入手机号',
     enterEmail: '请输入邮箱',
     enterFundPassword: '请输入资金密码',
-
+    enterICode: '请输入邀请码',
+    vCodeHasSent: '验证码已发送,请查收',
   },
   homeIndex: {
-    title: "你好，世界",
+    login: {
+      signBy: '登录BYBIT',
+      emailOrPhone: '邮箱/手机号',
+      registerIn: '注册BYBIT',
+
+    }
   },
+
   contract: {
     buyAndSellContract: {
       popup: {
