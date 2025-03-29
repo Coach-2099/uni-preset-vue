@@ -29,7 +29,7 @@
     <div class="bottom bg-white mt-5 px-10">
       <van-tabs v-model:active="active" offset-top="74" shrink sticky>
         <van-tab title="订单">
-          <realTimeTransactions></realTimeTransactions>
+          <realTimeTransactions ref="realTimeTransactionsRef"></realTimeTransactions>
         </van-tab>
         <van-tab v-if="activeTab === 'left'" title="成交">
           <transactionOrder></transactionOrder>
@@ -49,12 +49,16 @@
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
+import { onShow,onLoad } from "@dcloudio/uni-app";
 import CustomNavBar from '@/components/customNavBar/index.vue';
 import trendChart from '@/components/trendChart/index.vue';
 import realTimeTransactions from '@/components/business/realTimeTransactions/index.vue'
 import transactionOrder from '@/components/business/transactionOrder/index.vue'
 import positionOrder from '@/components/business/positionOrder/index.vue'
 import tradingFunArea from '@/components/business/tradingFunArea/index.vue'
+import { useControlStore } from '@/stores/control';
+
+const controlStore = useControlStore();
 
 
 const active = ref(0)
@@ -62,6 +66,25 @@ const activeTab = ref<'left' | 'right'>('left');
 const switchTab = (tab: 'left' | 'right') => {
   activeTab.value = tab;
 };
+const realTimeTransactionsRef: any = ref(null)
+const symbol = ref('BTC/USDT')
+
+onLoad(() => {
+  console.log('params', controlStore.quotesData.symbol)
+  console.log('params', controlStore.quotesData.activeType)
+  if(controlStore.quotesData.symbol){
+	  symbol.value= controlStore.quotesData.symbol
+  }
+  // 修正类型错误，确保赋值为 'left' 或 'right'
+  activeTab.value = controlStore.quotesData.activeType || 'left';
+})
+
+onShow(() => {
+  realTimeTransactionsRef.value?.loadData({
+    klineType: 'SPOT',
+    symbol: symbol
+  })
+})
 
 const sliderStyle = computed(() => ({
   transform: `translateX(${activeTab.value === 'left' ? '0' : '100%'})`,

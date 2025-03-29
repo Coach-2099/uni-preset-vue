@@ -76,12 +76,8 @@ const sellWidth = ref(100)
 const bidsList = ref([]) // 买单
 const asksList = ref([]) // 卖单
 
-const loadData = async () => {
+const loadData = async (params: any) => {
   console.log('loadData realTimeTransactionsIndex')
-  const params = {
-    klineType: 'SPOT',
-    symbol: 'BTC/USDT'
-  }
   const data = await getDepth(params)
   bidsList.value = data.bids
   asksList.value = data.asks

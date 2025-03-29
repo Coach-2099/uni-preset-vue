@@ -146,27 +146,27 @@
           </div>
         </div>
         <!-- 行情列表 -->
-        <div v-for="(item, index) in listData" :key="index">
+        <div v-for="[k, v] in symbolMap" :key="k">
           <div
-            @click="goDetail(item)"
+            @click="goDetail(v)"
             class="mt-5 ml-15 mr-15 pb-5 flex ff-biance fw-b justify-between items-center"
           >
             <div class="flex-1">
-              <text class="fs-16">{{ item.symbol1 }}</text>
-              <text class="fs-12 text-gray">/ {{ item.symbol2 }}</text>
+              <text class="fs-16">{{ v.tradeToken }}</text>
+              <text class="fs-12 text-gray">/ {{ v.basicToken }}</text>
               <div>
-                <text class="fs-12 text-gray">{{ formatVolume(item.vol) + ' ' + item.symbol2 }}</text>
+                <text class="fs-12 text-gray">{{ formatVolume(v.vol) + ' ' + v.basicToken }}</text>
               </div>
             </div>
             <div class="flex-1 flex justify-end items-center">
-              <div class="flex-1 text-right items-center mr-20">{{ item.close }}</div>
+              <div class="flex-1 text-right items-center mr-20">{{ v.close }}</div>
               <van-button 
                 class="flex-1 text-right rises_falls_btn" 
-                :class="item.rose > 0 ? 'rise_btn' : 'fall_btn'"
+                :class="v.rose > 0 ? 'rise_btn' : 'fall_btn'"
                 style="width: 22.4vw;" 
                 size="small"
               >
-                <text class="fs-14 text-white">{{ formatChange(item.rose) }}</text>
+                <text class="fs-14 text-white">{{ formatChange(v.rose) }}</text>
               </van-button>
             </div>
           </div>
@@ -177,7 +177,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, defineProps, defineEmits, computed, ref, watch, nextTick } from 'vue';
+import { onMounted, defineProps, defineEmits, computed, ref, watch, nextTick, reactive } from 'vue';
 import basePullRefresh from '@/components/basePullRefresh/index.vue';
 
 import { getSymbolsLastPrice } from '@/api/quotes'
@@ -193,6 +193,7 @@ const sortField = ref('')
 const sortDirection = ref('')
 const isLoading = ref(false)
 const loadingData = ref(true)
+const symbolMap = reactive(new Map())
 
 const props = defineProps({
   type: {
@@ -237,11 +238,12 @@ const loadData = async () => {
     // 这里将 listData 的类型明确指定为 any[]，以解决类型不匹配的问题
     listData.value.push(...data)
     listData.value.forEach((item: any) => {
-      item.symbol1 = item.symbol.split('/')[0]
-      item.symbol2 = item.symbol.split('/')[1]
+      item.tradeToken = item.symbol.split('/')[0]
+      item.basicToken = item.symbol.split('/')[1]
+	  symbolMap.set(item.symbol,item)
       // item.price = item.price.toFixed(2)
     })
-    console.log('listData', listData.value)
+    console.log('listData', symbolMap)
   } catch (error) {
     console.error('Error fetching data:', error);
   } finally {
@@ -252,6 +254,13 @@ const loadData = async () => {
       })
     }, 0)
   }
+}
+
+const refreshData= (ticker: any) => {
+	ticker.tradeToken = ticker.symbol.split('/')[0]
+	ticker.basicToken = ticker.symbol.split('/')[1]
+	ticker.rose = Number((ticker.close-ticker.open)/ticker.open*100).toFixed(2)
+	symbolMap.set(ticker.symbol,ticker)
 }
 
 const clearData = () => {
@@ -325,7 +334,8 @@ const formatChange = (change:any) => {
 
 defineExpose({
   loadData,
-  clearData
+  clearData,
+  refreshData
 })
 
 </script>

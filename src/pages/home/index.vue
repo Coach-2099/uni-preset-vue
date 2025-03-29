@@ -188,7 +188,6 @@ const userData = ref({
 const spotQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const futuresQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const socketService = computed(() => userStore.socketService);
-// const socketService = useSocket('ws://172.20.10.12:8888', { path: '/webSocket', allowEIO3: true });
 
   onLaunch(() => {
     uni.hideTabBar();
@@ -202,48 +201,33 @@ const socketService = computed(() => userStore.socketService);
     })
 
     // 订阅BTC/USDT的实时行情
-    socketService.value.subscribe('ticker', ['BTC/USDT']);
-
-    // 当用户登录后订阅用户相关数据
-    const userId = userStore.userInfo.userId; // 从登录状态获取实际用户ID
-    socketService.value.subscribeUser(userId, ['orders', 'balance']);
+    socketService.value.subscribe('ticker');
 
     // 添加行情数据监听
     socketService.value.on('ticker', (data: any) => {
       console.log('收到行情数据:', data);
       // 示例数据结构处理：{ symbol: 'BTC/USDT', price: 50000, change: 0.22 }
       tickerData.value[data.symbol] = data;
+	  let currentRef : any
+	  switch(active.value){
+		  case 0:
+		  currentRef = spotQuoteListRefs
+		  break
+		  case 1:
+		  currentRef = futuresQuoteListRefs
+		  break
+		  default:
+		  
+	  }
+	  currentRef.value?.refreshData(data);
+	  
     });
-
-    // 添加深度数据监听
-    socketService.value.on('depth', (data: any) => {
-      console.log('收到深度数据:', data);
-      // 示例数据结构处理：{ symbol: 'ETH/USDT', bids: [], asks: [] }
-      depthData.value[data.symbol] = data;
-    });
-
-    // 添加用户数据监听
-    socketService.value.on('user_update', (data: any) => {
-      console.log('用户数据更新:', data);
-      if (data.type === 'balance') {
-        userData.value.balance = data.value;
-      } else if (data.type === 'orders') {
-        userData.value.orders = data.value;
-      }
-    });
-
   });
 
   // Disconnect from the socket server when the component is unmounted
   onUnmounted(() => {
     // 取消所有订阅
-    socketService.value.unsubscribe('ticker', ['BTC/USDT']);
-    socketService.value.unsubscribe('depth', ['ETH/USDT']);
-    
-    const userId = 'user123';
-    socketService.value.unsubscribeUser(userId, ['orders', 'balance']);
-    
-    socketService.value.disconnect();
+    socketService.value.unsubscribe('ticker');
   });
 
   const subscribeFun = () => {

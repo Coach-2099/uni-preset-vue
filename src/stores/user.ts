@@ -56,7 +56,7 @@ export const useUserStore = defineStore('userStore', {
         },
         initSocket() {
             if (this.isLogin && !this.socketService) {
-                this.socketService = useSocket('ws://172.20.10.12:8888/webSocket')
+                this.socketService = useSocket('ws://13.229.75.237/webSocket')
                 this.socketService?.connect();
             }
         }

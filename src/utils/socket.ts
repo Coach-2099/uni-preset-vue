@@ -69,16 +69,16 @@ class SocketService {
   // 消息处理核心方法
   private handleMessage(data: string) {
     if (data === 'ok') return; // 过滤服务端确认消息
+	// 心跳响应处理
+	else if(data === 'pong'){
+		this.clearHeartbeatTimeout();
+		this.retryCount = 0;
+		return;
+	}
     try {
       const { event, payload } = JSON.parse(data);
       const handler = this.eventHandlers.get(event);
       handler?.(payload);
-      
-      // 心跳响应处理
-      if (event === 'pong') {
-        this.clearHeartbeatTimeout();
-        this.retryCount = 0;
-      }
     } catch (e) {
       console.error('消息解析失败', e);
     }
@@ -87,77 +87,77 @@ class SocketService {
   // 恢复订阅
   private restoreSubscriptions() {
     // 实现原有的订阅恢复逻辑...
+	const  subscribes = Array.from(this.subscriptions)
+	console.log('this.subscriptions= {0}',subscribes)
+	subscribes.forEach(topic=>{
+		this.subscribe(topic,'')
+	})
   }
 
 
   /**
-   * 通用订阅方法
-   * @param topicType - 主题类型 (ticker/depth)
-   * @param symbols - 交易对数组
-   */
-  subscribe(topicType: 'ticker' | 'depth', symbols: string[]) {
-    let topic  = ''
-    if (!symbols || symbols.length === 0) {
-      topic = `${topicType}`
-    } else {
-      // 组合式
-      topic = `${symbols.join(',')}-${topicType}`;
+     * 通用订阅方法
+     * @param topicType - 主题类型 (ticker/depth)
+     * @param symbols - 交易对数组
+     */
+    subscribe(topicType: string, symbol: string) {
+      let topic  = ''
+      if (!symbol || symbol.length === 0) {
+        topic = `${topicType}`
+      } else {
+        // 组合式
+        topic = `${symbol.join(',')}-${topicType}`;
+      }
+      if (!this.subscriptions.has(topic)) {
+        // {"event":"subscribe","data":"ticker"}
+        this.ws?.send(JSON.stringify({ event: 'subscribe', data: topic }));
+        this.subscriptions.add(topic);
+      }
     }
-    if (!this.subscriptions.has(topic)) {
-      // {"event":"subscribe","data":"ticker"}
-      this.ws?.send(JSON.stringify({ event: 'subscribe', data: topic }));
-      // this.emit('subscribe', {
-      //   event: topicType,
-      //   data:symbols
-      // });
-      this.subscriptions.add(topic);
+  
+    /**
+     * 通用取消订阅方法
+     * @param topicType - 主题类型 (ticker/depth)
+     * @param symbols - 交易对数组
+     */
+    unsubscribe(topicType: string, symbol: string) {
+      let topic  = ''
+      if (!symbol || symbol.length === 0) {
+        topic = `${topicType}`
+      } else {
+        // 组合式
+        topic = `${symbol.join(',')}-${topicType}`;
+      }
+      if (this.subscriptions.has(topic)) {
+        this.ws?.send(JSON.stringify({ event: 'unsubscribe', data: topic }));
+        this.subscriptions.delete(topic);
+      }
     }
-  }
-
-  /**
-   * 通用取消订阅方法
-   * @param topicType - 主题类型 (ticker/depth)
-   * @param symbols - 交易对数组
-   */
-  unsubscribe(topicType: 'ticker' | 'depth', symbols: string[]) {
-    const topic = `${symbols.join(',')}-${topicType}`;
-    if (this.subscriptions.has(topic)) {
-      this.emit('unsubscribe', {
-        type: topicType,
-        symbols
-      });
-      this.subscriptions.delete(topic);
+  
+    /**
+     * 用户主题订阅
+     * @param userId - 用户ID
+     * @param topics - 订阅主题数组
+     */
+    subscribeUser(userId: string) {
+      if (!this.userSubscriptions.has(userId)) {
+        this.ws?.send(JSON.stringify({ event: 'subscribe_user', data: userId }));
+        this.userSubscriptions.add(userId);
+      }
     }
-  }
-
-  /**
-   * 用户主题订阅
-   * @param userId - 用户ID
-   * @param topics - 订阅主题数组
-   */
-  subscribeUser(userId: string, topics: string[]) {
-    const topicKey = `${userId}_${topics.join(',')}`;
-    if (!this.userSubscriptions.has(topicKey)) {
-      this.emit('subscribe_user', userId);
-      this.userSubscriptions.add(topicKey);
+  
+     /**
+     * 用户主题取消订阅
+     * @param userId - 用户ID
+     * @param topics - 取消订阅主题数组
+     */
+     unsubscribeUser(userId: string) {
+      if (this.userSubscriptions.has(userId)) {
+        this.ws?.send(JSON.stringify({ event: 'unsubscribe_user', data: userId }));
+        this.userSubscriptions.delete(userId);
+      }
     }
-  }
-
-   /**
-   * 用户主题取消订阅
-   * @param userId - 用户ID
-   * @param topics - 取消订阅主题数组
-   */
-   unsubscribeUser(userId: string, topics: string[]) {
-    const topicKey = `${userId}_${topics.join(',')}`;
-    if (this.userSubscriptions.has(topicKey)) {
-      this.emit('unsubscribe_user', {
-        user_id: userId,
-        topics
-      });
-      this.userSubscriptions.delete(topicKey);
-    }
-  }
+  
 
   /**
    * 发送消息
@@ -199,7 +199,7 @@ class SocketService {
     this.stopHeartbeat(); // 确保先停止已有定时器
     this.heartbeatTimer = setInterval(() => {
       this.sendHeartbeat();
-      this.setHeartbeatTimeout();
+      // this.setHeartbeatTimeout();
     }, this.heartbeatInterval) as unknown as number;
   }
 
