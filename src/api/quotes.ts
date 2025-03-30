@@ -23,7 +23,8 @@ export function getTicker(data?: any) {
 
 // 获取K线历史行情数据
 export function getKlineHistory(data?: any) {
-  return request.get({ url: '/admin/kline/getKlineHistory', data })
+  return request.get(
+    { url: '/admin/kline/getKlineHistory', data })
 }
 
 // 获取交易对的深度数据

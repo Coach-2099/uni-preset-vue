@@ -67,7 +67,6 @@ const props = defineProps({
 })
 
 onShow(() => {
-  console.log('onshow')
   symbolInfo.value = 'BTC/USDT'
   if (controlStore.quotesData.symbol) symbolInfo.value = controlStore.quotesData.symbol
 })
