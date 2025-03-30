@@ -14,6 +14,8 @@ const messages = {
 }
 
 const i18n = createI18n({
+	legacy: false,
+  globalInjection: true, // 允许模板中使用$t
 	locale: langDefault || 'en-US',		//默认显示的语言 
 	messages
 })

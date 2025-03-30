@@ -5,13 +5,13 @@
     </div>
     <div class="quotesList">
       <van-tabs v-model:active="active" @click-tab="onClickTab" sticky shrink>
-        <van-tab title="现货">
+        <van-tab :title="$t('noun.spotGoods')">
           <quoteList ref="spotQuoteListRefs" type="SPOT"></quoteList>
         </van-tab>
-        <van-tab title="合约">
+        <van-tab :title="$t('noun.futureGoods')">
           <quoteList ref="futuresQuoteListRefs" type="FUTURES"></quoteList>
         </van-tab>
-        <van-tab title="黄金">
+        <van-tab :title="$t('noun.gold')">
           <quoteList ref="metalsQuoteListRefs" type="METALS"></quoteList>
         </van-tab>
       </van-tabs>

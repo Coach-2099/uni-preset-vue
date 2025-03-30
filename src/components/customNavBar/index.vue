@@ -35,10 +35,14 @@
 
 <script lang="ts" setup>
 import { ref, computed, watch, nextTick, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const navBackground = ref('#ffffff');
 
 const visible = ref(true)
+
+
 
 // 保持当前路由判断逻辑
 const currentRoute = computed(() => {
@@ -60,39 +64,74 @@ interface RouteConfig {
   backgroundColor?: string
 }
 
-const routeConfig: Record<string, RouteConfig> = {
+const routeConfig = computed(() => ({
   '/pages/home/index': {
-    title: '首页',
+    title: t('navBar.home'),
     icon: '/static/svg/tabbar/index0.svg',
     activeIcon: '/static/svg/tabbar/index1.svg',
     backgroundColor: '#FFFFFF'
   },
   '/pages/quotes/index': {
-    title: '行情',
+    title: t('navBar.quotes'),
     icon: '/static/svg/tabbar/hang0.svg',
     activeIcon: '/static/svg/tabbar/hang1.svg',
     backgroundColor: '#F5F6FA'
   },
   '/pages/trade/index': {
-    title: '现货',
+    title: t('navBar.trade'),
     icon: '/static/svg/tabbar/trade0.svg',
     activeIcon: '/static/svg/tabbar/trade1.svg',
     backgroundColor: '#F5F6FA'
   },
   '/pages/contract/index': {
-    title: '合约',
+    title: t('navBar.contract'),
     icon: '/static/svg/tabbar/gang0.svg',
     activeIcon: '/static/svg/tabbar/gang1.svg',
     backgroundColor: '#F5F6FA'
   },
 
   '/pages/myAssets/index': {
-    title: '资产', 
+    title: t('navBar.myAssets'),
     icon: '/static/svg/tabbar/mine0.svg',
     activeIcon: '/static/svg/tabbar/mine1.svg',
     backgroundColor: '#F5F6FA'
   }
-}
+}))
+
+// const routeConfig: Record<string, RouteConfig> = {
+//   '/pages/home/index': {
+//     title: t('navBar.home'),
+//     icon: '/static/svg/tabbar/index0.svg',
+//     activeIcon: '/static/svg/tabbar/index1.svg',
+//     backgroundColor: '#FFFFFF'
+//   },
+//   '/pages/quotes/index': {
+//     title: '行情',
+//     icon: '/static/svg/tabbar/hang0.svg',
+//     activeIcon: '/static/svg/tabbar/hang1.svg',
+//     backgroundColor: '#F5F6FA'
+//   },
+//   '/pages/trade/index': {
+//     title: 'trade',
+//     icon: '/static/svg/tabbar/trade0.svg',
+//     activeIcon: '/static/svg/tabbar/trade1.svg',
+//     backgroundColor: '#F5F6FA'
+//   },
+//   '/pages/contract/index': {
+//     title: 'contract',
+//     icon: '/static/svg/tabbar/gang0.svg',
+//     activeIcon: '/static/svg/tabbar/gang1.svg',
+//     backgroundColor: '#F5F6FA'
+//   },
+
+//   '/pages/myAssets/index': {
+//     title: '资产', 
+//     icon: '/static/svg/tabbar/mine0.svg',
+//     activeIcon: '/static/svg/tabbar/mine1.svg',
+//     backgroundColor: '#F5F6FA'
+//   }
+// }
+
 
 // 移除返回相关逻辑
 const switchTab = (path: string) => {

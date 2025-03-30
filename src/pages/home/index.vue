@@ -23,7 +23,7 @@
       </div>
     </van-sticky>
     <div v-if="userStore.userInfo" class="assetsInfo">
-      <p class="fs-14 text-gray">总资产折合</p>
+      <p class="fs-14 text-gray">{{ $t('homeIndex.totalAssets') }}</p>
       <p class="mt-15">
         <span class="fs-32 fw-b text-black mr-10">0.00</span>
         <span class="fs-14 text-black">USD</span>
@@ -35,7 +35,7 @@
     <div v-else class="noLoginTemp bg-white py-25">
       <div class="noLoginBox  w-100 flex-col items-center">
         <div class="fw-b fs-16 text-black">
-          注册解锁高达<text class="text-light-blue">$5050</text>奖励
+          {{ $t('common.registerToUnlock') }}<text class="text-light-blue">$5050</text>{{ $t('common.award') }}
         </div>
         <div class="mt-15">
           <van-button
@@ -43,7 +43,7 @@
             type="primary"
             @click="goRegister"
           >
-            <text class="fs-14 text-white py-5">注册/登录</text>
+            <text class="fs-14 text-white py-5">{{ $t('common.loginOrRegister') }}</text>
           </van-button>
         </div>
       </div>
@@ -63,19 +63,19 @@
       <div class="pl-20 pr-20 pt-15 pb-15 flex justify-between ribbon">
         <div class="flex-col items-center" @click="sendMessage">
           <van-image width="28" hidden="30" src="/static/svg/home/recharge.svg" />
-          <p class="mt-5 text-by-black" style="font-size: 3.2vw;">Recharge</p>
+          <p class="mt-5 text-by-black" style="font-size: 3.2vw;">{{ $t('noun.recharge') }}</p>
         </div>
         <div class="flex-col items-center" @click="goTransfer">
           <van-image width="28" hidden="30" src="/static/svg/home/transfer.svg" />
-          <p class="mt-5 text-by-black" style="font-size: 3.2vw;">transfer</p>
+          <p class="mt-5 text-by-black" style="font-size: 3.2vw;">{{ $t('noun.transfer') }}</p>
         </div>
         <div class="flex-col items-center" @click="goWithdraw">
           <van-image width="28" hidden="28" src="/static/svg/home/withdraw.svg" />
-          <p class="mt-5 text-by-black" style="font-size: 3.2vw;">withdraw</p>
+          <p class="mt-5 text-by-black" style="font-size: 3.2vw;">{{ $t('noun.withdraw') }}</p>
         </div>
         <div class="flex-col items-center" @click="goInvite">
           <van-image width="28" hidden="30" src="/static/svg/home/invite.svg" />
-          <p class="mt-5 text-by-black" style="font-size: 3.2vw;">Invite</p>
+          <p class="mt-5 text-by-black" style="font-size: 3.2vw;">{{ $t('noun.invite') }}</p>
         </div>
       </div>
     </div>
@@ -88,25 +88,25 @@
         title-inactive-color="#B0B0B0"
         @click-tab="onClickTab"
       >
-        <van-tab title="币种">
+        <van-tab :title="$t('noun.spotGoods')">
           <quoteList
             ref="spotQuoteListRefs"
             type="SPOT"
             :needPullRefresh="false"
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
-            <p class="fs-12">View More</p>
+            <p class="fs-12">{{ $t('common.viewMore') }}</p>
             <van-image class="ml-5" width="8" height="10" src="/static/images/right.png" />
           </div>
         </van-tab>
-        <van-tab title="合约">
+        <van-tab :title="$t('noun.futureGoods')">
           <quoteList
             ref="futuresQuoteListRefs"
             type="FUTURES"
             :needPullRefresh="false"
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
-            <p class="fs-12">View More</p>
+            <p class="fs-12">{{ $t('common.viewMore') }}</p>
             <van-image class="ml-5" width="9" height="7" src="/static/images/right.png" />
           </div>
         </van-tab>

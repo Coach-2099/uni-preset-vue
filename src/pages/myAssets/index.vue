@@ -2,7 +2,7 @@
   <div class="assets-index">
     <div class="header w-100 text-center text-black fs-22 pt-15 pb-15">Assets</div>
     <div class="assetsInfo">
-      <p class="fs-14 text-gray">总资产折合</p>
+      <p class="fs-14 text-gray">{{ $t('homeIndex.totalAssets') }}</p>
       <p class="mt-5 flex items-baseline">
         <span class="fs-32 fw-b text-black mr-10">0.00</span>
         <span class="fs-14 fw-b text-black">USD</span>
@@ -29,7 +29,7 @@
             src="/static/images/ProfitAndLoss.png"
             mode="scaleToFill"
           />
-          <text class="text-gray fs-14">单日盈亏 23.69</text>
+          <text class="text-gray fs-14">{{ $t('homeIndex.singleDay') }} 23.69</text>
         </p>
       </div>
     </div>
@@ -37,19 +37,19 @@
       <div class="flex justify-between items-center px-5 py-5 ribbon">
         <div class="contentBox flex-col items-center justify-center" @click="goRecharge">
           <van-image class="MyVanImage" src="/static/svg/home/recharge.svg" />
-          <p class="mt-5 text-by-black fs-12 fw-b">Recharge</p>
+          <p class="mt-5 text-by-black fs-12 fw-b">{{ $t('noun.recharge') }}</p>
         </div>
         <div class="contentBox flex-col items-center justify-center" @click="goTransfer">
           <van-image src="/static/svg/home/transfer.svg" />
-          <p class="mt-5 text-by-black fs-12 fw-b">transfer</p>
+          <p class="mt-5 text-by-black fs-12 fw-b">{{ $t('noun.transfer') }}</p>
         </div>
         <div class="contentBox flex-col items-center justify-center" @click="goWithdraw">
           <van-image width="28" hidden="28" src="/static/svg/home/withdraw.svg" />
-          <p class="mt-5 text-by-black fs-12 fw-b">withdraw</p>
+          <p class="mt-5 text-by-black fs-12 fw-b">{{ $t('noun.withdraw') }}</p>
         </div>
         <div class="contentBox flex-col items-center justify-center" @click="goInvite">
           <van-image src="/static/svg/home/invite.svg" />
-          <p class="mt-5 text-by-black fs-12 fw-b">Invite</p>
+          <p class="mt-5 text-by-black fs-12 fw-b">{{ $t('noun.invite') }}</p>
         </div>
       </div>
     </div>

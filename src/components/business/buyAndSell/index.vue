@@ -10,7 +10,7 @@
     </div>
     <div class="mt-10 flex justify-between align-center">
       <div class="">
-        <text class="fs-12 text-gray">可用</text>
+        <text class="fs-12 text-gray">{{ $t('module.buyAndSellModule.available') }}</text>
       </div>
       <div>
         <text class="mr-5 fs-12 text-black">0</text>
@@ -20,7 +20,7 @@
     <div class="inputBox">
       <div class="baseSelect w-100 mt-10 pl-15 pr-10 py-5 flex justify-between items-center">
         <div class="leftBox flex items-center">
-          <p class="fs-14 text-black">限价单</p>
+          <p class="fs-14 text-black">{{ $t('noun.priceLimitOrder') }}</p>
         </div>
         <div class="rightBox flex items-center">
           <image
@@ -35,13 +35,13 @@
           <div
             @click="clickPriceInpupt"
             :class="showPriceInput ? 'fs-12 h-20' : 'fs-14'"
-            class="text-gray price-label">价格</div>
+            class="text-gray price-label">{{ $t('noun.price') }}</div>
           <input
             v-if="showPriceInput"
             :focus="showPriceInput"
             v-model="price"
             class="myInput flex-1 w-100"
-            placeholder="输入"
+            :placeholder="$t('tips.enterPrice')"
             placeholder-class="input-placeholder"
           />
         </div>
@@ -55,13 +55,13 @@
           <div
             @click="clickPriceInpupt"
             :class="showPriceInput ? 'fs-12 h-20' : 'fs-14'"
-            class="text-gray price-label">数量</div>
+            class="text-gray price-label">{{ $t('noun.quantity') }}</div>
           <input
             v-if="showPriceInput"
             :focus="showPriceInput"
             v-model="price"
             class="myInput flex-1 w-100"
-            placeholder="输入"
+            :placeholder="$t('tips.enterQuantity')"
             placeholder-class="input-placeholder"
           />
         </div>
@@ -106,13 +106,13 @@
           <div
             @click="clickPriceInpupt"
             :class="showPriceInput ? 'fs-12 h-20' : 'fs-14'"
-            class="text-gray price-label">订单额</div>
+            class="text-gray price-label">{{ $t('noun.orderAmount') }}</div>
           <input
             v-if="showPriceInput"
             :focus="showPriceInput"
             v-model="price"
             class="myInput flex-1 w-100"
-            placeholder="输入"
+            :placeholder="$t('tips.enterOrderAmount')"
             placeholder-class="input-placeholder"
           />
         </div>
@@ -120,7 +120,7 @@
       </div>
       <div class="baseText w-100 mt-10 pl-15 pr-10 py-5 flex justify-between items-center">
         <div class="leftBox flex items-center">
-          <p class="fs-12 text-black">最多可买</p>
+          <p class="fs-12 text-black">{{ $t('noun.buyUpTo') }}</p>
         </div>
         <div class="rightBox flex items-center">
           <text class="fs-12 text-light-gray">2.22304</text>

@@ -16,7 +16,7 @@ import { useUserStore } from '@/stores/user';
 export function createApp() {
   const app = createSSRApp(App);
 
-  app.use(i18n)
+  app.use(i18n as any)
   app.use(Vant)
   app.use(Icon)
   app.use(plugins)
