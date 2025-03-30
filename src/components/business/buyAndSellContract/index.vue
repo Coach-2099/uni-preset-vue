@@ -20,7 +20,7 @@
     </van-popover>
     <div class="mt-10 flex justify-between align-center">
       <div class="">
-        <text class="fs-12 text-gray">可用</text>
+        <text class="fs-12 text-gray">{{ $t('module.buyAndSellModule.available') }}</text>
       </div>
       <div>
         <text class="mr-5 fs-12 text-black">0</text>
@@ -61,14 +61,14 @@
             :class="showPriceInput ? 'fs-12 topTextTemp' : 'fs-14'"
             class="text-gray price-label"
           >
-            <text>价格</text>
+            <text>{{ $t('noun.price') }}</text>
           </div>
           <input
             v-if="showPriceInput"
             :focus="showPriceInput"
             v-model="price"
             class="myInput flex-1 w-100"
-            placeholder="输入"
+            :placeholder="$t('tips.enterPrice')"
             placeholder-class="input-placeholder"
           />
         </div>
@@ -81,14 +81,14 @@
             @click="clickPriceInpupt"
             :class="showPriceInput ? 'fs-12 topTextTemp' : 'fs-14'"
             class="text-gray price-label">
-              <text>数量</text>
+              <text>{{ $t('noun.quantity') }}</text>
             </div>
           <input
             v-if="showPriceInput"
             :focus="showPriceInput"
             v-model="price"
             class="myInput flex-1 w-100"
-            placeholder="输入"
+            :placeholder="$t('noun.enterQuantity')"
             placeholder-class="input-placeholder"
           />
         </div>
@@ -110,14 +110,14 @@
             @click="clickPriceInpupt"
             :class="showPriceInput ? 'fs-12 topTextTemp' : 'fs-14'"
             class="text-gray price-label">
-              <text>订单价值</text>
+              <text>{{ $t('noun.orderValue') }}</text>
             </div>
           <input
             v-if="showPriceInput"
             :focus="showPriceInput"
             v-model="price"
             class="myInput flex-1 w-100"
-            placeholder="输入"
+            :placeholder="$t('tips.enterOrderValue')"
             placeholder-class="input-placeholder"
           />
         </div>
@@ -169,8 +169,8 @@
       </div>
       <div class="baseBox mt-15 py-5 pl-15 pr-10">
         <div class="flex justify-between items-center fs-12 text-gray">
-          <div v-if="settingAfterConfirmation === '1'">数量</div>
-          <div v-if="settingAfterConfirmation === '2'">成本</div>
+          <div v-if="settingAfterConfirmation === '1'">{{ $t('noun.quantity') }}</div>
+          <div v-if="settingAfterConfirmation === '2'">{{ $t('noun.cost') }}</div>
           <div class="">
             <text class="text-light-green">0</text> /
             <text class="text-red">0</text>
@@ -178,7 +178,7 @@
           </div>
         </div>
         <div class="flex justify-between mt-5 items-center fs-12 text-gray">
-          <div>成本</div>
+          <div>{{ $t('noun.cost') }}</div>
           <div class="">
             <text class="text-light-green">0</text> /
             <text class="text-red">0</text>
@@ -200,13 +200,13 @@
           <text
             class="fs-12"
             :class="checked ? 'text-black' : 'text-gray'"
-          >止盈止损</text>
+          >{{ $t('noun.takeProfitAndStopLoss') }}</text>
         </van-checkbox>
         <div v-if="checked" class="baseInput pr-10 mt-10 flex justify-between items-center">
           <input
             v-model="stopProfitVal"
             class="myInput px-10 w-50"
-            placeholder="止盈"
+            :placeholder="$t('noun.takeProfit')"
             placeholder-class="input-placeholder"
           />
         </div>
@@ -214,7 +214,7 @@
           <input
             v-model="stopProfitVal"
             class="myInput px-10 w-50"
-            placeholder="止损"
+            :placeholder="$t('noun.stopLoss')"
             placeholder-class="input-placeholder"
           />
         </div>
@@ -224,13 +224,13 @@
           @click="buyFun"
           class="myBuyBtn fw-b fs-14 w-100"
           type="success"
-        >做多</van-button>
+        >{{ $t('noun.doMore') }}</van-button>
         <div class="mt-5">
           <van-button
             @click="sellFun"
             class="mySellBtn fw-b fs-14 w-100"
             type="danger"
-          >做空</van-button>
+          >{{ $t('noun.doLess') }}</van-button>
         </div>
       </div>
     </div>

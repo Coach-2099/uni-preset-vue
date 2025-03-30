@@ -6,7 +6,7 @@
         src="/static/svg/tools/detault.svg"
         mode="scaleToFill"
       />
-      <div class="mt-25 fs-14 text-black ">No data available</div>
+      <div class="mt-25 fs-14 text-black ">{{ $t('common.noData') }}</div>
     </div>
   </div>
 </template>

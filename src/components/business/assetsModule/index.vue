@@ -10,7 +10,7 @@
             <text
               class="fs-14"
               :class="checked ? 'text-black' : 'text-gray'"
-            >Hide zero balances</text>
+            >{{ $t('module.assetsModule.hideZeroBalances')}}</text>
           </van-checkbox>
         </div>
         <div class="searchBox">

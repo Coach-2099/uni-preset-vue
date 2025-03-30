@@ -58,7 +58,7 @@
                 class="sortTemp flex justify-center items-center text-right"
                 @click="toggleSort('change')"
               >
-                <text>24H Change</text>
+                <text>{{ $t('noun.hourChange') }}</text>
                 <image
                   class="sortImg"
                   :src="sortIcon('change')"
@@ -99,7 +99,7 @@
               class="sortTemp flex justify-between items-center"
               @click="toggleSort('symbol')"
             >
-              <text>交易对</text>
+              <text>{{ $t('noun.transactionPair') }}</text>
               <image
                 class="sortImg"
                 :src="sortIcon('symbol')"
@@ -111,7 +111,7 @@
               class="sortTemp flex justify-between items-center"
               @click="toggleSort('volume')"
             >
-              <text>交易量</text>
+              <text>{{ $t('noun.tradingVolume') }}</text>
               <image
                 class="sortImg"
                 :src="sortIcon('volume')"
@@ -125,7 +125,7 @@
               class="sortTemp flex-1 flex justify-center items-center text-right mr-20"
               @click="toggleSort('price')"
             >
-              <text>Last Price</text>
+              <text>{{ $t('noun.lastPrice') }}</text>
               <image
                 class="sortImg"
                 :src="sortIcon('price')"
@@ -136,7 +136,7 @@
               class="sortTemp flex justify-center items-center text-right"
               @click="toggleSort('change')"
             >
-              <text>24H Change</text>
+              <text>{{  $t('noun.hourChange')  }}</text>
               <image
                 class="sortImg"
                 :src="sortIcon('change')"
