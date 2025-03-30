@@ -9,10 +9,10 @@
               mode="scaleToFill"
             />
           </div>
-          <div>{{ symbolInfo }}</div>
+          <div>{{ symbol }}</div>
         </div>
         <div class="increaseAndDecreaseBox">
-          <text class="text-red fs-12">-3.37%</text>
+          <text class="text-red fs-12">{{rose}}%</text>
         </div>
       </div>
       <div class="toolsBtn" @click="showChartBtn">
@@ -31,16 +31,16 @@
         <buyAndSellContract v-if="buyAndSellType == 'contract'"></buyAndSellContract>
       </div>
       <div class="flex-1">
-        <priceFluctuations></priceFluctuations>
+        <priceFluctuations :lastPrice="lastPrice" ref="priceFluctuationsRef"></priceFluctuations>
       </div>
-    </div>
+    </div> 
 
     <floatingPanelProps ref="floatingPanelPropsRef"></floatingPanelProps>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted ,computed,onUnmounted,nextTick} from 'vue';
 import buyAndSell from '@/components/business/buyAndSell/index.vue';
 import priceFluctuations from '@/components/business/priceFluctuations/index.vue';
 import buyAndSellContract from '@/components/business/buyAndSellContract/index.vue';
@@ -49,15 +49,22 @@ import { useControlStore } from '@/stores/control';
 
 import { getSymbolInfo } from '@/api/trade'
 import { onShow } from '@dcloudio/uni-app';
+import { useUserStore } from '@/stores/user';
 
 // stores
 const controlStore = useControlStore();
+const userStore = useUserStore();
+const socketService = computed(() => userStore.socketService);
 
 // 默认BTC/USDT
-const symbolInfo = ref('BTC/USDT')
-const showFLoatingPanel = ref(false)
-const floatingPanelPropsRef: any = ref(null)
+const symbol = ref('BTC/USDT') //默认交易对
+const showFLoatingPanel = ref(false) //是否加载行情列表
+const floatingPanelPropsRef: any = ref(null) //行情列表引用
+const priceFluctuationsRef: any = ref(null) //深度引用
 const showChart = ref(false)
+const lastPrice = ref(0) //实时最新价
+const rose = ref(0) //实时最新涨跌幅比例
+
 
 const props = defineProps({
   buyAndSellType: {
@@ -67,8 +74,13 @@ const props = defineProps({
 })
 
 onShow(() => {
-  symbolInfo.value = 'BTC/USDT'
-  if (controlStore.quotesData.symbol) symbolInfo.value = controlStore.quotesData.symbol
+  if (controlStore.quotesData.symbol){
+	  symbol.value = controlStore.quotesData.symbol
+  }
+  priceFluctuationsRef.value?.loadData({
+    klineType: 'FUTURES',
+    symbol: symbol.value
+  })
 })
 
 onMounted(() => {
@@ -77,11 +89,24 @@ onMounted(() => {
   // 进入页面请求获取配置的接口
   // 默认BTC/USDT
   getBuyAndSellConfig()
+  nextTick(() => {
+	  if (controlStore.quotesData.symbol){
+	  	  symbol.value = controlStore.quotesData.symbol
+	  }
+	  socketService.value.subscribe('ticker',symbol.value);
+	  socketService.value.on(`${symbol.value}-ticker`, (data: any) => {
+	  		lastPrice.value = data.close
+			rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
+	  })
+  })
 })
-
+onUnmounted(() => {
+	console.log('移除ticker监听')
+	socketService.value.unsubscribe('ticker',symbol.value);
+})
 const getBuyAndSellConfig = async () => {
   const params = {
-    symbol: 'BTC/USDT'
+    symbol: symbol.value
   }
   const data = await getSymbolInfo(params)
   console.log('配置  data: ', data)

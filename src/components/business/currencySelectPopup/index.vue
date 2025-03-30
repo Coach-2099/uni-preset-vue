@@ -8,29 +8,31 @@
     :style="{ height: '90%', display: 'flex', flexDirection: 'column'}"
   >
     <div class="searchModule bg-white pt-15 pos-fixed w-100">
-      <van-search v-model="value" placeholder="BTC/USDT" />
+      <van-search v-model="searchVal" placeholder="请输入要检索的充值币种" @update:model-value="onSearch" />
     </div>
     <div class="currencyList" style="flex: 1; overflow-y: auto;">
-      <div v-for="index in 5" :key=index class="currencyBox flex justify-start items-center px-20 py-5 mt-5 mb-10">
+      <div v-for="(item,index) in searchItems" :key=index class="currencyBox flex justify-start items-center px-20 py-5 mt-5 mb-10" @click="chooseToken(item)">
         <image
           class="currencyImg"
-          src="/static/images/OIP-C.jpg"
+          :src="item.img"
           mode="scaleToFill"
         ></image>
-        <p class="fw-b fs-14 mx-5 text-black">BTC</p>
-        <p class="fs-10 text-gray">Bitcoin</p>
+        <p class="fw-b fs-14 mx-5 text-black">{{item.token}}</p>
+        <!-- <p class="fs-10 text-gray">Bitcoin</p> -->
       </div>
     </div>
   </van-popup>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { getRecharge, getTrasferCoins, getWithdrawCoins } from '@/api/asset';
+import { ref,defineEmits } from 'vue';
+import { getRechargeCoins, getTrasferCoins, getWithdrawCoins } from '@/api/asset';
 
-
-const value = ref('')
+const emit = defineEmits(['chooseToken'])
+const searchVal = ref('')
 const showBottom = ref(false)
+const coinItems = ref([])
+let searchItems =ref([])
 
 const  showFLoatingPanel = (type: string) => {
   showBottom.value = !showBottom.value
@@ -40,17 +42,35 @@ const  showFLoatingPanel = (type: string) => {
   if (type == 'transfer') return loadDataTransfer()
 }
 
+const chooseToken= (item: any) => {
+	showBottom.value = false
+	emit('chooseToken',item)
+}
+
+const onSearch= (val:string) => {
+	if(searchVal.value.length>0){
+		searchItems.value = coinItems.value.filter((item: any)=>{return item.token.indexOf(val)!=-1})	
+	}else{
+		searchItems.value = coinItems.value
+	}
+}
+
+
 
 // 获取充值货币列表
 const loadDataRecharge = async () => {
   const params = {}
-  const data = await getRecharge(params)
+  const data = await getRechargeCoins(params)
+  coinItems.value = data
+  searchItems.value = data
 }
 
 // 获取提币货币列表
 const loadDataWithdraw = async () => {
   const params = {}
   const data = await getWithdrawCoins(params)
+  coinItems.value = data
+  searchItems.value = data
 }
 
 const loadDataTransfer = async () => {
@@ -58,11 +78,14 @@ const loadDataTransfer = async () => {
     accountType: '', //查询币种
   }
   const data = await getTrasferCoins(params)
+  coinItems.value = data
+  searchItems.value = data
 }
 
 // 将方法暴露给父组件
 defineExpose({
-  showFLoatingPanel
+  showFLoatingPanel,
+  coinItems
 })
 
 </script>

@@ -32,9 +32,9 @@
       <div class="fs-14">0.1</div>
     </div>
     <div class="contentTip text-gray fs-14 flex justify-between mt-20">
-      <div class="fs-12">数量(BTC)</div>
-      <div class="fs-12">价格(USDT)</div>
-      <div class="fs-12">数量(BTC)</div>
+      <div class="fs-12">数量({{tradeToken}})</div>
+      <div class="fs-12">价格({{basicToken}})</div>
+      <div class="fs-12">数量({{tradeToken}})</div>
     </div>
     <div class="contentBuySell w-100 flex justify-between mt-15">
       <div class="tempBox w-100">
@@ -64,9 +64,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref,onUnmounted,onMounted,nextTick,computed,watch} from 'vue'
 import { getDepth } from '@/api/quotes'
+import { useUserStore } from '@/stores/user';
+import { useControlStore } from '@/stores/control';
 
+const controlStore = useControlStore();
+
+const userStore = useUserStore();
+const socketService = computed(() => userStore.socketService);
 const leftWidth = ref(50)
 const rightWidth = ref(50)
 
@@ -76,39 +82,57 @@ const sellWidth = ref(100)
 const bidsList = ref([]) // 买单
 const asksList = ref([]) // 卖单
 
+const tradeToken = ref('') //交易币种
+const basicToken = ref('') //基础币种
+
+const subSymbol = ref('') //当前订阅的交易对
+
+watch(
+  () => controlStore.quotesData.symbol,
+  (newVal, oldVal) => {
+	socketService.value.unsubscribe('depth',oldVal); //取消原有订阅
+    socketService.value.subscribe('depth',newVal); //订阅新的交易对
+	subSymbol.value = newVal
+  }
+);
+
 const loadData = async (params: any) => {
-  console.log('loadData realTimeTransactionsIndex')
   const data = await getDepth(params)
   bidsList.value = data.bids
   asksList.value = data.asks
-
-  // 新增计算逻辑
-  const bidsTotal = bidsList.value.reduce((sum, item) => sum + Number(item[1]), 0)
-  const asksTotal = asksList.value.reduce((sum, item) => sum + Number(item[1]), 0)
-  const total = bidsTotal + asksTotal
-
-  // 计算百分比（保留两位小数）
-  leftWidth.value = total > 0
-    ? Number(((asksTotal / total) * 100).toFixed(2))
-    : 50 // 默认值防止除零错误
-    rightWidth.value = 100 - leftWidth.value
+  const symbol = params.symbol.split('/')
+  tradeToken.value = symbol[0]
+  basicToken.value = symbol[1]
+  depthData(bidsList.value,asksList.value)
+  if(!controlStore.quotesData.symbol){
+	  subSymbol.value = params.symbol
+	 socketService.value.subscribe('depth',params.symbol);
+	 socketService.value.on(`${params.symbol}-depth`, (item: any) => {
+		bidsList.value = item.bids
+		asksList.value = item.asks
+		depthData(bidsList.value,asksList.value)
+	 })
+  }
 
 }
+
+const depthData =(bidsList:any,asksList:any)=>{
+	// 新增计算逻辑
+	const bidsTotal = bidsList.reduce((sum, item) => sum + Number(item[1]), 0)
+	const asksTotal = asksList.reduce((sum, item) => sum + Number(item[1]), 0)
+	const total = bidsTotal + asksTotal
+	
+	// 计算百分比（保留两位小数）
+	leftWidth.value = total > 0
+	  ? Number(((asksTotal / total) * 100).toFixed(0))
+	  : 50 // 默认值防止除零错误
+	  rightWidth.value = Number(100 - leftWidth.value).toFixed(0)
+}
+onUnmounted(() => {
+	console.log('移除depth监听')
+	socketService.value.unsubscribe('depth',subSymbol.value);
+})
  
-const getRandomInt = (min:number, max:number) => {
-  min = Math.ceil(min); // 确保最小值是整数
-  max = Math.floor(max); // 确保最大值是整数
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// 模拟数据变化（根据实际业务逻辑修改）
-setInterval(() => {
-  // leftWidth.value = getRandomInt(1, 100)
-  // rightWidth.value = 100 - leftWidth.value
-
-  // buyWidth.value = getRandomInt(1, 100)
-  // sellWidth.value = getRandomInt(1, 100)
-}, 1500)
 
 defineExpose({
   loadData

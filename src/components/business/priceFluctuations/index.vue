@@ -3,12 +3,12 @@
     <div class="flex justify-between align-center">
       <div>
         <p class="fs-12 text-gray">价格</p>
-        <p class="fs-12 text-gray">(USDT)</p>
+        <p class="fs-12 text-gray">({{basicToken}})</p>
       </div>
       <div class="flex justify-between align-center">
         <div class="mr-5">
           <p class="fs-12 text-gray text-right">数量</p>
-          <p class="fs-12 text-gray text-right">(BTC)</p>
+          <p class="fs-12 text-gray text-right">({{tradeToken}})</p>
         </div>
         <div class="downBtn">
           <image
@@ -21,9 +21,9 @@
 
     <div class="contentTemp">
       <div class="listBox">
-        <div v-for="index in dynamicEntryCount" :key="index" class="contentList pos-relative flex justify-between items-center">
-          <div class="fs-12 text-light-green">85888</div>
-          <div class="fs-12 text-black">3.686</div>
+        <div v-for="(item, index) in asksList" :key="index" class="contentList pos-relative flex justify-between items-center">
+          <div class="fs-12 text-light-green">{{item[1]}}</div>
+          <div class="fs-12 text-black">{{item[0]}}</div>
           <div
             class="bg-layer pos-absolute buyTemp"
             :style="{ 'width': fluctuationWidth +'%' }"
@@ -33,18 +33,18 @@
     </div>
 
     <div class="contentTitle mt-5">
-      <p class="fs-16 text-light-green">86126</p>
+      <p class="fs-16 text-light-green">{{lastPrice}}</p>
       <p class="fs-12 text-black">
-        <text>≈ 88,781.89</text>
+        <text>≈ {{lastPrice}}</text>
         <text class="ml-5">USD</text>
       </p>
     </div>
 
     <div class="contentTemp">
       <div class="listBox">
-        <div v-for="index in dynamicEntryCount" :key="index" class="contentList pos-relative flex justify-between items-center">
-          <div class="fs-12 text-red">85888</div>
-          <div class="fs-12 text-black">3.686</div>
+        <div v-for="(item, index) in bidsList" :key="index" class="contentList pos-relative flex justify-between items-center">
+          <div class="fs-12 text-red">{{item[1]}}</div>
+          <div class="fs-12 text-black">{{item[0]}}</div>
           <div
             class="bg-layer pos-absolute sellTemp"
             :style="{ 'width': fluctuationWidth +'%' }"
@@ -98,10 +98,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-
+import { ref, watch ,computed,onUnmounted} from 'vue';
+import { getDepth } from '@/api/quotes'
 import { useControlStore } from '@/stores/control'
 import { storeToRefs } from 'pinia'
+import { useUserStore } from '@/stores/user';
+
+const props = defineProps({
+  lastPrice: {
+    type: Number,
+    default: 0
+  }
+})
+
+const userStore = useUserStore();
+const socketService = computed(() => userStore.socketService);
 
 const controlStore = useControlStore();
 const { inputShow } = storeToRefs(controlStore);
@@ -110,29 +121,62 @@ const fluctuationWidth = ref(10);
 const leftWidth = ref(50);
 const rightWidth = ref(50);
 
-// 新增响应式数据
-const dynamicEntryCount = ref(8);
+const bidsList = ref([]) // 买单
+const asksList = ref([]) // 卖单
 
-watch(inputShow, (newVal, oldVal) => {
-  if (newVal) {
-    dynamicEntryCount.value = 11
-  } else {
-    dynamicEntryCount.value = 8
+const tradeToken = ref('') //交易币种
+const basicToken = ref('') //基础币种
+
+const subSymbol = ref('') //当前订阅的交易对
+
+// 监控交易对变化
+watch(
+  () => controlStore.quotesData.symbol,
+  (newVal, oldVal) => {
+	socketService.value.unsubscribe('depth',oldVal); //取消原有订阅
+    socketService.value.subscribe('depth',newVal); //订阅新的交易对
+	subSymbol.value = newVal
   }
-})
+);
+const loadData = async (params: any) => {
+  const data = await getDepth(params)
+  bidsList.value = data.bids
+  asksList.value = data.asks
+  const symbol = params.symbol.split('/')
+  tradeToken.value = symbol[0]
+  basicToken.value = symbol[1]
+  depthData(bidsList.value,asksList.value)
+  if(!controlStore.quotesData.symbol){
+	  subSymbol.value = params.symbol
+	 socketService.value.subscribe('depth',params.symbol);
+	 socketService.value.on(`${params.symbol}-depth`, (item: any) => {
+		bidsList.value = item.bids
+		asksList.value = item.asks
+		depthData(bidsList.value,asksList.value)
+	 })
+  }
 
-const getRandomInt = (min:number, max:number) => {
-  min = Math.ceil(min); // 确保最小值是整数
-  max = Math.floor(max); // 确保最大值是整数
-  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-setInterval(() => {
-  leftWidth.value = getRandomInt(1, 100)
-  rightWidth.value = 100 - leftWidth.value
-  fluctuationWidth.value = getRandomInt(1, 100)
-},1500)
-
+const depthData =(bidsList:any,asksList:any)=>{
+	// 新增计算逻辑
+	const bidsTotal = bidsList.reduce((sum, item) => sum + Number(item[1]), 0)
+	const asksTotal = asksList.reduce((sum, item) => sum + Number(item[1]), 0)
+	const total = bidsTotal + asksTotal
+	
+	// 计算百分比
+	leftWidth.value = total > 0
+	  ? Number(((asksTotal / total) * 100).toFixed(0))
+	  : 50 // 默认值防止除零错误
+	  rightWidth.value = Number(100 - leftWidth.value).toFixed(0)
+}
+onUnmounted(() => {
+	console.log('移除depth监听')
+	socketService.value.unsubscribe('depth',subSymbol.value);
+})
+defineExpose({
+  loadData
+})
 </script>
 
 <style lang="scss" scoped>

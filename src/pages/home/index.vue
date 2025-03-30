@@ -110,6 +110,17 @@
             <van-image class="ml-5" width="9" height="7" src="/static/images/right.png" />
           </div>
         </van-tab>
+		<van-tab :title="$t('noun.metalsGoods')">
+		  <quoteList
+		    ref="metalsQuoteListRefs"
+		    type="METALS"
+		    :needPullRefresh="false"
+		  ></quoteList>
+		  <div class="moreTemp flex justify-center items-center" @click="viewMore">
+		    <p class="fs-12">{{ $t('common.viewMore') }}</p>
+		    <van-image class="ml-5" width="9" height="7" src="/static/images/right.png" />
+		  </div>
+		</van-tab>
       </van-tabs>
     </div>
     <div class="mt-5 pt-10 bg-white news">
@@ -187,6 +198,7 @@ const userData = ref({
 
 const spotQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const futuresQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
+const metalsQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const socketService = computed(() => userStore.socketService);
 
   onLaunch(() => {
@@ -198,30 +210,32 @@ const socketService = computed(() => userStore.socketService);
     // 切换类型时请求
     nextTick(() => {
       onClickTab({name: 0})
+	  // 订阅BTC/USDT的实时行情
+	  setTimeout(()=>{
+		  socketService.value.subscribe('ticker');
+		  // 添加行情数据监听
+		  socketService.value.on('ticker', (data: any) => {
+		    // 示例数据结构处理：{ symbol: 'BTC/USDT', price: 50000, change: 0.22 }
+		    // tickerData.value[data.symbol] = data;
+		    let currentRef : any
+		    switch(active.value){
+		  	  case 0:
+				  currentRef = spotQuoteListRefs
+				  break
+		  	  case 1:
+				  currentRef = futuresQuoteListRefs
+				  break
+			  case 2:
+					currentRef =metalsQuoteListRefs
+		  	  default:
+		  	  
+		    }
+		    currentRef.value?.refreshData(data);
+		    
+		  });
+	  },100)
     })
-
-    // 订阅BTC/USDT的实时行情
-    socketService.value.subscribe('ticker');
-
-    // 添加行情数据监听
-    socketService.value.on('ticker', (data: any) => {
-      console.log('收到行情数据:', data);
-      // 示例数据结构处理：{ symbol: 'BTC/USDT', price: 50000, change: 0.22 }
-      tickerData.value[data.symbol] = data;
-	  let currentRef : any
-	  switch(active.value){
-		  case 0:
-		  currentRef = spotQuoteListRefs
-		  break
-		  case 1:
-		  currentRef = futuresQuoteListRefs
-		  break
-		  default:
-		  
-	  }
-	  currentRef.value?.refreshData(data);
-	  
-    });
+    
   });
 
   // Disconnect from the socket server when the component is unmounted
@@ -267,7 +281,18 @@ const socketService = computed(() => userStore.socketService);
   const onClickTab = (e: any) => {
     console.log('点击了标签页', e);
     nextTick(() => {
-      const currentRef = active.value === 0 ? spotQuoteListRefs : futuresQuoteListRefs;
+	  let currentRef : any
+	  switch(active.value){
+	  		  case 0:
+				currentRef = spotQuoteListRefs
+	  		  break
+	  		  case 1:
+				currentRef = futuresQuoteListRefs
+	  		  break
+			  case 2:
+			  	currentRef =metalsQuoteListRefs
+	  		  default:
+	  }
       console.log('currentRef', currentRef.value)
       currentRef.value?.clearData();
       currentRef.value?.loadData();

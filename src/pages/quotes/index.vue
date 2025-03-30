@@ -11,7 +11,7 @@
         <van-tab :title="$t('noun.futureGoods')">
           <quoteList ref="futuresQuoteListRefs" type="FUTURES"></quoteList>
         </van-tab>
-        <van-tab :title="$t('noun.gold')">
+        <van-tab :title="$t('noun.metalsGoods')">
           <quoteList ref="metalsQuoteListRefs" type="METALS"></quoteList>
         </van-tab>
       </van-tabs>
