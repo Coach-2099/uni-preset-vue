@@ -188,7 +188,7 @@ import { useControlStore } from '@/stores/control';
 const controlStore = useControlStore();
 
 // 组件内部状态
-const listData = ref<any[]>([])
+// const listData = ref<any[]>([])
 const sortField = ref('')
 const sortDirection = ref('')
 const isLoading = ref(false)
@@ -236,8 +236,8 @@ const loadData = async () => {
     const data = await getSymbolsLastPrice(params)
     // 问题出在 listData 初始化为空数组时没有指定类型，TypeScript 默认推断为 never[]
     // 这里将 listData 的类型明确指定为 any[]，以解决类型不匹配的问题
-    listData.value.push(...data)
-    listData.value.forEach((item: any) => {
+    // listData.value.push(...data)
+    data.forEach((item: any) => {
       item.tradeToken = item.symbol.split('/')[0]
       item.basicToken = item.symbol.split('/')[1]
 	  symbolMap.set(item.symbol,item)
@@ -260,11 +260,16 @@ const refreshData= (ticker: any) => {
 	ticker.tradeToken = ticker.symbol.split('/')[0]
 	ticker.basicToken = ticker.symbol.split('/')[1]
 	ticker.rose = Number((ticker.close-ticker.open)/ticker.open*100).toFixed(2)
+	if(symbolMap.has(ticker.symbol)){
+		const showUnit = symbolMap.get(ticker.symbol).showUnit
+		ticker.showUnit = showUnit
+		ticker.close = ticker.close.toFixed(showUnit)
+	}
 	symbolMap.set(ticker.symbol,ticker)
 }
 
 const clearData = () => {
-  listData.value = []
+  symbolMap.clear()
 }
 
 const goDetail = (v: any) => {
@@ -280,7 +285,7 @@ const goDetail = (v: any) => {
   // 合约
   if (props.type === 'FUTURES') return uni.switchTab({ url: `/pages/contract/index` })
   // 贵金属
-  // if (props.type === 'METALS') return uni.switchTab({ url: `/pages/futures/index?symbol=${v.symbol}` })
+  if (props.type === 'METALS') return uni.switchTab({ url: `/pages/metals/index` })
 }
 
 // 自包含排序逻辑

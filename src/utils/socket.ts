@@ -106,11 +106,13 @@ class SocketService {
         topic = `${topicType}`
       } else {
         // 组合式
-        topic = `${symbol.join(',')}-${topicType}`;
+        topic = `${symbol}-${topicType}`;
       }
       if (!this.subscriptions.has(topic)) {
         // {"event":"subscribe","data":"ticker"}
-        this.ws?.send(JSON.stringify({ event: 'subscribe', data: topic }));
+		if(this.ws?.readyState === 1){
+			this.ws?.send(JSON.stringify({ event: 'subscribe', data: topic }));	
+		}
         this.subscriptions.add(topic);
       }
     }
@@ -126,7 +128,7 @@ class SocketService {
         topic = `${topicType}`
       } else {
         // 组合式
-        topic = `${symbol.join(',')}-${topicType}`;
+        topic = `${symbol}-${topicType}`;
       }
       if (this.subscriptions.has(topic)) {
         this.ws?.send(JSON.stringify({ event: 'unsubscribe', data: topic }));

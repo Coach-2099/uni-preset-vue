@@ -67,23 +67,23 @@ const switchTab = (tab: 'left' | 'right') => {
   activeTab.value = tab;
 };
 const realTimeTransactionsRef: any = ref(null)
-const symbol = ref('BTC/USDT')
+const symbol = ref('BTC/USDT') //默认交易对
 
 onLoad(() => {
-  console.log('params', controlStore.quotesData.symbol)
-  console.log('params', controlStore.quotesData.activeType)
-  if(controlStore.quotesData.symbol){
-	  symbol.value= controlStore.quotesData.symbol
-  }
   // 修正类型错误，确保赋值为 'left' 或 'right'
   activeTab.value = controlStore.quotesData.activeType || 'left';
 })
 
 onShow(() => {
-  realTimeTransactionsRef.value?.loadData({
-    klineType: 'SPOT',
-    symbol: symbol
-  })
+	if(controlStore.quotesData.symbol){
+		  symbol.value= controlStore.quotesData.symbol
+	}
+	if(activeTab.value === 'left'){
+		realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
+		  klineType: 'FUTURES',
+		  symbol: symbol.value
+		})
+	}
 })
 
 const sliderStyle = computed(() => ({

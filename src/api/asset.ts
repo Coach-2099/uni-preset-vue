@@ -35,6 +35,11 @@ export function getAsset(data: any) {
   return request.get({ url: "/admin/asset/getAsset", data })
 }
 
+// 获取用户可充值币种列表
+export function getRechargeCoins(data: any) {
+  return request.get({ url: "/admin/asset/getRechargeCoins", data })
+}
+
 // 获取提币地址列表
 export function getWithdrawCoins(data: any) {
   return request.get({ url: "/admin/asset/getWithdrawCoins", data })

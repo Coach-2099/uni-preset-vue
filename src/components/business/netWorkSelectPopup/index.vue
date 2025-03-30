@@ -18,39 +18,34 @@
       </div>
     </div>
     <div class="netWorkList flex-1" style="overflow-y: auto;">
-      <div v-for="index in 5" :key="index" class="px-15 my-10">
-        <div>BTC</div>
-        <div>
+      <div v-for="(item,index) in protocolTypes" :key="index" class="px-15 my-10" @click="chooseProtocolType(item.split('|')[0])">
+        <div>{{item.split('|')[0]}}({{item.split('|')[1]}})</div>
+        <!-- <div>
           <text class="fw-b fs-14">手续费:</text>
           <text class="text-gray fs-14 ml-5">0.000006</text>
-        </div>
+        </div> -->
       </div>
     </div>
   </van-popup>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref,defineEmits } from 'vue'
 
+const emit = defineEmits(['chooseProtocolType'])
 const value = ref('')
 const showBottom = ref(false)
+const protocolTypes =ref([])
 
-const  showFLoatingPanel = (type: string) => {
+const  showFLoatingPanel = (data:any) => {
   showBottom.value = !showBottom.value
   // 判断类型是充值 或 提币
-  if (type == 'recharge') return loadDataRecharge()
-  if (type == 'withdraw') return loadDataWithdraw()
+  protocolTypes.value = data
 }
 
-// 获取充值货币列表
-const loadDataRecharge = async () => {
-
-}
-
-// 获取提币货币列表
-const loadDataWithdraw = async () => {
-
-  
+const chooseProtocolType =(protocol: string) =>{
+	showBottom.value = false
+	emit('chooseProtocolType',protocol)
 }
 
 

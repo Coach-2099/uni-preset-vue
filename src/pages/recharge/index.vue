@@ -12,7 +12,9 @@
       </template>
     </navigationBar>
     <div class="flex justify-center items-center  w-100 mt-25">
-      <div class="qrcodeBox px-15 py-15"></div>
+      <div class="qrcodeBox px-15 py-15">
+		  <qrcode-vue :value="address" size="160" />
+	  </div>
     </div>
     <div class="mt-10 px-15">
       <p class="fs-14 text-black">币种</p>
@@ -26,8 +28,8 @@
             src="/static/images/OIP-C.jpg"
             mode="scaleToFill"
           />
-          <p class="fs-14 fw-b ml-5 mr-5 text-black">BTC</p>
-          <p class="fs-14 text-gray">Bitcoin</p>
+          <p class="fs-14 fw-b ml-5 mr-5 text-black">{{symbol}}</p>
+          <p class="fs-14 text-gray">(Bitcoin)</p>
         </div>
         <div class="rightBox flex items-center">
           <image
@@ -38,7 +40,7 @@
         </div>
       </div>
     </div>
-    <div class="mt-10 px-15">
+    <div class="mt-10 px-15" v-show="networkShow">
       <p class="fs-14 text-black">所属网络</p>
       <div
         class="baseSelect w-100 mt-5 pl-15 pr-25 flex justify-between items-cneter"
@@ -46,7 +48,7 @@
       >
         <div class="leftBox flex items-center">
           <p v-if="false" class="fs-14 text-gray">请选择链类型</p>
-          <p v-else class="fs-14 fw-b ml-5 mr-5 text-black">BTC</p>
+          <p v-else class="fs-14 fw-b ml-5 mr-5 text-black">{{protocolType}}</p>
         </div>
         <div class="rightBox flex items-center">
           <image
@@ -64,7 +66,7 @@
         <div class="rightIcon"></div>
       </div>
       <div class="copyInfo flex justify-between items-center mt-10">
-        <p class="fs-14 text-gray address text-wrap">{{ rechargeData.address }}</p>
+        <p class="fs-14 text-gray address text-wrap">{{ address }}</p>
         <image
           class="copyIcon"
           src="/static/images/copy.png"
@@ -103,33 +105,37 @@
     <div class="copyBtnBox w-100 flex items-center justify-center px-20">
       <van-button @click="copy" class="copyBtn w-100" type="primary">Copy Address</van-button>
     </div>
-    <currencySelectPopup ref="currentSelectRef"></currencySelectPopup>
-    <networkSelectPopup ref="networkSelectPopupRef"></networkSelectPopup>
+    <currencySelectPopup @chooseToken="chooseToken" ref="currentSelectRef"></currencySelectPopup>
+    <networkSelectPopup :active="networkShow" @chooseProtocolType="chooseProtocolType" ref="networkSelectPopupRef"></networkSelectPopup>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive,nextTick } from 'vue';
 import { getRecharge } from '@/api/asset';
 import navigationBar from '@/components/navigationBar/index.vue';
 import currencySelectPopup from '@/components/business/currencySelectPopup/index.vue';
 import networkSelectPopup from '@/components/business/netWorkSelectPopup/index.vue'
+import QrcodeVue from 'qrcode.vue'
 
-const rechargeData = ref({})
+const address = ref('')
 const currentSelectRef:any = ref(null)
 const networkSelectPopupRef:any = ref(null)
-
+const symbol =ref('USDT')
+const protocolType = ref('ERC20')
+const networkShow = ref(true)
 onMounted(() => {
-  getRechargeAddres()
+  currentSelectRef.value?.showFLoatingPanel('recharge')
 })
 
 const getRechargeAddres = async () => {
   const params = {
-    symbol: '' // 交易对
+    symbol: protocolType.value?symbol.value+'-'+protocolType.value:symbol.value // 充值币种
   }
   const data = await getRecharge(params)
-  rechargeData.value = data
+  address.value = data
 }
+
 
 const goAssetRecord = () => {
   console.log('资产列表')
@@ -139,16 +145,41 @@ const goAssetRecord = () => {
 }
 
 const openPopup = () => {
-  currentSelectRef.value?.showFLoatingPanel()
+  currentSelectRef.value?.showFLoatingPanel('recharge')
 }
 
 const openNetworkPopup = () => {
   networkSelectPopupRef.value?.showFLoatingPanel()
 }
 
+//接收子组件传过来的币种信息
+const chooseToken =(item: any) =>{
+	console.log('choose ={}',item)
+	symbol.value = item.token
+	if(item.protocolTypes && item.protocolTypes.length>1){
+		networkSelectPopupRef.value?.showFLoatingPanel(item.protocolTypes)	
+		networkShow.value = true
+	}else{
+		if(item.protocolTypes){
+			protocolType.value = item.protocolTypes[0]
+			networkShow.value = true
+		}else{
+			protocolType.value = ''
+			networkShow.value = false
+		}
+		getRechargeAddres()
+	}
+}
+
+const chooseProtocolType =(protocol: string) =>{
+	protocolType.value = protocol
+	getRechargeAddres()
+}
+
+
 const copy = () => {
   uni.setClipboardData({
-    data: rechargeData.value.address,
+    data: address.value,
     success: function() {
       uni.showToast({
         title: '复制成功',

@@ -44,7 +44,7 @@ export default {
   noun: {
     spotGoods: '现货',
     futureGoods: '合约',
-    gold: '黄金',
+	metalsGoods:'贵金属',
     recharge: '充值',
     transfer: '转账',
     withdraw: '提现',
