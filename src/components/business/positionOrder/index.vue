@@ -13,7 +13,7 @@
         </div>
         <div class="rightBox" v-if="value.status==='POSITIONING'">
           <p class="fs-12 text-gray text-right">未结盈亏</p>
-          <p class="fw-b fs-16 text-red mt-5">{{value.}}(-1.59%)</p>
+          <p class="fw-b fs-16 text-red mt-5">{{calculateUnrealizedProfit(value.direction,value.quantity,value.entryPrice)}}(-1.59%)</p>
         </div>
       </div>
       <div class="positionDetail mt-20">
@@ -72,11 +72,11 @@ const close =(orderNo: string)=>{
 	closeOrder(params)
 }
 //
-const calculateUnrealizedProfit=(direction:string,tradeNum: number,entryPrice:number)=>{
+const calculateUnrealizedProfit=(direction:string,quantity: number,entryPrice:number)=>{
 	if(direction ==='LONG'){
-		return roundDown((lastPrice.value - entryPrice) * tradeNum,2)
+		return roundDown((lastPrice.value - entryPrice) * quantity,2)
 	}else{
-		return roundDown((entryPrice - lastPrice.value ) * tradeNum,2)
+		return roundDown((entryPrice - lastPrice.value ) * quantity,2)
 	}
 }
 onMounted(() => {
