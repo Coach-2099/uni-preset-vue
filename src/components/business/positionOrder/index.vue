@@ -22,10 +22,10 @@
             <p class="fs-12 text-gray">持仓数量</p>
             <p class="fs-12 text-balck mt-5">{{value.tradeNum}}</p>
           </div>
-          <div class="detailBox w-20">
+          <!-- <div class="detailBox w-20">
             <p class="fs-12 text-gray">入场价格</p>
             <p class="fs-12 text-balck mt-5">{{value.}}</p>
-          </div>
+          </div> -->
           <div class="detailBox w-20">
             <p class="fs-12 text-gray">标记价格</p>
             <p class="fs-12 text-black mt-5">85,888.88</p>
