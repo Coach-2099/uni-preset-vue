@@ -75,12 +75,12 @@ onLoad(() => {
   // 修正类型错误，确保赋值为 'left' 或 'right'
   activeTab.value = controlStore.quotesData.activeType || 'left';
 })
-
 onShow(() => {
 	if(controlStore.quotesData.symbol){
 		  symbol.value= controlStore.quotesData.symbol
 	}
 	if(activeTab.value === 'left'){
+		 console.log('sub depth onload')
 		realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
 		  klineType: 'FUTURES',
 		  symbol: symbol.value

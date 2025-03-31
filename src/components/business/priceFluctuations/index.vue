@@ -18,19 +18,19 @@
         </div>
       </div>
     </div>
-
-    <div class="contentTemp">
-      <div class="listBox">
-        <div v-for="(item, index) in asksList" :key="index" class="contentList pos-relative flex justify-between items-center">
-          <div class="fs-12 text-light-green">{{item[1]}}</div>
-          <div class="fs-12 text-black">{{item[0]}}</div>
-          <div
-            class="bg-layer pos-absolute buyTemp"
-            :style="{ 'width': fluctuationWidth +'%' }"
-          ></div>
-        </div>
-      </div>
-    </div>
+	<!-- 卖单深度列表-->
+	<div class="contentTemp">
+	  <div class="listBox">
+	    <div v-for="(item, index) in bidsList" :key="index" class="contentList pos-relative flex justify-between items-center">
+	      <div class="fs-12 text-red">{{item[0]}}</div>
+	      <div class="fs-12 text-black">{{item[1]}}</div>
+	      <div
+	        class="bg-layer pos-absolute sellTemp"
+	        :style="{ 'width': fluctuationWidth +'%' }"
+	      ></div>
+	    </div>
+	  </div>
+	</div>
 
     <div class="contentTitle mt-5">
       <p class="fs-16 text-light-green">{{lastPrice}}</p>
@@ -39,19 +39,19 @@
         <text class="ml-5">USD</text>
       </p>
     </div>
-
-    <div class="contentTemp">
-      <div class="listBox">
-        <div v-for="(item, index) in bidsList" :key="index" class="contentList pos-relative flex justify-between items-center">
-          <div class="fs-12 text-red">{{item[1]}}</div>
-          <div class="fs-12 text-black">{{item[0]}}</div>
-          <div
-            class="bg-layer pos-absolute sellTemp"
-            :style="{ 'width': fluctuationWidth +'%' }"
-          ></div>
-        </div>
-      </div>
-    </div>
+	<!-- 买单深度列表-->
+   <div class="contentTemp">
+     <div class="listBox">
+       <div v-for="(item, index) in asksList" :key="index" class="contentList pos-relative flex justify-between items-center">
+         <div class="fs-12 text-light-green">{{item[0]}}</div>
+         <div class="fs-12 text-black">{{item[1]}}</div>
+         <div
+           class="bg-layer pos-absolute buyTemp"
+           :style="{ 'width': fluctuationWidth +'%' }"
+         ></div>
+       </div>
+     </div>
+   </div>
 
     <div class="sellAndBuyTemp flex justify-between items-center mt-5">
       <div 

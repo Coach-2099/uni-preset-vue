@@ -224,3 +224,13 @@ export function getUrlParams(url?: string): Record<string, string> {
 
   return params;
 }
+
+/**
+ * 向下舍去
+ * @param {number} value 
+ * @param {number} decimals 
+ * @return 
+ */ 
+export function roundDown(value:number, decimals:number) {
+    return Math.floor(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
+}
