@@ -29,6 +29,7 @@
             ref="spotSelectSpotRef"
             type="SPOT"
             v-model:searchVal="searchValue"
+            @closeModel="showFLoatingPanel"
           ></selectSpot>
         </van-tab>
         <van-tab title="新币榜">新币榜</van-tab>

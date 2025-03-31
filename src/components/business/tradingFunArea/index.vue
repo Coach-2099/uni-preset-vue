@@ -11,7 +11,7 @@
           </div>
           <div>{{ symbol }}</div>
         </div>
-        <div class="increaseAndDecreaseBox">
+        <div class="increaseAndDecreaseBox px-5">
           <text class="text-red fs-12">{{rose}}%</text>
         </div>
       </div>
@@ -91,11 +91,11 @@ onMounted(() => {
   getBuyAndSellConfig()
   nextTick(() => {
 	  if (controlStore.quotesData.symbol){
-	  	  symbol.value = controlStore.quotesData.symbol
+      symbol.value = controlStore.quotesData.symbol
 	  }
 	  socketService.value.subscribe('ticker',symbol.value);
 	  socketService.value.on(`${symbol.value}-ticker`, (data: any) => {
-	  		lastPrice.value = data.close
+      lastPrice.value = data.close
 			rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
 	  })
   })

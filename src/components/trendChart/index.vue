@@ -1,5 +1,41 @@
 <template>
   <div class="trend-temp">
+    <div class="trend-temp-header">
+      <div class="flex">
+        <div class="flex checckBitBtn mr-5" @click="checkBit">
+          <div class="checckBitImgBox mr-5">
+            <image
+              src="/static/images/checkBit.png"
+              mode="scaleToFill"
+            />
+          </div>
+          <div>{{ symbolInfo }}</div>
+        </div>
+        <div class="increaseAndDecreaseBox px-5">
+          <text class="text-red fs-12">{{rose}}%</text>
+        </div>
+      </div>
+      <div class="flex items-center justify-between">
+        <div class="flex-1">
+          <div class="fs-28 text-red">{{ lastPrice }}</div>
+          <div class="fs-12 text-black">≈ {{ lastPrice }} USD</div>
+        </div>
+        <div class="fs-12 text-gray flex-1">
+          <div class="flex items-center justify-between">
+            <div>24h最高</div>
+            <div>{{ HIGH24h }}</div>
+          </div>
+          <div class="flex items-center justify-between">
+            <div>24h最低</div>
+            <div>{{ LOW24h }}</div>
+          </div>
+          <div class="flex items-center justify-between">
+            <div>24h交易额</div>
+            <div>{{ VOL24h }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- 这里是走势图！！ -->
     <lightWeightChart 
       ref="chartRef"
@@ -13,28 +49,69 @@
     <!-- <button @click="generateNewCandle">生成新K线</button>
     <button @click="addRandomData">添加数据</button> -->
     <!-- <button @click="toggleTheme">切换主题</button> -->
+    <floatingPanelProps ref="floatingPanelPropsRef"></floatingPanelProps>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { onLoad, onShow } from '@dcloudio/uni-app';
-import { ref, defineComponent, onUnmounted, nextTick } from 'vue';
+import { ref, defineComponent, onMounted, onUnmounted, nextTick, computed, watch } from 'vue';
 import lightWeightChart from '@/components/LightweightChart/index.vue';
 import type LightweightChartType from '@/components/LightweightChart/index.vue'
-import type {  UTCTimestamp } from 'lightweight-charts';
 import { getKlineHistory } from '@/api/quotes';
 import { useControlStore } from '@/stores/control';
+import { useUserStore } from '@/stores/user';
+import floatingPanelProps from '@/components/business/floatingPanelSpot/index.vue';
+import type {  UTCTimestamp } from 'lightweight-charts';
 
 // stores
 const controlStore = useControlStore();
+const userStore = useUserStore();
+const socketService = computed(() => userStore.socketService);
+
+// 新增以下监听代码
+watch(
+  () => controlStore.quotesData.symbol,
+  (newSymbol, oldSymbol) => {
+    if (newSymbol) {
+      console.log('oldSymbol', oldSymbol)
+      // 取消旧symbol的订阅和监听
+      if (oldSymbol) {
+        socketService.value.unsubscribe('ticker', oldSymbol);
+        socketService.value.off(`${oldSymbol}-ticker`);
+      }
+
+      symbolInfo.value = newSymbol
+      
+      // 设置新symbol的订阅和监听
+      socketService.value.subscribe('ticker', newSymbol);
+      socketService.value.on(`${newSymbol}-ticker`, (data: any) => {
+        rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
+        HIGH24h.value = data.high
+        LOW24h.value = data.low
+        VOL24h.value = data.vol
+        lastPrice.value = data.close
+      })
+      // 这里可以添加symbol变化后的处理逻辑
+      loadData()
+    }
+  },
+  { immediate: true } // 立即执行一次以获取初始值
+)
 
 const chartRef = ref<InstanceType<typeof LightweightChartType>>()
+const floatingPanelPropsRef: any = ref(null) //行情列表引用
 
 const theme = ref<'light' | 'dark'>('light')
-const currentInterval = ref(300)
+const currentInterval = ref(300) // 间隔多少时间的图表数据
 
 const symbolInfo = ref('BTC/USDT')
 const timeInterval = ref('min_5') // K线周期,可用值:min_1,min_5,min_15,min_30,min_60,hour_4,day_1
+const rose = ref(0) //实时最新涨跌幅比例
+const HIGH24h = ref(0) //24h最高
+const LOW24h = ref(0) //24h最低
+const VOL24h = ref(0) //24h交易额
+const lastPrice = ref(0) //最新成交价
 
 // 新增时间间隔映射
 const intervalMap:any = {
@@ -51,9 +128,9 @@ const candleData:any = ref([])
 
 // EMA配置
 const emaConfigs = ref([
-  { 
-    period: 7, 
-    color: '#FFA726', 
+  {
+    period: 7,
+    color: '#FFA726',
     lineWidth: 2,
     visible: true
   },
@@ -81,15 +158,50 @@ const candleColors = ref({
   priceLineVisible: true // 显示价格线
 })
 
-// 第一次进入时加载，后续通过socket添加数据
-onLoad(() => {
-
+onMounted(() => {
+  nextTick(() => {
+	  if (controlStore.quotesData.symbol){
+      symbolInfo.value = controlStore.quotesData.symbol
+	  }
+    // 订阅 ticker
+    socketService.value.subscribe('ticker',symbolInfo.value);
+	  socketService.value.on(`${symbolInfo.value}-ticker`, (data: any) => {
+			rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
+      HIGH24h.value = data.high
+      LOW24h.value = data.low
+      VOL24h.value = data.vol
+      lastPrice.value = data.close
+	  })
+    // socketService.value.subscribe('kline',symbolInfo.value);
+    // socketService.value.on(`${symbolInfo.value}-kline`, (data: any) => {
+    //   // isFinish 为 true 时 push新数据
+    //   if (data.isFinish) {
+    //     candleData.value.push({
+    //       time: Math.round(data.startTime / 1000), // 转换为秒级时间戳
+    //       open: Number(data.open.toFixed(2)),
+    //       high: Number(data.high.toFixed(2)),
+    //       low: Number(data.low.toFixed(2)),
+    //       close: Number(data.close.toFixed(2)),
+    //       volume: Number(data.vol.toFixed(2))
+    //     })
+    //   } else {
+    //     // isFinish 为 false 时更新最新数据
+    //     candleData.value[candleData.value.length - 1].open = Number(data.open.toFixed(2))
+    //     candleData.value[candleData.value.length - 1].high = Number(data.high.toFixed(2))
+    //     candleData.value[candleData.value.length - 1].low = Number(data.low.toFixed(2))
+    //     candleData.value[candleData.value.length - 1].close = Number(data.close.toFixed(2))
+    //     // candleData.value[candleData.value.length - 1].volume = Number(data.vol.toFixed(2))
+    //   }
+    // })
+    // 第一次进入要加载数据
+    loadData()
+  })
 })
 
 onShow(() => {
   symbolInfo.value = 'BTC/USDT'
   if (controlStore.quotesData.symbol) symbolInfo.value = controlStore.quotesData.symbol
-  loadData()
+  // loadData()
 })
 
 
@@ -120,11 +232,13 @@ const loadData = async () => {
       volume: Number(klineList[i].vol.toFixed(2))
     })
   }
+  console.log('加载数据 ')
 }
 
 const handleLoadMore = async({ start, end }) => {
   console.log('start!!!!', start)
   console.log('end!!!!', end)
+
 }
 
 // 生成初始蜡烛图数据
@@ -186,79 +300,39 @@ const getPeriodByInterval = (interval: number) => {
   return map[interval] || 'min_5'
 }
 
-// 生成对应时间间隔的测试数据
-const generateMockData = (interval: number) => {
-  const data = []
-  const now = Math.floor(Date.now() / 1000) // 转换为秒级时间戳
-  let price = 100
-  
-  // 生成100根K线
-  for (let i = 0; i < 100; i++) {
-    const open = price
-    const close = open + (Math.random() - 0.5) * 10
-    const high = Math.max(open, close) + Math.random() * 5
-    const low = Math.min(open, close) - Math.random() * 5
-    
-    data.push({
-      time: now - (100 - i) * interval as UTCTimestamp,
-      open: Number(open.toFixed(2)),
-      high: Number(high.toFixed(2)),
-      low: Number(low.toFixed(2)),
-      close: Number(close.toFixed(2))
-    })
-    
-    price = close
-  }
-  return data
+const checkBit = () => {
+  floatingPanelPropsRef.value?.showFLoatingPanel()
 }
-
 
 // 切换主题
 const toggleTheme = () => {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
 }
 
-// 生成新K线
-const generateNewCandle = () => {
-  const lastCandle = candleData.value[candleData.value.length - 1]
-  const newTime = lastCandle.time + 3600 // 新增每小时数据
-  
-  const open = lastCandle.close
-  const close = open + (Math.random() - 0.5) * 10
-  const high = Math.max(open, close) + Math.random() * 5
-  const low = Math.min(open, close) - Math.random() * 5
-
-  candleData.value = [...candleData.value.slice(1), { // 保持数据量固定
-    time: newTime,
-    open: Number(open.toFixed(2)),
-    high: Number(high.toFixed(2)),
-    low: Number(low.toFixed(2)),
-    close: Number(close.toFixed(2))
-  }]
-}
-
-// 动态添加数据
-const addRandomData = () => {
-  const lastCandle = candleData.value[candleData.value.length - 1]
-  const newCandle = {
-    time: lastCandle.time + 3600,
-    open: lastCandle.close,
-    high: lastCandle.close + Math.random() * 5,
-    low: lastCandle.close - Math.random() * 5,
-    close: lastCandle.close + (Math.random() - 0.5) * 3
-  }
-  candleData.value = [...candleData.value, newCandle]
-}
-
 onUnmounted(() => {
   console.log('chartRef.value', chartRef)
   chartRef?.removeChart()
+  // 移除监听
+  socketService.value.unsubscribe('ticker',symbol.value);
 })
 
 </script>
 
 <style lang="scss" scoped>
 .trend-temp {
-  
+  .trend-temp-header {
+    .checckBitBtn {
+      .checckBitImgBox {
+        image {
+          width: 14px;
+          height: 14px;
+        }
+      }
+    }
+    .increaseAndDecreaseBox {
+      background: #FFD3D9;
+      border-radius: 3px 3px 3px 3px;
+    }
+  }
 }
 </style>

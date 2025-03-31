@@ -228,14 +228,11 @@ const socketService = computed(() => userStore.socketService);
 			  case 2:
 					currentRef =metalsQuoteListRefs
 		  	  default:
-		  	  
 		    }
 		    currentRef.value?.refreshData(data);
-		    
 		  });
 	  },100)
     })
-    
   });
 
   // Disconnect from the socket server when the component is unmounted

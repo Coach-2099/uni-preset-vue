@@ -1,5 +1,5 @@
 <template>
-  <div class="contract-index">
+  <div class="contract-index pos-relative">
     <div class="top bg-white">
       <div class="switch-container-box bg-white pos-fixed w-100 flex justify-between">
         <div class="w-100 pos-relative switch-container flex justify-between">
@@ -19,11 +19,13 @@
           ></div>
         </div>
       </div>
-      <div v-if="activeTab === 'left'">
-        <trendChart></trendChart>
-      </div>
-      <div v-if="activeTab === 'right'">
-        <tradingFunArea buyAndSellType="contract"></tradingFunArea>
+      <div class="tabBox">
+        <div v-if="activeTab === 'left'">
+          <trendChart></trendChart>
+        </div>
+        <div v-if="activeTab === 'right'">
+          <tradingFunArea buyAndSellType="contract"></tradingFunArea>
+        </div>
       </div>
     </div>
     <div class="bottom bg-white mt-5 px-10">
@@ -138,6 +140,9 @@ const sliderStyle = computed(() => ({
           border-radius: 6px;
         }
       }
+    }
+    .tabBox {
+      margin-top: 50px;
     }
   }
 

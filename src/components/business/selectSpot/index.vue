@@ -47,7 +47,13 @@
         </div>
       </div>
       <div v-for="(item, index) in listData" :key="index">
-        <div class="mt-5 ml-15 mr-15 pb-5 flex ff-biance fw-b justify-between items-center">
+        <div
+          class="
+            mt-5 ml-15 mr-15 pb-5
+            ff-biance fw-b
+            flex justify-between items-center"
+          @click="checkBitItem(item)"
+        >
           <div class="flex-1">
             <text class="fs-16">{{ item.symbol1 }}</text>
             <text class="fs-12 text-gray">/ {{ item.symbol2 }}</text>
@@ -68,9 +74,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, nextTick, watch } from 'vue';
+import { ref, nextTick, watch, defineEmits } from 'vue';
 import { getSymbolsLastPrice } from '@/api/quotes';
 import { getTicker } from '@/api/quotes';
+import { useControlStore } from '@/stores/control';
 
 const props = defineProps({
   type: {
@@ -85,6 +92,12 @@ const props = defineProps({
 
 const listData = ref<any[]>([]); // 从API获取的真实数据
 const loadingData = ref(true); // 加载状态
+
+
+const emit = defineEmits(['closeModel'])
+
+// stores
+const controlStore = useControlStore();
 
 watch(() => props.searchVal, (newVal, oldVal) => {
   console.log('newVal', newVal)
@@ -139,8 +152,18 @@ const searchFun = async () => {
     // 移除setTimeout直接更新状态
     loadingData.value = false;
   }
+}
 
-  
+const checkBitItem = (item: any) => {
+  console.log('item!!', item)
+  const activeType = controlStore.quotesData.activeType
+  console.log('activeType!!', activeType)
+  controlStore.setQuotesData({
+    symbol: item.symbol,
+    activeType: activeType || 'left'
+  })
+  // 选中后父组件触发加载事件
+  emit('closeModel')
 }
 
 const formatVolume = (volume:any) => {

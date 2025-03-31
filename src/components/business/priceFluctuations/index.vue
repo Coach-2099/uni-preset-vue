@@ -129,6 +129,8 @@ const basicToken = ref('') //基础币种
 
 const subSymbol = ref('') //当前订阅的交易对
 
+const MAX_DEPTH_LENGTH = 7 // 最大显示20条深度数据
+
 // 监控交易对变化
 watch(
   () => controlStore.quotesData.symbol,
@@ -142,6 +144,8 @@ const loadData = async (params: any) => {
   const data = await getDepth(params)
   bidsList.value = data.bids
   asksList.value = data.asks
+  bidsList.value = data.bids.slice(0, MAX_DEPTH_LENGTH)
+  asksList.value = data.asks.slice(0, MAX_DEPTH_LENGTH)
   const symbol = params.symbol.split('/')
   tradeToken.value = symbol[0]
   basicToken.value = symbol[1]
@@ -152,6 +156,9 @@ const loadData = async (params: any) => {
 	 socketService.value.on(`${params.symbol}-depth`, (item: any) => {
 		bidsList.value = item.bids
 		asksList.value = item.asks
+    // 对实时数据也添加长度限制
+    bidsList.value = item.bids.slice(0, MAX_DEPTH_LENGTH)
+    asksList.value = item.asks.slice(0, MAX_DEPTH_LENGTH)
 		depthData(bidsList.value,asksList.value)
 	 })
   }

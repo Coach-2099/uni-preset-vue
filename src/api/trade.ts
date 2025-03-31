@@ -19,3 +19,13 @@ export function deleteTradeSymbol(data: any) {
 export function getSymbolInfo(data?: any) {
   return request.get({ url: '/admin/trade/getSymbolInfo', data })
 }
+
+// 获取现货订单列表
+export function getOrderList(data?: any) {
+  return request.get({ url: '/admin/trade/getOrderList', data })
+}
+
+// 获取合约or贵金属交易订单列表
+export function getFuturesOrderList(data?: any) {
+  return request.get({ url: '/admin/trade/getFuturesOrderList', data })
+}

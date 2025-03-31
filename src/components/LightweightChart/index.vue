@@ -7,7 +7,6 @@
         :key="interval.value"
         @click="handleTimeSelect(interval.value)"
       >
-        <!-- :class="['time-btn', { active: selectedInterval === interval.value }]" -->
         <text
           class="fs-12 mr-5"
           :class="selectedInterval === interval.value ? 'text-black' : 'text-gray'">
@@ -117,6 +116,9 @@ const isH5 = ref(process.env.UNI_PLATFORM === 'h5')
 let chart: IChartApi | null = null
 let candleSeries: ISeriesApi<CandlestickSeries> | null = null
 const emaSeriesMap = ref(new Map<number, ISeriesApi<LineSeries>>())
+
+const volumeSeries = ref<ISeriesApi<'Histogram'> | null>(null) // 成交量系列响应式引用
+
 
 // 时间间隔配置
 const timeIntervals = ref<TimeInterval[]>([
@@ -231,9 +233,11 @@ const initEMASeries = () => {
       color: config.color,
       lineWidth: config.lineWidth || 2,
       lineStyle: 0, // 0: 实线
-      priceScaleId: 'right',
+      priceScaleId: 'none',
+      // priceLineVisible: false,
+      lastValueVisible: false,
       visible: config.visible ?? true,
-      title: `EMA ${config.period}` // 添加EMA标题
+      title: '' // 添加EMA标题
     })
 
     emaSeriesMap.value.set(config.period, series)
@@ -255,49 +259,267 @@ const updateAllEMAData = () => {
 }
 
 // 初始化图表
-const initChart = async () => {
+// const initChart = async () => {
+//   if (!chartContainer.value) return
+
+//   // 创建图表容器引用
+//   const container = chartContainer.value.$el
+
+//   // 创建tooltip元素
+//   const toolTip = document.createElement('div')
+//   toolTip.style.cssText = `
+//     width: 132px; 
+//     height: 120px; 
+//     position: absolute;
+//     display: none;
+//     padding: 8px;
+//     box-sizing: border-box;
+//     font-size: 12px;
+//     text-align: left;
+//     z-index: 1000;
+//     pointer-events: none;
+//     border: 1px solid;
+//     border-radius: 2px;
+//     font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif;
+//   `
+//   container.appendChild(toolTip)
+
+//   // 调整图表高度分配（蜡烛图70% + 成交量30%）
+//   const chartHeight = 400
+//   const priceChartHeight = chartHeight * 0.7
+//   const volumeChartHeight = chartHeight * 0.3
+
+//   chart = createChart(container, {
+//     width: chartContainer.value.clientWidth,
+//     height: chartHeight,
+//     layout: {
+//       background: {
+//         color: props.theme === 'dark' ? '#1E1E1E' : '#FFFFFF'
+//       },
+//       textColor: props.theme === 'dark' ? '#DDD' : '#333'
+//     },
+//     rightPriceScale: {
+//       // visible: false, // 显示右侧Y轴
+//       scaleMargins: { top: 0.3, bottom: 0.25 },
+//       borderVisible: false, // 新增：隐藏右侧Y轴轴线
+//     },
+//     crosshair: {
+//       horzLine: {
+//         visible: false,
+//         labelVisible: false
+//       },
+//       vertLine: {
+//         labelVisible: false
+//       }
+//     },
+//     grid: {
+//       vertLines: {
+//         color: props.theme === 'dark' ? '#FFFFFF22' : '#00000022',
+//         style: 2, // 2 表示虚线
+//         visible: true
+//       },
+//       horzLines: {
+//         color: props.theme === 'dark' ? '#FFFFFF22' : '#00000022',
+//         style: 2, // 2 表示虚线
+//         visible: true
+//       }
+//     }
+//   })
+
+//   // 初始化蜡烛图
+//   candleSeries = chart.addSeries(CandlestickSeries, {
+//     upColor: '#26a69a',
+//     downColor: '#ef5350',
+//     borderVisible: false,
+//     wickUpColor: '#26a69a',
+//     wickDownColor: '#ef5350',
+//     title: '', // 添加系列标题
+//   })
+
+//   let volumeSeries: ISeriesApi<'Histogram'> | null = null
+//   // 初始化成交量系列
+//   volumeSeries = chart.addSeries(HistogramSeries, {
+//     color: '#26a69a',
+//     priceFormat: {
+//       type: 'volume',
+//     },
+//     priceScaleId: 'volume', // 使用独立的priceScale
+//     priceLineVisible: false,
+//   })
+//   // 设置图表高度
+//   volumeSeries.priceScale().applyOptions({
+//       // set the positioning of the volume series
+//       scaleMargins: {
+//           top: 0.85, // highest point of the series will be 70% away from the top
+//           bottom: 0,
+//       },
+//   });
+
+
+//   // 在设置数据时同时设置成交量数据
+//   const volumeData = props.data.map(d => ({
+//     time: d.time,
+//     value: d.volume,
+//     color: d.close > d.open ? '#26a69a' : '#ef5350' // 颜色与蜡烛图同步
+//   }))
+//   volumeSeries?.setData(volumeData)
+
+//   // 添加可见时间范围监听
+//   chart.timeScale().subscribeVisibleTimeRangeChange((newRange:any) => {
+//     if (!newRange?.from) return;
+    
+//     // 获取当前数据的最早时间戳
+//     const earliestDataTime = props.data[0]?.time as number;
+    
+//     // 当可见范围开始时间接近数据集头部时触发加载
+//     if (newRange.from <= earliestDataTime) {
+//       console.log('触发')
+//       // 触发父组件加载更多数据
+//       emit('load-more-data', {
+//         start: newRange?.from - 3600, // 提前1小时（示例值）
+//         end: earliestDataTime
+//       });
+//     }
+//   });
+
+
+//   // 在initChart中添加时间格式化
+//   // chart.applyOptions({
+//   //   timeScale: {
+//   //     tickMarkFormatter: (time: number) => {
+//   //       return new Date(time * 1000).toLocaleDateString()
+//   //     },
+//   //     borderVisible: false // 新增：隐藏底部X轴轴线
+//   //   }
+//   // })
+
+//   // 初始化十字光标订阅
+//   chart.subscribeCrosshairMove(param => {
+//     if (!param.point || !param.time || !candleSeries) {
+//       toolTip.style.display = 'none'
+//       return
+//     }
+
+//     const candleData = param.seriesData?.get(candleSeries) as CandleData
+//     const price = candleData?.close.toFixed(2) || ''
+//     const close = candleData?.close || 0
+//     const open = candleData?.open || 0
+//     const high = candleData?.high || 0
+//     const low = candleData?.low || 0
+//     const Increase = ((close - open) / open * 100).toFixed(2)
+
+//     // console.log('price', price)
+//     // console.log('candleSeries.options()', candleSeries.options())
+//     // console.log('param:', param.seriesData)
+
+//     // 获取EMA系列数据（示例获取第一个EMA系列）
+//     const emaValues = []
+//     for (const [series, data] of param.seriesData) {
+//       if (series.seriesType() === 'Line' && series.options().title?.startsWith('EMA')) {
+//         emaValues.push({
+//           period: series.options().title?.split(' ')[1],
+//           value: (data as any).value?.toFixed(2)
+//         })
+//       }
+//     }
+
+//     // 更新tooltip内容
+//     toolTip.innerHTML = `
+//       <div class="${props.theme === 'dark' ? 'text-black' : 'text-gray'}">
+//         ${new Date(param.time * 1000).toLocaleString()}
+//       </div>
+//       <div class="flex items-center justify-between text-gray">
+//         <div>收:</div>
+//         <div>${close}</div>
+//       </div>
+//       <div class="flex items-center justify-between text-gray">
+//         <div>开:</div>
+//         <div>${open}</div>
+//       </div>
+//       <div class="flex items-center justify-between text-gray">
+//         <div>高:</div>
+//         <div>${high}</div>
+//       </div>
+//       <div class="flex items-center justify-between text-gray">
+//         <div>低:</div>
+//         <div>${low}</div>
+//       </div>
+//       <div class="flex items-center justify-between text-gray">
+//         <div>涨幅:</div>
+//         <div>
+//           <text class="${Increase > 0 ? 'text-green' :'text-red'}">${Increase}%</text>
+//         </div>
+//       </div>
+//     `
+
+
+//     // 更新tooltip位置
+//     const { x, y } = param.point
+//     const containerWidth = container.clientWidth
+//     const containerHeight = container.clientHeight
+//     const tooltipWidth = toolTip.offsetWidth
+//     const tooltipHeight = toolTip.offsetHeight
+
+//     let left = x + 15
+//     if (left > containerWidth - tooltipWidth) {
+//       left = x - tooltipWidth - 15
+//     }
+
+//     let top = y + 15
+//     if (top > containerHeight - tooltipHeight) {
+//       top = y - tooltipHeight - 15
+//     }
+
+//     Object.assign(toolTip.style, {
+//       left: `${left}px`,
+//       top: `${top}px`,
+//       display: 'block',
+//       background: props.theme === 'dark' ? '#1E1E1E' : '#FFFFFF',
+//       borderColor: props.theme === 'dark' ? '#666' : '#DDD'
+//     })
+//   })
+
+//   // 初始化EMA
+//   initEMASeries()
+//   updateTimeFormatter()
+//   // 设置初始数据
+//   candleSeries.setData(props.data)
+//   updateAllEMAData()
+//   // chart.timeScale().fitContent()
+//   // 设置可视数据
+//   const visibleRange = chart.timeScale().getVisibleRange()
+//   if (visibleRange && props.data.length > 0) {
+//     // 改用逻辑范围计算
+//     chart.timeScale().setVisibleLogicalRange({
+//       from: Math.max(0, props.data.length - 30), // 显示最后120根K线
+//       to: props.data.length - 1
+//     })
+//   } else {
+//     chart.timeScale().fitContent()
+//   }
+// }
+
+// 新增图表结构初始化方法
+const initChartStructure = async () => {
   if (!chartContainer.value) return
 
   // 创建图表容器引用
   const container = chartContainer.value.$el
-
-  // 创建tooltip元素
-  const toolTip = document.createElement('div')
-  toolTip.style.cssText = `
-    width: 132px; 
-    height: 120px; 
-    position: absolute;
-    display: none;
-    padding: 8px;
-    box-sizing: border-box;
-    font-size: 12px;
-    text-align: left;
-    z-index: 1000;
-    pointer-events: none;
-    border: 1px solid;
-    border-radius: 2px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif;
-  `
-  container.appendChild(toolTip)
-
-  // 调整图表高度分配（蜡烛图70% + 成交量30%）
-  const chartHeight = 400
-  const priceChartHeight = chartHeight * 0.7
-  const volumeChartHeight = chartHeight * 0.3
-
+  
+  // 创建基础图表结构（与之前initChart中的图表创建部分相同）
   chart = createChart(container, {
     width: chartContainer.value.clientWidth,
-    height: chartHeight,
-    layout: {
+    height: 400,
+    layout: { 
       background: {
         color: props.theme === 'dark' ? '#1E1E1E' : '#FFFFFF'
       },
       textColor: props.theme === 'dark' ? '#DDD' : '#333'
-    },
-    rightPriceScale: {
+     },
+    rightPriceScale: { 
       scaleMargins: { top: 0.3, bottom: 0.25 },
       borderVisible: false, // 新增：隐藏右侧Y轴轴线
-    },
+     },
     crosshair: {
       horzLine: {
         visible: false,
@@ -321,181 +543,78 @@ const initChart = async () => {
     }
   })
 
-  // 初始化蜡烛图
+  // 初始化蜡烛图系列（不设置数据）
   candleSeries = chart.addSeries(CandlestickSeries, {
     upColor: '#26a69a',
     downColor: '#ef5350',
     borderVisible: false,
     wickUpColor: '#26a69a',
-    wickDownColor: '#ef5350',
-    title: '价格', // 添加系列标题
+    wickDownColor: '#ef5350'
   })
 
-  let volumeSeries: ISeriesApi<'Histogram'> | null = null
-  // 初始化成交量系列
-  volumeSeries = chart.addSeries(HistogramSeries, {
+  // 初始化成交量系列（不设置数据）
+  volumeSeries.value = chart.addSeries(HistogramSeries, {
     color: '#26a69a',
-    priceFormat: {
-      type: 'volume',
-    },
-    priceScaleId: 'volume', // 使用独立的priceScale
-    priceLineVisible: false,
+    priceFormat: { type: 'volume' },
+    priceScaleId: 'volume'
   })
-  // 设置图表高度
-  volumeSeries.priceScale().applyOptions({
-      // set the positioning of the volume series
+  
+  // 应用成交量系列高度设置
+  // 在应用scaleMargins前确保priceScale存在
+  if (volumeSeries.value ) {
+    const priceScale = chart.priceScale('volume')
+    priceScale.applyOptions({
       scaleMargins: {
-          top: 0.85, // highest point of the series will be 70% away from the top
-          bottom: 0,
-      },
-  });
-
-
-  // 在设置数据时同时设置成交量数据
-  const volumeData = props.data.map(d => ({
-    time: d.time,
-    value: d.volume,
-    color: d.close > d.open ? '#26a69a' : '#ef5350' // 颜色与蜡烛图同步
-  }))
-  volumeSeries?.setData(volumeData)
-
-  // 添加可见时间范围监听
-  chart.timeScale().subscribeVisibleTimeRangeChange((newRange:any) => {
-    if (!newRange?.from) return;
-    
-    // 获取当前数据的最早时间戳
-    const earliestDataTime = props.data[0]?.time as number;
-    
-    // 当可见范围开始时间接近数据集头部时触发加载
-    if (newRange.from <= earliestDataTime) {
-      console.log('触发')
-      // 触发父组件加载更多数据
-      emit('load-more-data', {
-        start: newRange?.from - 3600, // 提前1小时（示例值）
-        end: earliestDataTime
-      });
-    }
-  });
-
-
-  // 在initChart中添加时间格式化
-  // chart.applyOptions({
-  //   timeScale: {
-  //     tickMarkFormatter: (time: number) => {
-  //       return new Date(time * 1000).toLocaleDateString()
-  //     },
-  //     borderVisible: false // 新增：隐藏底部X轴轴线
-  //   }
-  // })
-
-  // 初始化十字光标订阅
-  chart.subscribeCrosshairMove(param => {
-    if (!param.point || !param.time || !candleSeries) {
-      toolTip.style.display = 'none'
-      return
-    }
-
-    const candleData = param.seriesData?.get(candleSeries) as CandleData
-    const price = candleData?.close.toFixed(2) || ''
-    const close = candleData?.close || 0
-    const open = candleData?.open || 0
-    const high = candleData?.high || 0
-    const low = candleData?.low || 0
-    const Increase = ((close - open) / open * 100).toFixed(2)
-
-    // console.log('price', price)
-    // console.log('candleSeries.options()', candleSeries.options())
-    // console.log('param:', param.seriesData)
-
-    // 获取EMA系列数据（示例获取第一个EMA系列）
-    const emaValues = []
-    for (const [series, data] of param.seriesData) {
-      if (series.seriesType() === 'Line' && series.options().title?.startsWith('EMA')) {
-        emaValues.push({
-          period: series.options().title?.split(' ')[1],
-          value: (data as any).value?.toFixed(2)
-        })
+        top: 0.85,
+        bottom: 0
       }
-    }
-
-    // 更新tooltip内容
-    toolTip.innerHTML = `
-      <div class="${props.theme === 'dark' ? 'text-black' : 'text-gray'}">
-        ${new Date(param.time * 1000).toLocaleString()}
-      </div>
-      <div class="flex items-center justify-between text-gray">
-        <div>收:</div>
-        <div>${close}</div>
-      </div>
-      <div class="flex items-center justify-between text-gray">
-        <div>开:</div>
-        <div>${open}</div>
-      </div>
-      <div class="flex items-center justify-between text-gray">
-        <div>高:</div>
-        <div>${high}</div>
-      </div>
-      <div class="flex items-center justify-between text-gray">
-        <div>低:</div>
-        <div>${low}</div>
-      </div>
-      <div class="flex items-center justify-between text-gray">
-        <div>涨幅:</div>
-        <div>
-          <text class="${Increase > 0 ? 'text-green' :'text-red'}">${Increase}%</text>
-        </div>
-      </div>
-    `
-
-
-    // 更新tooltip位置
-    const { x, y } = param.point
-    const containerWidth = container.clientWidth
-    const containerHeight = container.clientHeight
-    const tooltipWidth = toolTip.offsetWidth
-    const tooltipHeight = toolTip.offsetHeight
-
-    let left = x + 15
-    if (left > containerWidth - tooltipWidth) {
-      left = x - tooltipWidth - 15
-    }
-
-    let top = y + 15
-    if (top > containerHeight - tooltipHeight) {
-      top = y - tooltipHeight - 15
-    }
-
-    Object.assign(toolTip.style, {
-      left: `${left}px`,
-      top: `${top}px`,
-      display: 'block',
-      background: props.theme === 'dark' ? '#1E1E1E' : '#FFFFFF',
-      borderColor: props.theme === 'dark' ? '#666' : '#DDD'
     })
-  })
-
-  // 初始化EMA
-  initEMASeries()
-  updateTimeFormatter()
-  // 设置初始数据
-  candleSeries.setData(props.data)
-  updateAllEMAData()
-  // chart.timeScale().fitContent()
-  // 设置可视数据
-  const visibleRange = chart.timeScale().getVisibleRange()
-  if (visibleRange && props.data.length > 0) {
-    // 改用逻辑范围计算
-    chart.timeScale().setVisibleLogicalRange({
-      from: Math.max(0, props.data.length - 30), // 显示最后120根K线
-      to: props.data.length - 1
-    })
-  } else {
-    chart.timeScale().fitContent()
   }
 }
 
+// 修改后的数据渲染方法
+const renderChartData = async () => {
+  
+  if (!chart || !candleSeries) return
+
+  // 新增数据排序和验证
+  const sortedData = [...props.data].sort((a, b) => a.time - b.time)
+  validateDataConsistency(sortedData)
+
+  // 设置蜡烛图数据
+  candleSeries.setData(props.data)
+  
+  // 设置成交量数据
+  const volumeData = props.data.map(d => ({
+    time: d.time,
+    value: d.volume,
+    color: d.close > d.open ? '#26a69a' : '#ef5350'
+  }))
+  volumeSeries.value?.setData(volumeData)
+
+  // 初始化EMA系列
+  initEMASeries()
+  updateAllEMAData()
+  
+  // 设置可视范围
+  chart.timeScale().setVisibleLogicalRange({
+    from: Math.max(0, props.data.length - 30),
+    to: props.data.length - 1
+  })
+}
+
+// 新增数据验证方法
+const validateDataConsistency = (data: CandleData[]) => {
+  for (let i = 1; i < data.length; i++) {
+    if (data[i].time <= data[i - 1].time) {
+      console.error(`数据顺序错误: index=${i}, time=${data[i].time}, prev=${data[i - 1].time}`)
+      throw new Error('Invalid data sequence')
+    }
+  }
+}
+
+// 清空图表
 const removeChart = () => {
-  console.log('chart', chart)
   if (chart) {
     // 正确销毁图表实例
     chart.remove()
@@ -526,10 +645,14 @@ const redrawChart = async () => {
 // 主题响应优化
 watch(() => 
   props.data, (newVal, oldVal) => {
-    console.log('修改 newVal', newVal)
-    console.log('修改 oldVal', oldVal)
-    redrawChart()
-    initChart()
+    // console.log('修改 newVal', newVal)
+    // console.log('修改 oldVal', oldVal)
+    // 存在图表实例才做图表重绘
+    // if (chart && candleSeries) redrawChart()
+    if (newVal.length > 0 && chart) {
+      console.log('修改!!!!!!!')
+      renderChartData()  // 数据变化时只更新渲染
+    }
   },
   {
     deep: true, // 添加深度监听
@@ -612,7 +735,16 @@ const toggleEMA = (period: number) => {
   }
 }
 
-onMounted()
+onMounted(async () => {
+  console.log('执行')
+  await nextTick()
+  await initChartStructure()  // 先初始化结构
+  if (props.data.length > 0) {
+    await renderChartData()   // 如果有初始数据立即渲染
+  }
+})
+
+
 onUnmounted(() => {
   emaSeriesMap.value.forEach(series => chart?.removeSeries(series))
   chart?.remove()
@@ -642,18 +774,6 @@ defineExpose({
   position: sticky;
   top: 0;
   z-index: 10;
-}
-
-.time-btn {
-  padding: 4px 8px;
-  font-size: 12px;
-  transition: all 0.2s;
-}
-
-.time-btn.active {
-  background: #007AFF;
-  color: white;
-  border-color: transparent;
 }
 
 .chart {
