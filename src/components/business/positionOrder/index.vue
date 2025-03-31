@@ -1,30 +1,30 @@
 <template>
   <div class="position-temp">
-    <div v-for="index in 5" :key="index" class="box pb-15">
+    <div v-for="[key,value] in ordersMap" :key="key" class="box pb-15">
       <div class="positionData flex justify-between mt-20">
         <div class="leftBox flex justify-between">
           <div class="">
-            <p class="fw-b fs-16 text-black">BTCUSDT</p>
-            <p class="fs-12 text-black mt-5">全仓10.00X</p>
+            <p class="fw-b fs-16 text-black">{{value.symbol}}</p>
+            <p class="fs-12 text-black mt-5">全仓{{value.leverage}}X</p>
           </div>
           <div class="core ml-15">
-            <text class="fs-12 text-light-green">多仓</text>
+            <text class="fs-12 text-light-green">{{value.direction ==='LONG'?'做多':'做空'}}</text>
           </div>
         </div>
-        <div class="rightBox">
+        <div class="rightBox" v-if="value.status==='POSITIONING'">
           <p class="fs-12 text-gray text-right">未结盈亏</p>
-          <p class="fw-b fs-16 text-red mt-5">-126.68(-1.59%)</p>
+          <p class="fw-b fs-16 text-red mt-5">{{value.}}(-1.59%)</p>
         </div>
       </div>
       <div class="positionDetail mt-20">
         <div class="flex justify-between">
           <div class="detailBox w-20">
             <p class="fs-12 text-gray">持仓数量</p>
-            <p class="fs-12 text-balck mt-5">17:36:05</p>
+            <p class="fs-12 text-balck mt-5">{{value.tradeNum}}</p>
           </div>
           <div class="detailBox w-20">
             <p class="fs-12 text-gray">入场价格</p>
-            <p class="fs-12 text-balck mt-5">85,888.88</p>
+            <p class="fs-12 text-balck mt-5">{{value.}}</p>
           </div>
           <div class="detailBox w-20">
             <p class="fs-12 text-gray">标记价格</p>
@@ -42,7 +42,7 @@
           <!-- <van-button class="myBtn flex-1" type="default">
             <text class="fs-12 text-gray">追踪出场</text>
           </van-button> -->
-          <van-button class="myBtn flex-1" type="default">
+          <van-button class="myBtn flex-1" type="default" @click="closeOrder">
             <text class="fs-12 text-gray">平仓</text>
           </van-button>
         </div>
@@ -52,6 +52,53 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, onMounted ,computed,onUnmounted,nextTick} from 'vue';
+import { useUserStore } from '@/stores/user';
+import { closeOrder } from '@/api/trade'
+import { roundDown } from '@/utils/util'
+const userStore = useUserStore();
+const socketService = computed(() => userStore.socketService);
+const unrealizedProfit = computed(() =>{
+	return 
+})
+const ordersMap = ref(new Map())
+const lastPrice = ref(0)
+
+//平仓
+const close =(orderNo: string)=>{
+	const params={
+		orderNo:orderNo
+	}
+	closeOrder(params)
+}
+//
+const calculateUnrealizedProfit=(direction:string,tradeNum: number,entryPrice:number)=>{
+	if(direction ==='LONG'){
+		return roundDown((lastPrice.value - entryPrice) * tradeNum,2)
+	}else{
+		return roundDown((entryPrice - lastPrice.value ) * tradeNum,2)
+	}
+}
+onMounted(() => {
+  nextTick(() => {
+	  socketService.value.on('ticker',(data: any)=>{
+		  lastPrice.value = data.close //获取最新价
+	  })
+	  socketService.value.subscribeUser(userStore.userInfo.id)
+	  socketService.value.on(userStore.userInfo.id, (data: any) => {
+			const payload = data.payload
+			if(data.event === 'FUTURES_ORDER_ENTRUSTMENT' || data.event === 'FUTURES_ORDER_POSITION'){
+				ordersMap.value.set(payload.orderNo,payload)
+			}else if(data.event === 'FUTURES_ORDER_CANCEL' ||data.event === 'FUTURES_ORDER_BOOM' ||data.event === 'FUTURES_ORDER_CLOSED' ){
+				ordersMap.value.delete(payload.orderNo)
+			}
+	  })
+  })
+})
+onUnmounted(() => {
+	console.log('移除user_id监听')
+	socketService.value.unsubscribeUser(userStore.userInfo.id);
+})
 </script>
 
 <style lang="scss" scoped>

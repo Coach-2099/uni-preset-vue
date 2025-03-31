@@ -49,3 +49,13 @@ export function getWithdrawCoins(data: any) {
 export function getTrasferCoins(data: any) {
   return request.get({ url: "/admin/asset/getTrasferCoins", data })
 }
+
+// 获取用户现货交易对每种资产信息
+export function getSpotBalance(data: any) {
+  return request.get({ url: "/admin/asset/getSpotBalance", data })
+}
+
+// 获取合约or 贵金属账户余额
+export function getSwapBalance(data: any) {
+  return request.get({ url: "/admin/asset/getSwapBalance", data })
+}

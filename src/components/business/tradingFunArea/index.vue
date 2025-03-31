@@ -28,7 +28,7 @@
     <div class="mt-15 buyAndSellBox flex justify-between items-stretch" :class="{'marginTop75': !showChart}">
       <div class="buyAndSellMoudle flex-1">
         <buyAndSell v-if="buyAndSellType == 'spot'"></buyAndSell>
-        <buyAndSellContract v-if="buyAndSellType == 'contract'"></buyAndSellContract>
+        <buyAndSellContract v-if="buyAndSellType == 'contract'" :lastPrice="lastPrice" :symbol="symbol"></buyAndSellContract>
       </div>
       <div class="flex-1">
         <priceFluctuations :lastPrice="lastPrice" ref="priceFluctuationsRef"></priceFluctuations>
@@ -77,10 +77,6 @@ onShow(() => {
   if (controlStore.quotesData.symbol){
 	  symbol.value = controlStore.quotesData.symbol
   }
-  priceFluctuationsRef.value?.loadData({
-    klineType: 'FUTURES',
-    symbol: symbol.value
-  })
 })
 
 onMounted(() => {
@@ -97,6 +93,10 @@ onMounted(() => {
 	  socketService.value.on(`${symbol.value}-ticker`, (data: any) => {
 	  		lastPrice.value = data.close
 			rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
+	  })
+	  priceFluctuationsRef.value?.loadData({
+	    klineType: 'FUTURES',
+	    symbol: symbol.value
 	  })
   })
 })

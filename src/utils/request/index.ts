@@ -36,14 +36,11 @@ const requestHooks: RequestHooks = {
     },
     async responseInterceptorsHook(response) {
         const { statusCode, data } = response as any
-        console.log('statusCode', statusCode)
         switch (statusCode) {
             case RequestCodeEnum.SUCCESS:
-                console.log('data!!!!!', data)
                 // 判断为登录接口
                 if (data.access_token) return data
                 if (data.code == RequestCodeEnum.BUSINESS_SUCCESS_CODE) {
-                    console.log('6666')
                     return data.data
                 }
                 if (data.code == RequestCodeEnum.BUSINESS_FAIL_CODE) {
