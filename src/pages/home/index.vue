@@ -207,7 +207,6 @@ const socketService = computed(() => userStore.socketService);
 
   // Connect to the socket server
   onMounted(() => {
-    console.log('userStore!!!!', userStore.userInfo)
     // 切换类型时请求
     nextTick(() => {
       onClickTab({name: 0})

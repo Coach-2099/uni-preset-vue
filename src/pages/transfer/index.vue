@@ -2,76 +2,84 @@
   <div class="transfer-index">
     <navigationBar title="划转"></navigationBar>
     <div class="accountTemp pt-25 pb-25 px-25 bg-white">
-      <div class="flex justify-between items-center">
-        <div class="flex justify-between items-center">
-          <p class="text-gray fs-14 mr-25">从</p>
-          <van-popover
-            placement="bottom-end"
-            :actions="actionsAccountType"
-            @select="onSelectFromAccountType"
-          >
-            <template #reference>
-              <div class="baseSelect w-100 py-5 flex justify-between items-center">
-                <div class="leftBox flex items-center">
-                  <p class="fs-14 text-black">{{ fromAccount?.text }}</p>
+      <transition-group name="flip" tag="div" class="account-container">
+        <div key="from" class="flex justify-between items-center">
+          <div class="flex justify-between items-center">
+          <div class="flex justify-between items-center">
+            <p class="text-gray fs-14 mr-25">从</p>
+            <van-popover
+              placement="bottom-start"
+              :actions="actionsAccountType"
+              @select="onSelectFromAccountType"
+            >
+              <template #reference>
+                <div class="baseSelect w-100 py-5 flex justify-between items-center">
+                  <div class="leftBox flex items-center">
+                    <p class="fs-14 text-black">{{ fromAccount?.text }}</p>
+                  </div>
+                  <!-- <div class="rightBox flex items-center">
+                    <image
+                      class="downIcon"
+                      src="/static/images/down.png"
+                      mode="scaleToFill"
+                    />
+                  </div> -->
                 </div>
-                <div class="rightBox flex items-center">
-                  <image
-                    class="downIcon"
-                    src="/static/images/down.png"
-                    mode="scaleToFill"
-                  />
-                </div>
-              </div>
-            </template>
-          </van-popover>
-        </div>
-        <image
-          class="downIcon"
-          src="/static/images/downGray.png"
-          mode="scaleToFill"
-        />
-      </div>
-      <div class="divLine mt-25 mb-25 bg-white pos-relative">
-        <van-divider>
+              </template>
+            </van-popover>
+          </div>
           <image
-            @click="exchange"
-            class="pos-absolute exchangeIcon"
-            src="/static/svg/tools/exchange.svg"
+            class="downIcon"
+            src="/static/images/downGray.png"
             mode="scaleToFill"
           />
-        </van-divider>
-      </div>
-      <div class="flex justify-between items-center">
-        <div class="flex justify-between items-center">
-          <p class="text-gray fs-14 mr-25">到</p>
-		  <van-popover
-		    placement="bottom-end"
-		    :actions="toAccountType"
-		    @select="onSelectToAccountType"
-		  >
-		    <template #reference>
-		      <div class="baseSelect w-100 py-5 flex justify-between items-center">
-		        <div class="leftBox flex items-center">
-		          <p class="fs-14 text-black">{{ toAccount?.text }}</p>
-		        </div>
-		        <div class="rightBox flex items-center">
-		          <image
-		            class="downIcon"
-		            src="/static/images/down.png"
-		            mode="scaleToFill"
-		          />
-		        </div>
-		      </div>
-		    </template>
-		  </van-popover>
         </div>
-        <image
-          class="downIcon"
-          src="/static/images/downGray.png"
-          mode="scaleToFill"
-        />
-      </div>
+        </div>
+
+        <div class="divLine mt-25 mb-25 bg-white pos-relative">
+          <van-divider>
+            <image
+              @click="exchange"
+              class="pos-absolute exchangeIcon"
+              src="/static/svg/tools/exchange.svg"
+              mode="scaleToFill"
+            />
+          </van-divider>
+        </div>
+
+        <div key="to" class="flex justify-between items-center">
+          <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center">
+              <p class="text-gray fs-14 mr-25">到</p>
+              <van-popover
+                placement="bottom-start"
+                :actions="toAccountType"
+                @select="onSelectToAccountType"
+              >
+                <template #reference>
+                  <div class="baseSelect w-100 py-5 flex justify-between items-center">
+                    <div class="leftBox flex items-center">
+                      <p class="fs-14 text-black">{{ toAccount?.text }}</p>
+                    </div>
+                    <!-- <div class="rightBox flex items-center">
+                      <image
+                        class="downIcon"
+                        src="/static/images/down.png"
+                        mode="scaleToFill"
+                      />
+                    </div> -->
+                  </div>
+                </template>
+              </van-popover>
+            </div>
+            <image
+              class="downIcon"
+              src="/static/images/downGray.png"
+              mode="scaleToFill"
+            />
+          </div>
+        </div>
+      </transition-group>
     </div>
     <div class="inputBox mt-5 bg-white">
       <div class="pt-20 mb-20">
@@ -238,6 +246,13 @@ const loadTrasferCoins = async () => {
 
 const exchange = () => {
   console.log('交换上下')
+    // 交换账户
+    const temp = fromAccount.value
+    fromAccount.value = toAccount.value
+    toAccount.value = temp
+
+    // 更新可选账户类型
+    toAccountType.value = actionsAccountType.filter(item => item.value !== fromAccount.value.value)
 }
 
 //提交划转
@@ -335,5 +350,33 @@ const transfer =async() =>{
       height: 16px;
     }
   }
+
+  /* 添加交换动画 */
+  .flip-move {
+    transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); // 更明显的缓动曲线
+  }
+
+  .flip-enter-active,
+  .flip-leave-active {
+    transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); // 同步延长持续时间
+    position: absolute;
+    width: 100%; // 防止宽度抖动
+  }
+
+  .flip-enter-from {
+    opacity: 0;
+    transform: translateY(-30px); // 增大位移量
+  }
+
+  .flip-leave-to {
+    opacity: 0;
+    transform: translateY(30px); // 增大位移量
+  }
+
+  .account-container {
+    position: relative;
+    min-height: 150px; // 保证容器高度避免跳动
+  }
+
 }
 </style>

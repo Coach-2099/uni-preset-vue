@@ -9,7 +9,7 @@
     <template #pulling="props">
       <img
         class="doge"
-        src="https://fastly.jsdelivr.net/npm/@vant/assets/doge.png"
+        src="@/static/images/logo.png"
         :style="{ transform: `scale(${props.distance / 80})` }"
       />
     </template>
@@ -18,7 +18,7 @@
     <template #loosing>
       <img
         class="doge"
-        src="https://fastly.jsdelivr.net/npm/@vant/assets/doge.png"
+        src="@/static/images/logo.png"
       />
     </template>
 
@@ -26,7 +26,7 @@
     <template #loading>
       <img
         class="doge"
-        src="https://fastly.jsdelivr.net/npm/@vant/assets/doge-fire.jpeg"
+        src="@/static/images/logo.png"
       />
     </template>
     <slot name="content"></slot>

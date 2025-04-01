@@ -1,62 +1,67 @@
 <template>
   <div class="realTimeTransactions-index">
-    <div class="sellAndBuyTemp flex justify-between">
-      <div 
-        class="trapezoidLeft"
-        :style="{ width: leftWidth + '%', 'min-width': '15%'  }"
-      >
-        <div class="leftBox flex items-center pr-5">
-          <image
-            src="/static/images/buyImg.png"
-            mode="scaleToFill"
-          />
-          <div class="fs-12 ml-5">{{ leftWidth }}%</div>
+    <dataDefault v-if="bidsList.length === 0 || asksList.length === 0" class="noData mt-25"></dataDefault>
+    <div v-else>
+      <div class="sellAndBuyTemp flex justify-between">
+        <div 
+          class="trapezoidLeft"
+          :style="{ width: leftWidth + '%', 'min-width': '15%'  }"
+        >
+          <div class="leftBox flex items-center pr-5">
+            <image
+              src="/static/images/buyImg.png"
+              mode="scaleToFill"
+            />
+            <div class="fs-12 ml-5">{{ leftWidth }}%</div>
+          </div>
+        </div>
+        <div
+          class="trapezoidRight text-right"
+          :style="{ width: rightWidth + '%', 'min-width': '15%'  }"
+        >
+          <div class="rightBox flex items-center pl-5">
+            <div class="fs-12 mr-5">{{ rightWidth }}%</div>
+            <image
+              src="/static/images/sellImg.png"
+              mode="scaleToFill"
+            />
+          </div>
         </div>
       </div>
-      <div 
-        class="trapezoidRight text-right"
-        :style="{ width: rightWidth + '%', 'min-width': '15%'  }"
-      >
-        <div class="rightBox flex items-center pl-5">
-          <div class="fs-12 mr-5">{{ rightWidth }}%</div>
-          <image
-            src="/static/images/sellImg.png"
-            mode="scaleToFill"
-          />
-        </div>
+      <div class="sellAndBuyTip text-gray fs-14 mt-5 flex justify-between">
+        <div class="fs-14 text-gray">买入</div>
+        <div class="fs-14 text-gray">卖出</div>
+        <div class="fs-14">0.1</div>
       </div>
-    </div>
-    <div class="sellAndBuyTip text-gray fs-14 mt-5 flex justify-between">
-      <div class="fs-14 text-gray">买入</div>
-      <div class="fs-14 text-gray">卖出</div>
-      <div class="fs-14">0.1</div>
-    </div>
-    <div class="contentTip text-gray fs-14 flex justify-between mt-20">
-      <div class="fs-12">数量({{tradeToken}})</div>
-      <div class="fs-12">价格({{basicToken}})</div>
-      <div class="fs-12">数量({{tradeToken}})</div>
-    </div>
-    <div class="contentBuySell w-100 flex justify-between mt-15">
-      <div class="tempBox w-100">
-        <div v-for="(item, index) in bidsList" :key="index" class="buyTemp pos-relative flex flex-1 justify-between">
-          <div class="fs-12 text-black">{{item[1]}}</div>
-          <div class="fs-12 text-light-green">{{item[0]}}</div>
-          <!-- 绿色背景层 -->
-          <div 
-            class="bg-layer pos-absolute"
-            :style="{ 'width': buyWidth +'%' }"
-          ></div>
+      <div>
+        <div class="contentTip text-gray fs-14 flex justify-between mt-20">
+          <div class="fs-12">数量({{tradeToken}})</div>
+          <div class="fs-12">价格({{basicToken}})</div>
+          <div class="fs-12">数量({{tradeToken}})</div>
         </div>
-      </div>
-      <div class="tempBox w-100">
-        <div v-for="(item, index) in asksList" :key="index" class="sellTemp pos-relative flex flex-1 justify-between">
-          <div class="fs-12 text-red">{{ item[0] }}</div>
-          <div class="fs-12 text-black">{{ item[1] }}</div>
-          <!-- 红色背景层 -->
-          <div 
-            class="bg-layer pos-absolute"
-            :style="{ 'width': sellWidth + '%' }"
-          ></div>
+        <div class="contentBuySell w-100 flex justify-between mt-15">
+          <div class="tempBox w-100">
+            <div v-for="(item, index) in bidsList" :key="index" class="buyTemp pos-relative flex flex-1 justify-between">
+              <div class="fs-12 text-black">{{item[1]}}</div>
+              <div class="fs-12 text-light-green">{{item[0]}}</div>
+              <!-- 绿色背景层 -->
+              <div 
+                class="bg-layer pos-absolute"
+                :style="{ 'width': buyWidth +'%' }"
+              ></div>
+            </div>
+          </div>
+          <div class="tempBox w-100">
+            <div v-for="(item, index) in asksList" :key="index" class="sellTemp pos-relative flex flex-1 justify-between">
+              <div class="fs-12 text-red">{{ item[0] }}</div>
+              <div class="fs-12 text-black">{{ item[1] }}</div>
+              <!-- 红色背景层 -->
+              <div 
+                class="bg-layer pos-absolute"
+                :style="{ 'width': sellWidth + '%' }"
+              ></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -68,6 +73,7 @@ import { ref,onUnmounted,onMounted,nextTick,computed,watch} from 'vue'
 import { getDepth } from '@/api/quotes'
 import { useUserStore } from '@/stores/user';
 import { useControlStore } from '@/stores/control';
+import dataDefault from '@/components/dataDefault/index.vue';
 
 const controlStore = useControlStore();
 
@@ -219,6 +225,9 @@ defineExpose({
   .sellAndBuyTip {
     padding-left: 8px;
     padding-right: 8px;
+  }
+  .noData {
+    padding-bottom: 128px; // 确保底部有足够的空间
   }
   .contentTip {
     padding-left: 8px;

@@ -31,7 +31,7 @@
     <div class="bottom pos-relative bg-white mt-5 px-10">
       <van-tabs v-model:active="active" offset-top="74" shrink sticky>
         <van-tab title="订单">
-          <!-- <realTimeTransactions ref="realTimeTransactionsRef"></realTimeTransactions> -->
+          <realTimeTransactions ref="realTimeTransactionsRef"></realTimeTransactions>
         </van-tab>
         <van-tab v-if="activeTab === 'left'" title="成交">
           <transactionOrder></transactionOrder>
@@ -71,15 +71,23 @@ const activeTab = ref<'left' | 'right'>('left')
 
 const realTimeTransactionsRef: any = ref(null)
 
+const symbol = ref('BTC/USDT')
+
 onLoad(() => {
   console.log('params', controlStore.quotesData.symbol)
   console.log('params', controlStore.quotesData.activeType)
+  if(controlStore.quotesData.symbol){
+	  symbol.value= controlStore.quotesData.symbol
+  }
   // 修正类型错误，确保赋值为 'left' 或 'right'
   activeTab.value = controlStore.quotesData.activeType || 'left';
 })
 
 onShow(() => {
-  realTimeTransactionsRef.value?.loadData()
+  realTimeTransactionsRef.value?.loadData({
+    klineType: 'SPOT',
+    symbol: symbol.value
+  })
 })
 
 onMounted(() => {})

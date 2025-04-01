@@ -92,9 +92,9 @@ export default {
   },
   homeIndex: {
     login: {
-      signBy: '登录BYBIT',
+      signBy: '登录XAUSWAP',
       emailOrPhone: '邮箱/手机号',
-      registerIn: '注册BYBIT',
+      registerIn: '注册XAUSWAP',
     },
     totalAssets: '总资产折合',
     registerToUnlock: '注册解锁高达',
