@@ -238,7 +238,7 @@ const signUp = async () => {
     // countryName: checkCountry.value.name,
     // countryCode: checkCountry.value.value,
     code: '111111',
-    inviteCode: ''
+    inviteCode: InvitationCode.value
   }
   const data = await register(params)
   console.log('data', data)

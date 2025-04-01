@@ -13,7 +13,7 @@
         </div>
         <div class="rightBox" v-if="value.status==='POSITIONING'">
           <p class="fs-12 text-gray text-right">未结盈亏</p>
-          <p class="fw-b fs-16 text-red mt-5">{{calculateUnrealizedProfit(value.direction,value.quantity,value.entryPrice)}}(-1.59%)</p>
+          <p class="fw-b fs-16 text-red mt-5">{{value.unrealizedProfit}}({{value.unrealizedProfitScale}}%)</p>
         </div>
       </div>
       <div class="positionDetail mt-20">
@@ -22,10 +22,10 @@
             <p class="fs-12 text-gray">持仓数量</p>
             <p class="fs-12 text-balck mt-5">{{value.tradeNum}}</p>
           </div>
-          <!-- <div class="detailBox w-20">
+          <div class="detailBox w-20">
             <p class="fs-12 text-gray">入场价格</p>
-            <p class="fs-12 text-balck mt-5">{{value.}}</p>
-          </div> -->
+            <p class="fs-12 text-balck mt-5">{{value.entryPrice}}</p>
+          </div>
           <div class="detailBox w-20">
             <p class="fs-12 text-gray">标记价格</p>
             <p class="fs-12 text-black mt-5">85,888.88</p>
@@ -42,7 +42,7 @@
           <!-- <van-button class="myBtn flex-1" type="default">
             <text class="fs-12 text-gray">追踪出场</text>
           </van-button> -->
-          <van-button class="myBtn flex-1" type="default" @click="closeOrder">
+          <van-button class="myBtn flex-1" type="default" @click="close(value.orderNo)">
             <text class="fs-12 text-gray">平仓</text>
           </van-button>
         </div>
@@ -52,10 +52,22 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted ,computed,onUnmounted,nextTick} from 'vue';
+import { ref, onMounted ,computed,onUnmounted,nextTick,watch} from 'vue';
 import { useUserStore } from '@/stores/user';
 import { closeOrder } from '@/api/trade'
 import { roundDown } from '@/utils/util'
+
+watch(
+  () => lastPrice.value,
+  (newVal, oldVal) => {
+	for(let val of ordersMap.value.values()){
+		if(val.status==='POSITIONING'){
+			val.unrealizedProfit = calculateUnrealizedProfit(val.direction,val.quantity,val.entryPrice)
+			val.unrealizedProfitScale=roundDown(val.unrealizedProfit/val.margin*100,2)
+		}
+	}
+  }
+);
 const userStore = useUserStore();
 const socketService = computed(() => userStore.socketService);
 const unrealizedProfit = computed(() =>{

@@ -46,8 +46,8 @@ export function getWithdrawCoins(data: any) {
 }
 
 // 获取内部转账可转的币种列表
-export function getTrasferCoins(data: any) {
-  return request.get({ url: "/admin/asset/getTrasferCoins", data })
+export function getTrasferCoins() {
+  return request.get({ url: "/admin/asset/getTrasferCoins"})
 }
 
 // 获取用户现货交易对每种资产信息
@@ -58,4 +58,9 @@ export function getSpotBalance(data: any) {
 // 获取合约or 贵金属账户余额
 export function getSwapBalance(data: any) {
   return request.get({ url: "/admin/asset/getSwapBalance", data })
+}
+
+// 根据账户类型获取余额信息
+export function getBalance(data: any) {
+  return request.get({ url: "/admin/asset/getBalance", data })
 }
