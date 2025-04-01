@@ -1,9 +1,6 @@
 <template>
   <div class="login-index">
-    <div class="pt-25">
-      <van-icon class="animate__animated animate__rotateIn" name="cross" size="25" @click="goBack"/>
-    </div>
-    <div class="fs-24 mt-25 mb-25 fw-b">{{ $t('homeIndex.login.signBy') }}</div>
+    <div class="fs-24 pt-25 pb-25 fw-b">{{ $t('homeIndex.login.signBy') }}</div>
     <div class="inputBox">
       <div class="inputTitle fw-b mb-5">{{ $t('common.account') }}</div>
       <input
@@ -35,7 +32,7 @@
 
     <div class="notes flex justify-between">
       <!-- 忘记密码 -->
-      <div class="text-blue">{{ $t('common.forgetPassword') }}</div>
+      <div @click="goForgotPWD" class="text-blue">{{ $t('common.forgetPassword') }}</div>
       <!-- 隐私政策 -->
       <div @click="goPrivacy" class="text-blue">{{ $t('common.privacypolicy') }}</div>
     </div>
@@ -50,7 +47,8 @@
 import { ref } from 'vue';
 import { accountLogin } from '@/api/account';
 import { useUserStore } from '@/stores/user';
-
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 const userStore = useUserStore();
 
 const account = ref('');
@@ -60,8 +58,8 @@ const showPassword = ref(false)
 
 const signIn = async () => {
   console.log('sign in')
-  if (!account.value) return uni.showToast({ title: $t('tips.enterAccount'), icon: 'none' })
-  if (!password.value) return uni.showToast({ title: $t('tips.enterPassword'), icon: 'none' })
+  if (!account.value) return uni.showToast({ title: t('tips.enterAccount'), icon: 'none' })
+  if (!password.value) return uni.showToast({ title: t('tips.enterPassword'), icon: 'none' })
   const params = {
     username: account.value,
     password: password.value,
@@ -93,6 +91,13 @@ const goPrivacy = () => {
   // 暂时设置前往注册页面
   uni.navigateTo({
     url: '/pages/register/index'
+  })
+}
+
+const goForgotPWD = () => {
+  console.log('忘记密码')
+  uni.navigateTo({
+    url: '/pages/forGotPWD/index'
   })
 }
 

@@ -1,10 +1,15 @@
 <template>
   <div class="register-index">
-    <div class="pt-25">
+    <!-- <div class="pt-25">
       <van-icon class="animate__animated animate__rotateIn" name="cross" size="25" @click="goBack"/>
-    </div>
-    <div class="fs-24 mt-25 mb-25 fw-b">{{ $t('homeIndex.login.registerIn') }}</div>
-    <van-tabs v-moiphonedel:active="active" background="#f8f8f8" shrink>
+    </div> -->
+    <div class="fs-24 pt-25 pb-25 fw-b">{{ $t('homeIndex.login.registerIn') }}</div>
+    <van-tabs
+      v-moiphonedel:active="active"
+      background="#f8f8f8"
+      shrink
+      @click-tab="onClickTab"
+    >
       <van-tab title="phone">
         <div class="inputBox mt-20">
           <div class="inputTitle fw-b mb-5">{{ $t('common.phone') }}</div>
@@ -15,7 +20,6 @@
                   +{{ countryCode }}
                 </template>
               </van-button>
-
               <van-popup v-model:show="showPicker" destroy-on-close position="bottom">
                 <van-picker
                   :columns="countryCodeArray"
@@ -31,26 +35,30 @@
               </van-popup>
             </div>
             <input
-              v-model="phone"
+              v-model="userName"
               class="flex-1 base-input"
               :placeholder="$t('tips.enterPhone')"
               placeholder-class="input-placeholder"
             />
-            <div class="codeBtnBox ml-5">
-              <van-button @click="getCode" type="primary">{{ $t('common.getVCode') }}</van-button>
-            </div>
           </div>
         </div>
         <div class="inputBox mt-20">
           <div class="inputTitle fw-b mb-5">{{ $t('common.vCode') }}</div>
           <div class="flex outerCodeBox">
             <input
-              v-model="phoneCode"
+              v-model="vCode"
               class="flex-1 base-input"
               :placeholder="$t('tips.enterVCode')"
               placeholder-class="input-placeholder"
               @input="inputPhoneCode"
             />
+            <baseVCodeButton 
+              :disabled="!userName"
+              @get-code="getCode"
+            />
+            <!-- <div class="codeBtnBox ml-5">
+              <van-button @click="getCode" type="primary">{{ $t('common.getVCode') }}</van-button>
+            </div> -->
           </div>
         </div>
       </van-tab>
@@ -59,26 +67,27 @@
           <div class="inputTitle fw-b mb-5">{{ $t('common.email') }}</div>
           <div class="flex">
             <input
-              v-model="email"
+              v-model="userName"
               class="flex-1 base-input"
               placeholder="eg: xxxx@gmail.com"
               placeholder-class="input-placeholder"
               @input="inputPhone"
             />
-            <div class="codeBtnBox ml-5">
-              <van-button @click="getCode" type="primary">{{ $t('common.getVCode') }}</van-button>
-            </div>
           </div>
         </div>
         <div class="inputBox mt-20">
           <div class="inputTitle fw-b mb-5">{{ $t('common.vCode') }}</div>
           <div class="flex outerCodeBox">
             <input
-              v-model="phoneCode"
+              v-model="vCode"
               class="flex-1 base-input"
-              placeholder="phone number code"
+              :placeholder="$t('tips.enterVCode')"
               placeholder-class="input-placeholder"
               @input="inputPhoneCode"
+            />
+            <baseVCodeButton 
+              :disabled="!userName"
+              @get-code="getCode"
             />
           </div>
         </div>
@@ -113,6 +122,7 @@
         v-model="InvitationCode"
         class="flex-1 base-input "
         :placeholder="$t('tips.enterICode')"
+        :disabled="urlInviteCode"
         placeholder-class="input-placeholder"
         @input="inputInvitationCode"
       />
@@ -125,9 +135,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-
+import { ref, onMounted } from 'vue'
 import { chkAccount, sendmsg, register } from '@/api/account'
+import { getUrlParams } from '@/utils/util'
+import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const active = ref(0)
 const showPicker = ref(false)
@@ -149,7 +162,11 @@ const email = ref('')
 const emailCode = ref('')
 
 const phone = ref()
-const phoneCode = ref()
+
+const userName = ref()
+const vCode = ref('')
+
+
 
 const password = ref()
 
@@ -157,18 +174,27 @@ const InvitationCode = ref()
 
 const showPassword = ref(true)
 
+const urlInviteCode = ref('')
+
+onMounted(() => {
+  const params = getUrlParams()
+  urlInviteCode.value = params.inviteCode
+  InvitationCode.value = params.inviteCode
+})
+
 // 获取验证码
 const getCode = async () => {
-  if (!phone.value) return uni.showToast({ title: '请输入手机号', icon: 'none' })
+  if (!userName.value) return uni.showToast({ title: t('tips.enterAccount'), icon: 'none' })
   const params = {
     sendMsgType: '', // 手机或者邮箱
-    userName: phone.value,
+    userName: userName.value,
     countryCode: countryCode.value,
   }
-  const data = await sendmsg(params)
+  await sendmsg(params)
   uni.showToast({
-    title: $t('tips.vCodeHasSent'),
-    icon: 'none'
+    title: t('tips.vCodeHasSent'),
+    icon: 'none',
+    duration: 3000
   })
 }
 
@@ -178,20 +204,26 @@ const goBack = () => {
   })
 }
 
+const onClickTab = (e: any) => {
+  console.log('e: ', e)
+  userName.value = ''
+  active.value = e.name
+}
+
 const inputPhone = () => {
-  console.log('phone', phone.value)
+  console.log('userName', userName.value)
 }
 
 
 // 检查手机号-帐号-邮箱是否存在
 const checkAccount = async () => {
-  const data = await chkAccount(phone.value);
+  const data = await chkAccount(userName.value);
   // 如果后续需要使用 data，可以在这里添加相应逻辑
   console.log('data', data);
 };
 
 const inputPhoneCode = () => {
-  console.log('phoneCode', phoneCode.value)
+  console.log('vCode', vCode.value)
 }
 
 const inputInvitationCode = () => {
@@ -231,7 +263,7 @@ const onConfirm = ({ selectedValues, selectedOptions }: PickerConfirmEvent) => {
 
 const signUp = async () => {
   const params = {
-    username: phone.value ,
+    username: userName.value ,
     password: password.value,
     countryName: '',
     countryCode: '',

@@ -44,7 +44,7 @@
           <p class="mt-5 text-by-black fs-12 fw-b">{{ $t('noun.transfer') }}</p>
         </div>
         <div class="contentBox flex-col items-center justify-center" @click="goWithdraw">
-          <van-image width="28" hidden="28" src="/static/svg/home/withdraw.svg" />
+          <van-image src="/static/svg/home/withdraw.svg" />
           <p class="mt-5 text-by-black fs-12 fw-b">{{ $t('noun.withdraw') }}</p>
         </div>
         <div class="contentBox flex-col items-center justify-center" @click="goInvite">
@@ -145,25 +145,21 @@ const goInvite = () => {
     padding-left: 18px;
     padding-right: 18px;
     .ribbon {
-      gap: 10px;
-      overflow-x: scroll;
-      // 隐藏滚动条新增样式
-      scrollbar-width: none; /* Firefox */
-      -ms-overflow-style: none; /* IE/Edge */
-      &::-webkit-scrollbar {
-        display: none; /* Chrome/Safari/Webkit */
-        width: 0;
-        height: 0;
-      }
-
-      /* 移动端优化（可选） */
-      -webkit-overflow-scrolling: touch; /* 启用弹性滚动 */
-
+      gap: 5px;
+      // overflow-x: scroll;
+      // // 隐藏滚动条新增样式
+      // scrollbar-width: none; /* Firefox */
+      // -ms-overflow-style: none; /* IE/Edge */
+      // &::-webkit-scrollbar {
+      //   display: none; /* Chrome/Safari/Webkit */
+      //   width: 0;
+      //   height: 0;
+      // }
 
       .contentBox {
-        width: 24%;
+        width: 22%;
         aspect-ratio: 1/1;
-        min-width: 70px;
+        min-width: 65px;
         // min-height: 84px;
         padding: 10px;
         background: #FFFFFF;

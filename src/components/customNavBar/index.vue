@@ -36,8 +36,8 @@
 <script lang="ts" setup>
 import { ref, computed, watch, nextTick, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-
 const { t } = useI18n()
+
 const navBackground = ref('#ffffff');
 
 const visible = ref(true)

@@ -56,7 +56,7 @@
     <div class="sellAndBuyTemp flex justify-between items-center mt-5">
       <div 
         class="trapezoidLeft"
-        :style="{ width: leftWidth + '%', 'min-width': '25%' }"
+        :style="{ width: leftWidth + '%', 'min-width': '30%' }"
       >
         <div class="leftBox flex items-center pr-5">
           <image
@@ -68,7 +68,7 @@
       </div>
       <div 
         class="trapezoidRight text-right"
-        :style="{ width: rightWidth + '%', 'min-width': '25%' }"
+        :style="{ width: rightWidth + '%', 'min-width': '30%' }"
       >
         <div class="rightBox flex items-center pl-5">
           <div class="fs-8 mr-5">{{ rightWidth }}%</div>
@@ -237,8 +237,8 @@ defineExpose({
     // 容器设置过渡
     transition: all 0.3s ease-in-out;
     width: 100%;
-    height: 16px;
-    line-height: 16px;
+    height: 20px;
+    line-height: 20px;
     [class^="trapezoid"] {
       transition: all 0.3s ease-in-out;
       height: 100%;
@@ -273,11 +273,11 @@ defineExpose({
       // padding-left: 12%; // 动态补偿
       justify-content: flex-start;
       .leftBox {
-        height: 16px;
-        line-height: 16px;
+        height: 20px;
+        line-height: 20px;
         image {
-          width: 16px;
-          height: 16px;
+          width: 20px;
+          height: 20px;
         }
       }
     }
@@ -296,11 +296,11 @@ defineExpose({
       // padding-right: 12%; // 动态补偿
       justify-content: flex-end;
       .rightBox {
-        height: 16px;
-        line-height: 16px;
+        height: 20px;
+        line-height: 20px;
         image {
-          width: 16px;
-          height: 16px;
+          width: 20px;
+          height: 20px;
         }
       }
     }

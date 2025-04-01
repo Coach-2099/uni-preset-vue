@@ -12,11 +12,15 @@
             class="myInput flex-1 px-10 py-10 w-100"
             placeholder="enter your account"
           />
-          <div class="codeBtnBox ml-5" @click="getCode">
+          <baseVCodeButton 
+            :disabled="!accountNumber"
+            @get-code="getCode"
+          />
+          <!-- <div class="codeBtnBox ml-5" @click="getCode">
             <van-button type="primary" :disabled="countdown > 0" >
               {{ countdown > 0 ? `${countdown}${$t('common.tryAgain')}`  : $t('common.getVCode') }}
             </van-button>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="mt-10">
@@ -66,9 +70,8 @@ import { ref } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue';
 import { sendmsg } from '@/api/account'
 import { setTradepwd } from '@/api/user'
+import baseVCodeButton from '@/components/baseVCodeButton/index.vue'
 
-const countdown = ref(0); // 倒计时响应式变量
-let timer: number | null = null;  // 计时器引用
 
 const accountNumber = ref('')
 const password = ref('')
@@ -94,16 +97,6 @@ const confirmFun = async () => {
 
 const getCode = async () => {
   if (!accountNumber.value) return uni.showToast({ title: $t('tips.enterAccount'), icon: 'none' })
-  
-  // 启动倒计时
-  countdown.value = 60;
-  timer = setInterval(() => {
-    countdown.value--;
-    if (countdown.value <= 0 && timer) {
-      clearInterval(timer);
-      timer = null;
-    }
-  }, 1000);
 
   const params = {
     userName: accountNumber.value,
