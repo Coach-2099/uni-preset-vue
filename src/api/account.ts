@@ -37,8 +37,8 @@ export function findpwd(data:any) {
 }
 
 // 检查手机号-帐号-邮箱是否存在
-export function chkAccount(mobile: any) {
-  return request.get({ url: "/admin/common/chkAccount?userName="+ mobile});
+export function chkAccount(data?: any) {
+  return request.get({ url: "/admin/common/chkAccount", data});
 }
 
 // 发送消息验证码
