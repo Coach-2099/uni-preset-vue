@@ -31,7 +31,7 @@
     <div class="bottom pos-relative bg-white mt-5 px-10">
       <van-tabs v-model:active="active" offset-top="74" shrink sticky>
         <van-tab title="订单">
-          <realTimeTransactions ref="realTimeTransactionsRef"></realTimeTransactions>
+          <!-- <realTimeTransactions ref="realTimeTransactionsRef"></realTimeTransactions> -->
         </van-tab>
         <van-tab v-if="activeTab === 'left'" title="成交">
           <transactionOrder></transactionOrder>

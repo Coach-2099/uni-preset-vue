@@ -84,7 +84,10 @@ const showResetPassword = ref(false);
 
 const verifyAccount = async () => {
   if (!userName.value) return uni.showToast({ title: t('tips.enterAccount'), icon: 'none' })
-  const data = await chkAccount(userName.value);
+  const params = {
+    userName: userName.value,
+  }
+  const data = await chkAccount(params);
   showResetPassword.value = true;
 }
 

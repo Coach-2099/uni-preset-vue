@@ -117,6 +117,9 @@ let chart: IChartApi | null = null
 let candleSeries: ISeriesApi<CandlestickSeries> | null = null
 const emaSeriesMap = ref(new Map<number, ISeriesApi<LineSeries>>())
 
+// 新增tooltip引用
+const toolTip = ref<HTMLElement | null>(null)
+
 const volumeSeries = ref<ISeriesApi<'Histogram'> | null>(null) // 成交量系列响应式引用
 
 
@@ -499,6 +502,63 @@ const updateAllEMAData = () => {
 //   }
 // }
 
+// 新增EMA最后K线更新方法
+const updateEMAForLastCandle = (candle: CandleData) => {
+  const configs = props.emaConfigs || defaultEMAConfigs
+  
+  configs.forEach(config => {
+    const series = emaSeriesMap.value.get(config.period)
+    if (!series) return
+
+    // 获取当前EMA数据最后值
+    const currentData = series.data()
+    const lastEma = currentData[currentData.length - 1]?.value
+    
+    if (lastEma) {
+      const k = 2 / (config.period + 1)
+      const newEma = (candle.close - lastEma) * k + lastEma
+      
+      series.update({
+        time: candle.time,
+        value: Number(newEma.toFixed(4))
+      })
+    }
+  })
+}
+
+// 新增EMA增量更新方法
+const updateEMAIncrementally = (newCandles: CandleData[]) => {
+  const configs = props.emaConfigs || defaultEMAConfigs
+  
+  configs.forEach(config => {
+    const series = emaSeriesMap.value.get(config.period)
+    if (!series || !series.data) return
+
+    const existingData = series.data()
+    const lastEma = existingData[existingData.length - 1]?.value || 0
+    const k = 2 / (config.period + 1)
+    
+    // 处理每个新蜡烛图
+    newCandles.forEach((candle, index) => {
+      // 当已有数据不足时重新计算EMA
+      if (existingData.length + index < config.period - 1) {
+        const closes = props.data
+          .slice(0, existingData.length + index + 1)
+          .map(d => d.close)
+        const sma = closes.reduce((a, b) => a + b, 0) / closes.length
+        series.update({ time: candle.time, value: sma })
+      } else {
+        const prevEma = index === 0 ? lastEma : existingData[existingData.length + index - 1]?.value
+        const newEma = (candle.close - prevEma) * k + prevEma
+        series.update({
+          time: candle.time,
+          value: Number(newEma.toFixed(4))
+        })
+      }
+    })
+  })
+}
+
 // 新增图表结构初始化方法
 const initChartStructure = async () => {
   if (!chartContainer.value) return
@@ -506,6 +566,26 @@ const initChartStructure = async () => {
   // 创建图表容器引用
   const container = chartContainer.value.$el
   
+  // 创建tooltip元素
+  const toolTipEl = document.createElement('div')
+  toolTipEl.style.cssText = `
+    width: 132px;
+    height: 120px;
+    position: absolute;
+    display: none;
+    padding: 8px;
+    box-sizing: border-box;
+    font-size: 12px;
+    text-align: left;
+    z-index: 1000;
+    pointer-events: none;
+    border: 1px solid;
+    border-radius: 2px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif;
+  `
+  container.appendChild(toolTipEl)
+  toolTip.value = toolTipEl
+
   // 创建基础图表结构（与之前initChart中的图表创建部分相同）
   chart = createChart(container, {
     width: chartContainer.value.clientWidth,
@@ -540,7 +620,79 @@ const initChartStructure = async () => {
         style: 2, // 2 表示虚线
         visible: true
       }
+    },
+  })
+
+  // 添加十字光标订阅
+  chart.subscribeCrosshairMove(param => {
+    if (!param.point || !param.time || !candleSeries) {
+      toolTipEl.style.display = 'none'
+      return
     }
+
+    const candleData = param.seriesData?.get(candleSeries) as CandleData
+    // 获取EMA系列数据
+    const emaValues = Array.from(emaSeriesMap.value.values()).map(series => {
+      const data = param.seriesData?.get(series) as { value?: number }
+      return {
+        period: series.options().title?.split(' ')[1],
+        value: data?.value?.toFixed(2)
+      }
+    })
+
+    const close = candleData?.close || 0
+    const open = candleData?.open || 0
+    const high = candleData?.high || 0
+    const low = candleData?.low || 0
+    const Increase = ((close - open) / open * 100).toFixed(2)
+    // 更新tooltip内容
+    toolTipEl.innerHTML = `
+      <div class="${props.theme === 'dark' ? 'text-black' : 'text-gray'}">
+        ${new Date(param.time * 1000).toLocaleString()}
+      </div>
+      ${candleData ? `
+        <div class="flex items-center justify-between text-gray">
+          <div>收:</div><div>${close}</div>
+        </div>
+        <div class="flex items-center justify-between text-gray">
+          <div>开:</div><div>${open}</div>
+        </div>
+        <div class="flex items-center justify-between text-gray">
+          <div>高:</div>
+          <div>${high}</div>
+        </div>
+        <div class="flex items-center justify-between text-gray">
+          <div>低:</div>
+          <div>${low}</div>
+        </div>
+        <div class="flex items-center justify-between text-gray">
+          <div>涨幅:</div>
+          <div>
+            <text class="${Increase > 0 ? 'text-green' :'text-red'}">${Increase}%</text>
+          </div>
+        </div>
+      ` : ''}
+    `
+
+    // 更新tooltip位置
+    const { x, y } = param.point
+    const containerWidth = container.clientWidth
+    const containerHeight = container.clientHeight
+    const tooltipWidth = toolTipEl.offsetWidth
+    const tooltipHeight = toolTipEl.offsetHeight
+
+    let left = x + 15
+    let top = y + 15
+    if (left > containerWidth - tooltipWidth) left = x - tooltipWidth - 15
+    if (top > containerHeight - tooltipHeight) top = y - tooltipHeight - 15
+
+    Object.assign(toolTipEl.style, {
+      left: `${left}px`,
+      top: `${top}px`,
+      display: 'block',
+      background: props.theme === 'dark' ? '#1E1E1E' : '#FFFFFF',
+      borderColor: props.theme === 'dark' ? '#666' : '#DDD'
+    })
   })
 
   // 初始化蜡烛图系列（不设置数据）
@@ -564,10 +716,11 @@ const initChartStructure = async () => {
   if (volumeSeries.value ) {
     const priceScale = chart.priceScale('volume')
     priceScale.applyOptions({
+      visible: false,
       scaleMargins: {
         top: 0.85,
         bottom: 0
-      }
+      },    
     })
   }
 }
@@ -616,6 +769,8 @@ const validateDataConsistency = (data: CandleData[]) => {
 // 清空图表
 const removeChart = () => {
   if (chart) {
+    // 移除tooltip元素
+    toolTip.value?.parentNode?.removeChild(toolTip.value)
     // 正确销毁图表实例
     chart.remove()
     // 清除所有引用
@@ -644,9 +799,8 @@ const redrawChart = async () => {
 
 // 主题响应优化
 watch(() => 
-  props.data, (newVal, oldVal) => {
-    // console.log('修改 newVal', newVal)
-    // console.log('修改 oldVal', oldVal)
+  props.data, (newVal:any, oldVal:any) => {
+    if (!chart || !candleSeries || newVal.length === 0) return
     // 存在图表实例才做图表重绘
     // if (chart && candleSeries) redrawChart()
     if (newVal.length > 0 && chart) {
@@ -658,36 +812,57 @@ watch(() =>
     deep: true, // 添加深度监听
     immediate: true // 初始化时自动执行
   }
-// props.theme, () => {
-//   chart?.applyOptions({
-//     layout: {
-//       background: { 
-//         color: props.theme === 'dark' ? '#1E1E1E' : '#FFFFFF' 
-//       },
-//       textColor: props.theme === 'dark' ? '#DDD' : '#333'
-//     },
-//     crosshair: {
-//       vertLine: {
-//         color: props.theme === 'dark' ? '#666' : '#DDD'
-//       }
-//     }
-//   })
-//   // 重新应用EMA颜色
-//   props.emaConfigs?.forEach((newConfigs) => {
-//     // 移除旧EMA系列
-//     emaSeriesMap.value.forEach((series, period) => {
-//       if (!newConfigs?.some(c => c.period === period)) {
-//         chart?.removeSeries(series)
-//         emaSeriesMap.value.delete(period)
-//       }
-//     })
-
-//     // 添加新EMA系列
-//     initEMASeries()
-//     updateAllEMAData()
-//   }, { deep: true })
-// }
 )
+
+// 暴露给父组件的更新方法
+const exposeMethods = {
+  // 更新最后一条K线
+  updateLastCandle(candle: CandleData) {
+    updateLastCandle(candle)
+    chart?.timeScale().scrollToPosition(1, false)
+  },
+  
+  // 追加新K线
+  appendNewCandle(candle: CandleData) {
+    appendNewCandle(candle)
+    chart?.timeScale().scrollToPosition(1, false)
+  },
+  
+  // 全量替换数据（用于历史数据）
+  replaceAllData(newData: CandleData[]) {
+    candleSeries?.setData(newData)
+    volumeSeries.value?.setData(newData.map(createVolumeData))
+    updateAllEMAData()
+  }
+}
+
+
+// 保留原有更新逻辑（稍作调整）
+const updateLastCandle = (candle: CandleData) => {
+  candleSeries?.update(candle)
+  volumeSeries.value?.update(createVolumeData(candle))
+  updateEMAForLastCandle(candle)
+}
+
+// 新增专用方法：追加新数据
+const appendNewCandle = (candle: CandleData) => {
+  candleSeries?.update(candle)
+  volumeSeries.value?.update(createVolumeData(candle))
+  updateEMAIncrementally([candle])
+}
+
+// 新增工具方法
+const createVolumeData = (d:any) => ({
+  time: d.time,
+  value: d.volume,
+  color: d.close > d.open ? '#26a69a' : '#ef5350'
+})
+
+const getLastCandleTime = () => {
+  const data = candleSeries?.data()
+  return data?.[data.length - 1]?.time as UTCTimestamp
+}
+
 
 // 更新时间格式
 const updateTimeFormatter = () => {
@@ -752,7 +927,9 @@ onUnmounted(() => {
 
 // 暴露方法给父组件
 defineExpose({
+  ...exposeMethods,
   updateChartData,
+  getLastCandleTime,
   removeChart,
   redrawChart // 暴露新方法
 })
