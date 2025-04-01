@@ -30,7 +30,8 @@
         <buyAndSell v-if="buyAndSellType == 'spot'"></buyAndSell>
         <buyAndSellContract v-if="buyAndSellType == 'contract'" :lastPrice="lastPrice" :symbol="symbol"></buyAndSellContract>
       </div>
-      <div class="flex-1">
+      <!-- <div class="flex-1"> -->
+      <div class="rightDev">
         <priceFluctuations :lastPrice="lastPrice" ref="priceFluctuationsRef"></priceFluctuations>
       </div>
     </div> 
@@ -154,6 +155,9 @@ const showChartBtn = () => {
   .buyAndSellBox {
     gap: 14px;
     .buyAndSellMoudle {
+    }
+    .rightDev {
+      width: 40%;
     }
   }
   .marginTop75 {

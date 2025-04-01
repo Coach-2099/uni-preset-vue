@@ -172,27 +172,41 @@ onMounted(() => {
       VOL24h.value = data.vol
       lastPrice.value = data.close
 	  })
-    // socketService.value.subscribe('kline',symbolInfo.value);
-    // socketService.value.on(`${symbolInfo.value}-kline`, (data: any) => {
-    //   // isFinish 为 true 时 push新数据
-    //   if (data.isFinish) {
-    //     candleData.value.push({
-    //       time: Math.round(data.startTime / 1000), // 转换为秒级时间戳
-    //       open: Number(data.open.toFixed(2)),
-    //       high: Number(data.high.toFixed(2)),
-    //       low: Number(data.low.toFixed(2)),
-    //       close: Number(data.close.toFixed(2)),
-    //       volume: Number(data.vol.toFixed(2))
-    //     })
-    //   } else {
-    //     // isFinish 为 false 时更新最新数据
-    //     candleData.value[candleData.value.length - 1].open = Number(data.open.toFixed(2))
-    //     candleData.value[candleData.value.length - 1].high = Number(data.high.toFixed(2))
-    //     candleData.value[candleData.value.length - 1].low = Number(data.low.toFixed(2))
-    //     candleData.value[candleData.value.length - 1].close = Number(data.close.toFixed(2))
-    //     // candleData.value[candleData.value.length - 1].volume = Number(data.vol.toFixed(2))
-    //   }
-    // })
+
+    // 订阅k线
+    socketService.value.subscribe('kline',symbolInfo.value);
+    socketService.value.on(`${symbolInfo.value}-kline`, (data: any) => {
+      // 确保时间戳是有效的UTCTimestamp（秒级）
+      const candleTime = Math.round(data.startTime / 1000)
+      // 获取当前最后一条数据的时间
+      const lastCandleTime = chartRef.value?.getLastCandleTime() // 需要在子组件暴露该方法
+
+      if (data.isFinish || candleTime > lastCandleTime) {
+        // isFinish 为 true 时 push新数据
+        const candle = {
+          time: candleTime, // 转换为秒级时间戳
+          open: Number(data.open.toFixed(2)),
+          high: Number(data.high.toFixed(2)),
+          low: Number(data.low.toFixed(2)),
+          close: Number(data.close.toFixed(2)),
+          volume: Number(data.vol.toFixed(2))
+        }
+        chartRef.value?.appendNewCandle(candle)
+      } else if (candleTime === lastCandleTime) {
+        // isFinish 为 false 时更新最新数据
+        const candle = {
+          open: Number(data.open.toFixed(2)),
+          high: Number(data.high.toFixed(2)),
+          low: Number(data.low.toFixed(2)),
+          close: Number(data.close.toFixed(2)),
+          time: candleTime,
+          volume: Number(data.vol.toFixed(2))
+        }
+        chartRef.value?.updateLastCandle(candle)
+      } else {
+        console.warn('时间戳不匹配无法更新', { candleTime, lastCandleTime })
+      }
+    })
     // 第一次进入要加载数据
     loadData()
   })

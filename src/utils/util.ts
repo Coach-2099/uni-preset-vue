@@ -214,7 +214,7 @@ export function encryptionBase64(rawStr: string) {
  */
 export function getUrlParams(url?: string): Record<string, string> {
   const params: Record<string, string> = {};
-  const search = url ? url.split('?')[1] : window.location.search;
+  const search = url ? url.split('?')[1] : window.location.hash.split("?")[1];
   
   if (!search) return params;
 
