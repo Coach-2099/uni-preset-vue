@@ -221,6 +221,13 @@
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "modifyUserInfo"
 			}
+		},
+		{
+			"path": "pages/forGotPWD/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "forGotPWD"
+			}
 		}
 	],
 	"globalStyle": {
