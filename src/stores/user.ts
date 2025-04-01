@@ -14,7 +14,7 @@ interface UserSate {
 }
 export const useUserStore = defineStore('userStore', {
     state: (): UserSate => ({
-        userInfo: {},
+        userInfo: cache.get('USER_INFO_KEY') || {},
         token: cache.get(TOKEN_KEY) || null,
         temToken: null,
         customerServiceUrl: '',
@@ -27,6 +27,7 @@ export const useUserStore = defineStore('userStore', {
         async getUser() {
             const data = await getUserInfo()
             this.userInfo = data
+            cache.set('USER_INFO_KEY', data)
         },
         async getCustomerServiceFun() {
             const data = await getCustomerService()
@@ -50,6 +51,7 @@ export const useUserStore = defineStore('userStore', {
             this.token = ''
             this.userInfo = {}
             cache.remove(TOKEN_KEY)
+            cache.remove('USER_INFO_KEY') // 退出时清除用户信息缓存
             uni.navigateTo({
                 url: '/pages/login/index'
             })
