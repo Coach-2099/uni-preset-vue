@@ -29,16 +29,16 @@
       </div>
     </div>
     <div class="bottom pos-relative bg-white mt-5 px-10">
-      <van-tabs v-model:active="active" offset-top="74" shrink sticky>
+      <van-tabs v-model:active="active" offset-top="74" @click-tab="onClickTab" shrink sticky>
         <van-tab title="订单">
           <realTimeTransactions ref="realTimeTransactionsRef"></realTimeTransactions>
         </van-tab>
         <van-tab v-if="activeTab === 'left'" title="成交">
-          <transactionOrder></transactionOrder>
+          <transactionOrder ref="transactionOrderRef"></transactionOrder>
         </van-tab>
-       <!-- <van-tab v-if="activeTab === 'right'" title="仓位">
-          <positionOrder></positionOrder>
-        </van-tab> -->
+       <van-tab v-if="activeTab === 'right'" title="仓位">
+          <positionOrder ref="positionOrderRef"></positionOrder>
+        </van-tab>
       </van-tabs>
       <div class="orderIconBox pos-absolute" @click="goOrder">
         <image
@@ -47,12 +47,16 @@
         />
       </div>
     </div>
+    <div v-if="activeTab === 'left'" class="btnBox pos-fixed w-100 flex">
+      <van-button class="buyBtn flex-1" type="success">Buy</van-button>
+      <van-button class="sellBtn flex-1" type="danger">Sell</van-button>
+    </div>
     <CustomNavBar></CustomNavBar>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, nextTick } from 'vue'
 import { onLaunch, onLoad, onShow } from "@dcloudio/uni-app";
 import CustomNavBar from '@/components/customNavBar/index.vue';
 import trendChart from '@/components/trendChart/index.vue';
@@ -70,6 +74,8 @@ const active = ref(0)
 const activeTab = ref<'left' | 'right'>('left')
 
 const realTimeTransactionsRef: any = ref(null)
+const transactionOrderRef: any = ref(null)
+const positionOrderRef: any = ref(null)
 
 const symbol = ref('BTC/USDT')
 
@@ -83,12 +89,6 @@ onLoad(() => {
   activeTab.value = controlStore.quotesData.activeType || 'left';
 })
 
-onShow(() => {
-  realTimeTransactionsRef.value?.loadData({
-    klineType: 'SPOT',
-    symbol: symbol.value
-  })
-})
 
 onMounted(() => {})
 
@@ -108,6 +108,26 @@ const sliderStyle = computed(() => ({
 const goOrder = () => {
   uni.navigateTo({
     url: '/pages/transactionOrder/index'
+  })
+}
+
+const onClickTab = (e: any) => {
+  console.log('点击了标签页', e);
+  nextTick(() => {
+    let currentRef : any
+    switch(active.value) {
+      case 0:
+        currentRef = realTimeTransactionsRef
+        break
+      case 1:
+        currentRef = transactionOrderRef
+        break
+      case 2:
+        currentRef = positionOrderRef
+        default:
+    }
+    console.log('currentRef', currentRef.value)
+    currentRef.value?.loadData({klineType: 'SPOT', symbol: symbol.value});
   })
 }
 
@@ -171,6 +191,25 @@ const goOrder = () => {
         width: 10px;
         height: 10px;
       }
+    }
+  }
+  .btnBox {
+    padding: 8px;
+    bottom: 80px;
+    left: 0px;
+    right:0px;
+    gap: 7px;
+    height: 50px;
+    background: #fff;
+    .van-button {
+      border-radius: 6px;
+      height: 40px;
+    }
+    .buyBtn {
+      background: #18B86D;
+    }
+    .sellBtn {
+      background: #FF454E;
     }
   }
 }

@@ -90,11 +90,16 @@ const props = defineProps({
   }
 });
 
+const klineType = ref('');
+
 const listData = ref<any[]>([]); // 从API获取的真实数据
 const loadingData = ref(true); // 加载状态
 
 
-const emit = defineEmits(['closeModel'])
+const emit = defineEmits<{
+  (e: 'closeModel', payload: {jumpType: any}): void
+  // (e: 'jumpAge', payload: { type: any }): void
+}>()
 
 // stores
 const controlStore = useControlStore();
@@ -104,13 +109,14 @@ watch(() => props.searchVal, (newVal, oldVal) => {
   console.log('oldVal', oldVal)
 })
 
-const loadData = async () => {
+const loadData = async (kType: any) => {
   loadingData.value = true;
+  klineType.value = kType
   try {
     // 使用解构赋值确保响应式更新
     listData.value = []
     const params = {
-      klineType: props.type,
+      klineType: kType,
     }
     // 添加await强制等待
     const data = await getSymbolsLastPrice(params)
@@ -145,7 +151,6 @@ const searchFun = async () => {
       symbol1: item.symbol.split('/')[0],
       symbol2: item.symbol.split('/')[1]
     }))
-    console.log('7788', listData.value)
   } catch (error) {
     console.error('Error fetching data:', error);
   } finally {
@@ -155,15 +160,14 @@ const searchFun = async () => {
 }
 
 const checkBitItem = (item: any) => {
-  console.log('item!!', item)
   const activeType = controlStore.quotesData.activeType
-  console.log('activeType!!', activeType)
   controlStore.setQuotesData({
     symbol: item.symbol,
     activeType: activeType || 'left'
   })
   // 选中后父组件触发加载事件
-  emit('closeModel')
+  emit('closeModel', {jumpType: klineType.value})
+  // emit('jumpAge', {type: klineType.value})
 }
 
 const formatVolume = (volume:any) => {

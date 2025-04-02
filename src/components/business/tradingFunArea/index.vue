@@ -93,7 +93,7 @@ onMounted(() => {
 
 
 const checkBit = () => {
-  floatingPanelPropsRef.value?.showFLoatingPanel()
+  floatingPanelPropsRef.value?.showFLoatingPanel({type: 'FUTURE'})
 }
 
 const showChartBtn = () => {

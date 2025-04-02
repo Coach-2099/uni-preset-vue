@@ -11,17 +11,16 @@
       </div>
     </div>
     <div class="contentBox mt-20">
-      <div v-for="index in 10" :key="index" class="orderContent mt-15 flex justify-between px-15">
+      <div v-for="(item, index) in dataList" :key="item.ts +'-'+ index" class="orderContent mt-15 flex justify-between px-15">
         <div class="titleBox flex-1 flex justify-stretch">
-          <div class="titleName text-black fs-12 half-width">17:36:56</div>
+          <div class="titleName text-black fs-12 half-width">{{ formatTime(item.ts) }}</div>
           <div class="titleName text-black fs-12 half-width">
-            <text v-if="true" class="text-black fs-12 buy-green">买入</text>
-            <text v-else class="text-black fs-12 sell-red">卖出</text>
+            <text class="text-black fs-12" :class="item.direction == 'sell' ? 'sell-red' : 'buy-green'">{{ item.direction }}</text>
           </div>
         </div>
         <div class="titleBox flex-1 flex justify-between">
-          <div class="titleName text-black fs-12 half-width">858888</div>
-          <div class="titleName text-black fs-12 half-width text-right">3.6639</div>
+          <div class="titleName text-black fs-12 half-width">{{ item.price }}</div>
+          <div class="titleName text-black fs-12 half-width text-right">{{ item.amount }}</div>
         </div>
       </div>
     </div>
@@ -29,14 +28,63 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, watch, computed } from 'vue'
+import { getTradeDetail } from '@/api/quotes'
+import { useControlStore } from '@/stores/control';
+import { onLaunch, onLoad, onShow } from "@dcloudio/uni-app";
+import { useUserStore } from '@/stores/user';
 
-const data = ref()
+const userStore = useUserStore();
+const socketService = computed(() => userStore.socketService);
+
+// stores
+const controlStore = useControlStore();
+
+const subSymbol = ref('') //当前订阅的交易对
+
+const dataList = ref()
+
+watch(
+  () => controlStore.quotesData.symbol,
+  (newVal, oldVal) => {
+    socketService.value.unsubscribe('trade',oldVal); //取消原有订阅
+    socketService.value.subscribe('trade',newVal); //订阅新的交易对
+    subSymbol.value = newVal
+  }
+)
+
+const loadData = async (params: any) => {
+  const data = await getTradeDetail(params)
+  dataList.value = data
+  socketService.value.subscribe('trade',params.symbol);
+  socketService.value.on(`${params.symbol}-trade`, (item: any) => {
+    dataList.value.unshift(item)
+    if(dataList.value.length > 30) {
+        dataList.value.splice(30) // 保留最新的50条数据
+    }
+  })
+}
+
+// 新增时间格式化方法
+const formatTime = (timestamp: number) => {
+  const date = new Date(timestamp * 1000) // 假设时间戳是秒级
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${hours}:${minutes}:${seconds}`
+}
+
+
+defineExpose({
+  loadData
+})
+
 
 </script>
 
 <style lang="scss" scoped>
 .transactionOrder-temp {
+  padding-bottom: 100px;
   .half-width {
     width: 45%;;
   }

@@ -243,7 +243,6 @@ const initEMASeries = () => {
       visible: config.visible ?? true,
       title: '' // 添加EMA标题
     })
-
     emaSeriesMap.value.set(config.period, series)
   })
 }
