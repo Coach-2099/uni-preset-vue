@@ -46,8 +46,6 @@
       @interval-change="handleIntervalChange"
       @load-more-data="handleLoadMore"
     ></lightWeightChart>
-    <!-- <button @click="generateNewCandle">生成新K线</button>
-    <button @click="addRandomData">添加数据</button> -->
     <!-- <button @click="toggleTheme">切换主题</button> -->
     <floatingPanelProps ref="floatingPanelPropsRef"></floatingPanelProps>
   </div>
@@ -315,7 +313,8 @@ const getPeriodByInterval = (interval: number) => {
 }
 
 const checkBit = () => {
-  floatingPanelPropsRef.value?.showFLoatingPanel()
+  console.log('点击')
+  floatingPanelPropsRef.value?.showFLoatingPanel({type: 'SPOT'})
 }
 
 // 切换主题

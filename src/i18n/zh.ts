@@ -44,7 +44,7 @@ export default {
   noun: {
     spotGoods: '现货',
     futureGoods: '合约',
-	metalsGoods:'贵金属',
+	  metalsGoods:'贵金属',
     recharge: '充值',
     transfer: '转账',
     withdraw: '提现',
@@ -95,6 +95,8 @@ export default {
       signBy: '登录XAUSWAP',
       emailOrPhone: '邮箱/手机号',
       registerIn: '注册XAUSWAP',
+      resetPassword: '重置密码',
+      verifyAccount: '验证账号',
     },
     totalAssets: '总资产折合',
     registerToUnlock: '注册解锁高达',

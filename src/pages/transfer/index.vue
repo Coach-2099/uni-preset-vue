@@ -4,8 +4,8 @@
     <div class="accountTemp pt-25 pb-25 px-25 bg-white">
       <transition-group name="flip" tag="div" class="account-container">
         <div key="from" class="flex justify-between items-center">
-          <div class="flex justify-between items-center">
-          <div class="flex justify-between items-center">
+          <div class="flex justify-between items-center w-100">
+          <div class="flex justify-start items-center w-100">
             <p class="text-gray fs-14 mr-25">从</p>
             <van-popover
               placement="bottom-start"
@@ -14,25 +14,20 @@
             >
               <template #reference>
                 <div class="baseSelect w-100 py-5 flex justify-between items-center">
-                  <div class="leftBox flex items-center">
+                  <div class="leftBox flex items-center w-100">
                     <p class="fs-14 text-black">{{ fromAccount?.text }}</p>
                   </div>
-                  <!-- <div class="rightBox flex items-center">
+                  <div class="rightBox flex items-center">
                     <image
                       class="downIcon"
                       src="/static/images/down.png"
                       mode="scaleToFill"
                     />
-                  </div> -->
+                  </div>
                 </div>
               </template>
             </van-popover>
           </div>
-          <image
-            class="downIcon"
-            src="/static/images/downGray.png"
-            mode="scaleToFill"
-          />
         </div>
         </div>
 
@@ -48,8 +43,8 @@
         </div>
 
         <div key="to" class="flex justify-between items-center">
-          <div class="flex justify-between items-center">
-            <div class="flex justify-between items-center">
+          <div class="flex justify-between items-center w-100">
+            <div class="flex justify-between items-center w-100">
               <p class="text-gray fs-14 mr-25">到</p>
               <van-popover
                 placement="bottom-start"
@@ -61,22 +56,22 @@
                     <div class="leftBox flex items-center">
                       <p class="fs-14 text-black">{{ toAccount?.text }}</p>
                     </div>
-                    <!-- <div class="rightBox flex items-center">
+                    <div class="rightBox flex items-center">
                       <image
                         class="downIcon"
                         src="/static/images/down.png"
                         mode="scaleToFill"
                       />
-                    </div> -->
+                    </div>
                   </div>
                 </template>
               </van-popover>
             </div>
-            <image
+            <!-- <image
               class="downIcon"
               src="/static/images/downGray.png"
               mode="scaleToFill"
-            />
+            /> -->
           </div>
         </div>
       </transition-group>
@@ -378,5 +373,8 @@ const transfer =async() =>{
     min-height: 150px; // 保证容器高度避免跳动
   }
 
+  :deep(.van-popover__wrapper) {
+    width: 100%;
+  }
 }
 </style>

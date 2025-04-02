@@ -1,32 +1,33 @@
 <template>
   <div class="login-index">
-    <div class="fs-24 pt-25 pb-25 fw-b">{{ $t('homeIndex.login.signBy') }}</div>
-    <div class="inputBox">
-      <div class="inputTitle fw-b mb-5">{{ $t('common.account') }}</div>
-      <input
-        v-model="account"
-        class="base-input"
-        :placeholder="$t('homeIndex.login.emailOrPhone')"
-        placeholder-class="input-placeholder"
-      />
-    </div>
-    <div class="inputBox mt-20">
-      <div class="inputTitle fw-b mb-5">{{ $t('common.password') }}</div>
-      <div class="flex outerBox">
+    <div class="header w-100 fw-b text-center text-black fs-22 pt-15 pb-15">{{ $t('homeIndex.login.signBy') }}</div>
+    <div class="inputBox-wrap">
+      <div class="inputBox">
         <input
-          v-model="password"
-          style="min-height: 45px;
-          height: 45px;
-          background: #fff;
-          padding-left: 10px;
-          border-radius: 5px;"
-          class="flex-1"
-          :placeholder="$t('tips.enterPassword')"
-          :password="showPassword"
+          v-model="account"
+          class="base-input"
+          style="border: none;"
+          :placeholder="$t('homeIndex.login.emailOrPhone')"
+          placeholder-class="input-placeholder"
         />
-        <text class="uni-icon flex justify-center items-center pr-5 right-icon">
-          <van-icon name="eye" @click="changePassword"/>
-        </text>
+      </div>
+      <div class="inputBox mt-20">
+        <div class="flex outerBox">
+          <input
+            v-model="password"
+            style="min-height: 45px;
+            height: 45px;
+            padding-left: 10px;
+            border: 0px;
+            border-radius: 5px;"
+            class="flex-1 base-input"
+            :placeholder="$t('tips.enterPassword')"
+            :password="showPassword"
+          />
+          <text class="uni-icon flex justify-center items-center pr-5 right-icon">
+            <van-icon name="eye" @click="changePassword"/>
+          </text>
+        </div>
       </div>
     </div>
 
@@ -109,20 +110,26 @@ const changePassword = () => {
 
 <style lang="scss" scoped>
 .login-index {
-  background-color: #f8f8f8;
   height: 100vh;
   padding: 0 20px;
   .inputBox {
     .outerBox {
-      border: 1px solid #d5d5d5;
+      // border: 1px solid #d5d5d5;
+      border: none;
       border-radius: 5px;
       .right-icon {
-        background: #fff;
+        background: #F6F7FB;
       }
     }
   }
+  .inputBox-wrap {
+    margin-top: 90px;
+  }
+  .base-input {
+    background: #F6F7FB;
+  }
   .notes {
-    margin-top: 40px;
+    margin-top: 30px;
   }
   .signBtn {
     width: 100%;
