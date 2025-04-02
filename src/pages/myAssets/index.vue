@@ -4,8 +4,8 @@
     <div class="assetsInfo">
       <p class="fs-14 text-gray">{{ $t('homeIndex.totalAssets') }}</p>
       <p class="mt-5 flex items-baseline">
-        <span class="fs-32 fw-b text-black mr-10">0.00</span>
-        <span class="fs-14 fw-b text-black">USD</span>
+        <span class="fs-32 fw-b text-black mr-10">{{balance}}</span>
+        <span class="fs-14 fw-b text-black">USDT</span>
         <image
           class="downArrow"
           src="/static/images/down.png"
@@ -13,7 +13,7 @@
         />
       </p>
       <div class="flex justify-between items-end">
-        <p class="text-gray">
+        <!-- <p class="text-gray">
           <text>
             ≈ 0.00000000  BTC
           </text>
@@ -22,14 +22,14 @@
             src="/static/images/exMarkGray.png"
             mode="scaleToFill"
           />
-        </p>
+        </p> -->
         <p class="flex items-center">
           <image
             class="ProfitAndLossImg"
             src="/static/images/ProfitAndLoss.png"
             mode="scaleToFill"
           />
-          <text class="text-gray fs-14">{{ $t('homeIndex.singleDay') }} 23.69</text>
+          <text class="text-gray fs-14">{{ $t('homeIndex.singleDay') }} {{plAmount}}({{pl}}%)</text>
         </p>
       </div>
     </div>
@@ -59,24 +59,30 @@
         title-active-color="#333333"
         title-inactive-color="#B0B0B0"
         v-model:active="active"
+		@click-tab="tabclick"
         shrink
         sticky
       >
-        <van-tab title="In stock">
+        <van-tab title="WALLET" name="wallet">
           <div class="px-20">
-            <assetsModule type="basic"></assetsModule>
+            <assetsModule type="wallet" :data="basicAccountList" :active="active"></assetsModule>
           </div>
         </van-tab>
-        <van-tab title="Contract">
+        <van-tab title="SPOT" name="spot">
           <div class="px-20">
-            <assetsModule type="basic"></assetsModule>
+            <assetsModule type="spot" :data="spotAccountList" :active="active"></assetsModule>
           </div>
         </van-tab>
-        <van-tab title="Gold">
+        <van-tab title="FUTURES" name="futures">
           <div class="px-20">
-            <assetsModule type="basic"></assetsModule>
+            <assetsModule type="futures" :data="futuresAccount"></assetsModule>
           </div>
         </van-tab>
+		<van-tab title="METALS" name="metals">
+		  <div class="px-20">
+		    <assetsModule type="metals" :data="metalsAccount"></assetsModule>
+		  </div>
+		</van-tab>
       </van-tabs>
     </div>
     <CustomNavBar></CustomNavBar>
@@ -84,12 +90,39 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref ,onMounted} from 'vue';
 import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼峰命名
 import assetsModule from '@/components/business/assetsModule/index.vue'
-
+import { getAsset } from '@/api/asset';
+import { roundDown } from '@/utils/util';
 
 const active = ref(0);
+const balance = ref(0) //账户总余额
+const pl = ref(0) //当日盈亏比例
+const plAmount = ref(0) //当日盈亏金额
+const basicAccountList = ref([]) //基础账户列表
+const spotAccountList =ref([]) //现货
+const futuresAccount =ref({}) //合约
+const metalsAccount =ref({}) //贵金属
+
+//查询余额
+const getBalance = async()=>{
+ const params = {
+	 isLogin: true
+ }
+ const data = await  getAsset(params)
+ balance.value = roundDown(data.total,2)
+ pl.value = roundDown(data.todayPnl,2)
+ plAmount.value = roundDown(data.todayPnlAmount,2)
+ basicAccountList.value = data.basicAccountList
+ spotAccountList.value = data.spotAccountList
+ futuresAccount.value = data.futuresAccount
+ metalsAccount.value = data.metalsAccount
+}
+onMounted(() => {
+	getBalance()
+})
+
 
 const goRecharge = () => {
   uni.navigateTo({

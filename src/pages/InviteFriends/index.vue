@@ -17,10 +17,13 @@
           your friend buys or sells $100 of crypto
         </p>
       </div>
-      <div class="copyTemp flex justify-between items-center">
-        <p class="fs-16 text-gray">{{ inviteCode }}</p>
-        <van-button class="copyBtn" type="primary" @click="copyText">Copy</van-button>
-      </div>
+	  <div class="copyTemp flex justify-between items-center">
+	    <qrcode-vue :value="inviteUrl" size="130" />
+	  </div>
+	  <div class="copyTemp flex justify-between items-center">
+	    <p class="fs-16 text-gray">{{ inviteUrl }}</p>
+	    <van-button class="copyBtn" type="primary" @click="copyText(inviteUrl)">Copy</van-button>
+	  </div>
     </div>
   </div>
 </template>
@@ -28,11 +31,13 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue'
-
-const inviteCode = ref('coinbase.com/join/xu_mtu');
+import { useUserStore } from '@/stores/user';
+import QrcodeVue from 'qrcode.vue'
+const userStore = useUserStore();
+const inviteUrl = ref(window.location.protocol+'//'+document.domain+'/#/pages/register/index?inviteCode='+userStore.userInfo.inviteCode);
 const copyText = () => {
   uni.setClipboardData({
-    data: inviteCode.value,
+    data: inviteUrl.value,
     success: () => {
       uni.showToast({
         title: '复制成功',

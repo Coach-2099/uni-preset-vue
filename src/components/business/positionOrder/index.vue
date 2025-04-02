@@ -1,53 +1,53 @@
 <template>
   <div class="position-temp">
-    <dataDefault v-if="ordersMap.size === 0" class="noData mt-25"></dataDefault>
-    <div v-else>
-      <div v-for="[key,value] in ordersMap" :key="key" class="box pb-15">
-        <div class="positionData flex justify-between mt-20">
-          <div class="leftBox flex justify-between">
-            <div class="">
-              <p class="fw-b fs-16 text-black">{{value.symbol}}</p>
-              <p class="fs-12 text-black mt-5">全仓{{value.leverage}}X</p>
-            </div>
-            <div class="core ml-15">
-              <text class="fs-12 text-light-green">{{value.direction ==='LONG'?'做多':'做空'}}</text>
-            </div>
+    <div v-for="[key,value] in ordersMap" :key="key" class="box pb-15">
+      <div class="positionData flex justify-between mt-20">
+        <div class="leftBox flex justify-between">
+          <div class="">
+            <p class="fw-b fs-16 text-black">{{value.symbol}}</p>
+            <p class="fs-12 text-black mt-5">全仓{{value.leverage}}X</p>
           </div>
-          <div class="rightBox" v-if="value.status==='POSITIONING'">
-            <p class="fs-12 text-gray text-right">未结盈亏</p>
-            <p class="fw-b fs-16 text-red mt-5">{{value.unrealizedProfit}}({{value.unrealizedProfitScale}}%)</p>
+          <div class="core ml-15">
+            <text :class="value.direction ==='LONG'?'fs-12 text-light-green':'fs-12 text-red'">{{value.direction ==='LONG'?'做多':'做空'}}</text>
           </div>
         </div>
-        <div class="positionDetail mt-20">
-          <div class="flex justify-between">
-            <div class="detailBox w-20">
-              <p class="fs-12 text-gray">持仓数量</p>
-              <p class="fs-12 text-balck mt-5">{{value.tradeNum}}</p>
-            </div>
-            <div class="detailBox w-20">
-              <p class="fs-12 text-gray">入场价格</p>
-              <p class="fs-12 text-balck mt-5">{{value.entryPrice}}</p>
-            </div>
-            <div class="detailBox w-20">
-              <p class="fs-12 text-gray">标记价格</p>
-              <p class="fs-12 text-black mt-5">85,888.88</p>
-            </div>
-            <div class="detailBox w-25">
-              <p class="fs-12 text-gray text-right">预计强平价格</p>
-              <p class="fs-12 text-right text-light-blue mt-5">85,888.88</p>
-            </div>
+        <div class="rightBox" v-if="value.status==='POSITIONING'">
+          <p class="fs-12 text-gray text-right">未结盈亏</p>
+          <p :class="value.unrealizedProfit>0?'fw-b fs-16 text-green mt-5':'fw-b fs-16 text-red mt-5'">{{value.unrealizedProfit}}({{value.unrealizedProfitScale}}%)</p>
+        </div>
+      </div>
+      <div class="positionDetail mt-20">
+        <div class="flex justify-between">
+          <div class="detailBox w-20">
+            <p class="fs-12 text-gray">{{value.status==='POSITIONING'?'持仓数量':'委托数量'}}</p>
+            <p class="fs-12 text-balck mt-5">{{value.quantity}}</p>
           </div>
-          <div class="btnBox flex justify-between mt-15">
-            <van-button class="myBtn flex-1" type="default">
-              <text class="fs-12 text-gray">设置止盈止损</text>
-            </van-button>
-            <!-- <van-button class="myBtn flex-1" type="default">
-              <text class="fs-12 text-gray">追踪出场</text>
-            </van-button> -->
-            <van-button class="myBtn flex-1" type="default" @click="close(value.orderNo)">
-              <text class="fs-12 text-gray">平仓</text>
-            </van-button>
+          <div class="detailBox w-20">
+            <p class="fs-12 text-gray">入场价格</p>
+            <p class="fs-12 text-balck mt-5">{{value.entryPrice}}</p>
           </div>
+          <div class="detailBox w-20">
+            <p class="fs-12 text-gray">持仓保证金</p>
+            <p class="fs-12 text-black mt-5">{{value.margin}}</p>
+          </div>
+          <!-- <div class="detailBox w-25">
+            <p class="fs-12 text-gray text-right">预计强平价格</p>
+            <p class="fs-12 text-right text-light-blue mt-5">85,888.88</p>
+          </div> -->
+        </div>
+        <div class="btnBox flex justify-between mt-15">
+          <van-button class="myBtn flex-1" type="default">
+            <text class="fs-12 text-gray">设置止盈止损</text>
+          </van-button>
+          <!-- <van-button class="myBtn flex-1" type="default">
+            <text class="fs-12 text-gray">追踪出场</text>
+          </van-button> -->
+		  <van-button v-if="value.status==='OPEN'" class="myBtn flex-1" type="default" @click="cancel(value.orderNo)">
+		    <text class="fs-12 text-gray">撤销</text>
+		  </van-button>
+          <van-button v-else class="myBtn flex-1" type="default" @click="close(value.orderNo,value.quantity)">
+            <text class="fs-12 text-gray">平仓</text>
+          </van-button>
         </div>
       </div>
     </div>
@@ -57,9 +57,9 @@
 <script lang="ts" setup>
 import { ref, onMounted ,computed,onUnmounted,nextTick} from 'vue';
 import { useUserStore } from '@/stores/user';
-import { closeOrder,getFuturesOrderList } from '@/api/trade'
+import { closeOrder,getFuturesOrderList,cancelFuturesOrder } from '@/api/trade'
 import { roundDown } from '@/utils/util'
-import dataDefault from '@/components/dataDefault/index.vue';
+import { onShow } from '@dcloudio/uni-app';
 
 const userStore = useUserStore();
 const socketService = computed(() => userStore.socketService);
@@ -72,11 +72,22 @@ const current = ref(1)
 const symbolMap =ref(new Map()) //存储当前持仓单交易对
 
 //平仓
-const close =(orderNo: string)=>{
-	const params={
-		orderNo:orderNo
+const close =async(orderNo: string,quantity: number)=>{
+	const params = {
+		orderNo:orderNo,
+		closeQuantity:quantity
 	}
-	closeOrder(params)
+	await closeOrder(params)
+	uni.showToast({title: '已平仓', icon: 'success'})
+}
+
+//平仓
+const cancel =async(orderNo: string)=>{
+	const params = {
+		orderNo:orderNo,
+	}
+	await cancelFuturesOrder(params)
+	uni.showToast({title: '已成功取消', icon: 'success'})
 }
 //计算实时盈亏
 const calculateUnrealizedProfit=(close: number,direction:string,quantity: number,entryPrice:number)=>{
@@ -86,8 +97,27 @@ const calculateUnrealizedProfit=(close: number,direction:string,quantity: number
 		return roundDown((entryPrice - close ) * quantity,2)
 	}
 }
+const loadPositions=async()=>{
+	const params ={
+		status:['OPEN','POSITIONING'],
+		accountType:'FUTURES',//查询合约账户
+		current:current.value,
+		size:size.value
+	}
+	const data = await getFuturesOrderList(params)
+	ordersMap.value.clear()
+	data.records.forEach((item:any)=>{
+		ordersMap.value.set(item.orderNo,item)
+		if(item.status === 'POSITIONING'){
+			symbolMap.value.set(item.symbol,'')
+		}
+	})
+}
+
+onShow(()=>{
+	loadPositions()
+})
 onMounted(() => {
-  loadPositions()
   nextTick(() => {
 	  socketService.value.subscribe('ticker')
 	  socketService.value.on('ticker',(data: any)=>{
@@ -103,34 +133,18 @@ onMounted(() => {
 	  socketService.value.subscribeUser(userStore.userInfo.userId)
 	  socketService.value.on(userStore.userInfo.userId, (data: any) => {
 			const payload = data.payload
-			if(data.event === 'FUTURES_ORDER_ENTRUSTMENT' || data.event === 'FUTURES_ORDER_POSITION'){
+			if(data.type === 'FUTURES_ORDER_ENTRUSTMENT' || data.type === 'FUTURES_ORDER_POSITION'){
 				ordersMap.value.set(payload.orderNo,payload)
-				if(data.event === 'FUTURES_ORDER_POSITION'){
+				if(data.type === 'FUTURES_ORDER_POSITION'){
 					symbolMap.value.set(payload.symbol,'')	
 				}
-			}else if(data.event === 'FUTURES_ORDER_CANCEL' ||data.event === 'FUTURES_ORDER_BOOM' ||data.event === 'FUTURES_ORDER_CLOSED' ){
+			}else if(data.type === 'FUTURES_ORDER_CANCEL' ||data.type === 'FUTURES_ORDER_BOOM' ||data.type === 'FUTURES_ORDER_CLOSED' ){
 				ordersMap.value.delete(payload.orderNo)
 			}
 	  })
   })
 })
 
-const loadPositions=async()=>{
-	const params ={
-		status:['OPEN','POSITIONING'],
-		accountType:'FUTURES',//查询合约账户
-		current:current.value,
-		size:size.value
-	}
-	const data = await getFuturesOrderList(params)
-	data.records.forEach((item:any)=>{
-		ordersMap.value.clear()
-		ordersMap.value.set(item.orderNo,item)
-		if(item.status === 'POSITIONING'){
-			symbolMap.value.set(item.symbol,'')
-		}
-	})
-}
 onUnmounted(() => {
 	console.log('移除user_id监听')
 	socketService.value.unsubscribe('ticker');
@@ -142,9 +156,6 @@ onUnmounted(() => {
 .position-temp {
   padding: 0 8px;
   padding-bottom: 90px;
-  .noData {
-    padding-bottom: 128px;
-  }
   .box {
     border-bottom: 2px solid #f9fafc;
     .positionData {

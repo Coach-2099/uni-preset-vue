@@ -163,50 +163,53 @@ onMounted(() => {
 	  if (controlStore.quotesData.symbol){
       symbolInfo.value = controlStore.quotesData.symbol
 	  }
-    // 订阅 ticker
-    socketService.value.subscribe('ticker',symbolInfo.value);
-	  socketService.value.on(`${symbolInfo.value}-ticker`, (data: any) => {
-			rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
-      HIGH24h.value = data.high
-      LOW24h.value = data.low
-      VOL24h.value = data.vol
-      lastPrice.value = data.close
-	  })
+	   //延迟100毫秒订阅
+	setTimeout(()=>{
+		// 订阅 ticker
+		socketService.value.subscribe('ticker',symbolInfo.value);
+		  socketService.value.on(`${symbolInfo.value}-ticker`, (data: any) => {
+				rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
+		  HIGH24h.value = data.high
+		  LOW24h.value = data.low
+		  VOL24h.value = data.vol
+		  lastPrice.value = data.close
+		  })
 
-    // 订阅k线
-    socketService.value.subscribe('kline',symbolInfo.value);
-    socketService.value.on(`${symbolInfo.value}-kline`, (data: any) => {
-      // 确保时间戳是有效的UTCTimestamp（秒级）
-      const candleTime = Math.round(data.startTime / 1000)
-      // 获取当前最后一条数据的时间
-      const lastCandleTime = chartRef.value?.getLastCandleTime() // 需要在子组件暴露该方法
+		// 订阅k线
+		socketService.value.subscribe('kline',symbolInfo.value);
+		socketService.value.on(`${symbolInfo.value}-kline`, (data: any) => {
+		  // 确保时间戳是有效的UTCTimestamp（秒级）
+		  const candleTime = Math.round(data.startTime / 1000)
+		  // 获取当前最后一条数据的时间
+		  const lastCandleTime = chartRef.value?.getLastCandleTime() // 需要在子组件暴露该方法
 
-      if (data.isFinish || candleTime > lastCandleTime) {
-        // isFinish 为 true 时 push新数据
-        const candle = {
-          time: candleTime, // 转换为秒级时间戳
-          open: Number(data.open.toFixed(2)),
-          high: Number(data.high.toFixed(2)),
-          low: Number(data.low.toFixed(2)),
-          close: Number(data.close.toFixed(2)),
-          volume: Number(data.vol.toFixed(2))
-        }
-        chartRef.value?.appendNewCandle(candle)
-      } else if (candleTime === lastCandleTime) {
-        // isFinish 为 false 时更新最新数据
-        const candle = {
-          open: Number(data.open.toFixed(2)),
-          high: Number(data.high.toFixed(2)),
-          low: Number(data.low.toFixed(2)),
-          close: Number(data.close.toFixed(2)),
-          time: candleTime,
-          volume: Number(data.vol.toFixed(2))
-        }
-        chartRef.value?.updateLastCandle(candle)
-      } else {
-        // console.warn('时间戳不匹配无法更新', { candleTime, lastCandleTime })
-      }
-    })
+		  if (data.isFinish || candleTime > lastCandleTime) {
+			// isFinish 为 true 时 push新数据
+			const candle = {
+			  time: candleTime, // 转换为秒级时间戳
+			  open: Number(data.open.toFixed(2)),
+			  high: Number(data.high.toFixed(2)),
+			  low: Number(data.low.toFixed(2)),
+			  close: Number(data.close.toFixed(2)),
+			  volume: Number(data.vol.toFixed(2))
+			}
+			chartRef.value?.appendNewCandle(candle)
+		  } else if (candleTime === lastCandleTime) {
+			// isFinish 为 false 时更新最新数据
+			const candle = {
+			  open: Number(data.open.toFixed(2)),
+			  high: Number(data.high.toFixed(2)),
+			  low: Number(data.low.toFixed(2)),
+			  close: Number(data.close.toFixed(2)),
+			  time: candleTime,
+			  volume: Number(data.vol.toFixed(2))
+			}
+			chartRef.value?.updateLastCandle(candle)
+		  } else {
+			// console.warn('时间戳不匹配无法更新', { candleTime, lastCandleTime })
+		  }
+		})
+	},100)
     // 第一次进入要加载数据
     loadData()
   })

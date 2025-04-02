@@ -25,12 +25,12 @@
     <div v-if="userStore.userInfo" class="assetsInfo">
       <p class="fs-14 text-gray">{{ $t('homeIndex.totalAssets') }}</p>
       <p class="mt-15">
-        <span class="fs-32 fw-b text-black mr-10">0.00</span>
-        <span class="fs-14 text-black">USD</span>
+        <span class="fs-32 fw-b text-black mr-10">{{balance}}</span>
+        <span class="fs-14 text-black">USDT</span>
       </p>
-      <div class="flex justify-between items-end">
+     <!-- <div class="flex justify-between items-end">
         <p class="text-gray mt-15">≈ 0.00000000  BTC</p>
-      </div>
+      </div> -->
     </div>
     <div v-else class="noLoginTemp bg-white py-25">
       <div class="noLoginBox  w-100 flex-col items-center">
@@ -182,11 +182,14 @@ import { useSocket } from '@/utils/socket';
 import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼峰命名
 import quoteList from '@/components/business/quoteList/index.vue'; // 使用大驼峰命名
 import { useUserStore } from '@/stores/user';
+import { getAsset } from '@/api/asset';
+import { roundDown } from '@/utils/util';
 
 const userStore = useUserStore();
 
 const active = ref(0);
 const tabType = ref(0)
+const balance =ref(0) //当前账户总余额
 
 // 新增响应式数据存储
 const tickerData = ref<Record<string, any>>({});
@@ -233,6 +236,10 @@ const socketService = computed(() => userStore.socketService);
 		  });
 	  },100)
     })
+	
+	if(userStore.userInfo.userId){
+		getBalance()
+	}
   });
 
   // Disconnect from the socket server when the component is unmounted
@@ -240,6 +247,14 @@ const socketService = computed(() => userStore.socketService);
     // 取消所有订阅
     socketService.value.unsubscribe('ticker');
   });
+
+ const getBalance = async()=>{
+	 const params = {
+		 isLogin: false
+	 }
+	 const data = await  getAsset(params)
+	 balance.value = roundDown(data.total,2)
+ }
 
   const subscribeFun = () => {
     

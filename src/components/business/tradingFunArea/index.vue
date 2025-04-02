@@ -74,15 +74,16 @@ const props = defineProps({
 
 onMounted(() => {
   nextTick(() => {
-	  console.log('load here')
 	  if (controlStore.quotesData.symbol){
-      symbol.value = controlStore.quotesData.symbol
+	  		symbol.value = controlStore.quotesData.symbol
 	  }
-	  socketService.value.subscribe('ticker',symbol.value);
-	  socketService.value.on(`${symbol.value}-ticker`, (data: any) => {
-      lastPrice.value = data.close
-			rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
-	  })
+	  setTimeout(()=>{
+		  socketService.value.subscribe('ticker',symbol.value);
+		  socketService.value.on(`${symbol.value}-ticker`, (data: any) => {
+		  lastPrice.value = data.close
+				rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
+		  })
+	  },100)
 	  priceFluctuationsRef.value?.loadData({
 	    klineType: 'FUTURES',
 	    symbol: symbol.value
