@@ -83,7 +83,8 @@ const props = defineProps<{
   data: CandleData[]
   emaConfigs?: EMAConfig[]
   theme?: 'light' | 'dark',
-  initialInterval?: number
+  initialInterval?: number,
+  hasMore?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -367,23 +368,26 @@ const updateAllEMAData = () => {
 //   }))
 //   volumeSeries?.setData(volumeData)
 
-//   // 添加可见时间范围监听
-//   chart.timeScale().subscribeVisibleTimeRangeChange((newRange:any) => {
-//     if (!newRange?.from) return;
+  // 添加可见时间范围监听
+const earliestEndDataTime = ref(0)
+const subRange =() =>{
+	chart.timeScale().subscribeVisibleTimeRangeChange((newRange:any) => {
+    if (!newRange?.from || !props.hasMore) return;
     
-//     // 获取当前数据的最早时间戳
-//     const earliestDataTime = props.data[0]?.time as number;
-    
-//     // 当可见范围开始时间接近数据集头部时触发加载
-//     if (newRange.from <= earliestDataTime) {
-//       console.log('触发')
-//       // 触发父组件加载更多数据
-//       emit('load-more-data', {
-//         start: newRange?.from - 3600, // 提前1小时（示例值）
-//         end: earliestDataTime
-//       });
-//     }
-//   });
+    // 获取当前数据的最早时间戳
+    const earliestDataTime = props.data[0]?.time as number;
+    // 当可见范围开始时间接近数据集头部时触发加载
+    if (newRange.from <= earliestDataTime && earliestEndDataTime.value!=earliestDataTime) {
+		earliestEndDataTime.value = earliestDataTime
+		console.log('newRange =',newRange)
+      // 触发父组件加载更多数据
+      emit('load-more-data', {
+        start: newRange?.from, // 为最后一根K线时间
+        end: newRange?.to
+      });
+    }
+  });
+}
 
 
 //   // 在initChart中添加时间格式化
@@ -917,6 +921,7 @@ onMounted(async () => {
   if (props.data.length > 0) {
     await renderChartData()   // 如果有初始数据立即渲染
   }
+  subRange() //订阅时间轴范围
 })
 
 

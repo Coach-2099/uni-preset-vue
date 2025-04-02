@@ -80,8 +80,7 @@ class SocketService {
       const handler = this.eventHandlers.get(event);
       handler?.(payload,type);
     } catch (e) {
-		console.log('异常时消息:{}',data)
-      console.error('消息解析失败', e);
+      // console.error('消息解析失败', e);
     }
   }
 

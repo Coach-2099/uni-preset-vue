@@ -43,7 +43,8 @@
       :ema-configs="emaConfigs"
       :theme="theme"
       :initial-interval="currentInterval"
-      @interval-change="handleIntervalChange"
+	  @interval-change="handleIntervalChange"
+	  :hasMore="hasMore"
       @load-more-data="handleLoadMore"
     ></lightWeightChart>
     <!-- <button @click="generateNewCandle">生成新K线</button>
@@ -93,7 +94,9 @@ watch(
         lastPrice.value = data.close
       })
       // 这里可以添加symbol变化后的处理逻辑
-      loadData()
+	  const currentTime = new Date().getTime()
+	  const endTime = currentTime- intervalMap[getPeriodByInterval(currentInterval.value)]
+      loadData(endTime,currentTime,true)
     }
   },
   { immediate: true } // 立即执行一次以获取初始值
@@ -112,6 +115,7 @@ const HIGH24h = ref(0) //24h最高
 const LOW24h = ref(0) //24h最低
 const VOL24h = ref(0) //24h交易额
 const lastPrice = ref(0) //最新成交价
+const hasMore = ref(true) //是否已读完K线全部数据
 
 // 新增时间间隔映射
 const intervalMap:any = {
@@ -207,7 +211,9 @@ onMounted(() => {
 		})
 	},100)
     // 第一次进入要加载数据
-    loadData()
+	const currentTime = new Date().getTime()
+	const endTime = currentTime- intervalMap[getPeriodByInterval(currentInterval.value)]
+    loadData(endTime,currentTime,true) //初次加载
   })
 })
 
@@ -217,57 +223,79 @@ onShow(() => {
 })
 
 
-const loadData = async () => {
-  const currentTime = new Date().getTime()
+const loadData = async (startTime: number,endTime:number,isFisrtLoad: boolean) => {
+  
   const params = {
     symbol: symbolInfo.value, // 替换为实际的symbol
     period: getPeriodByInterval(currentInterval.value), // 新增映射方法
-    startTime: currentTime - intervalMap[getPeriodByInterval(currentInterval.value)],
-    endTime: currentTime
+    startTime: startTime,
+    endTime: endTime
   }
   const { hasNext, klineList } = await getKlineHistory(params)
-  if (klineList.length === 0) {
+  if (!klineList) {
     return
   }
+  hasMore.value = hasNext
   // 清空旧数据
-  candleData.value = []
-  for (let i = 0; i < klineList.length; i++) {
-    candleData.value.push({
-      time: klineList[i].startTime/1000, // 转换为秒级时间戳
-      open: Number(klineList[i].open.toFixed(2)),
-      high: Number(klineList[i].high.toFixed(2)),
-      low: Number(klineList[i].low.toFixed(2)),
-      close: Number(klineList[i].close.toFixed(2)),
-      volume: Number(klineList[i].vol.toFixed(2))
-    })
+  if(isFisrtLoad){
+	candleData.value = []
+	  for (let i = 0; i < klineList.length; i++) {
+		  const kline = {
+			time: klineList[i].startTime/1000, // 转换为秒级时间戳
+			open: Number(klineList[i].open.toFixed(2)),
+			high: Number(klineList[i].high.toFixed(2)),
+			low: Number(klineList[i].low.toFixed(2)),
+			close: Number(klineList[i].close.toFixed(2)),
+			volume: Number(klineList[i].vol.toFixed(2))
+		  }
+			candleData.value.push(kline)
+	  }
+  }else{
+	   console.log(' init result ={}',candleData.value.length)
+	  const kl = klineList.length -1
+	  for (let i = kl; i >= 0; i--) {
+		  const kline = {
+			time: klineList[i].startTime/1000, // 转换为秒级时间戳
+			open: Number(klineList[i].open.toFixed(2)),
+			high: Number(klineList[i].high.toFixed(2)),
+			low: Number(klineList[i].low.toFixed(2)),
+			close: Number(klineList[i].close.toFixed(2)),
+			volume: Number(klineList[i].vol.toFixed(2))
+		  }
+		  if(candleData.value[0].time > kline.time){
+		  			  candleData.value.unshift(kline)
+		  }else{
+			  console.log('重复的time:'+candleData.value[0].startTime)
+		  }
+	  }
+	  console.log(' update result ={}',candleData.value.length)
+	  chartRef.value?.updateChartData(candleData.value)
   }
   console.log('加载数据 ')
 }
 
 const handleLoadMore = async({ start, end }) => {
-  console.log('start!!!!', start)
-  console.log('end!!!!', end)
-  
+  const endTime =	start*1000
+  const startTime = endTime - intervalMap[getPeriodByInterval(currentInterval.value)]
+  loadData(startTime,endTime,false)
 }
 
 
 
 // 处理时间间隔变化
-const handleIntervalChange = async (interval: number) => {
-    // 先更新当前时间间隔
-    currentInterval.value = interval
-    // 清空旧数据
-    candleData.value = []
-    // 重新加载数据
-    await loadData()
-    // 强制更新图表
-    nextTick(() => {
-      // 假设LightweightChart组件有一个方法来更新数据，这里改为更新v-model绑定的数据
-      candleData.value = [...candleData.value];
-    })
-  // const mockData = generateMockData(interval)
-  // chartRef.value?.updateChartData(mockData)
-}
+// const handleIntervalChange = async (interval: number) => {
+//     // 先更新当前时间间隔
+//     currentInterval.value = interval
+//     // 清空旧数据
+//     candleData.value = []
+//     // 重新加载数据
+//     await loadData()
+//     // 强制更新图表
+//     nextTick(() => {
+//       // 假设LightweightChart组件有一个方法来更新数据，这里改为更新v-model绑定的数据
+//       candleData.value = [...candleData.value];
+//     })
+// }
 
 // 新增时间间隔到API参数的映射方法
 const getPeriodByInterval = (interval: number) => {
@@ -290,6 +318,25 @@ const checkBit = () => {
 // 切换主题
 const toggleTheme = () => {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
+}
+
+// 处理时间周期变化
+const handleIntervalChange = async (interval: number) => {
+    // 先更新当前时间间隔
+    currentInterval.value = interval
+    // 清空旧数据
+    candleData.value = []
+    // 重新加载数据
+	const currentTime = new Date().getTime()
+	const endTime = currentTime- intervalMap[getPeriodByInterval(currentInterval.value)]
+	loadData(endTime,currentTime,true) //初次加载
+    // 强制更新图表
+    nextTick(() => {
+      // 假设LightweightChart组件有一个方法来更新数据，这里改为更新v-model绑定的数据
+      candleData.value = [...candleData.value];
+    })
+  // const mockData = generateMockData(interval)
+  // chartRef.value?.updateChartData(mockData)
 }
 
 onUnmounted(() => {
