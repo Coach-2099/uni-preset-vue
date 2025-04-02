@@ -69,7 +69,7 @@ const controlStore = useControlStore();
 const userStore = useUserStore();
 const socketService = computed(() => userStore.socketService);
 
-// 新增以下监听代码
+// 新增以下监听代码,对新交易对进行订阅，取消老的订阅
 watch(
   () => controlStore.quotesData.symbol,
   (newSymbol, oldSymbol) => {
@@ -115,13 +115,13 @@ const lastPrice = ref(0) //最新成交价
 
 // 新增时间间隔映射
 const intervalMap:any = {
-  'min_1': 1 * 24 * 60 * 60 * 1000,    // 1天
-  'min_5': 3 * 24 * 60 * 60 * 1000,    // 3天
-  'min_15': 7 * 24 * 60 * 60 * 1000,   // 1周
-  'min_30': 14 * 24 * 60 * 60 * 1000,  // 2周
-  'min_60': 30 * 24 * 60 * 60 * 1000,   // 1月
-  'hour_4': 90 * 24 * 60 * 60 * 1000,   // 3月
-  'day_1': 365 * 24 * 60 * 60 * 1000    // 1年
+  'min_1': 60 * 100 * 1000,    // 分钟
+  'min_5': 5 * 60 * 100 * 1000,    // 5分钟
+  'min_15': 15 * 60 * 100 * 1000,   //15
+  'min_30': 30 * 60 * 100 * 1000,  //30
+  'min_60': 60 * 60 * 100 * 1000,   // 60
+  'hour_4': 240 * 60 * 100 * 1000,   // 4h
+  'day_1': 1440 * 60 * 100 * 1000    // 1年
 }
 
 const candleData:any = ref([])
@@ -179,34 +179,30 @@ onMounted(() => {
 		socketService.value.subscribe('kline',symbolInfo.value);
 		socketService.value.on(`${symbolInfo.value}-kline`, (data: any) => {
 		  // 确保时间戳是有效的UTCTimestamp（秒级）
-		  const candleTime = Math.round(data.startTime / 1000)
-		  // 获取当前最后一条数据的时间
-		  const lastCandleTime = chartRef.value?.getLastCandleTime() // 需要在子组件暴露该方法
+		  const candleTime = data.startTime / 1000
 
-		  if (data.isFinish || candleTime > lastCandleTime) {
+		  if (data.isFinish) {
 			// isFinish 为 true 时 push新数据
 			const candle = {
 			  time: candleTime, // 转换为秒级时间戳
 			  open: Number(data.open.toFixed(2)),
 			  high: Number(data.high.toFixed(2)),
 			  low: Number(data.low.toFixed(2)),
-			  close: Number(data.close.toFixed(2)),
+			  close: Number(lastPrice.value),
 			  volume: Number(data.vol.toFixed(2))
 			}
 			chartRef.value?.appendNewCandle(candle)
-		  } else if (candleTime === lastCandleTime) {
+		  }  {
 			// isFinish 为 false 时更新最新数据
 			const candle = {
 			  open: Number(data.open.toFixed(2)),
 			  high: Number(data.high.toFixed(2)),
 			  low: Number(data.low.toFixed(2)),
-			  close: Number(data.close.toFixed(2)),
+			  close: Number(lastPrice.value),
 			  time: candleTime,
 			  volume: Number(data.vol.toFixed(2))
 			}
 			chartRef.value?.updateLastCandle(candle)
-		  } else {
-			// console.warn('时间戳不匹配无法更新', { candleTime, lastCandleTime })
 		  }
 		})
 	},100)
@@ -216,7 +212,6 @@ onMounted(() => {
 })
 
 onShow(() => {
-  symbolInfo.value = 'BTC/USDT'
   if (controlStore.quotesData.symbol) symbolInfo.value = controlStore.quotesData.symbol
   // loadData()
 })
@@ -232,16 +227,13 @@ const loadData = async () => {
   }
   const { hasNext, klineList } = await getKlineHistory(params)
   if (klineList.length === 0) {
-    console.log('没有数据')
     return
   }
   // 清空旧数据
   candleData.value = []
-  // 根据时间间隔生成时间戳
-  const interval = intervalMap[getPeriodByInterval(currentInterval.value)]
   for (let i = 0; i < klineList.length; i++) {
     candleData.value.push({
-      time: Math.round((currentTime - (interval * (klineList.length - 1 - i))) / 1000), // 转换为秒级时间戳
+      time: klineList[i].startTime/1000, // 转换为秒级时间戳
       open: Number(klineList[i].open.toFixed(2)),
       high: Number(klineList[i].high.toFixed(2)),
       low: Number(klineList[i].low.toFixed(2)),
@@ -258,32 +250,6 @@ const handleLoadMore = async({ start, end }) => {
   
 }
 
-// 生成初始蜡烛图数据
-const generateCandleData = (count: number) => {
-  let currentTime = Math.floor(Date.now() / 1000)
-  let price = 100
-  const data = []
-
-  for (let i = 0; i < count; i++) {
-    const open = price
-    const close = open + (Math.random() - 0.5) * 10
-    const high = Math.max(open, close) + Math.random() * 5
-    const low = Math.min(open, close) - Math.random() * 5
-    const volume = Math.random() * 10
-
-    data.push({
-      time: currentTime - (count - i - 1) * 3600, // 每小时一个K线
-      open: Number(open.toFixed(2)),
-      high: Number(high.toFixed(2)),
-      low: Number(low.toFixed(2)),
-      close: Number(close.toFixed(2)),
-      volume: Number(volume.toFixed(2))
-    })
-    price = close
-
-  }
-  return data
-}
 
 
 // 处理时间间隔变化
@@ -328,9 +294,9 @@ const toggleTheme = () => {
 
 onUnmounted(() => {
   console.log('chartRef.value', chartRef)
-  chartRef?.removeChart()
+  chartRef.value?.removeChart()
   // 移除监听
-  socketService.value.unsubscribe('ticker',symbol.value);
+  socketService.value.unsubscribe('ticker',symbolInfo.value);
 })
 
 </script>

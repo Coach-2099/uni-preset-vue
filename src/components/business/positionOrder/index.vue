@@ -131,14 +131,14 @@ onMounted(() => {
 		  }
 	  })
 	  socketService.value.subscribeUser(userStore.userInfo.userId)
-	  socketService.value.on(userStore.userInfo.userId, (data: any) => {
-			const payload = data.payload
-			if(data.type === 'FUTURES_ORDER_ENTRUSTMENT' || data.type === 'FUTURES_ORDER_POSITION'){
+	  socketService.value.on(userStore.userInfo.userId, (data: any,type:string) => {
+			const payload = data
+			if(type === 'FUTURES_ORDER_ENTRUSTMENT' || type === 'FUTURES_ORDER_POSITION'){
 				ordersMap.value.set(payload.orderNo,payload)
-				if(data.type === 'FUTURES_ORDER_POSITION'){
+				if(type === 'FUTURES_ORDER_POSITION'){
 					symbolMap.value.set(payload.symbol,'')	
 				}
-			}else if(data.type === 'FUTURES_ORDER_CANCEL' ||data.type === 'FUTURES_ORDER_BOOM' ||data.type === 'FUTURES_ORDER_CLOSED' ){
+			}else if(type === 'FUTURES_ORDER_CANCEL' ||type === 'FUTURES_ORDER_BOOM' ||type === 'FUTURES_ORDER_CLOSED' ){
 				ordersMap.value.delete(payload.orderNo)
 			}
 	  })

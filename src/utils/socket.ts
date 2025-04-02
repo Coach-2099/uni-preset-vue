@@ -76,10 +76,11 @@ class SocketService {
 		return;
 	}
     try {
-      const { event, payload } = JSON.parse(data);
+      const { event, payload,type } = JSON.parse(data);
       const handler = this.eventHandlers.get(event);
-      handler?.(payload);
+      handler?.(payload,type);
     } catch (e) {
+		console.log('异常时消息:{}',data)
       console.error('消息解析失败', e);
     }
   }
