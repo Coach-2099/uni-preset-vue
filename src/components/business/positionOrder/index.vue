@@ -13,41 +13,44 @@
               <text class="fs-12 text-light-green">{{value.direction ==='LONG'?'做多':'做空'}}</text>
             </div>
           </div>
-          <div class="rightBox" v-if="value.status==='POSITIONING'">
-            <p class="fs-12 text-gray text-right">未结盈亏</p>
-            <p class="fw-b fs-16 text-red mt-5">{{value.unrealizedProfit}}({{value.unrealizedProfitScale}}%)</p>
+          <div class="core ml-15">
+            <text :class="value.direction ==='LONG'?'fs-12 text-light-green':'fs-12 text-red'">{{value.direction ==='LONG'?'做多':'做空'}}</text>
           </div>
         </div>
-        <div class="positionDetail mt-20">
-          <div class="flex justify-between">
-            <div class="detailBox w-20">
-              <p class="fs-12 text-gray">持仓数量</p>
-              <p class="fs-12 text-balck mt-5">{{value.tradeNum}}</p>
-            </div>
-            <div class="detailBox w-20">
-              <p class="fs-12 text-gray">入场价格</p>
-              <p class="fs-12 text-balck mt-5">{{value.entryPrice}}</p>
-            </div>
-            <div class="detailBox w-20">
-              <p class="fs-12 text-gray">标记价格</p>
-              <p class="fs-12 text-black mt-5">85,888.88</p>
-            </div>
-            <div class="detailBox w-25">
-              <p class="fs-12 text-gray text-right">预计强平价格</p>
-              <p class="fs-12 text-right text-light-blue mt-5">85,888.88</p>
-            </div>
+        <div class="rightBox" v-if="value.status==='POSITIONING'">
+          <p class="fs-12 text-gray text-right">未结盈亏</p>
+          <p :class="value.unrealizedProfit>0?'fw-b fs-16 text-green mt-5':'fw-b fs-16 text-red mt-5'">{{value.unrealizedProfit}}({{value.unrealizedProfitScale}}%)</p>
+        </div>
+      </div>
+      <div class="positionDetail mt-20">
+        <div class="flex justify-between">
+          <div class="detailBox w-20">
+            <p class="fs-12 text-gray">{{value.status==='POSITIONING'?'持仓数量':'委托数量'}}</p>
+            <p class="fs-12 text-balck mt-5">{{value.quantity}}</p>
           </div>
-          <div class="btnBox flex justify-between mt-15">
-            <van-button class="myBtn flex-1" type="default">
-              <text class="fs-12 text-gray">设置止盈止损</text>
-            </van-button>
-            <!-- <van-button class="myBtn flex-1" type="default">
-              <text class="fs-12 text-gray">追踪出场</text>
-            </van-button> -->
-            <van-button class="myBtn flex-1" type="default" @click="close(value.orderNo)">
-              <text class="fs-12 text-gray">平仓</text>
-            </van-button>
+          <div class="detailBox w-20">
+            <p class="fs-12 text-gray">入场价格</p>
+            <p class="fs-12 text-balck mt-5">{{value.entryPrice}}</p>
           </div>
+          <div class="detailBox w-20">
+            <p class="fs-12 text-gray">持仓保证金</p>
+            <p class="fs-12 text-black mt-5">{{value.margin}}</p>
+          </div>
+          <!-- <div class="detailBox w-25">
+            <p class="fs-12 text-gray text-right">预计强平价格</p>
+            <p class="fs-12 text-right text-light-blue mt-5">85,888.88</p>
+          </div> -->
+        </div>
+        <div class="btnBox flex justify-between mt-15">
+          <van-button class="myBtn flex-1" type="default">
+            <text class="fs-12 text-gray">设置止盈止损</text>
+          </van-button>
+          <!-- <van-button class="myBtn flex-1" type="default">
+            <text class="fs-12 text-gray">追踪出场</text>
+          </van-button> -->
+          <van-button class="myBtn flex-1" type="default" @click="close(value.orderNo)">
+            <text class="fs-12 text-gray">平仓</text>
+          </van-button>
         </div>
       </div>
     </div>
