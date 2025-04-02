@@ -5,7 +5,7 @@
         <div @click="goUser" class="flex items-center home_icon">
            <image src="/static/svg/home/user.svg" />
         </div>
-        <div class="fw-b fs-26 text-black ml-20">BYBIT</div>
+        <div class="fw-b fs-26 text-black ml-20">XAUSWAP</div>
         <div class="flex justify-between">
           <div class="flex items-center home_right_icon mr-20">
             <image

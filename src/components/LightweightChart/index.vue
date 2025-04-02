@@ -819,13 +819,13 @@ const exposeMethods = {
   // 更新最后一条K线
   updateLastCandle(candle: CandleData) {
     updateLastCandle(candle)
-    chart?.timeScale().scrollToPosition(1, false)
+    // chart?.timeScale().scrollToPosition(1, false)
   },
   
   // 追加新K线
   appendNewCandle(candle: CandleData) {
     appendNewCandle(candle)
-    chart?.timeScale().scrollToPosition(1, false)
+    // chart?.timeScale().scrollToPosition(1, false)
   },
   
   // 全量替换数据（用于历史数据）
