@@ -1,7 +1,7 @@
 <template>
   <div class="trend-temp">
     <div class="trend-temp-header">
-      <div class="flex">
+      <div class="flex pos-fixed checkBitBox bg-white px-20">
         <div class="flex checckBitBtn mr-5" @click="checkBit">
           <div class="checckBitImgBox mr-5">
             <image
@@ -15,7 +15,7 @@
           <text class="text-red fs-12">{{rose}}%</text>
         </div>
       </div>
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between pt-10">
         <div class="flex-1">
           <div class="fs-28 text-red">{{ lastPrice }}</div>
           <div class="fs-12 text-black">≈ {{ lastPrice }} USD</div>
@@ -335,17 +335,23 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .trend-temp {
   .trend-temp-header {
-    .checckBitBtn {
-      .checckBitImgBox {
-        image {
-          width: 14px;
-          height: 14px;
+    .checkBitBox {
+      left: 0;
+      right: 0;
+      top: 50px;
+      z-index: 29;
+      .checckBitBtn {
+        .checckBitImgBox {
+          image {
+            width: 14px;
+            height: 14px;
+          }
         }
       }
-    }
-    .increaseAndDecreaseBox {
-      background: #FFD3D9;
-      border-radius: 3px 3px 3px 3px;
+      .increaseAndDecreaseBox {
+        background: #FFD3D9;
+        border-radius: 3px 3px 3px 3px;
+      }
     }
   }
 }

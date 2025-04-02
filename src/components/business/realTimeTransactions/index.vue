@@ -69,7 +69,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref,onUnmounted,onMounted,nextTick,computed,watch} from 'vue'
+import { ref,computed,watch} from 'vue'
 import { getDepth } from '@/api/quotes'
 import { useUserStore } from '@/stores/user';
 import { useControlStore } from '@/stores/control';
