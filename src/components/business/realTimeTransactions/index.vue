@@ -128,10 +128,6 @@ const depthData =(bidsList:any,asksList:any)=>{
 	  : 50 // 默认值防止除零错误
 	  rightWidth.value = Number(100 - leftWidth.value).toFixed(0)
 }
-onUnmounted(() => {
-	console.log('移除depth监听')
-	socketService.value.unsubscribe('depth',subSymbol.value);
-})
  
 
 defineExpose({

@@ -48,8 +48,6 @@ import buyAndSellContract from '@/components/business/buyAndSellContract/index.v
 import floatingPanelProps from '@/components/business/floatingPanelSpot/index.vue'
 import { useControlStore } from '@/stores/control';
 
-import { getSymbolInfo } from '@/api/trade'
-import { onShow } from '@dcloudio/uni-app';
 import { useUserStore } from '@/stores/user';
 
 // stores
@@ -74,19 +72,9 @@ const props = defineProps({
   }
 })
 
-onShow(() => {
-  if (controlStore.quotesData.symbol){
-	  symbol.value = controlStore.quotesData.symbol
-  }
-})
-
 onMounted(() => {
-  console.log('onMounted')
-  console.log('buyAndSellType: ', props.buyAndSellType)
-  // 进入页面请求获取配置的接口
-  // 默认BTC/USDT
-  getBuyAndSellConfig()
   nextTick(() => {
+	  console.log('load here')
 	  if (controlStore.quotesData.symbol){
       symbol.value = controlStore.quotesData.symbol
 	  }
@@ -101,17 +89,7 @@ onMounted(() => {
 	  })
   })
 })
-onUnmounted(() => {
-	console.log('移除ticker监听')
-	socketService.value.unsubscribe('ticker',symbol.value);
-})
-const getBuyAndSellConfig = async () => {
-  const params = {
-    symbol: symbol.value
-  }
-  const data = await getSymbolInfo(params)
-  console.log('配置  data: ', data)
-}
+
 
 const checkBit = () => {
   floatingPanelPropsRef.value?.showFLoatingPanel()

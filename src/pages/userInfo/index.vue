@@ -31,7 +31,7 @@
         <div class="ml-10">
           <p class="fs-20 fw-b text-balck">{{ userInfo.username }}</p>
           <div class="fs-12 flex mt-10 text-gray">
-            <text>UID:{{ userInfo.userId }}</text>
+            <text>UID:{{ userInfo.uid }}</text>
             <div class="ml-5"><van-image src="/static/svg/tools/copy.svg" /></div>
           </div>
         </div>
@@ -139,7 +139,7 @@ import { ref, onMounted, onUnmounted, createApp } from 'vue';
 import { useUserStore } from '@/stores/user';
 const DEFAULT_USER_INFO = {
   username: '未登录用户',
-  userId: '--',
+  uid: '--',
   isValid: 0
 }
 
@@ -157,7 +157,7 @@ const getUser = async () => {
   await userStore.getUser()
   userInfo.value = {
     username: userStore.userInfo.username || DEFAULT_USER_INFO.username,
-    userId: userStore.userInfo.userId || DEFAULT_USER_INFO.userId,
+    uid: userStore.userInfo.uid || DEFAULT_USER_INFO.uid,
     isValid: userStore.userInfo.isValid || DEFAULT_USER_INFO.isValid
   }
 }

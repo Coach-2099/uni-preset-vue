@@ -36,9 +36,9 @@
         <van-tab v-if="activeTab === 'left'" title="成交">
           <transactionOrder></transactionOrder>
         </van-tab>
-        <van-tab v-if="activeTab === 'right'" title="仓位">
+       <!-- <van-tab v-if="activeTab === 'right'" title="仓位">
           <positionOrder></positionOrder>
-        </van-tab>
+        </van-tab> -->
       </van-tabs>
       <div class="orderIconBox pos-absolute" @click="goOrder">
         <image

@@ -106,7 +106,7 @@ const theme = ref<'light' | 'dark'>('light')
 const currentInterval = ref(300) // 间隔多少时间的图表数据
 
 const symbolInfo = ref('BTC/USDT')
-const timeInterval = ref('min_5') // K线周期,可用值:min_1,min_5,min_15,min_30,min_60,hour_4,day_1
+const timeInterval = ref('min_15') // K线周期,可用值:min_1,min_5,min_15,min_30,min_60,hour_4,day_1
 const rose = ref(0) //实时最新涨跌幅比例
 const HIGH24h = ref(0) //24h最高
 const LOW24h = ref(0) //24h最低
@@ -204,7 +204,7 @@ onMounted(() => {
         }
         chartRef.value?.updateLastCandle(candle)
       } else {
-        console.warn('时间戳不匹配无法更新', { candleTime, lastCandleTime })
+        // console.warn('时间戳不匹配无法更新', { candleTime, lastCandleTime })
       }
     })
     // 第一次进入要加载数据

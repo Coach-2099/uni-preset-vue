@@ -33,9 +33,9 @@
         <van-tab title="订单">
           <realTimeTransactions ref="realTimeTransactionsRef"></realTimeTransactions>
         </van-tab>
-        <van-tab v-if="activeTab === 'left'" title="成交">
+        <!-- <van-tab v-if="activeTab === 'left'" title="成交">
           <transactionOrder></transactionOrder>
-        </van-tab>
+        </van-tab> -->
         <van-tab v-if="activeTab === 'right'" title="仓位">
           <positionOrder></positionOrder>
         </van-tab>
@@ -50,17 +50,20 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed,onMounted } from 'vue';
+import { ref, computed,onMounted,nextTick,onUnmounted } from 'vue';
 import { onLoad } from "@dcloudio/uni-app";
 import CustomNavBar from '@/components/customNavBar/index.vue';
 import trendChart from '@/components/trendChart/index.vue';
 import realTimeTransactions from '@/components/business/realTimeTransactions/index.vue'
-import transactionOrder from '@/components/business/transactionOrder/index.vue'
+// import transactionOrder from '@/components/business/transactionOrder/index.vue'
 import positionOrder from '@/components/business/positionOrder/index.vue'
 import tradingFunArea from '@/components/business/tradingFunArea/index.vue'
 import { useControlStore } from '@/stores/control';
 
+import { useUserStore } from '@/stores/user';
 const controlStore = useControlStore();
+const userStore = useUserStore();
+const socketService = computed(() => userStore.socketService);
 
 
 const active = ref(0)
@@ -79,12 +82,20 @@ onMounted(() => {
 	if(controlStore.quotesData.symbol){
 		  symbol.value= controlStore.quotesData.symbol
 	}
-	if(activeTab.value === 'left'){
-		realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
-		  klineType: 'FUTURES',
-		  symbol: symbol.value
-		})
-	}
+	 nextTick(() => {
+	realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
+	  klineType: 'FUTURES',
+	  symbol: symbol.value
+	})
+	})
+})
+
+onUnmounted(() => {
+	console.log('移除ticker监听')
+	socketService.value.unsubscribe('ticker',symbol.value);
+	socketService.value.unsubscribe('depth',symbol.value);
+	socketService.value.unsubscribe('kline',symbol.value);
+	socketService.value.unsubscribe('ticker');
 })
 
 const sliderStyle = computed(() => ({

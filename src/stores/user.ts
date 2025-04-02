@@ -36,7 +36,6 @@ export const useUserStore = defineStore('userStore', {
             console.log('token', token)
             this.token = token
             cache.set(TOKEN_KEY, token)
-
             // 开启socket 连接
             // this.socketService = useSocket('ws://172.20.10.12:8888/webSocket')
             // this.socketService?.connect();
