@@ -41,8 +41,8 @@ export function getRechargeCoins(data: any) {
 }
 
 // 获取提币地址列表
-export function getWithdrawCoins(data: any) {
-  return request.get({ url: "/admin/asset/getWithdrawCoins", data })
+export function getWithdrawCoins() {
+  return request.get({ url: "/admin/asset/getWithdrawCoins" })
 }
 
 // 获取内部转账可转的币种列表
