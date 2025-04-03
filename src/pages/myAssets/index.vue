@@ -78,11 +78,11 @@
             <assetsModule type="futures" :data="futuresAccount"></assetsModule>
           </div>
         </van-tab>
-		<van-tab title="METALS" name="metals">
-		  <div class="px-20">
-		    <assetsModule type="metals" :data="metalsAccount"></assetsModule>
-		  </div>
-		</van-tab>
+        <van-tab title="METALS" name="metals">
+          <div class="px-20">
+            <assetsModule type="metals" :data="metalsAccount"></assetsModule>
+          </div>
+        </van-tab>
       </van-tabs>
     </div>
     <CustomNavBar></CustomNavBar>

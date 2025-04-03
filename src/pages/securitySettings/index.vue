@@ -6,19 +6,19 @@
       <p class="text-gray fs-12 pt-20">上次登录时间：2025-02-23  11:43:05</p>
       <p class="text-gray fs-12 pt-10">登录设备：ios</p>
       <p class="text-balck fs-16 pt-25">安全级别 
-        <span v-if="userInfo.securityLevel == 1" class="text-red">低</span>
+        <span v-if="userInfo.securityLevel == 1 || userInfo.securityLevel == 0" class="text-red">低</span>
         <span v-if="userInfo.securityLevel == 2" class="text-orange">中</span>
         <span v-if="userInfo.securityLevel == 3" class="text-green">高</span>
       </p>
       <div>
-        <van-progress v-if="userInfo.securityLevel == 1" color="#ee0a24" :percentage="40" :show-pivot="false" />
+        <van-progress v-if="userInfo.securityLevel == 1  || userInfo.securityLevel == 0" color="#ee0a24" :percentage="40" :show-pivot="false" />
         <van-progress v-else-if="userInfo.securityLevel == 2" color="#FFA500" :percentage="60" :show-pivot="false" />
         <van-progress v-else-if="userInfo.securityLevel == 3" color="#00B200" :percentage="100" :show-pivot="false" />
       </div>
       <div class="unsafeLevelBox mt-15 fs-12 text-gray">
         <div>
           账户安全等级
-          <text v-if="userInfo.securityLevel == 1">低，请至少开启<span class="text-red">1</span>项安全验证。</text>
+          <text v-if="userInfo.securityLevel == 1 || userInfo.securityLevel == 0">低，请至少开启<span class="text-red">1</span>项安全验证。</text>
           <text v-else-if="userInfo.securityLevel == 2">中</text>
           <text v-else-if="userInfo.securityLevel == 3">高</text>
         </div>

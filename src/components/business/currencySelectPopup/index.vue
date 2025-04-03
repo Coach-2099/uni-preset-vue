@@ -68,7 +68,7 @@ const loadDataRecharge = async () => {
 // 获取提币货币列表
 const loadDataWithdraw = async () => {
   const params = {}
-  const data = await getWithdrawCoins(params)
+  const data = await getWithdrawCoins()
   coinItems.value = data
   searchItems.value = data
 }

@@ -105,8 +105,15 @@
     <div class="copyBtnBox w-100 flex items-center justify-center px-20">
       <van-button @click="copy" class="copyBtn w-100" type="primary">Copy Address</van-button>
     </div>
-    <currencySelectPopup @chooseToken="chooseToken" ref="currentSelectRef"></currencySelectPopup>
-    <networkSelectPopup :active="networkShow" @chooseProtocolType="chooseProtocolType" ref="networkSelectPopupRef"></networkSelectPopup>
+    <currencySelectPopup
+      @chooseToken="chooseToken"
+      ref="currentSelectRef"
+    ></currencySelectPopup>
+    <networkSelectPopup
+      :active="networkShow"
+      @chooseProtocolType="chooseProtocolType"
+      ref="networkSelectPopupRef"
+    ></networkSelectPopup>
   </div>
 </template>
 
@@ -136,7 +143,6 @@ const getRechargeAddres = async () => {
   address.value = data
 }
 
-
 const goAssetRecord = () => {
   console.log('资产列表')
   uni.navigateTo({
@@ -154,7 +160,6 @@ const openNetworkPopup = () => {
 
 //接收子组件传过来的币种信息
 const chooseToken =(item: any) =>{
-	console.log('choose ={}',item)
 	symbol.value = item.token
 	if(item.protocolTypes && item.protocolTypes.length>1){
 		networkSelectPopupRef.value?.showFLoatingPanel(item.protocolTypes)	

@@ -14,14 +14,14 @@
     <div class="inputBox pt-10 pb-25 bg-white">
       <div class="mb-20">
         <p class="fs-16 text-black">币种</p>
-        <div class="baseSelect w-100 mt-10 pl-15 pr-25 flex justify-between items-cneter">
+        <div @click="checkBit" class="baseSelect w-100 mt-10 pl-15 pr-25 flex justify-between items-cneter">
           <div class="leftBox flex items-center">
             <image
               class="baseImg"
-              src="/static/images/OIP-C.jpg"
+              :src="symbolUrl"
               mode="scaleToFill"
             />
-            <p class="fs-14 fw-b ml-5 mr-5 text-black">BTC</p>
+            <p class="fs-14 fw-b ml-5 mr-5 text-black">{{ symbol }}</p>
             <p class="fs-14 text-gray">Bitcoin</p>
           </div>
           <div class="rightBox flex items-center">
@@ -33,13 +33,34 @@
           </div>
         </div>
       </div>
+
+      <div v-if="protocolType" class="mt-20">
+        <p class="fs-16 text-black">所属网络</p>
+        <div @click="openNetworkPopup" class="baseSelect w-100 mt-10 pl-15 pr-25 flex justify-between items-cneter">
+          <div class="leftBox flex items-center">
+            <p
+              class="fs-14"
+              :class="protocolType ? 'text-black' : 'text-gray'">
+              {{ protocolType || '请选择链类型'}}
+            </p>
+          </div>
+          <div class="rightBox flex items-center">
+            <image
+              class="downIcon"
+              src="/static/images/downGray.png"
+              mode="scaleToFill"
+            />
+          </div>
+        </div>
+      </div>
+
       <div class="mt-25">
         <div class="flex justify-between items-center">
           <p class="fs-16 text-black">地址</p>
-          <div class="flex items-center">
+          <!-- <div class="flex items-center">
             <p class="fs-16 text-black mr-10">地址簿</p>
             <div class="rightIcon"></div>
-          </div>
+          </div> -->
         </div>
         <div class="baseInput mt-10">
           <input
@@ -49,21 +70,6 @@
             placeholder-class="input-placeholder"
             @input="inputAddress"
           />
-        </div>
-      </div>
-      <div class="mt-20">
-        <p class="fs-16 text-black">所属网络</p>
-        <div class="baseSelect w-100 mt-10 pl-15 pr-25 flex justify-between items-cneter">
-          <div class="leftBox flex items-center">
-            <p class="fs-14 text-gray">请选择链类型</p>
-          </div>
-          <div class="rightBox flex items-center">
-            <image
-              class="downIcon"
-              src="/static/images/downGray.png"
-              mode="scaleToFill"
-            />
-          </div>
         </div>
       </div>
 
@@ -82,7 +88,7 @@
         </div>
         <div class="baseInput mt-10 flex justify-between items-center">
           <input
-            v-model="address"
+            v-model="amount"
             class="myInput flex-1 px-10 py-10 w-100"
             placeholder="最低提币金额：20"
             placeholder-class="input-placeholder"
@@ -107,7 +113,7 @@
         <p class="fs-16 text-gray">月剩余额度</p>
         <P class="fs-16 text-black">20,000/20,000 USDT</P>
       </div>
-      <div class="mt-10 flex justify-between items-center">
+      <div @click="openContractAddress" class="mt-10 flex justify-between items-center">
         <p class="fs-16 text-gray">合约地址：</p>
         <div class="flex justify-between items-center">
           <p class="fs-16 text-black mr-5">以20000结尾</p>
@@ -119,46 +125,159 @@
     <div class="btnGroup bg-white w-100">
       <div class="flex justify-between items-center">
         <p class="fs-14 text-gray">提币手续费</p>
-        <p class="fs-14 text-gray">0 1INCH </p>
+        <p class="fs-14 text-gray">{{ processingFee || 0 }} {{ symbol }} </p>
       </div>
       <div class="flex justify-between items-center mt-5">
         <div>
-          <p class="fs-16 text-gray">到账金额<text class="text-light-blue">设置</text> </p>
-          <p class="fs-14 fw-b text-black">0 1INCH </p>
+          <p class="fs-16 text-gray">到账金额</p>
+          <p class="fs-14 fw-b text-black">{{ amountOfReceipt }} {{ symbol }}</p>
         </div>
         <div>
           <van-button
             class="withdrawBtn fw-b"
             type="primary"
+            @click="goWithdraw"
           >Withdraw</van-button>
         </div>
       </div>
     </div>
 
+    <currencySelectPopup @chooseToken="chooseToken" ref="currentSelectRef"></currencySelectPopup>
+    <networkSelectPopup :active="networkShow" @chooseProtocolType="chooseProtocolType" ref="networkSelectPopupRef"></networkSelectPopup>
+    <contractAddress ref="contractAddressRef"></contractAddress>
+    <infoVerification @withdrawFun="isWithdraw" ref="InfoVerificationRef"></infoVerification>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue'
+import currencySelectPopup from '@/components/business/currencySelectPopup/index.vue';
+import networkSelectPopup from '@/components/business/netWorkSelectPopup/index.vue'
+import contractAddress from '@/components/business/contractAddress/index.vue';
+import infoVerification from '@/components/business/InfoVerification/index.vue'
+import { getWithdrawCoins, withdraw } from '@/api/asset';
+import { useUserStore } from '@/stores/user';
+import { showConfirmDialog } from 'vant';
+import { onShow } from '@dcloudio/uni-app';
 
 const currency = ref('');
-const address = ref('');
+const address = ref(''); // 钱包地址
+const currentSelectRef:any = ref(null)
+const networkSelectPopupRef:any = ref(null)
+const contractAddressRef:any = ref(null)
+const symbol = ref('') // 币种
+const symbolUrl = ref('') // 币种图标
+const networkShow = ref(true)
+const protocolType = ref('') // 网络类型
+const amount = ref('') // 输入金额
+const protocolTypesList = ref([])
+const processingFee = ref(0) // 手续费
+// const amountOfReceipt = ref(0) // 到账金额
+
+const InfoVerificationRef:any = ref(null)
+
+const userStore = useUserStore();
+const userInfo = userStore.userInfo;
+
+// 在script部分添加计算逻辑
+const amountOfReceipt = computed(() => {
+  const amountNum = parseFloat(amount.value) || 0
+  const fee = parseFloat(processingFee.value.toString()) || 0 // 确保手续费是数字
+  return Number((amountNum - fee).toFixed(4)) // 保留4位小数后转数字
+})
+
+// TODO: 提现功能接口加密
+onShow(() => {
+  // 打开弹窗之前需要验证是否绑定了手机和邮箱
+  getUser()
+})
+
+const getUser = async () => {
+  await userStore.getUser()
+  userInfo.value = {
+    username: userStore.userInfo.userName,
+    userId: userStore.userInfo.userId,
+    avatar: userStore.userInfo.avatar
+  }
+  if(!userInfo.value.username || !userInfo.value.userId) {
+    showConfirmDialog({
+      showCancelButton: false,
+      message:'请先前往安全页面绑定手机号和邮箱',
+    }).then(() => {
+      uni.navigateTo({
+        url: '/pages/securitySettings/index'
+      })
+    })
+  } else {
+    // 手机号和邮箱都绑定了再进行选择
+    currentSelectRef.value?.showFLoatingPanel('withdraw')
+  }
+}
 
 const goAssetRecord = () => {
-  console.log('资产列表')
   uni.navigateTo({
     url: '/pages/AssetRecord/index'
   })
 }
 
-const inputCurrency = () => {
-  console.log(currency.value)
-}
-
 const inputAddress = () => {
   console.log(address.value)
 }
+
+const checkBit = () => {
+  currentSelectRef.value?.showFLoatingPanel('withdraw')
+}
+
+const chooseToken = (item: any) => {
+  symbol.value = item.token
+  symbolUrl.value = item.img
+  if(item.protocolTypes && item.protocolTypes.length>1) {
+    protocolTypesList.value = item.protocolTypes
+    networkSelectPopupRef.value?.showFLoatingPanel(item.protocolTypes)
+		networkShow.value = true
+  } else {
+		if(item.protocolTypes) {
+			protocolType.value = item.protocolTypes[0]
+			networkShow.value = true
+		} else {
+			protocolType.value = ''
+			networkShow.value = false
+		}
+		// getWithdrawalAddres()
+  }
+}
+
+const chooseProtocolType =(protocol: string) =>{
+	protocolType.value = protocol
+	// getWithdrawalAddres()
+}
+
+const openNetworkPopup = () => {
+  networkSelectPopupRef.value?.showFLoatingPanel(protocolTypesList.value)
+}
+
+const goWithdraw = async () => {
+  InfoVerificationRef.value?.showFLoatingPanel()
+}
+
+const isWithdraw = async (Object: any) => {
+  const params = {
+    address: address.value,
+    amount: amount.value,
+    symbol: symbol.value,
+    protocolType: protocolType.value,
+    tradePwd: Object.password, // 交易密码
+    smsCode: Object.phonevCode, // 短信验证码
+    emailCode: Object.emailvCode // 邮箱验证码
+  }
+  const data = await withdraw(params)
+}
+
+const openContractAddress = () => {
+  contractAddressRef.value?.showFLoatingPanel()
+}
+
 
 </script>
 

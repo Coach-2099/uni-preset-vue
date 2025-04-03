@@ -17,13 +17,13 @@
           your friend buys or sells $100 of crypto
         </p>
       </div>
-	  <div class="copyTemp flex justify-between items-center">
-	    <qrcode-vue :value="inviteUrl" size="130" />
-	  </div>
-	  <div class="copyTemp flex justify-between items-center">
-	    <p class="fs-16 text-gray">{{ inviteUrl }}</p>
-	    <van-button class="copyBtn" type="primary" @click="copyText(inviteUrl)">Copy</van-button>
-	  </div>
+      <div class="copyTemp flex justify-between items-center">
+        <p class="inviteStr w-75 fs-16 text-gray">{{ inviteUrl }}</p>
+        <van-button class="copyBtn ml-10" type="primary" @click="copyText(inviteUrl)">Copy</van-button>
+      </div>
+      <div class="qrCodeTemp">
+        <qrcode-vue :value="inviteUrl" size="130" />
+      </div>
     </div>
   </div>
 </template>
@@ -64,10 +64,26 @@ const copyText = () => {
       border-radius: 8px 8px 8px 8px;
       border: 1px solid #B0B0B0;
       padding: 11px 23px;
+      .inviteStr {
+        // 新增换行样式
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
       .copyBtn {
         background: #1777FF;
         border-radius: 8px 8px 8px 8px;
       }
+    }
+    .qrCodeTemp {
+      top: 25px;
+      left: 0;
+      right: 0;
+      margin: auto;
+      width: 175px;
+      margin-top: 28px;
+      border-radius: 8px;
+      border: 1px solid #B0B0B0;
+      padding: 11px 23px;
     }
   }
 }

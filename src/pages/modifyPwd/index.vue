@@ -12,14 +12,18 @@
             <div class="baseInput mt-5 flex justify-between items-center">
               <input
                 v-model="phone"
-                class="myInput flex-1 px-10 py-10 w-100"
+                class="myInput mr-10 flex-1 px-10 py-10 w-100"
                 placeholder="enter your password"
                 @input="inputPassword"
               />
-              <div class="codeBtnBox ml-5" @click="getCode">
+              <baseVCodeButton 
+                :disabled="!phone"
+                @get-code="getCode"
+              />
+              <!-- <div class="codeBtnBox ml-5" @click="getCode">
                 <van-button type="primary">获取验证码</van-button>
                 <van-button v-if="false" type="primary" disabled>{{  countdown  }}</van-button>
-              </div>
+              </div> -->
             </div>
           </div>
         </van-tab>
@@ -101,6 +105,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue';
+import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
 import { sendmsg, updatepwd } from '@/api/account'
 
 const showPassword = ref(false);
