@@ -59,18 +59,17 @@
         title-active-color="#333333"
         title-inactive-color="#B0B0B0"
         v-model:active="active"
-		@click-tab="tabclick"
         shrink
         sticky
       >
         <van-tab title="WALLET" name="wallet">
           <div class="px-20">
-            <assetsModule type="wallet" :data="basicAccountList" :active="active"></assetsModule>
+            <assetsModule type="wallet" :data="basicAccountList"></assetsModule>
           </div>
         </van-tab>
         <van-tab title="SPOT" name="spot">
           <div class="px-20">
-            <assetsModule type="spot" :data="spotAccountList" :active="active"></assetsModule>
+            <assetsModule type="spot" :data="spotAccountList"></assetsModule>
           </div>
         </van-tab>
         <van-tab title="FUTURES" name="futures">
@@ -90,11 +89,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref ,onMounted} from 'vue';
+import { ref } from 'vue';
 import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼峰命名
 import assetsModule from '@/components/business/assetsModule/index.vue'
 import { getAsset } from '@/api/asset';
 import { roundDown } from '@/utils/util';
+import { onShow } from '@dcloudio/uni-app';
 
 const active = ref(0);
 const balance = ref(0) //账户总余额
@@ -119,7 +119,8 @@ const getBalance = async()=>{
  futuresAccount.value = data.futuresAccount
  metalsAccount.value = data.metalsAccount
 }
-onMounted(() => {
+
+onShow(()=>{
 	getBalance()
 })
 

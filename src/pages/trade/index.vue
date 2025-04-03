@@ -24,20 +24,20 @@
           <trendChart></trendChart>
         </div>
         <div v-if="activeTab === 'right'">
-          <tradingFunArea buyAndSellType="spot"></tradingFunArea>
+          <tradingFunArea buyAndSellType="SPOT"></tradingFunArea>
         </div>
       </div>
     </div>
     <div class="bottom pos-relative bg-white mt-5 px-10">
       <van-tabs v-model:active="active" offset-top="74" @click-tab="onClickTab" shrink sticky>
-        <van-tab title="订单">
+        <van-tab v-if="activeTab === 'left'" title="订单表">
           <realTimeTransactions ref="realTimeTransactionsRef"></realTimeTransactions>
         </van-tab>
         <van-tab v-if="activeTab === 'left'" title="成交">
-          <transactionOrder ref="transactionOrderRef"></transactionOrder>
+          <transactionOrder ref="transactionOrderRef" type="SPOT"></transactionOrder>
         </van-tab>
-       <van-tab v-if="activeTab === 'right'" title="仓位">
-          <positionOrder ref="positionOrderRef"></positionOrder>
+       <van-tab v-if="activeTab === 'right'" title="订单">
+          <tradeOrder ref="tradeOrderRef"></tradeOrder>
         </van-tab>
       </van-tabs>
       <div class="orderIconBox pos-absolute" @click="goOrder">
@@ -62,7 +62,7 @@ import CustomNavBar from '@/components/customNavBar/index.vue';
 import trendChart from '@/components/trendChart/index.vue';
 import realTimeTransactions from '@/components/business/realTimeTransactions/index.vue'
 import transactionOrder from '@/components/business/transactionOrder/index.vue'
-import positionOrder from '@/components/business/positionOrder/index.vue'
+import tradeOrder from '@/components/business/tradeOrder/index.vue'
 import tradingFunArea from '@/components/business/tradingFunArea/index.vue'
 import { useControlStore } from '@/stores/control';
 
@@ -75,7 +75,7 @@ const activeTab = ref<'left' | 'right'>('left')
 
 const realTimeTransactionsRef: any = ref(null)
 const transactionOrderRef: any = ref(null)
-const positionOrderRef: any = ref(null)
+const tradeOrderRef: any = ref(null)
 
 const symbol = ref('BTC/USDT')
 
@@ -90,7 +90,19 @@ onLoad(() => {
 })
 
 
-onMounted(() => {})
+onMounted(() => {
+	if(controlStore.quotesData.symbol){
+		  symbol.value= controlStore.quotesData.symbol
+	}
+	 nextTick(() => {
+		if(activeTab.value === 'left'){
+			realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
+			  klineType: 'SPOT',
+			  symbol: symbol.value
+			})
+		}
+	})
+})
 
 onLaunch(() => {
   uni.hideTabBar();
@@ -122,9 +134,7 @@ const onClickTab = (e: any) => {
       case 1:
         currentRef = transactionOrderRef
         break
-      case 2:
-        currentRef = positionOrderRef
-        default:
+		default:
     }
     console.log('currentRef', currentRef.value)
     currentRef.value?.loadData({klineType: 'SPOT', symbol: symbol.value});

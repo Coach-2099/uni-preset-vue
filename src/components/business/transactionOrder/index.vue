@@ -15,7 +15,8 @@
         <div class="titleBox flex-1 flex justify-stretch">
           <div class="titleName text-black fs-12 half-width">{{ formatTime(item.ts) }}</div>
           <div class="titleName text-black fs-12 half-width">
-            <text class="text-black fs-12" :class="item.direction == 'sell' ? 'sell-red' : 'buy-green'">{{ item.direction }}</text>
+			<text v-if="type==='FUTURES'||type==='METALS'" class="text-black fs-12" :class="item.direction == 'sell' ? 'sell-red' : 'buy-green'">{{ item.direction == 'sell'?'做空':'做多' }}</text>  
+            <text v-else class="text-black fs-12" :class="item.direction == 'sell' ? 'sell-red' : 'buy-green'">{{ item.direction == 'sell'?'卖出':'买入' }}</text>
           </div>
         </div>
         <div class="titleBox flex-1 flex justify-between">
@@ -44,6 +45,13 @@ const subSymbol = ref('') //当前订阅的交易对
 
 const dataList = ref()
 
+const props = defineProps({
+  type: {
+    type: String,
+    default: 'SPOT'
+  }
+})
+
 watch(
   () => controlStore.quotesData.symbol,
   (newVal, oldVal) => {
@@ -67,7 +75,7 @@ const loadData = async (params: any) => {
 
 // 新增时间格式化方法
 const formatTime = (timestamp: number) => {
-  const date = new Date(timestamp * 1000) // 假设时间戳是秒级
+  const date = new Date(timestamp) // 假设时间戳是秒级
   const hours = String(date.getHours()).padStart(2, '0')
   const minutes = String(date.getMinutes()).padStart(2, '0')
   const seconds = String(date.getSeconds()).padStart(2, '0')

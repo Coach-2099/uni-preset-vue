@@ -24,26 +24,26 @@
           <trendChart></trendChart>
         </div>
         <div v-if="activeTab === 'right'">
-          <tradingFunArea buyAndSellType="contract"></tradingFunArea>
+          <tradingFunArea buyAndSellType="FUTURES"></tradingFunArea>
         </div>
       </div>
     </div>
     <div class="bottom bg-white mt-5 px-10">
-      <van-tabs v-model:active="active" offset-top="74" shrink sticky>
-        <van-tab title="订单">
+      <van-tabs v-model:active="active" offset-top="74" @click-tab="onClickTab" shrink sticky>
+        <van-tab v-if="activeTab === 'left'" title="订单">
           <realTimeTransactions ref="realTimeTransactionsRef"></realTimeTransactions>
         </van-tab>
-        <!-- <van-tab v-if="activeTab === 'left'" title="成交">
-          <transactionOrder></transactionOrder>
-        </van-tab> -->
+        <van-tab v-if="activeTab === 'left'" title="成交">
+          <transactionOrder  ref="transactionOrderRef" type="FUTURES"></transactionOrder>
+        </van-tab>
         <van-tab v-if="activeTab === 'right'" title="仓位">
           <positionOrder></positionOrder>
         </van-tab>
       </van-tabs>
     </div>
     <div v-if="activeTab === 'left'" class="btnBox pos-fixed w-100 flex">
-      <van-button class="buyBtn flex-1" type="success">Buy</van-button>
-      <van-button class="sellBtn flex-1" type="danger">Sell</van-button>
+      <van-button class="buyBtn flex-1" type="success">LONG</van-button>
+      <van-button class="sellBtn flex-1" type="danger">SHORT</van-button>
     </div>
     <CustomNavBar></CustomNavBar>
   </div>
@@ -55,7 +55,7 @@ import { onLoad } from "@dcloudio/uni-app";
 import CustomNavBar from '@/components/customNavBar/index.vue';
 import trendChart from '@/components/trendChart/index.vue';
 import realTimeTransactions from '@/components/business/realTimeTransactions/index.vue'
-// import transactionOrder from '@/components/business/transactionOrder/index.vue'
+import transactionOrder from '@/components/business/transactionOrder/index.vue'
 import positionOrder from '@/components/business/positionOrder/index.vue'
 import tradingFunArea from '@/components/business/tradingFunArea/index.vue'
 import { useControlStore } from '@/stores/control';
@@ -72,6 +72,7 @@ const switchTab = (tab: 'left' | 'right') => {
   activeTab.value = tab;
 };
 const realTimeTransactionsRef: any = ref(null)
+const transactionOrderRef: any = ref(null)
 const symbol = ref('BTC/USDT') //默认交易对
 
 onLoad(() => {
@@ -83,10 +84,12 @@ onMounted(() => {
 		  symbol.value= controlStore.quotesData.symbol
 	}
 	 nextTick(() => {
-	realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
-	  klineType: 'FUTURES',
-	  symbol: symbol.value
-	})
+		if(activeTab.value === 'left'){
+			realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
+			  klineType: 'FUTURES',
+			  symbol: symbol.value
+			})
+		}
 	})
 })
 
@@ -97,6 +100,24 @@ onUnmounted(() => {
 	socketService.value.unsubscribe('kline',symbol.value);
 	socketService.value.unsubscribe('ticker');
 })
+
+const onClickTab = (e: any) => {
+  console.log('点击了标签页', e);
+  nextTick(() => {
+    let currentRef : any
+    switch(active.value) {
+      case 0:
+        currentRef = realTimeTransactionsRef
+        break
+      case 1:
+        currentRef = transactionOrderRef
+        break
+		default:
+    }
+    console.log('contract currentRef', currentRef.value)
+    currentRef.value?.loadData({klineType: 'FUTURES', symbol: symbol.value});
+  })
+}
 
 const sliderStyle = computed(() => ({
   transform: `translateX(${activeTab.value === 'left' ? '0' : '100%'})`,

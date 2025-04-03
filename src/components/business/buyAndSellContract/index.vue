@@ -8,7 +8,7 @@
     >
       <template #reference>
         <div class="dropDownBox flex justify-between align-center w-100">
-          <div class="fs-12 text-black">{{leverage}}</div>
+          <div class="fs-12 text-black">{{leverage?.text}}</div>
           <div class="imgBox">
             <image
               class="downIcon"
@@ -342,7 +342,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref ,onMounted} from 'vue';
+import { ref ,onMounted,watch} from 'vue';
 import {getLeverages,futuresTrade,getSymbolInfo} from '@/api/trade'
 import { getSwapBalance } from '@/api/asset'
 import { storeToRefs } from 'pinia'
@@ -353,7 +353,7 @@ import checkSquare from '@/static/images/checkSquare.png'
 import searchIcon from '@/static/images/search.png'
 
 import { useControlStore } from '@/stores/control'
-import { useUserStore } from '@/stores/user';
+const controlStore = useControlStore();
 
 const props = defineProps({
   symbol: {
@@ -366,7 +366,14 @@ const props = defineProps({
   }
 })
 
-const controlStore = useControlStore();
+watch(
+  () => controlStore.canceled,
+  (newVal, oldVal) => {
+	loadSwapBalance()
+  }
+);
+
+
 
 const checkedSettings = ref('1') //价值切换 
 const settingAfterConfirmation = ref('1') //价值切换值
@@ -385,7 +392,7 @@ const activeIcon = ref(checkSquare)
 const inactiveIcon = ref(square)
 
 const leverageData = ref<any[]>([]);
-const leverage = ref(0) //当前杠杆倍数
+const leverage = ref({}) //当前杠杆倍数
 
 const marginBalance = ref(0) //可用保证金余额
 const tradeToken = ref('') //交易币种
@@ -426,7 +433,7 @@ const checkedNoPopupWindows = ref(false)
 
 //选择杠杆
 const onSelect = (action: any) => {
-  leverage.value = action.value
+  leverage.value = action
   calculateMargin(tradeNum.value) //重新计算保证金
 }
 onMounted(() => {
@@ -460,10 +467,10 @@ const loadSwapBalance = async () => {
 //获取杠杆列表
 const loadLeverages = async () => {
   const data = await getLeverages()
-  leverage.value = data[0].value
   data.forEach((item: any)=>{
 	  leverageData.value.push({ text: item.name, value: item.value })
   })
+  leverage.value = leverageData.value[0]
   
 }
 
@@ -493,9 +500,9 @@ const calculateMargin = (val: number) =>{
 		return uni.showToast({title: '保证金不足，请修改交易量', icon: 'none'})
 	}
 	if(orderTypeObj.value.value ==='MARKET'){
-		tradeVal.value = roundDown(val * props.lastPrice * leverage.value,tradeSymbol.value.tradePriceDigit) //交易价值
+		tradeVal.value = roundDown(val * props.lastPrice * leverage.value.value,tradeSymbol.value.tradePriceDigit) //交易价值
 	}else{
-		tradeVal.value = roundDown(val * price.value * leverage.value,tradeSymbol.value.tradePriceDigit)
+		tradeVal.value = roundDown(val * price.value * leverage.value.value,tradeSymbol.value.tradePriceDigit)
 	}
 }
 
@@ -540,10 +547,10 @@ const submitTrade = async () => {
 	const params = {
 	  symbol: props.symbol,
 	  tradeAmount: tradeNum.value,
-	  tradePrice: orderTypeObj.value.value==='LIMIT'?price.value:props.lastPrice,
+	  tradePrice: price.value,
 	  tradeType: orderTypeObj.value.value,
 	  direction: direction.value,
-	  leverage: leverage.value,
+	  leverage: leverage.value.value,
 	  stopProfit: stopProfitVal.value,
 	  stopLoss: stopLossVal.value
 	}

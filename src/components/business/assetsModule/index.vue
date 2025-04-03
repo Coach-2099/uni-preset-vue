@@ -73,12 +73,14 @@
 </template>
 
 <script lang="ts" setup>
-import {  onMounted, ref, watch } from 'vue'
+import {   ref, watch } from 'vue'
 import square  from '@/static/images/square.png'
 import checkSquare from '@/static/images/checkSquare.png'
 import searchIcon from '@/static/images/search.png'
 import { getAsset } from '@/api/asset';
 import { roundDown } from '@/utils/util';
+import { nextTick } from 'process';
+import { onLoad, onShow } from '@dcloudio/uni-app';
 // import dataDefault from '@/components/dataDefault/index.vue'
 
 const checked = ref(false)
@@ -102,6 +104,15 @@ const props = defineProps({
 	  default:'wallet'
   }
 });
+
+watch(
+  () => props.data,
+  (newVal, oldVal) => {
+	if(props.type === 'wallet'|| props.type === 'spot'){
+		searchItems.value = props.data
+	}
+  }
+)
 
 const goDetail = () => {
   uni.navigateTo({
@@ -128,7 +139,7 @@ const onSearch = (val:string) => {
 	}
 }
 
-onMounted(()=>{
+onShow(()=>{
 	if(props.type === 'wallet'|| props.type === 'spot'){
 		searchItems.value = props.data
 	}

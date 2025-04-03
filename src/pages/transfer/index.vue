@@ -146,7 +146,7 @@
 import { ref ,onMounted} from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue'
 import { getTrasferCoins, getBalance,postTransfer} from '@/api/asset'
-const amount = ref(0); //转账金额
+const amount = ref(''); //转账金额
 const fromAccount = ref<AccountType>(
 	{ text: '钱包', value: 'WALLET' }
 ) //转出账户

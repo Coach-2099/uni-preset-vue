@@ -53,6 +53,7 @@
     "alova": "^3.2.8",
     "animate.css": "^4.1.1",
     "crypto-js": "^4.2.0",
+    "date-fns": "^4.1.0",
     "enum": "^3.0.4",
     "lightweight-charts": "^5.0.3",
     "lodash-es": "^4.17.21",

@@ -1,5 +1,6 @@
 import { isObject } from "@vue/shared";
 import * as CryptoJS from "crypto-js";
+import {format} from 'date-fns'
 
 /**
  * @description 获取元素节点信息（在组件中的元素必须要传ctx）
@@ -233,4 +234,14 @@ export function getUrlParams(url?: string): Record<string, string> {
  */ 
 export function roundDown(value:number, decimals:number) {
     return Math.floor(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
+}
+
+//formart iso date
+export function formatISODate(date:string){
+	return format(new Date(date),'Pp')
+}
+
+//自定义格式
+export function formatDate(date:number,format:string){
+	return format(new Date(date),format)
 }

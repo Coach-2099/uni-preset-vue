@@ -27,8 +27,8 @@
     </div>
     <div class="mt-15 buyAndSellBox flex justify-between items-stretch" :class="{'marginTop75': !showChart}">
       <div class="buyAndSellMoudle flex-1">
-        <buyAndSell v-if="buyAndSellType == 'spot'"></buyAndSell>
-        <buyAndSellContract v-if="buyAndSellType == 'contract'" :lastPrice="lastPrice" :symbol="symbol"></buyAndSellContract>
+        <buyAndSell v-if="buyAndSellType == 'SPOT'" :lastPrice="lastPrice" :symbol="symbol"></buyAndSell>
+        <buyAndSellContract v-if="buyAndSellType == 'FUTURES'|| buyAndSellType == 'METALS'" :lastPrice="lastPrice" :symbol="symbol"></buyAndSellContract>
       </div>
       <!-- <div class="flex-1"> -->
       <div class="rightDev">
@@ -85,7 +85,7 @@ onMounted(() => {
 		  })
 	  },100)
 	  priceFluctuationsRef.value?.loadData({
-	    klineType: 'FUTURES',
+	    klineType: props.buyAndSellType,
 	    symbol: symbol.value
 	  })
   })
@@ -93,7 +93,7 @@ onMounted(() => {
 
 
 const checkBit = () => {
-  floatingPanelPropsRef.value?.showFLoatingPanel({type: 'FUTURE'})
+  floatingPanelPropsRef.value?.showFLoatingPanel({type: props.buyAndSellType})
 }
 
 const showChartBtn = () => {
