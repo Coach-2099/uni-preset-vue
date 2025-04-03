@@ -72,15 +72,14 @@ const socketService = computed(() => userStore.socketService);
 watch(
   () => controlStore.quotesData.symbol,
   (newSymbol, oldSymbol) => {
-    if (newSymbol) {
-      console.log('oldSymbol', oldSymbol)
+    if (newSymbol && newSymbol!=symbolInfo.value) { //切换的交易对与原交易对相同不做处理
       // 取消旧symbol的订阅和监听
-      if (oldSymbol) {
-        socketService.value.unsubscribe('ticker', oldSymbol);
-        socketService.value.off(`${oldSymbol}-ticker`);
-      }
+	  socketService.value.unsubscribe('ticker', symbolInfo.value);
+	  socketService.value.off(`${symbolInfo.value}-ticker`);
 
       symbolInfo.value = newSymbol
+	  // 这里可以添加symbol变化后的处理逻辑
+	  handleIntervalChange(currentInterval.value)
       
       // 设置新symbol的订阅和监听
       socketService.value.subscribe('ticker', newSymbol);
@@ -91,10 +90,6 @@ watch(
         VOL24h.value = data.vol
         lastPrice.value = data.close
       })
-      // 这里可以添加symbol变化后的处理逻辑
-	  const currentTime = new Date().getTime()
-	  const endTime = currentTime- intervalMap[getPeriodByInterval(currentInterval.value)]
-      loadData(endTime,currentTime,true)
     }
   },
   { immediate: true } // 立即执行一次以获取初始值
@@ -278,23 +273,6 @@ const handleLoadMore = async({ start, end }) => {
   loadData(startTime,endTime,false)
 }
 
-
-
-// 处理时间间隔变化
-// const handleIntervalChange = async (interval: number) => {
-//     // 先更新当前时间间隔
-//     currentInterval.value = interval
-//     // 清空旧数据
-//     candleData.value = []
-//     // 重新加载数据
-//     await loadData()
-//     // 强制更新图表
-//     nextTick(() => {
-//       // 假设LightweightChart组件有一个方法来更新数据，这里改为更新v-model绑定的数据
-//       candleData.value = [...candleData.value];
-//     })
-// }
-
 // 新增时间间隔到API参数的映射方法
 const getPeriodByInterval = (interval: number) => {
   const map: { [key: number]: string } = {
@@ -324,7 +302,8 @@ const handleIntervalChange = async (interval: number) => {
     // 先更新当前时间间隔
     currentInterval.value = interval
     // 清空旧数据
-    candleData.value = []
+    // candleData.value = []
+	chartRef.value?.clearData()
     // 重新加载数据
 	const currentTime = new Date().getTime()
 	const endTime = currentTime- intervalMap[getPeriodByInterval(currentInterval.value)]

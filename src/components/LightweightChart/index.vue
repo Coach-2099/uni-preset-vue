@@ -378,10 +378,9 @@ const subRange =() =>{
     // 当可见范围开始时间接近数据集头部时触发加载
     if (newRange.from <= earliestDataTime && earliestEndDataTime.value!=earliestDataTime) {
 		earliestEndDataTime.value = earliestDataTime
-		console.log('newRange =',newRange)
       // 触发父组件加载更多数据
       emit('load-more-data', {
-        start: newRange?.from, // 为最后一根K线时间
+        start: earliestDataTime, // 为最后一根K线时间
         end: newRange?.to
       });
     }
@@ -730,7 +729,6 @@ const initChartStructure = async () => {
 
 // 修改后的数据渲染方法
 const renderChartData = async () => {
-  
   if (!chart || !candleSeries) return
 
   // 新增数据排序和验证
@@ -789,15 +787,8 @@ const removeChart = () => {
 // 新增重新绘制方法
 const redrawChart = async () => {
   // 正确销毁图表实例
-  chart.remove()
   // 清除所有引用
-  chart = null
-  candleSeries = null
-  // 清理EMA系列
-  emaSeriesMap.value.clear()
-  // removeChart()
-  await nextTick()
-  // initChart()
+  chart?.removeSeries(candleSeries)
 }
 
 // 主题响应优化
@@ -836,6 +827,10 @@ const exposeMethods = {
     candleSeries?.setData(newData)
     volumeSeries.value?.setData(newData.map(createVolumeData))
     updateAllEMAData()
+  },
+  //清空数据
+  clearData(){
+	  redrawChart() //重新绘制
   }
 }
 
@@ -914,7 +909,6 @@ const toggleEMA = (period: number) => {
 }
 
 onMounted(async () => {
-  console.log('执行')
   await nextTick()
   await initChartStructure()  // 先初始化结构
   if (props.data.length > 0) {
