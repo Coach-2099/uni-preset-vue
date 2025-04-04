@@ -177,7 +177,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue';
-import { onLaunch } from "@dcloudio/uni-app";
+import { onLaunch, onShow } from "@dcloudio/uni-app";
 import { useSocket } from '@/utils/socket';
 import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼峰命名
 import quoteList from '@/components/business/quoteList/index.vue'; // 使用大驼峰命名
@@ -236,11 +236,13 @@ const socketService = computed(() => userStore.socketService);
 		  });
 	  },100)
     })
-	
-	if(userStore.userInfo.userId){
-		getBalance()
-	}
   });
+  
+  onShow(()=>{
+	  if(userStore.userInfo.userId){
+	  	getBalance()
+	  }
+  })
 
   // Disconnect from the socket server when the component is unmounted
   onUnmounted(() => {

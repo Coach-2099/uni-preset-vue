@@ -165,6 +165,7 @@ import { getSpotBalance } from '@/api/asset'
 import { roundDown } from '@/utils/util';
 import { getSymbolInfo, spotTrade } from '@/api/trade';
 import { useControlStore } from '@/stores/control';
+import { onShow } from '@dcloudio/uni-app';
 
 const controlStore = useControlStore();
 const props = defineProps({
@@ -266,14 +267,27 @@ const calculateMargin = (val: number) =>{
 		tradeVal.value = roundDown(val * currentPrice,2)
 	}
 }
+//获取用户当前交易对币种可用余额
+const loadSpotBalance = async () => {
+	const params = {
+	  symbol: props.symbol
+	}
+  const data = await getSpotBalance(params)
+  tradeCoinBalance.value = data.tradeTokenBalance //获取余额数据
+  basicCoinBalance.value = data.basicTokenBalance //获取余额数据
+}
+
 onMounted(()=>{
-	loadSpotBalance() 
 	getBuyAndSellConfig()
 	const tradeSymbol = props.symbol.split('/')
 	tradeToken.value = tradeSymbol[0]
 	basicToken.value = tradeSymbol[1]
 	showPriceInput.value  =true
 	price.value = props.lastPrice //初始化当前价格
+})
+
+onShow(()=>{
+	loadSpotBalance() 
 })
 
 //获取交易对配置信息
@@ -285,15 +299,6 @@ const getBuyAndSellConfig = async () => {
   tradeSymbol.value = data
 }
 
-//获取用户当前交易对币种可用余额
-const loadSpotBalance = async () => {
-	const params = {
-	  symbol: props.symbol
-	}
-  const data = await getSpotBalance(params)
-  tradeCoinBalance.value = data.tradeTokenBalance //获取余额数据
-  basicCoinBalance.value = data.basicTokenBalance //获取余额数据
-}
 const clickPriceInpupt = () => {
   showPriceInput.value = !showPriceInput.value
 }
@@ -314,7 +319,15 @@ const submitTrade = async () => {
 	}
 	await spotTrade(params) //合约下单
 	loadSpotBalance() //下单成功重新读取可用余额
+	clearParams()
 	uni.showToast({title: '下单成功', icon: 'success'})
+}
+
+//清空交易参数
+const clearParams= ()=>{
+	tradeNum.value = 0 
+	value.value =0
+	tradeVal.value = 0 
 }
 
 </script>

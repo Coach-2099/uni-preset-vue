@@ -57,7 +57,7 @@ export const useUserStore = defineStore('userStore', {
         },
         initSocket() {
             if (this.isLogin && !this.socketService) {
-                this.socketService = useSocket('ws://13.229.75.237/webSocket')
+                this.socketService = useSocket(import.meta.env.VITE_WEBSOCKET_BASE_URL)
                 this.socketService?.connect();
             }
         }

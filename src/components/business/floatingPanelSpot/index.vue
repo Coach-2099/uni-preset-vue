@@ -37,7 +37,7 @@
         <van-tab :title="$t('noun.futureGoods')">
           <selectSpot
             ref="futureGoodsSelectSpotRef"
-            type="SPOT"
+            type="FUTURES"
             v-model:searchVal="searchValue"
             @closeModel="showFLoatingPanel"
           ></selectSpot>
@@ -45,7 +45,7 @@
         <van-tab :title="$t('noun.metalsGoods')">
           <selectSpot
             ref="metalsGoodsSelectSpotRef"
-            type="SPOT"
+            type="METALS"
             v-model:searchVal="searchValue"
             @closeModel="showFLoatingPanel"
           ></selectSpot>
@@ -156,6 +156,9 @@ const jumpToAge = (data: any) => {
     })
   } else if (data.type === 'METALS') {
     // 前往贵金属页面
+	uni.switchTab({
+	  url: '/pages/metals/index'
+	})
   }
 }
 

@@ -67,7 +67,7 @@
       </div>
       <div class="copyInfo flex justify-between items-center mt-10">
         <p class="fs-14 text-gray address text-wrap">{{ address }}</p>
-        <image
+        <image @click="copy"
           class="copyIcon"
           src="/static/images/copy.png"
           mode="scaleToFill"
@@ -140,7 +140,7 @@ const getRechargeAddres = async () => {
     symbol: protocolType.value?symbol.value+'-'+protocolType.value:symbol.value // 充值币种
   }
   const data = await getRecharge(params)
-  address.value = data
+  address.value = data.address
 }
 
 const goAssetRecord = () => {

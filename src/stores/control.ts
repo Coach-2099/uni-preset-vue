@@ -10,7 +10,7 @@ interface ControlStae {  // 修正拼写错误
 export const useControlStore = defineStore('controlStore', {
   state: (): ControlStae => ({
     inputShow: false,
-    quotesData: {},
+    quotesData: {}, //现货交易对监听
 	noPopupWindows: false, //是否弹窗显示下单信息
 	canceled:false, //是否已撤单
   }),

@@ -71,12 +71,12 @@ const routeConfig = computed(() => ({
     activeIcon: '/static/svg/tabbar/index1.svg',
     backgroundColor: '#FFFFFF'
   },
-  '/pages/quotes/index': {
-    title: t('navBar.quotes'),
-    icon: '/static/svg/tabbar/hang0.svg',
-    activeIcon: '/static/svg/tabbar/hang1.svg',
-    backgroundColor: '#F5F6FA'
-  },
+  // '/pages/quotes/index': {
+  //   title: t('navBar.quotes'),
+  //   icon: '/static/svg/tabbar/hang0.svg',
+  //   activeIcon: '/static/svg/tabbar/hang1.svg',
+  //   backgroundColor: '#F5F6FA'
+  // },
   '/pages/trade/index': {
     title: t('navBar.trade'),
     icon: '/static/svg/tabbar/trade0.svg',
@@ -89,7 +89,12 @@ const routeConfig = computed(() => ({
     activeIcon: '/static/svg/tabbar/gang1.svg',
     backgroundColor: '#F5F6FA'
   },
-
+ '/pages/metals/index': {
+    title: t('navBar.metals'),
+    icon: '/static/svg/tabbar/gang0.svg',
+    activeIcon: '/static/svg/tabbar/gang1.svg',
+    backgroundColor: '#F5F6FA'
+  },
   '/pages/myAssets/index': {
     title: t('navBar.myAssets'),
     icon: '/static/svg/tabbar/mine0.svg',

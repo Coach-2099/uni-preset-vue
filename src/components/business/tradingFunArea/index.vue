@@ -91,7 +91,7 @@ onMounted(() => {
   })
 })
 
-
+//默认切换显示的行情类型
 const checkBit = () => {
   floatingPanelPropsRef.value?.showFLoatingPanel({type: props.buyAndSellType})
 }

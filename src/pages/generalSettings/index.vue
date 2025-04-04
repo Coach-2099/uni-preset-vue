@@ -32,7 +32,7 @@
           <text class="text-black fs-16">UID</text>
         </div>
         <div>
-          <text class="fs-12 text-gray mr-5">{{ userInfo.userId }}</text>
+          <text class="fs-12 text-gray mr-5">{{ userInfo.uid }}</text>
           <image
             class="rightIcon"
             src="/static/svg/tools/copy.svg"

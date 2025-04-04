@@ -176,16 +176,16 @@
           <div v-if="settingAfterConfirmation === '1'">{{ $t('noun.quantity') }}</div>
           <div v-if="settingAfterConfirmation === '2'">{{ $t('noun.cost') }}</div>
           <div class="">
-            <text class="text-light-green">{{tradeVal}}</text> /
-            <text class="text-red">{{orderTypeObj?.value === 'MARKET'?lastPrice:price}}</text>
-            {{basicToken}}
+            <text class="text-light-green">{{tradeVal}}</text>
+            <!--  /<text class="text-red">{{orderTypeObj?.value === 'MARKET'?lastPrice:price}}</text> -->
+			{{basicToken}}
           </div>
         </div>
         <div class="flex justify-between mt-5 items-center fs-12 text-gray">
           <div>{{ $t('noun.cost') }}</div>
           <div class="">
-            <text class="text-light-green">{{margin}}</text> /
-            <text class="text-red">{{orderTypeObj?.value === 'MARKET'?lastPrice:price}}</text>
+            <text class="text-light-green">{{margin}}</text> 
+            <!-- /<text class="text-red">{{orderTypeObj?.value === 'MARKET'?lastPrice:price}}</text> -->
             {{basicToken}}
           </div>
         </div>
@@ -309,7 +309,7 @@
           </div>
           <div class="flex justify-between items-center mt-15">
             <div>仓位杠杆</div>
-            <div class="text-black">全仓{{leverage}}x</div>
+            <div class="text-black">全仓{{leverage.text}}</div>
           </div>
 		  <div v-if="stopProfitVal>0" class="flex justify-between items-center mt-15">
 		    <div>止盈价</div>
@@ -353,6 +353,7 @@ import checkSquare from '@/static/images/checkSquare.png'
 import searchIcon from '@/static/images/search.png'
 
 import { useControlStore } from '@/stores/control'
+import { onShow } from '@dcloudio/uni-app';
 const controlStore = useControlStore();
 
 const props = defineProps({
@@ -434,16 +435,33 @@ const checkedNoPopupWindows = ref(false)
 //选择杠杆
 const onSelect = (action: any) => {
   leverage.value = action
-  calculateMargin(tradeNum.value) //重新计算保证金
+  if(value.value>0){ //如果滑动值>0走滑动计算
+	  sliderChange(value.value)
+  }else{
+	calculateMargin(tradeNum.value) //重新计算保证金
+  }
 }
+
+//获取合约账户可用保证金
+const loadSwapBalance = async () => {
+	const params = {
+	  accounType: 'FUTURES'
+	}
+  const data = await getSwapBalance(params)
+  marginBalance.value = data //获取余额数据
+}
+
 onMounted(() => {
-	loadSwapBalance()
 	loadLeverages()
 	// 进入页面请求获取配置的接口
 	getBuyAndSellConfig()
 	const tradeSymbol = props.symbol.split('/')
 	tradeToken.value = tradeSymbol[0]
 	basicToken.value = tradeSymbol[1]
+})
+
+onShow(()=>{
+	loadSwapBalance()
 })
 
 //获取交易对配置信息
@@ -455,14 +473,6 @@ const getBuyAndSellConfig = async () => {
   tradeSymbol.value = data
 }
 
-//获取合约账户可用保证金
-const loadSwapBalance = async () => {
-	const params = {
-	  accounType: 'FUTURES'
-	}
-  const data = await getSwapBalance(params)
-  marginBalance.value = data //获取余额数据
-}
 
 //获取杠杆列表
 const loadLeverages = async () => {
@@ -480,30 +490,41 @@ const onSelectOrderType = (action: any) => {
 }
 
 const sliderChange =(val:number) =>{
+	let currentPrice = 0
 	if(orderTypeObj.value.value ==='MARKET'){
-		tradeNum.value = roundDown(val/100 * marginBalance.value/props.lastPrice,tradeSymbol.value.minTradeDigit) //滑动比例×usdt余额/最新价
+		currentPrice = props.lastPrice
 	}else{
 		if(!price.value){
 			return uni.showToast({title: '请输入正确的交易价格', icon: 'none'})
 		}else{
-			tradeNum.value = roundDown(val/100 * marginBalance.value/price.value,tradeSymbol.value.minTradeDigit) //滑动比例×usdt余额/最新价
+			currentPrice = price.value
 		}
 	}
-	calculateMargin(tradeNum.value)
+	showPriceInput.value = true
+	let marginVal = roundDown(val/100 * marginBalance.value/currentPrice ,tradeSymbol.value.minTradeDigit) //滑动比例×usdt余额/最新价
+	tradeNum.value = roundDown(marginVal * leverage.value.value,tradeSymbol.value.minTradeDigit)
+	tradeVal.value = roundDown(tradeNum.value * currentPrice,tradeSymbol.value.showUnit)
+	if(val === 100){
+		margin.value = roundDown(marginBalance.value,tradeSymbol.value.showUnit)
+	}else{
+		margin.value = roundDown(currentPrice * marginVal,tradeSymbol.value.showUnit) //计算所需保证金
+	}
 }
 
 //计算所需保证金 价格*交易量(val/lastprice)/杠杆
 const calculateMargin = (val: number) =>{
 	showPriceInput.value = true
-	margin.value = roundDown(props.lastPrice * val,tradeSymbol.value.tradePriceDigit) //计算所需保证金
+	let currentPrice = 0
+	if(orderTypeObj.value.value ==='MARKET'){
+		currentPrice = props.lastPrice
+	}else{
+		currentPrice = price.value
+	}
+	margin.value = roundDown(currentPrice * val/leverage.value.value,tradeSymbol.value.tradePriceDigit) //计算所需保证金
 	if(marginBalance.value<margin.value){
 		return uni.showToast({title: '保证金不足，请修改交易量', icon: 'none'})
 	}
-	if(orderTypeObj.value.value ==='MARKET'){
-		tradeVal.value = roundDown(val * props.lastPrice * leverage.value.value,tradeSymbol.value.tradePriceDigit) //交易价值
-	}else{
-		tradeVal.value = roundDown(val * price.value * leverage.value.value,tradeSymbol.value.tradePriceDigit)
-	}
+	tradeVal.value = roundDown(val * currentPrice,tradeSymbol.value.tradePriceDigit)
 }
 
 // 下单偏好设置
@@ -552,12 +573,24 @@ const submitTrade = async () => {
 	  direction: direction.value,
 	  leverage: leverage.value.value,
 	  stopProfit: stopProfitVal.value,
-	  stopLoss: stopLossVal.value
+	  stopLoss: stopLossVal.value,
+	  allIn:value.value===100?true:false //是否全部
 	}
 	await futuresTrade(params) //合约下单
 	showBuyPopup.value = false 
 	loadSwapBalance() //下单成功重新读取可用保证金
+	clearParams()
 	uni.showToast({title: '下单成功', icon: 'success'})
+}
+
+//清空交易参数
+const clearParams= ()=>{
+	tradeNum.value = 0 
+	stopProfitVal.value = 0
+	stopLossVal.value = 0
+	value.value =0
+	tradeVal.value = 0 
+	margin.value =0 
 }
 </script>
 

@@ -167,7 +167,6 @@ const checkBitItem = (item: any) => {
   })
   // 选中后父组件触发加载事件
   emit('closeModel', {jumpType: klineType.value})
-  // emit('jumpAge', {type: klineType.value})
 }
 
 const formatVolume = (volume:any) => {

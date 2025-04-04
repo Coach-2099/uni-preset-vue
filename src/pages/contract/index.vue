@@ -30,7 +30,7 @@
     </div>
     <div class="bottom bg-white mt-5 px-10">
       <van-tabs v-model:active="active" offset-top="74" @click-tab="onClickTab" shrink sticky>
-        <van-tab v-if="activeTab === 'left'" title="订单">
+        <van-tab v-if="activeTab === 'left'" title="订单表">
           <realTimeTransactions ref="realTimeTransactionsRef"></realTimeTransactions>
         </van-tab>
         <van-tab v-if="activeTab === 'left'" title="成交">
@@ -39,6 +39,12 @@
         <van-tab v-if="activeTab === 'right'" title="仓位">
           <positionOrder></positionOrder>
         </van-tab>
+		<div v-if="activeTab === 'right'" class="orderIconBox pos-absolute" @click="goOrder">
+		  <image
+		    src="/static/images/checkBit.png"
+		    mode="scaleToFill"
+		  />
+		</div>
       </van-tabs>
     </div>
     <div v-if="activeTab === 'left'" class="btnBox pos-fixed w-100 flex">
@@ -92,6 +98,13 @@ onMounted(() => {
 		}
 	})
 })
+
+//调换订单历史
+const goOrder = () => {
+  uni.navigateTo({
+    url: '/pages/transactionOrder/index'
+  })
+}
 
 onUnmounted(() => {
 	console.log('移除ticker监听')
@@ -174,6 +187,17 @@ const sliderStyle = computed(() => ({
     }
     .tabBox {
       margin-top: 50px;
+    }
+  }
+  
+  .bottom {
+    .orderIconBox {
+      top: 20rpx;
+      right: 20px;
+      image {
+        width: 10px;
+        height: 10px;
+      }
     }
   }
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="contract-index">
+  <div class="contract-index pos-relative">
     <div class="top bg-white">
       <div class="switch-container-box bg-white pos-fixed w-100 flex justify-between">
         <div class="w-100 pos-relative switch-container flex justify-between">
@@ -19,37 +19,45 @@
           ></div>
         </div>
       </div>
-      <div v-if="activeTab === 'left'">
-        <trendChart></trendChart>
-      </div>
-      <div v-if="activeTab === 'right'">
-        <tradingFunArea buyAndSellType="contract"></tradingFunArea>
+      <div class="tabBox">
+        <div v-if="activeTab === 'left'">
+          <trendChart></trendChart>
+        </div>
+        <div v-if="activeTab === 'right'">
+          <tradingFunArea buyAndSellType="METALS"></tradingFunArea>
+        </div>
       </div>
     </div>
     <div class="bottom bg-white mt-5 px-10">
-      <van-tabs v-model:active="active" offset-top="74" shrink sticky>
-        <van-tab title="订单">
+      <van-tabs v-model:active="active" offset-top="74" @click-tab="onClickTab" shrink sticky>
+        <van-tab v-if="activeTab === 'left'" title="订单表">
           <realTimeTransactions ref="realTimeTransactionsRef"></realTimeTransactions>
         </van-tab>
         <van-tab v-if="activeTab === 'left'" title="成交">
-          <transactionOrder></transactionOrder>
+          <transactionOrder  ref="transactionOrderRef" type="METALS"></transactionOrder>
         </van-tab>
         <van-tab v-if="activeTab === 'right'" title="仓位">
           <positionOrder></positionOrder>
         </van-tab>
+		<div v-if="activeTab === 'right'" class="orderIconBox pos-absolute" @click="goOrder">
+		  <image
+		    src="/static/images/checkBit.png"
+		    mode="scaleToFill"
+		  />
+		</div>
       </van-tabs>
     </div>
     <div v-if="activeTab === 'left'" class="btnBox pos-fixed w-100 flex">
-      <van-button class="buyBtn flex-1" type="success">Buy</van-button>
-      <van-button class="sellBtn flex-1" type="danger">Sell</van-button>
+      <van-button class="buyBtn flex-1" type="success">LONG</van-button>
+      <van-button class="sellBtn flex-1" type="danger">SHORT</van-button>
     </div>
     <CustomNavBar></CustomNavBar>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
-import { onShow,onLoad } from "@dcloudio/uni-app";
+import { ref, computed,onMounted,nextTick,onUnmounted } from 'vue';
+import { onLoad } from "@dcloudio/uni-app";
 import CustomNavBar from '@/components/customNavBar/index.vue';
 import trendChart from '@/components/trendChart/index.vue';
 import realTimeTransactions from '@/components/business/realTimeTransactions/index.vue'
@@ -58,7 +66,10 @@ import positionOrder from '@/components/business/positionOrder/index.vue'
 import tradingFunArea from '@/components/business/tradingFunArea/index.vue'
 import { useControlStore } from '@/stores/control';
 
+import { useUserStore } from '@/stores/user';
 const controlStore = useControlStore();
+const userStore = useUserStore();
+const socketService = computed(() => userStore.socketService);
 
 
 const active = ref(0)
@@ -67,24 +78,59 @@ const switchTab = (tab: 'left' | 'right') => {
   activeTab.value = tab;
 };
 const realTimeTransactionsRef: any = ref(null)
-const symbol = ref('BTC/USDT')
+const transactionOrderRef: any = ref(null)
+const symbol = ref('XAU/USD') //默认交易对
 
 onLoad(() => {
-  console.log('params', controlStore.quotesData.symbol)
-  console.log('params', controlStore.quotesData.activeType)
-  if(controlStore.quotesData.symbol){
-	  symbol.value= controlStore.quotesData.symbol
-  }
   // 修正类型错误，确保赋值为 'left' 或 'right'
   activeTab.value = controlStore.quotesData.activeType || 'left';
 })
-
-onShow(() => {
-  realTimeTransactionsRef.value?.loadData({
-    klineType: 'SPOT',
-    symbol: symbol
-  })
+onMounted(() => {
+	if(controlStore.quotesData.symbol){
+		  symbol.value= controlStore.quotesData.symbol
+	}
+	 nextTick(() => {
+		if(activeTab.value === 'left'){
+			realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
+			  klineType: 'METALS',
+			  symbol: symbol.value
+			})
+		}
+	})
 })
+
+//调换订单历史
+const goOrder = () => {
+  uni.navigateTo({
+    url: '/pages/transactionOrder/index'
+  })
+}
+
+onUnmounted(() => {
+	console.log('移除ticker监听')
+	socketService.value.unsubscribe('ticker',symbol.value);
+	socketService.value.unsubscribe('depth',symbol.value);
+	socketService.value.unsubscribe('kline',symbol.value);
+	socketService.value.unsubscribe('ticker');
+})
+
+const onClickTab = (e: any) => {
+  console.log('点击了标签页', e);
+  nextTick(() => {
+    let currentRef : any
+    switch(active.value) {
+      case 0:
+        currentRef = realTimeTransactionsRef
+        break
+      case 1:
+        currentRef = transactionOrderRef
+        break
+		default:
+    }
+    console.log('contract currentRef', currentRef.value)
+    currentRef.value?.loadData({klineType: 'METALS', symbol: symbol.value});
+  })
+}
 
 const sliderStyle = computed(() => ({
   transform: `translateX(${activeTab.value === 'left' ? '0' : '100%'})`,
@@ -137,6 +183,20 @@ const sliderStyle = computed(() => ({
           transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           border-radius: 6px;
         }
+      }
+    }
+    .tabBox {
+      margin-top: 50px;
+    }
+  }
+  
+  .bottom {
+    .orderIconBox {
+      top: 20rpx;
+      right: 20px;
+      image {
+        width: 10px;
+        height: 10px;
       }
     }
   }

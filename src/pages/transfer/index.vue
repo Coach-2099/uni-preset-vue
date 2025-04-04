@@ -248,6 +248,7 @@ const exchange = () => {
 
     // 更新可选账户类型
     toAccountType.value = actionsAccountType.filter(item => item.value !== fromAccount.value.value)
+	balance()//重新查询from余额
 }
 
 //提交划转

@@ -40,7 +40,7 @@
           <tradeOrder ref="tradeOrderRef"></tradeOrder>
         </van-tab>
       </van-tabs>
-      <div class="orderIconBox pos-absolute" @click="goOrder">
+      <div v-if="activeTab === 'right'" class="orderIconBox pos-absolute" @click="goOrder">
         <image
           src="/static/images/checkBit.png"
           mode="scaleToFill"

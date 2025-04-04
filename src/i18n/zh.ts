@@ -13,7 +13,8 @@ export default {
     quotes: '行情',
     trade: '现货',
     contract: '合约',
-    myAssets: '资产'
+    myAssets: '资产',
+	metals:'贵金属'
   },
   common: {
     confirm: '确 认',
