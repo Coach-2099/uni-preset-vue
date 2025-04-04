@@ -3,50 +3,20 @@
     <navigationBar title="修改密码"></navigationBar>
     <div class="inputTemp mt-25 px-20">
 
-      <van-tabs v-moiphonedel:active="active" shrink>
-        <van-tab title="phone">
-          <div class="mt-20">
-            <div class="flex justify-between items-center">
-              <p class="fs-14 text-black">手机</p>
-            </div>
-            <div class="baseInput mt-5 flex justify-between items-center">
-              <input
-                v-model="phone"
-                class="myInput mr-10 flex-1 px-10 py-10 w-100"
-                placeholder="enter your password"
-                @input="inputPassword"
-              />
-              <baseVCodeButton 
-                :disabled="!phone"
-                @get-code="getCode"
-              />
-              <!-- <div class="codeBtnBox ml-5" @click="getCode">
-                <van-button type="primary">获取验证码</van-button>
-                <van-button v-if="false" type="primary" disabled>{{  countdown  }}</van-button>
-              </div> -->
-            </div>
-          </div>
-        </van-tab>
-        <van-tab title="email">
-          <div class="mt-20">
-            <div class="flex justify-between items-center">
-              <p class="fs-14 text-black">email</p>
-            </div>
-            <div class="baseInput mt-5 flex justify-between items-center">
-              <input
-                v-model="email"
-                class="myInput flex-1 px-10 py-10 w-100"
-                placeholder="enter your password"
-                @input="inputPassword"
-              />
-              <div class="codeBtnBox ml-5" @click="getCode">
-                <van-button type="primary">获取验证码</van-button>
-                <van-button v-if="false" type="primary" disabled>{{  countdown  }}</van-button>
-              </div>
-            </div>
-          </div>
-        </van-tab>
-      </van-tabs>
+      <div class="mt-20">
+        <div class="flex justify-between items-center">
+          <p class="fs-14 text-black">账号</p>
+        </div>
+        <div class="baseInput mt-5 flex justify-between items-center">
+          <input
+            v-model="userName"
+            class="myInput mr-10 flex-1 px-10 py-10 w-100"
+            placeholder="enter your password"
+            disabled="true"
+            @input="inputPassword"
+          />
+        </div>
+      </div>
       <div class="mt-15">
         <div class="flex justify-between items-center">
           <p class="fs-14 text-black">验证码</p>
@@ -54,9 +24,13 @@
         <div class="baseInput mt-5 flex justify-between items-center">
           <input
             v-model="phoneCode"
-            class="myInput flex-1 px-10 py-10 w-100"
+            class="myInput flex-1 px-10 py-10 w-100 mr-10"
             placeholder="enter your password"
             @input="inputPassword"
+          />
+          <baseVCodeButton 
+            :disabled="!userName"
+            @get-code="getCode"
           />
         </div>
       </div>
@@ -103,20 +77,26 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue';
 import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
 import { sendmsg, updatepwd } from '@/api/account'
+import { useUserStore } from '@/stores/user';
 
+const userStore = useUserStore();
 const showPassword = ref(false);
-const phone = ref('');
-const email = ref('');
+const userName = ref('');
 
 const phoneCode = ref('');
 const password = ref('')
-const countdown = ref(60)
 
-const active = ref(0)
+const userInfo = computed(() => {
+  return userStore.userInfo;
+});
+
+onMounted(() => {
+  userName.value = userInfo.value.username;
+})
 
 const changePassword = () => {
   showPassword.value = !showPassword.value
@@ -127,10 +107,10 @@ const inputPassword = () => {
 }
 
 const getCode = async () => {
-  if (!phone.value) return uni.showToast({ title: '请输入手机号', icon: 'none' })
+  // if (!userName.value) return uni.showToast({ title: '请输入手机号', icon: 'none' })
   const params = {
     sendMsgType: '', // 手机或者邮箱
-    userName: phone.value,
+    userName: userName.value,
     // countryCode: countryCode.value,
   }
   await sendmsg(params)
@@ -142,7 +122,7 @@ const getCode = async () => {
 
 const confirmFun = async () => {
   const params = {
-    username: phone.value,
+    username: userName.value,
     password: password.value,
     code: phoneCode.value
   }

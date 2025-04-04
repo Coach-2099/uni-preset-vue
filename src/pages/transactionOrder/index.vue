@@ -41,19 +41,19 @@
                   <p>TP/SL</p>
                 </div> -->
                 <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-                  <p>Trigger Price</p>
-                  <p>{{ item.tradePrice }}</p>
+                  <p>入场价格</p>
+                  <p>{{ item.entryPrice }}</p>
                 </div>
                 <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-                  <p>Order Price</p>
-                  <p>{{ item.tradeTotal }}</p>
+                  <p>清算价格</p>
+                  <p>{{ item.liquidationPrice }}</p>
                 </div>
                 <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-                  <p>Filled/Order Quantity</p>
-                  <p>{{ item.tradeNum }}</p>
+                  <p>填充/订单数量</p>
+                  <p>{{ item.quantity }}</p>
                 </div>
                 <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-                  <p>Status</p>
+                  <p>状态</p>
                   <p>{{ formatStatus(item.status) }}</p>
                 </div>
               </div>

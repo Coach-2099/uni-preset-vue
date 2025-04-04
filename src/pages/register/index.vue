@@ -1,153 +1,167 @@
 <template>
   <div class="register-index">
-    <div class="header w-100 fw-b text-center text-black fs-22 pt-15 pb-15">{{ $t('homeIndex.login.registerIn') }}</div>
-    <van-tabs
-      v-moiphonedel:active="active"
-      shrink
-      @click-tab="onClickTab"
-    >
-      <van-tab title="email">
-        <div class="inputBox mt-20">
-          <div class="flex items-center inputTemp">
+    <!-- <div class="header w-100 fw-b text-center text-black fs-22 pt-15 pb-15">{{ $t('homeIndex.login.registerIn') }}</div> -->
+    <div class="logoTemp w-100 flex justify-center items-center">
+      <image
+        src="/static/images/logo-text.png"
+        mode="scaleToFill"
+      />
+    </div>
+
+    <div class="register-form">
+      <van-tabs
+        v-moiphonedel:active="active"
+        shrink
+        @click-tab="onClickTab"
+      >
+        <van-tab title="email">
+          <div class="inputBox mt-20">
+            <div class="flex items-center inputTemp">
+              <image
+                class="leftEmailIcon mx-10"
+                src="@/static/images/emailIcon.png"
+              />
+              <input
+                v-model="userName"
+                class="flex-1 base-input"
+                style="
+                  border:none;
+                  background-color: #F6F7FB;"
+                placeholder="eg: xxxx@gmail.com"
+                placeholder-class="input-placeholder"
+                @input="inputPhone"
+              />
+            </div>
+          </div>
+        </van-tab>
+        <van-tab title="phone">
+          <div class="inputBox mt-20">
+            <!-- <div class="inputTitle fw-b mb-5">{{ $t('common.phone') }}</div> -->
+            <div class="flex">
+              <div class="countryBox mr-10">
+                <van-button type="default" style="width: 90px;background-color: #F6F7FB;border: none;" @click="checkCountryFun">
+                  <template #default>
+                    <div class="flex items-center inputTemp">
+                      <image
+                        class="leftPhoneIcon mx-10"
+                        src="@/static/images/phoneIcon.png"
+                      />
+                      <div>+{{ countryCode }}</div>
+                      <image
+                        class="rightDownIcon mx-10"
+                        src="@/static/images/down.png"
+                      />
+                    </div>
+                  </template>
+                </van-button>
+                <van-popup v-model:show="showPicker" destroy-on-close position="bottom">
+                  <van-picker
+                    :columns="countryCodeArray"
+                    :model-value="pickVal"
+                    @confirm="onConfirm"
+                    @cancel="showPicker = false"
+                  >
+                    <template #option="option">
+                      <img :src="option.flag" alt="flag" style="width: 25px; height: 18px; margin-right: 5px;" />
+                      {{ option.text }}
+                    </template>
+                  </van-picker>
+                </van-popup>
+              </div>
+              <input
+                v-model="userName"
+                class="flex-1 base-input"
+                style="background-color: #F6F7FB;border: none;"
+                :placeholder="$t('tips.enterPhone')"
+                placeholder-class="input-placeholder"
+              />
+            </div>
+          </div>
+        </van-tab>
+      </van-tabs>
+
+      <div class="inputBox mt-20">
+        <div class="flex outerCodeBox">
+          <div class="flex flex-1 items-center inputTemp mr-10">
             <image
-              class="leftEmailIcon mx-10"
-              src="@/static/images/emailIcon.png"
+              class="leftIcon mx-10"
+              src="@/static/images/vCodeIcon.png"
             />
             <input
-              v-model="userName"
+              v-model="vCode"
               class="flex-1 base-input"
               style="
-                border:none;
-                background-color: #F6F7FB;"
-              placeholder="eg: xxxx@gmail.com"
+              border: none;
+              background-color: #F6F7FB;"
+              :placeholder="$t('tips.enterVCode')"
               placeholder-class="input-placeholder"
-              @input="inputPhone"
+              @input="inputPhoneCode"
             />
           </div>
-        </div>
-      </van-tab>
-      <van-tab title="phone">
-        <div class="inputBox mt-20">
-          <!-- <div class="inputTitle fw-b mb-5">{{ $t('common.phone') }}</div> -->
-          <div class="flex">
-            <div class="countryBox mr-10">
-              <van-button type="default" style="width: 90px;background-color: #F6F7FB;border: none;" @click="checkCountryFun">
-                <template #default>
-                  <div class="flex items-center inputTemp">
-                    <image
-                      class="leftPhoneIcon mx-10"
-                      src="@/static/images/phoneIcon.png"
-                    />
-                    <div>+{{ countryCode }}</div>
-                    <image
-                      class="rightDownIcon mx-10"
-                      src="@/static/images/down.png"
-                    />
-                  </div>
-                </template>
-              </van-button>
-              <van-popup v-model:show="showPicker" destroy-on-close position="bottom">
-                <van-picker
-                  :columns="countryCodeArray"
-                  :model-value="pickVal"
-                  @confirm="onConfirm"
-                  @cancel="showPicker = false"
-                >
-                  <template #option="option">
-                    <img :src="option.flag" alt="flag" style="width: 25px; height: 18px; margin-right: 5px;" />
-                    {{ option.text }}
-                  </template>
-                </van-picker>
-              </van-popup>
-            </div>
-            <input
-              v-model="userName"
-              class="flex-1 base-input"
-              style="background-color: #F6F7FB;border: none;"
-              :placeholder="$t('tips.enterPhone')"
-              placeholder-class="input-placeholder"
-            />
-          </div>
-        </div>
-      </van-tab>
-    </van-tabs>
-
-    <div class="inputBox mt-20">
-      <div class="flex outerCodeBox">
-        <div class="flex flex-1 items-center inputTemp mr-10">
-          <image
-            class="leftIcon mx-10"
-            src="@/static/images/vCodeIcon.png"
-          />
-          <input
-            v-model="vCode"
-            class="flex-1 base-input"
-            style="
-            border: none;
-            background-color: #F6F7FB;"
-            :placeholder="$t('tips.enterVCode')"
-            placeholder-class="input-placeholder"
-            @input="inputPhoneCode"
+          <baseVCodeButton 
+            :disabled="!userName"
+            @get-code="getCode"
           />
         </div>
-        <baseVCodeButton 
-          :disabled="!userName"
-          @get-code="getCode"
-        />
       </div>
-    </div>
 
-    <div class="inputBox mt-20">
-      <div class="flex outerBox">
+      <div class="inputBox mt-20">
+        <div class="flex outerBox">
+          <div class="flex flex-1 items-center inputTemp">
+            <image
+              class="leftPwdIcon mx-10"
+              src="@/static/images/pwdIcon.png"
+            />
+            <input
+              v-model="password"
+              style="min-height: 45px;
+              height: 45px;
+              border: none;
+              padding-left: 10px;
+              border-radius: 5px;
+              background-color: #F6F7FB;"
+              class="flex-1"
+              :placeholder="$t('tips.enterPassword')"
+              :password="showPassword"
+              @input="inputPassword"
+            />
+          </div>
+          <text class="uni-icon flex justify-center items-center pr-5 right-icon">
+            <van-icon name="eye" @click="changePassword"/>
+          </text>
+        </div>
+      </div>
+
+      <div class="inputBox mt-20 animate__animated animate__headShake">
+        <!-- <div class="inputTitle fw-b mb-5 text-red">{{ $t('common.iCode') }}*</div> -->
         <div class="flex flex-1 items-center inputTemp">
           <image
-            class="leftPwdIcon mx-10"
-            src="@/static/images/pwdIcon.png"
+            class="leftIcodeIcon mx-10"
+            src="@/static/images/ICodeIcon.png"
+            mode="scaleToFill"
           />
           <input
-            v-model="password"
-            style="min-height: 45px;
-            height: 45px;
-            border: none;
-            padding-left: 10px;
-            border-radius: 5px;
-            background-color: #F6F7FB;"
-            class="flex-1"
-            :placeholder="$t('tips.enterPassword')"
-            :password="showPassword"
-            @input="inputPassword"
+            v-model="InvitationCode"
+            style="
+              background-color: #F6F7FB;
+              border: none;"
+            class="flex-1 base-input"
+            placeholder-style="color: #FF3E47" 
+            :placeholder="$t('tips.enterICode')"
+            :disabled="urlInviteCode"
+            placeholder-class="input-placeholder"
+            @input="inputInvitationCode"
           />
         </div>
-        <text class="uni-icon flex justify-center items-center pr-5 right-icon">
-          <van-icon name="eye" @click="changePassword"/>
-        </text>
       </div>
     </div>
 
-    <div class="inputBox mt-20 animate__animated animate__headShake">
-      <!-- <div class="inputTitle fw-b mb-5 text-red">{{ $t('common.iCode') }}*</div> -->
-      <div class="flex flex-1 items-center inputTemp">
-        <image
-          class="leftIcodeIcon mx-10"
-          src="@/static/images/ICodeIcon.png"
-          mode="scaleToFill"
-        />
-        <input
-          v-model="InvitationCode"
-          style="
-            background-color: #F6F7FB;
-            border: none;"
-          class="flex-1 base-input"
-          placeholder-style="color: #FF3E47" 
-          :placeholder="$t('tips.enterICode')"
-          :disabled="urlInviteCode"
-          placeholder-class="input-placeholder"
-          @input="inputInvitationCode"
-        />
-      </div>
+    <div class="notes flex justify-end mt-10">
+      <div>{{ $t('common.hasAccount') }}</div>
+      <div @click="goLogin" class="text-blue">{{ $t('common.goLogin') }}</div>
     </div>
 
-    <div class="mt-25">
+    <div class="my-25">
       <van-button class="w-100" type="primary" @click="signUp">{{ $t('common.register') }}</van-button>
     </div>
   </div>
@@ -201,6 +215,7 @@ onMounted(() => {
   InvitationCode.value = params.inviteCode
 })
 
+
 // 获取验证码
 const getCode = async () => {
   if (!userName.value) return uni.showToast({ title: t('tips.enterAccount'), icon: 'none' })
@@ -214,6 +229,12 @@ const getCode = async () => {
     title: t('tips.vCodeHasSent'),
     icon: 'none',
     duration: 3000
+  })
+}
+
+const goLogin = () => {
+  uni.navigateTo({
+    url: '/pages/login/index'
   })
 }
 
@@ -302,51 +323,64 @@ const signUp = async () => {
   // background-color: #f8f8f8;
   height: 100vh;
   padding: 0 20px;
-  .inputBox {
-    .outerBox {
-      border: none;
-      border-radius: 8px;
-      .right-icon {
+  .logoTemp {
+    padding-top: 20%;
+    image {
+      width: 100px;
+      height: 120px;
+    }
+  }
+  .register-form {
+    margin-top: 20%;
+    .inputBox {
+      .outerBox {
+        border: none;
+        border-radius: 8px;
+        .right-icon {
+          background: #F6F7FB;
+        }
+      }
+      .countryBox {
+        // width: 200px;
+      }
+      .outerCodeBox {
+        .codeBtnBox {
+  
+        }
+      }
+      .inputTemp {
+        // border: 1px solid #d5d5d5;
         background: #F6F7FB;
+        border-radius: 5px;
+        .leftIcon {
+          width: 12.7px;
+          height: 13.7px;
+        }
+        .leftEmailIcon {
+          width: 13.5px;
+          height: 9.93px;
+        }
+        .leftPwdIcon {
+          width: 13.5px;
+          height: 13.5px;
+        }
+        .leftIcodeIcon {
+          width: 14px;
+          height: 13.5px;
+        }
+        .leftPhoneIcon {
+          width: 13.9px;
+          height: 13.5px;
+        }
+        .rightDownIcon {
+          width: 7px;
+          height: 5px;
+        }
       }
     }
-    .countryBox {
-      // width: 200px;
-    }
-    .outerCodeBox {
-      .codeBtnBox {
-
-      }
-    }
-    .inputTemp {
-      // border: 1px solid #d5d5d5;
-      background: #F6F7FB;
-      border-radius: 5px;
-      .leftIcon {
-        width: 12.7px;
-        height: 13.7px;
-      }
-      .leftEmailIcon {
-        width: 13.5px;
-        height: 9.93px;
-      }
-      .leftPwdIcon {
-        width: 13.5px;
-        height: 13.5px;
-      }
-      .leftIcodeIcon {
-        width: 14px;
-        height: 13.5px;
-      }
-      .leftPhoneIcon {
-        width: 13.9px;
-        height: 13.5px;
-      }
-      .rightDownIcon {
-        width: 7px;
-        height: 5px;
-      }
-    }
+  }
+  .notes {
+    // margin-top: 10%;
   }
 }
 </style> 
