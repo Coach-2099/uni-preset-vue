@@ -31,7 +31,7 @@
           />
         </div>
       </div>
-      <div class="mt-10">
+      <!-- <div class="mt-10">
         <div class="flex justify-between items-center">
           <p class="fs-14 text-black">密码</p>
         </div>
@@ -61,7 +61,7 @@
             @input="inputPassword"
           />
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="btnBox bg-white w-100 pos-fixed">
       <van-button

@@ -1,6 +1,15 @@
 <template>
   <div class="login-index">
-    <div class="header w-100 fw-b text-center text-black fs-22 pt-15 pb-15">{{ $t('homeIndex.login.signBy') }}</div>
+    <!-- <div class="header w-100 fw-b text-center text-black fs-22 pt-15 pb-15">
+      {{ $t('common.login') }}
+    </div> -->
+    <div class="logoTemp w-100 flex justify-center items-center">
+      <image
+        src="/static/images/logo-text.png"
+        mode="scaleToFill"
+      />
+    </div>
+
     <div class="inputBox-wrap">
       <div class="inputBox">
         <input
@@ -35,7 +44,9 @@
       <!-- 忘记密码 -->
       <div @click="goForgotPWD" class="text-blue">{{ $t('common.forgetPassword') }}</div>
       <!-- 隐私政策 -->
-      <div @click="goPrivacy" class="text-blue">{{ $t('common.privacypolicy') }}</div>
+      <!-- <div @click="goPrivacy" class="text-blue">{{ $t('common.privacypolicy') }}</div> -->
+      <!-- 前往注册 -->
+      <div @click="goRegister" class="text-blue">{{ $t('common.goToRegister') }}</div>
     </div>
 
     <div class="signBtn">
@@ -86,13 +97,14 @@ const goBack = () => {
   })
 }
 
-const goPrivacy = () => {
-  console.log('这是隐私协议')
-
-  // 暂时设置前往注册页面
+const goRegister = () => {
   uni.navigateTo({
     url: '/pages/register/index'
   })
+}
+
+const goPrivacy = () => {
+  console.log('这是隐私协议')
 }
 
 const goForgotPWD = () => {
@@ -112,6 +124,13 @@ const changePassword = () => {
 .login-index {
   height: 100vh;
   padding: 0 20px;
+  .logoTemp {
+    margin-top: 30%;
+    image {
+      width: 100px;
+      height: 120px;
+    }
+  }
   .inputBox {
     .outerBox {
       // border: 1px solid #d5d5d5;
@@ -123,7 +142,7 @@ const changePassword = () => {
     }
   }
   .inputBox-wrap {
-    margin-top: 90px;
+    margin-top: 20%;
   }
   .base-input {
     background: #F6F7FB;

@@ -27,7 +27,10 @@ export default {
     password: '密码',
     vCode: '验证码',
     iCode: '邀请码',
+    goToRegister: '前往注册',
     privacypolicy: '隐私政策',
+    hasAccount: '已有账号？',
+    goLogin: '前往登录',
     fundPassword: '资金密码',
     remember: '记住密码',
     forgetPassword: '忘记密码',
@@ -92,7 +95,7 @@ export default {
   },
   homeIndex: {
     login: {
-      signBy: '登录XAUSWAP',
+      signBy: 'XAUSWAP',
       emailOrPhone: '邮箱/手机号',
       registerIn: '注册XAUSWAP',
       resetPassword: '重置密码',
