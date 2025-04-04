@@ -82,19 +82,19 @@
           <div class="rightIcon ml-10"></div>
         </div>
       </div>
-      <div class="flex justify-between items-center mt-25">
+      <div class="flex justify-between items-center mt-5">
         <p class="fs-14 text-gray">Deposit Arrival</p>
         <div class="flex justify-between items-baseline">
           <p class="text-black fs-14">6 confirmations</p>
         </div>
       </div>
-      <div class="flex justify-between items-center mt-25">
+      <div class="flex justify-between items-center mt-5">
         <p class="fs-14 text-gray">Withdrawal Unlockecl</p>
         <div class="flex justify-between items-baseline">
           <p class="text-black fs-14">64 confirmations</p>
         </div>
       </div>
-      <div class="flex justify-between items-center mt-25">
+      <div class="flex justify-between items-center mt-5">
         <p class="fs-14 text-gray">Contract Address:</p>
         <div class="flex justify-between items-baseline">
           <p class="text-black fs-14">Ending with d831ec7</p>
@@ -102,6 +102,23 @@
         </div>
       </div>
     </div>
+    <div class="textDescription fs-12 pt-5 mt-25">
+      <div class="bg-white pt-20 px-20">
+        <p>View all deposit and withdrawal statuses?</p>
+        <p>点击这里</p>
+        <p class="mt-10 fw-b">
+          In upholding the integrity and safety of our platform's trading environment, Bybit is dedicated to combating financial crime and ensuring adherence to anti-money laundering measures.
+        </p>
+        <p class="mt-10">
+          Please make sure that only USDT deposit is made via this address. Otherwise, your deposited funds will not be added to your available balance - nor will it be refunded.
+        </p>
+        <p class="mt-10">
+          Please make sure that your Bybit deposit address is correct. Otherwise
+          your deposited funds will not be added to your available balance - nor
+        </p>
+      </div>
+    </div>
+
     <div class="copyBtnBox w-100 flex items-center justify-center px-20">
       <van-button @click="copy" class="copyBtn w-100" type="primary">Copy Address</van-button>
     </div>
@@ -229,6 +246,9 @@ const copy = () => {
   }
   .basicInfo {
     margin-top: 40px;
+  }
+  .textDescription {
+    background: #f8f8fa;
     padding-bottom: 90px;
   }
   .copyBtnBox {

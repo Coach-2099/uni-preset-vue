@@ -35,7 +35,8 @@
               placeholder-class="input-placeholder"
             />
           </div>
-          <baseVCodeButton 
+          <baseVCodeButton
+            ref="vcodeRef"
             :disabled="!userName"
             @get-code="getCode"
           />
@@ -91,10 +92,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
-import { chkAccount, findpwd } from '@/api/account';
+import { chkAccount, findpwd, sendmsg } from '@/api/account';
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
+const vcodeRef = ref()
 const userName = ref('');
 const vCode = ref('');
 const password = ref('');
@@ -125,6 +127,18 @@ const resetPassword = async () => {
 const changePassword = () => {
   console.log('change password')
   showPassword.value = !showPassword.value
+}
+
+const getCode = async () => {
+  const params = {
+    userName: userName.value,
+    countryCode: '',
+  }
+  await sendmsg(params)
+  uni.showToast({
+    title: t('tips.vCodeSend'),
+    icon: 'none'
+  })
 }
 
 </script>

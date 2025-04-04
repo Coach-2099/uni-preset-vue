@@ -58,12 +58,17 @@ const stopCountdown = () => {
 const handleClick = () => {
   if (!isCounting.value) {
     emit('get-code')
-    startCountdown()
+    // startCountdown()
   }
 }
 
 // 自动清理定时器
 onBeforeUnmount(stopCountdown)
+
+// 暴露倒计时方法给父组件
+defineExpose({
+  startCountdown
+})
 
 </script>
 

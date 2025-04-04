@@ -1,6 +1,6 @@
 <template>
   <div class="modifyEmail-index">
-    <navigationBar title="修改邮箱"></navigationBar>
+    <navigationBar title="绑定邮箱"></navigationBar>
     <div class="inputTemp mt-25 px-20">
       <div>
         <div class="flex justify-between items-center">
@@ -8,14 +8,10 @@
         </div>
         <div class="baseInput mt-5 flex justify-between items-center">
           <input
-            v-model="password"
+            v-model="email"
             class="myInput flex-1 px-10 py-10 w-100"
-            placeholder="enter your password"
-            @input="inputPassword"
+            :placeholder="$t('tips.enterEmail')"
           />
-          <div class="codeBtnBox ml-5" @click="getCode">
-            <van-button type="primary">获取验证码</van-button>
-          </div>
         </div>
       </div>
       <div class="mt-10">
@@ -24,50 +20,24 @@
         </div>
         <div class="baseInput mt-5 flex justify-between items-center">
           <input
-            v-model="password"
-            class="myInput flex-1 px-10 py-10 w-100"
-            placeholder="enter your password"
-            @input="inputPassword"
+            v-model="vCode"
+            class="myInput flex-1 px-10 py-10 w-100 mr-10"
+            :placeholder="$t('tips.enterVCode')"
+          />
+          <baseVCodeButton
+            ref="vcodeRef"
+            :disabled="!email"
+            @get-code="getCode"
           />
         </div>
       </div>
-      <!-- <div class="mt-10">
-        <div class="flex justify-between items-center">
-          <p class="fs-14 text-black">密码</p>
-        </div>
-        <div class="baseInput mt-5 flex justify-between items-center">
-          <input
-            v-model="password"
-            class="myInput flex-1 px-10 py-10 w-100"
-            placeholder="enter your password"
-            :password="showPassword"
-            @input="inputPassword"
-          />
-          <text class="uni-icon flex justify-center items-center pr-5 right-icon">
-            <van-icon name="eye" @click="changePassword"/>
-          </text>
-        </div>
-      </div>
-      <div class="mt-10">
-        <div class="flex justify-between items-center">
-          <p class="fs-14 text-black">旧密码</p>
-        </div>
-        <div class="baseInput mt-5 flex justify-between items-center">
-          <input
-            v-model="password"
-            class="myInput flex-1 px-10 py-10 w-100"
-            placeholder="enter your password"
-            :password="showPassword"
-            @input="inputPassword"
-          />
-        </div>
-      </div> -->
     </div>
     <div class="btnBox bg-white w-100 pos-fixed">
       <van-button
         class="confirmBtn w-100 fw-b fs-20"
         type="primary"
-      >confirm</van-button>
+        @click="confirm"
+      >确 认</van-button>
     </div>
   </div>
 </template>
@@ -75,20 +45,51 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue';
+import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
+import { sendmsg } from '@/api/account'
+import { bindPhoneOrEmail } from '@/api/user'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
-const showPassword = ref(false);
-const password = ref('')
+const vcodeRef = ref()
+const vCode = ref('')
+const email = ref('')
 
-const changePassword = () => {
-  showPassword.value = !showPassword.value
+
+const getCode = async () => {
+  // 新增邮箱格式校验
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+    return uni.showToast({ title: t('tips.emailFormatIsIncorrect'), icon: 'none' })
+  }
+  vcodeRef.value.startCountdown()
+  const params = {
+    sendMsgType: '', // 手机或者邮箱
+    userName: email.value,
+    // countryCode: countryCode.value,
+  }
+  await sendmsg(params)
+  uni.showToast({
+    title: t('tips.vCodeHasSent'),
+    icon: 'none'
+  })
 }
 
-const inputPassword = () => {
-  console.log(password.value);
-}
-
-const getCode = () => {
-  console.log('获取验证码');
+const confirm = async () => {
+  if (!email.value) {
+    return uni.showToast({ title: t('tips.enterEmail'), icon: 'none' })
+  }
+  if (!vCode.value) {
+    return uni.showToast({ title: t('tips.enterVCode'), icon: 'none' })
+  }
+  const params = {}
+  await bindPhoneOrEmail(params)
+  uni.showToast({
+    title: t('tips.bindSuccess'),
+    icon: 'none'
+  })
+  setTimeout(() => {
+    uni.navigateBack()
+  }, 1000)
 }
 
 

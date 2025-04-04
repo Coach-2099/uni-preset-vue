@@ -125,7 +125,7 @@ const changePassword = () => {
   height: 100vh;
   padding: 0 20px;
   .logoTemp {
-    margin-top: 30%;
+    padding-top: 30%;
     image {
       width: 100px;
       height: 120px;

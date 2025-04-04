@@ -28,7 +28,7 @@
                 placeholder-class="input-placeholder"
               />
             </div>
-            <baseVCodeButton @get-code="getPhoneCode"/>
+            <baseVCodeButton ref="vcodeRef" @get-code="getPhoneCode"/>
           </div>
         </div>
         <div class="inputBox mt-20">
@@ -49,7 +49,7 @@
                 placeholder-class="input-placeholder"
               />
             </div>
-            <baseVCodeButton @get-code="getEmailCode"/>
+            <baseVCodeButton ref="vcodeEmailRef" @get-code="getEmailCode"/>
           </div>
         </div>
         <div class="w-100 pt-25">
@@ -91,6 +91,8 @@ import { useUserStore } from '@/stores/user';
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
+const vcodeRef = ref()
+const vcodeEmailRef = ref()
 const userStore = useUserStore()
 const userInfo = userStore.userInfo;
 const showBottom = ref(false)
@@ -135,6 +137,7 @@ const withdrawFun = () => {
 }
 
 const getPhoneCode = async () => {
+  vcodeRef.value.startCountdown()
   const params = {
     sendMsgType: '', // 手机或者邮箱
     userName: userInfo.phone,
@@ -149,6 +152,7 @@ const getPhoneCode = async () => {
 }
 
 const getEmailCode = async () => {
+  vcodeEmailRef.value.startCountdown()
   const params = {
     sendMsgType: '', // 手机或者邮箱
     userName: userInfo.email,

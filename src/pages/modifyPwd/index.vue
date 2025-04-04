@@ -25,10 +25,11 @@
           <input
             v-model="phoneCode"
             class="myInput flex-1 px-10 py-10 w-100 mr-10"
-            placeholder="enter your password"
+            :placeholder="$t('tips.enterVCode')"
             @input="inputPassword"
           />
-          <baseVCodeButton 
+          <baseVCodeButton
+            ref="vcodeRef"
             :disabled="!userName"
             @get-code="getCode"
           />
@@ -42,7 +43,7 @@
           <input
             v-model="password"
             class="myInput flex-1 px-10 py-10 w-100"
-            placeholder="enter your password"
+            :placeholder="$t('tips.enterPassword')"
             :password="showPassword"
             @input="inputPassword"
           />
@@ -83,8 +84,9 @@ import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
 import { sendmsg, updatepwd } from '@/api/account'
 import { useUserStore } from '@/stores/user';
 
+const vcodeRef = ref();
 const userStore = useUserStore();
-const showPassword = ref(false);
+const showPassword = ref(true);
 const userName = ref('');
 
 const phoneCode = ref('');
@@ -107,7 +109,7 @@ const inputPassword = () => {
 }
 
 const getCode = async () => {
-  // if (!userName.value) return uni.showToast({ title: '请输入手机号', icon: 'none' })
+  vcodeRef.value.startCountdown()
   const params = {
     sendMsgType: '', // 手机或者邮箱
     userName: userName.value,
