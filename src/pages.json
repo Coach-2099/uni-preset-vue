@@ -240,6 +240,13 @@
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "forGotPWD"
 			}
+		},
+		{
+			"path": "pages/modifyPhone/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "modifyPhone"
+			}
 		}
 	],
 	"globalStyle": {

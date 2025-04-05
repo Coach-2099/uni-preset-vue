@@ -43,8 +43,8 @@
       :ema-configs="emaConfigs"
       :theme="theme"
       :initial-interval="currentInterval"
-	  @interval-change="handleIntervalChange"
-	  :hasMore="hasMore"
+      @interval-change="handleIntervalChange"
+      :hasMore="hasMore"
       @load-more-data="handleLoadMore"
     ></lightWeightChart>
     <!-- <button @click="toggleTheme">切换主题</button> -->
@@ -315,6 +315,7 @@ const getPeriodByInterval = (interval: number) => {
 
 const checkBit = () => {
   console.log('点击')
+  // METALS  SPOT   FUTURE
   floatingPanelPropsRef.value?.showFLoatingPanel({type: 'SPOT'})
 }
 

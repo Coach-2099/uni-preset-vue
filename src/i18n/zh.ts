@@ -93,6 +93,9 @@ export default {
     enterOrderValue: '请输入订单价值',
     vCodeHasSent: '验证码已发送,请查收',
     enter: '请输入',
+    bindSuccess: '绑定成功',
+    emailFormatIsIncorrect: '邮箱格式不正确',
+    bindPhoneOrEmail: '请先绑定手机号或邮箱',
   },
   homeIndex: {
     login: {

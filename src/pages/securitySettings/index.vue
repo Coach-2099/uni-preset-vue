@@ -59,7 +59,7 @@
           />
         </div>
       </div>
-      <div class="pt-25 flex justify-between">
+      <div class="pt-25 flex justify-between" @click="gomodifyPhone">
         <div class="">
           <text class="text-black fs-16">手机号</text>
         </div>
@@ -123,6 +123,12 @@ const goModifyFundPassword = () => {
 const gomodifyEmail = () => {
   uni.navigateTo({
     url: '/pages/modifyEmail/index'
+  })
+}
+
+const gomodifyPhone = () => {
+  uni.navigateTo({
+    url: '/pages/modifyPhone/index'
   })
 }
 

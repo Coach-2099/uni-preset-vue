@@ -74,11 +74,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, nextTick, watch, defineEmits } from 'vue';
+import { ref, nextTick, watch, defineEmits, computed } from 'vue';
 import { getSymbolsLastPrice } from '@/api/quotes';
 import { getTicker } from '@/api/quotes';
 import { useControlStore } from '@/stores/control';
-
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore();
 const props = defineProps({
   type: {
     type: String,
@@ -94,11 +95,10 @@ const klineType = ref('');
 
 const listData = ref<any[]>([]); // 从API获取的真实数据
 const loadingData = ref(true); // 加载状态
-
+const socketService = computed(() => userStore.socketService);
 
 const emit = defineEmits<{
   (e: 'closeModel', payload: {jumpType: any}): void
-  // (e: 'jumpAge', payload: { type: any }): void
 }>()
 
 // stores
@@ -112,27 +112,40 @@ watch(() => props.searchVal, (newVal, oldVal) => {
 const loadData = async (kType: any) => {
   loadingData.value = true;
   klineType.value = kType
-  try {
-    // 使用解构赋值确保响应式更新
-    listData.value = []
-    const params = {
-      klineType: kType,
-    }
-    // 添加await强制等待
-    const data = await getSymbolsLastPrice(params)
-    // 使用数组解构保持响应性
-    listData.value = data.map((item: any) => ({
-      ...item,
-      symbol1: item.symbol.split('/')[0],
-      symbol2: item.symbol.split('/')[1]
-    }))
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  } finally {
-    // 移除setTimeout直接更新状态
-    loadingData.value = false;
+  // 使用解构赋值确保响应式更新
+  listData.value = []
+  const params = {
+    klineType: kType,
   }
+  // 添加await强制等待
+  const data = await getSymbolsLastPrice(params)
+  // 使用数组解构保持响应性
+  listData.value = data.map((item: any) => ({
+    ...item,
+    symbol1: item.symbol.split('/')[0],
+    symbol2: item.symbol.split('/')[1]
+  }))
+  loadingData.value = false;
+  isSocket()
 };
+
+const isSocket = () => {
+  // 查询数据后进行sockt 连接
+  socketService.value.subscribe('ticker');
+  socketService.value.on('ticker', (data: any) => {
+    const index = listData.value.findIndex(item => item.symbol === data.symbol)
+    if (index > -1) {
+      // 使用对象展开保持响应性
+      listData.value[index] = {
+        ...listData.value[index],
+        rose: Number((data.close-data.open)/data.open*100).toFixed(2),
+        close: data.close,
+        vol: data.vol,
+        // rose: data.rose
+      }
+    }
+  })
+}
 
 const searchFun = async () => {
   loadingData.value = true;

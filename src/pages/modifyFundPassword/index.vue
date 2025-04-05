@@ -2,7 +2,7 @@
   <div class="modifyFundPassword-index">
     <navigationBar title="资金密码"></navigationBar>
     <div class="inputTemp mt-25 px-20">
-      <div class="mt-10">
+      <!-- <div class="mt-10">
         <div class="flex justify-between items-center">
           <p class="fs-14 text-black">{{ $t('common.account') }}</p>
         </div>
@@ -12,17 +12,8 @@
             class="myInput flex-1 px-10 py-10 w-100"
             placeholder="enter your account"
           />
-          <baseVCodeButton 
-            :disabled="!accountNumber"
-            @get-code="getCode"
-          />
-          <!-- <div class="codeBtnBox ml-5" @click="getCode">
-            <van-button type="primary" :disabled="countdown > 0" >
-              {{ countdown > 0 ? `${countdown}${$t('common.tryAgain')}`  : $t('common.getVCode') }}
-            </van-button>
-          </div> -->
         </div>
-      </div>
+      </div> -->
       <div class="mt-10">
         <div class="flex justify-between items-center">
           <p class="fs-14 text-black">{{ $t('common.vCode') }}</p>
@@ -30,10 +21,11 @@
         <div class="baseInput mt-5 flex justify-between items-center">
           <input
             v-model="verificationCode"
-            class="myInput flex-1 px-10 py-10 w-100"
-            placeholder="enter verification code"
-            @input="inputPassword"
+            class="myInput flex-1 px-10 py-10 w-100 mr-10"
+            :placeholder="$t('tips.enterVCode')"
           />
+          <!-- :disabled="!accountNumber" -->
+          <baseVCodeButton ref="vcodeRef"  @get-code="getCode" />
         </div>
       </div>
       <div class="mt-10">
@@ -44,7 +36,7 @@
           <input
             v-model="password"
             class="myInput flex-1 px-10 py-10 w-100"
-            placeholder="enter your password"
+            :placeholder="$t('tips.enterPassword')"
             :password="showPassword"
           />
           <text class="uni-icon flex justify-center items-center pr-5 right-icon">
@@ -71,40 +63,61 @@ import navigationBar from '@/components/navigationBar/index.vue';
 import { sendmsg } from '@/api/account'
 import { setTradepwd } from '@/api/user'
 import baseVCodeButton from '@/components/baseVCodeButton/index.vue'
+import { onShow } from '@dcloudio/uni-app';
+import { useUserStore } from '@/stores/user';
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
-
+const vcodeRef = ref()
+const userStore = useUserStore();
 const accountNumber = ref('')
 const password = ref('')
 const verificationCode = ref('')
 const showPassword = ref(true);
 
-const inputPassword = () => {
-  console.log(password.value)
-}
 
+// 点击确认按钮
 const confirmFun = async () => {
   const params = {
     username: accountNumber.value,
-    code: '',
-    password: ''
+    code: verificationCode.value,
+    password: password.value
   }
   await setTradepwd(params)
   uni.showToast({
-    title: $t('tips.success'),
+    title: t('tips.success'),
     icon: 'none'
   })
 }
 
+// 获取验证码
 const getCode = async () => {
-  if (!accountNumber.value) return uni.showToast({ title: $t('tips.enterAccount'), icon: 'none' })
+  const phone = userStore.userInfo.phone;
+  const email = userStore.userInfo.email;
+  console.log('phone', phone)
+  console.log('email', email)
+  if (!phone && !email) {
+    uni.showToast({
+      title: t('tips.bindPhoneOrEmail'),
+      icon: 'none'
+    })
+    return;
+  }
 
+  // 有手机的话就给手机发送验证码
+  vcodeRef.value.startCountdown()
+  if (phone) {
+    accountNumber.value = phone;
+  } else if (email) {
+    accountNumber.value = email;
+  }
   const params = {
     userName: accountNumber.value,
     countryCode: '',
   }
   await sendmsg(params)
   uni.showToast({
-    title: $t('tips.vCodeSend'),
+    title: t('tips.vCodeSend'),
     icon: 'none'
   })
 }

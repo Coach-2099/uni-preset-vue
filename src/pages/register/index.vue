@@ -98,7 +98,8 @@
               @input="inputPhoneCode"
             />
           </div>
-          <baseVCodeButton 
+          <baseVCodeButton
+            ref="vcodeRef"
             :disabled="!userName"
             @get-code="getCode"
           />
@@ -199,7 +200,7 @@ const phone = ref()
 const userName = ref()
 const vCode = ref('')
 
-
+const vcodeRef = ref()
 
 const password = ref()
 
@@ -219,6 +220,7 @@ onMounted(() => {
 // 获取验证码
 const getCode = async () => {
   if (!userName.value) return uni.showToast({ title: t('tips.enterAccount'), icon: 'none' })
+  vcodeRef.value.startCountdown()
   const params = {
     sendMsgType: '', // 手机或者邮箱
     userName: userName.value,

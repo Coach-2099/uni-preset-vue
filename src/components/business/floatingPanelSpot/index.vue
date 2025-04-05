@@ -5,6 +5,7 @@
     round
     lock-scroll
     lazy-render
+    :before-close="beforeClose"
     :style="{ height: '90%', display: 'flex', flexDirection: 'column'}"
   >
     <div class="searchModule bg-white pt-15 pos-fixed w-100 pr-5">
@@ -27,16 +28,15 @@
       >
         <van-tab :title="$t('noun.spotGoods')">
           <selectSpot
-            ref="spotSelectSpotRef"
+            ref="SelectSpotRef"
             type="SPOT"
             v-model:searchVal="searchValue"
             @closeModel="showFLoatingPanel"
-            @jumpAge="jumpToAge"
           ></selectSpot>
         </van-tab>
         <van-tab :title="$t('noun.futureGoods')">
           <selectSpot
-            ref="futureGoodsSelectSpotRef"
+            ref="SelectFutureGoodsRef"
             type="FUTURES"
             v-model:searchVal="searchValue"
             @closeModel="showFLoatingPanel"
@@ -44,7 +44,7 @@
         </van-tab>
         <van-tab :title="$t('noun.metalsGoods')">
           <selectSpot
-            ref="metalsGoodsSelectSpotRef"
+            ref="SelectMetalsGoodsRef"
             type="METALS"
             v-model:searchVal="searchValue"
             @closeModel="showFLoatingPanel"
@@ -56,48 +56,60 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref } from 'vue';
+import { nextTick, ref, computed } from 'vue';
 import type { Component } from 'vue';
 import selectSpot from '@/components/business/selectSpot/index.vue';
 import { onShow } from '@dcloudio/uni-app';
 
-const spotSelectSpotRef: any = ref(null)
-const futureGoodsSelectSpotRef: any = ref(null)
-const metalsGoodsSelectSpotRef: any = ref(null)
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore();
+const SelectSpotRef: any = ref(null)
+const SelectFutureGoodsRef: any = ref(null)
+const SelectMetalsGoodsRef: any = ref(null)
 const searchValue = ref('')
 const active = ref(0)
 const showBottom = ref(false)
 const jumpKlineType = ref('') // 跳转的类型，SPOT  FUTURE  METALS
-
+const socketService = computed(() => userStore.socketService);
 /**
  * 显示浮窗
  * @param data 传递过来的类型，决定查询那种数据
  */
-const  showFLoatingPanel = (data: any) => {
+const showFLoatingPanel = (data: any) => {
   showBottom.value = !showBottom.value;
   jumpKlineType.value = data.type;
   nextTick(() => {
     console.log('data!!!!!', data)
     if (data.type) {
+      // 此处是加载数据
       if(showBottom.value) {
         if (data.type === 'SPOT') {
           active.value = 0
-          spotSelectSpotRef.value?.loadData(data.type)
+          nextTick(() => {
+            SelectSpotRef.value?.loadData(data.type)
+          })
         } else if (data.type === 'FUTURES') {
           active.value = 1
-          futureGoodsSelectSpotRef.value?.loadData(data.type) 
+          nextTick(() => {
+            SelectFutureGoodsRef.value?.loadData(data.type) 
+          })
         } else if (data.type === 'METALS') {
           active.value = 2
-          metalsGoodsSelectSpotRef.value?.loadData(data.type) 
+          nextTick(() => {
+            SelectMetalsGoodsRef.value?.loadData(data.type) 
+          })
         }
       }
     }
     console.log('跳转', data)
+    // 此处是选中货币后 则跳转到相关页面
     if (data.jumpType) {
       if (jumpKlineType.value == data.jumpType) {
         showBottom.value =!showBottom.value;
+        socketService.value.unsubscribe('ticker');
         return
       }
+      socketService.value.unsubscribe('ticker');
       if (data.jumpType === 'SPOT') {
         uni.switchTab({
           url: '/pages/trade/index'
@@ -116,7 +128,13 @@ const  showFLoatingPanel = (data: any) => {
 }
 
 const onClickButton = () => {
-  spotSelectSpotRef.value?.searchFun()
+  if (jumpKlineType.value == 'SPOT') {
+    SelectSpotRef.value?.searchFun()
+  } else if (jumpKlineType.value == 'FUTURE') {
+    SelectFutureGoodsRef.value?.searchFun()
+  } else if (jumpKlineType.value == 'METALS') {
+    SelectMetalsGoodsRef.value?.searchFun()
+  }
 }
 
 const onClickTab = (e: any) => {
@@ -125,15 +143,15 @@ const onClickTab = (e: any) => {
     let kType = 'SPOT'
 	  switch(active.value){
         case 0:
-      currentRef = spotSelectSpotRef
+      currentRef = SelectSpotRef
       kType = 'SPOT'
         break
         case 1:
-      currentRef = futureGoodsSelectSpotRef
+      currentRef = SelectFutureGoodsRef
       kType = 'FUTURES'
         break
       case 2:
-        currentRef =metalsGoodsSelectSpotRef
+        currentRef =SelectMetalsGoodsRef
         kType = 'METALS'
         default:
 	  }
@@ -141,28 +159,10 @@ const onClickTab = (e: any) => {
   })
 }
 
-const jumpToAge = (data: any) => {
-  console.log('123', data.type)
-  // 如果在当前选择的类型下，就关闭浮窗
-  if (jumpKlineType.value === data.type) {
-    showBottom.value = !showBottom.value;
-    return
-  }
-  showBottom.value = !showBottom.value;
-  if (data.type === 'SPOT') {
-    uni.switchTab({
-      url: '/pages/trade/index'
-    })
-  } else if (data.type === 'FUTURES') {
-    uni.switchTab({
-      url: '/pages/contract/index'
-    })
-  } else if (data.type === 'METALS') {
-    // 前往贵金属页面
-	uni.switchTab({
-	  url: '/pages/metals/index'
-	})
-  }
+// 关闭页面 停止ws
+const beforeClose = () => {
+  showBottom.value =!showBottom.value;
+  socketService.value.unsubscribe('ticker');
 }
 
 // 将方法暴露给父组件
