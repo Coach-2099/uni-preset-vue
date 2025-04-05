@@ -102,11 +102,11 @@ const basicToken = ref('') //基础币种
 const subSymbol = ref('') //当前订阅的交易对
 
 watch(
-  () => controlStore.quotesData.symbol,
+  () => controlStore.getQuotesData(props.type)?.symbol,
   (newVal, oldVal) => {
-	socketService.value.unsubscribe('depth',oldVal); //取消原有订阅
-    socketService.value.subscribe('depth',newVal); //订阅新的交易对
-	subSymbol.value = newVal
+    if(newVal){
+		socketService.value.unsubscribe('depth',oldVal); //取消原有订阅
+	}
   }
 );
 
@@ -121,31 +121,28 @@ const loadData = async (params: any) => {
   if(params.symbol){
   	  subSymbol.value = params.symbol
   }else{
-  	  subSymbol.value = controlStore.quotesData.symbol
+  	  subSymbol.value = controlStore.getQuotesData(props.type)?.symbol
   }
-  console.log('subSymbol.value =',subSymbol.value)
-  socketService.value.subscribe('depth',subSymbol.value);
-  socketService.value.on(`${subSymbol.value}-depth`, (item: any) => {
-	bidsList.value = item.bids
-	asksList.value = item.asks
-	if(props.type === 'METALS'){
-		depthMetalsData(bidsList.value,asksList.value)
-	}else{
-		depthData(bidsList.value,asksList.value)
-	}
- })
+  subdepth(subSymbol.value)
 }
 
-onShow(()=>{
-	if(controlStore.quotesData.symbol){
-		  subSymbol.value = controlStore.quotesData.symbol
-	}
-	const params = {
-	  klineType: props.type,
-	  symbol: subSymbol.value
-	}
-	loadData(params)
-})
+
+const subdepth =(symbol:string)=>{
+	socketService.value.subscribe('depth',symbol);
+	 socketService.value.on(`${symbol}-depth`, (item: any) => {
+		bidsList.value = item.bids
+		asksList.value = item.asks
+	// 对实时数据也添加长度限制
+	bidsList.value = item.bids.slice(0, MAX_DEPTH_LENGTH)
+	asksList.value = item.asks.slice(0, MAX_DEPTH_LENGTH)
+		if(props.type === 'METALS'){
+			depthMetalsData(bidsList.value,asksList.value)
+		}else{
+			depthData(bidsList.value,asksList.value)
+		}
+	 })
+}
+
 //贵金属行情数据格式不一样
 const depthMetalsData =(bidsList:any,asksList:any)=>{
 	// 新增计算逻辑

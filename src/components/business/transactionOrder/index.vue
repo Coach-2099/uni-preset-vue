@@ -53,7 +53,7 @@ const props = defineProps({
 })
 
 watch(
-  () => controlStore.quotesData.symbol,
+  () => controlStore.getQuotesData(props.type)?.symbol,
   (newVal, oldVal) => {
     socketService.value.unsubscribe('trade',oldVal); //取消原有订阅
     socketService.value.subscribe('trade',newVal); //订阅新的交易对

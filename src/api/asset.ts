@@ -64,3 +64,13 @@ export function getSwapBalance(data: any) {
 export function getBalance(data: any) {
   return request.get({ url: "/admin/asset/getBalance", data })
 }
+
+// 验证地址的准确性
+export function checkAddress(data: any) {
+  return request.get({ url: "/admin/asset/checkAddress", data })
+}
+
+// 获取提币手续费
+export function getTokenFee(data: any) {
+  return request.get({ url: "/admin/asset/getTokenFee", data })
+}

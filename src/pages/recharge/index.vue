@@ -29,7 +29,7 @@
             mode="scaleToFill"
           />
           <p class="fs-14 fw-b ml-5 mr-5 text-black">{{symbol}}</p>
-          <p class="fs-14 text-gray">(Bitcoin)</p>
+          <p class="fs-14 text-gray">{{name?`(${name})`:''}}</p>
         </div>
         <div class="rightBox flex items-center">
           <image
@@ -103,8 +103,8 @@
       </div>
     </div>
     <div class="textDescription fs-12 pt-5 mt-25">
-      <div class="bg-white pt-20 px-20">
-        <p>View all deposit and withdrawal statuses?</p>
+      <div class="bg-white pt-20 px-20" v-html="rechargeDesc">
+        <!-- <p>View all deposit and withdrawal statuses?</p>
         <p>点击这里</p>
         <p class="mt-10 fw-b">
           In upholding the integrity and safety of our platform's trading environment, Bybit is dedicated to combating financial crime and ensuring adherence to anti-money laundering measures.
@@ -115,7 +115,7 @@
         <p class="mt-10">
           Please make sure that your Bybit deposit address is correct. Otherwise
           your deposited funds will not be added to your available balance - nor
-        </p>
+        </p> -->
       </div>
     </div>
 
@@ -142,7 +142,9 @@ import currencySelectPopup from '@/components/business/currencySelectPopup/index
 import networkSelectPopup from '@/components/business/netWorkSelectPopup/index.vue'
 import QrcodeVue from 'qrcode.vue'
 
-const address = ref('')
+const address = ref('') //地址
+const rechargeDesc = ref('') //币种描述
+const name = ref('') //币种全称
 const currentSelectRef:any = ref(null)
 const networkSelectPopupRef:any = ref(null)
 const symbol =ref('USDT')
@@ -178,6 +180,8 @@ const openNetworkPopup = () => {
 //接收子组件传过来的币种信息
 const chooseToken =(item: any) =>{
 	symbol.value = item.token
+	rechargeDesc.value = item.desc
+	name.value = item.name
 	if(item.protocolTypes && item.protocolTypes.length>1){
 		networkSelectPopupRef.value?.showFLoatingPanel(item.protocolTypes)	
 		networkShow.value = true
@@ -197,6 +201,7 @@ const chooseProtocolType =(protocol: string) =>{
 	protocolType.value = protocol
 	getRechargeAddres()
 }
+
 
 
 const copy = () => {

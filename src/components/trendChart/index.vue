@@ -137,7 +137,7 @@ const candleColors = ref({
 
 // 新增以下监听代码,对新交易对进行订阅，取消老的订阅
 watch(
-  () => controlStore.quotesData.symbol,
+  () => controlStore.getQuotesData(props.type)?.symbol,
   (newSymbol, oldSymbol) => {
     if (newSymbol) { //切换的交易对与原交易对相同不做处理
       // 取消旧symbol的订阅和监听
@@ -165,8 +165,8 @@ watch(
 
 onMounted(() => {
   nextTick(() => {
-	  if (controlStore.quotesData.symbol){
-      symbolInfo.value = controlStore.quotesData.symbol
+	  if (controlStore.getQuotesData(props.type)?.symbol){
+		symbolInfo.value = controlStore.getQuotesData(props.type)?.symbol
 	  }
 	   //延迟100毫秒订阅
 	setTimeout(()=>{
@@ -223,7 +223,7 @@ onMounted(() => {
 })
 
 onShow(() => {
-  if (controlStore.quotesData.symbol) symbolInfo.value = controlStore.quotesData.symbol
+  if (controlStore.getQuotesData(props.type)?.symbol) symbolInfo.value = controlStore.getQuotesData(props.type)?.symbol
   // loadData()
 })
 
@@ -345,7 +345,6 @@ const handleIntervalChange = async (interval: number) => {
 }
 
 onUnmounted(() => {
-  console.log('chartRef.value', chartRef)
   chartRef.value?.removeChart()
   // 移除监听
   socketService.value.unsubscribe('ticker',symbolInfo.value);

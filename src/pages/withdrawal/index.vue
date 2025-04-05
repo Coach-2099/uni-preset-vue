@@ -22,7 +22,7 @@
               mode="scaleToFill"
             />
             <p class="fs-14 fw-b ml-5 mr-5 text-black">{{ symbol }}</p>
-            <p class="fs-14 text-gray">Bitcoin</p>
+            <p class="fs-14 text-gray">{{name}}</p>
           </div>
           <div class="rightBox flex items-center">
             <image
@@ -68,7 +68,7 @@
             class="myInput px-10 py-10 w-100"
             placeholder="请输入或长按粘贴提币地址"
             placeholder-class="input-placeholder"
-            @input="inputAddress"
+			@blur="checkAddressRight"
           />
         </div>
       </div>
@@ -76,7 +76,7 @@
       <div class="mt-25">
         <div class="flex justify-between items-center">
           <p class="fs-16 text-black">金额</p>
-          <div class="flex items-end">
+          <!-- <div class="flex items-end">
             <p class="fs-16 text-black mr-5">0</p>
             <div class="rightImg">
               <image
@@ -84,23 +84,23 @@
                 mode="scaleToFill"
               />
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="baseInput mt-10 flex justify-between items-center">
           <input
             v-model="amount"
             class="myInput flex-1 px-10 py-10 w-100"
-            placeholder="最低提币金额：20"
+            :placeholder="`最低提币金额：${limitWithdraw}`"
             placeholder-class="input-placeholder"
-            @input="inputAddress"
+            @input="calculateFee"
           />
-          <text class="fs-16 px-10 rightText">最大</text>
+          <text @click="maxVal" class="fs-16 px-10 rightText">最大</text>
         </div>
       </div>
 
       <div class="flex justify-between items-center mt-25">
         <p class="text-gray fs-16">资金账户：</p>
-        <p class="text-black fs-16">0</p>
+        <p class="text-black fs-16">{{tokenBalance}}</p>
       </div>
     </div>
     <div class="detailInfo mt-5 pt-20 bg-white">
@@ -156,24 +156,29 @@ import currencySelectPopup from '@/components/business/currencySelectPopup/index
 import networkSelectPopup from '@/components/business/netWorkSelectPopup/index.vue'
 import contractAddress from '@/components/business/contractAddress/index.vue';
 import infoVerification from '@/components/business/InfoVerification/index.vue'
-import { getWithdrawCoins, withdraw } from '@/api/asset';
+import { getBalance, getWithdrawCoins, withdraw ,checkAddress, getTokenFee} from '@/api/asset';
 import { useUserStore } from '@/stores/user';
 import { showConfirmDialog } from 'vant';
 import { onShow } from '@dcloudio/uni-app';
+import { roundDown } from '@/utils/util';
 
-const currency = ref('');
+const tokenBalance = ref(0); //所选钱包余额
 const address = ref(''); // 钱包地址
 const currentSelectRef:any = ref(null)
 const networkSelectPopupRef:any = ref(null)
 const contractAddressRef:any = ref(null)
 const symbol = ref('') // 币种
 const symbolUrl = ref('') // 币种图标
+const name =ref('')//币全称
 const networkShow = ref(true)
 const protocolType = ref('') // 网络类型
 const amount = ref('') // 输入金额
 const protocolTypesList = ref([])
 const processingFee = ref(0) // 手续费
+const limitWithdraw = ref(0) //最小提币量
+const maxWithdraw = ref(0) //最大提币量
 // const amountOfReceipt = ref(0) // 到账金额
+const tokenFee =ref({}) //手续费对象
 
 const InfoVerificationRef:any = ref(null)
 
@@ -199,7 +204,8 @@ const getUser = async () => {
     username: userStore.userInfo.userName,
     phone: userStore.userInfo.phone,
     email: userStore.userInfo.email,
-    avatar: userStore.userInfo.avatar
+    avatar: userStore.userInfo.avatar,
+	isValid: userStore.userInfo.isValid
   }
 
   if(!userInfo.value.phone) {
@@ -220,6 +226,15 @@ const getUser = async () => {
         url: '/pages/modifyEmail/index'
       })
     })
+  }else if(userInfo.value.isValid!==2){
+	  showConfirmDialog({
+	    showCancelButton: false,
+	    message:'请先进行实名认证',
+	  }).then(() => {
+	    uni.navigateTo({
+	      url: '/pages/IdentityAuth/index'
+	    })
+	  })
   } else {
     // 手机号和邮箱都绑定了再进行选择
     currentSelectRef.value?.showFLoatingPanel('withdraw')
@@ -232,8 +247,53 @@ const goAssetRecord = () => {
   })
 }
 
-const inputAddress = () => {
-  console.log(address.value)
+const maxVal =()=>{
+	amount.value = tokenBalance.value
+	calculateFee()
+}
+
+//计算手续费
+const calculateFee =()=>{
+	if(tokenFee.value){
+		if(tokenFee.value.feeType === 1){ //按比例
+			processingFee.value = roundDown(amount.value * tokenFee.value.val,2)
+		}else{ //固定
+			processingFee.value = tokenFee.value.val
+		}
+	}
+}
+
+const getFee=async()=>{
+	const params = {
+		token:symbol.value
+	}
+	const data = await getTokenFee(params)
+	tokenFee.value = data
+}
+
+//获取选中币种余额信息
+const balance =async (token:string) => {
+	const params = {
+	  token: token,
+	  accountType: 'WALLET' //只查询基础钱包账户余额，提币只能从基础钱包提出
+	}
+	const data = await getBalance(params)
+	tokenBalance.value = data
+}
+
+//检测地址的正确性
+const checkAddressRight = async() => {
+  if(!symbol.value){
+	  return uni.showToast({title: '请先选择提币币种', icon: 'none'})
+  }
+  const params ={
+	  coin:symbol.value,
+	  address: address.value
+  }
+  const data = await checkAddress(params)
+  if(data.errMsg){ //检测地址错误清空地址信息
+	  address.value = ''
+  }
 }
 
 const checkBit = () => {
@@ -243,6 +303,9 @@ const checkBit = () => {
 const chooseToken = (item: any) => {
   symbol.value = item.token
   symbolUrl.value = item.img
+  name.value = item.name
+  limitWithdraw.value = item.limitWithdraw
+  maxWithdraw.value = item.maxWithdraw
   if(item.protocolTypes && item.protocolTypes.length>1) {
     protocolTypesList.value = item.protocolTypes
     networkSelectPopupRef.value?.showFLoatingPanel(item.protocolTypes)
@@ -255,8 +318,9 @@ const chooseToken = (item: any) => {
 			protocolType.value = ''
 			networkShow.value = false
 		}
-		// getWithdrawalAddres()
   }
+  getFee() //获取选择币种手续费
+  balance(item.token) //查询余额
 }
 
 const chooseProtocolType =(protocol: string) =>{
@@ -283,6 +347,10 @@ const isWithdraw = async (Object: any) => {
     emailCode: Object.emailvCode // 邮箱验证码
   }
   const data = await withdraw(params)
+  if(!data.errMsg){
+  	uni.showToast({title: '提币申请已提交', icon: 'success'})
+	balance(symbol.value) //查询余额
+  }
 }
 
 const openContractAddress = () => {

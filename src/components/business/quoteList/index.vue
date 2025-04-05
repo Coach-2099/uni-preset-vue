@@ -272,7 +272,7 @@ const goDetail = (v: any) => {
   console.log('前往购买详情', v)
   console.log('类型', props.type)
   // store 存储数据
-  controlStore.setQuotesData({
+  controlStore.setQuotesData(props.type,{
     symbol: v.symbol,
     activeType: 'right'
   })

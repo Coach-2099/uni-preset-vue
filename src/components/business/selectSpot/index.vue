@@ -174,7 +174,7 @@ const searchFun = async () => {
 
 const checkBitItem = (item: any) => {
   const activeType = controlStore.quotesData.activeType
-  controlStore.setQuotesData({
+  controlStore.setQuotesData(props.type,{
     symbol: item.symbol,
     activeType: activeType || 'left',
   })

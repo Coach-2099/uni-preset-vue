@@ -271,8 +271,8 @@ const transfer =async() =>{
 	const data = await postTransfer(params)
 	if(!data.errMsg){
 		uni.showToast({title: '划转成功', icon: 'success'})
+		balance()//重新获取余额信息
 	}
-	balance()//重新获取余额信息
 }
 
 </script>

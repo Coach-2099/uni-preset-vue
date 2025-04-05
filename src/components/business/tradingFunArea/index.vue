@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted ,computed,onUnmounted,nextTick} from 'vue';
+import { ref, onMounted ,computed,onUnmounted,nextTick,watch} from 'vue';
 import buyAndSell from '@/components/business/buyAndSell/index.vue';
 import priceFluctuations from '@/components/business/priceFluctuations/index.vue';
 import buyAndSellContract from '@/components/business/buyAndSellContract/index.vue';
@@ -77,30 +77,42 @@ const props = defineProps({
   }
 })
 
+watch(
+  () => controlStore.getQuotesData(props.buyAndSellType)?.symbol,
+  (newVal, oldVal) => {
+	if(newVal){
+		socketService.value.unsubscribe('depth',oldVal); //取消原有订阅
+		loadInfo(newVal); //订阅新的交易对
+	}
+  }
+);
+
 onMounted(() => {
   nextTick(() => {
-	  setTimeout(()=>{
-		  socketService.value.subscribe('ticker',props.symbol);
-		  socketService.value.on(`${props.symbol}-ticker`, (data: any) => {
-		  lastPrice.value = data.close
-				rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
-		  })
-	  },100)
-	  priceFluctuationsRef.value?.loadData({
-	    klineType: props.buyAndSellType,
-	    symbol: props.symbol
-	  })
-	  if(lastPrice.value === 0){
-		  getLastPrice()
-	  }
+	  loadInfo(props.symbol)
   })
 })
 
+const loadInfo=(symbol:string)=>{
+	socketService.value.subscribe('ticker',symbol);
+	socketService.value.on(`${symbol}-ticker`, (data: any) => {
+		lastPrice.value = data.close
+		rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
+	})
+	priceFluctuationsRef.value?.loadData({
+	  klineType: props.buyAndSellType,
+	  symbol: symbol
+	})
+	if(lastPrice.value === 0){
+		getLastPrice(symbol)
+	}
+}
+
 	
-const getLastPrice=async()=>{
+const getLastPrice=async(symbol:string)=>{
 	const params ={
 		klineType: props.buyAndSellType,
-		symbol: props.symbol
+		symbol: symbol
 	}
 	const data = await getTicker(params)
 	lastPrice.value = data.close

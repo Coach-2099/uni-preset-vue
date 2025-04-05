@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, computed, nextTick } from 'vue'
+import { onMounted, ref, computed, nextTick ,watch} from 'vue'
 import { onHide, onLaunch, onLoad, onShow } from "@dcloudio/uni-app";
 import CustomNavBar from '@/components/customNavBar/index.vue';
 import trendChart from '@/components/trendChart/index.vue';
@@ -79,34 +79,41 @@ const tradeOrderRef: any = ref(null)
 
 const symbol = ref('BTC/USDT')
 
-onLoad(() => {
-  if(controlStore.quotesData.symbol){
-	  symbol.value= controlStore.quotesData.symbol
-  }
-  nextTick(() => {
-  	if(activeTab.value === 'left'){
-  		realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
-  		  klineType: 'SPOT',
-  		  symbol: symbol.value
-  		})
-  	}
-  })
-  // 修正类型错误，确保赋值为 'left' 或 'right'
-  activeTab.value = controlStore.quotesData?.activeType || 'left';
-})
-
-onHide(()=>{
-	controlStore.setQuotesData({
-		symbol:''
-	})
-})
-
-
-onMounted(() => {
-	if(controlStore.quotesData.symbol){
-		  symbol.value= controlStore.quotesData.symbol
+watch(
+  () => controlStore.getQuotesData('SPOT')?.symbol,
+  (newVal, oldVal) => {
+	if(newVal){
+		loadInfo(newVal); //订阅新的交易对
+		symbol.value = newVal
 	}
+  }
+)
+
+onLoad(() => {
+  if(controlStore.getQuotesData('SPOT')?.symbol){
+  	  symbol.value= controlStore.getQuotesData('SPOT')?.symbol
+  }else{
+  	  controlStore.setQuotesData('SPOT',{
+  		  symbol:symbol.value,
+  		  activeType:'right'
+  	  })
+  }
+	loadInfo(symbol.value)
+  // 修正类型错误，确保赋值为 'left' 或 'right'
+  activeTab.value = controlStore.getQuotesData('SPOT')?.activeType || 'left';
 })
+
+const loadInfo =(symbol:string)=>{
+	nextTick(()=>{
+		setTimeout(()=>{
+			realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
+			  klineType: 'SPOT',
+			  symbol: symbol
+			})
+		},100)
+	})
+}
+
 
 onLaunch(() => {
   uni.hideTabBar();

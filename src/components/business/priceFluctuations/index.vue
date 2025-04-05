@@ -137,12 +137,11 @@ const MAX_DEPTH_LENGTH = 7 // 最大显示20条深度数据
 
 // 监控交易对变化
 watch(
-  () => controlStore.quotesData.symbol,
+  () => controlStore.getQuotesData(props.type)?.symbol,
   (newVal, oldVal) => {
-	  console.log('newVal =',newVal)
-	socketService.value.unsubscribe('depth',oldVal); //取消原有订阅
-    socketService.value.subscribe('depth',newVal); //订阅新的交易对
-	subSymbol.value = newVal
+	if(newVal){
+		socketService.value.unsubscribe('depth',oldVal); //取消原有订阅
+	}
   }
 );
 const loadData = async (params: any) => {
@@ -158,15 +157,19 @@ const loadData = async (params: any) => {
   if(params.symbol){
 	  subSymbol.value = params.symbol
   }else{
-	  subSymbol.value = controlStore.quotesData.symbol
+	  subSymbol.value = controlStore.getQuotesData(props.type)?.symbol
   }
-	socketService.value.subscribe('depth',subSymbol.value);
-	 socketService.value.on(`${subSymbol.value}-depth`, (item: any) => {
+  subdepth(subSymbol.value)
+}
+
+const subdepth =(symbol:string)=>{
+	socketService.value.subscribe('depth',symbol);
+	 socketService.value.on(`${symbol}-depth`, (item: any) => {
 		bidsList.value = item.bids
 		asksList.value = item.asks
-    // 对实时数据也添加长度限制
-    bidsList.value = item.bids.slice(0, MAX_DEPTH_LENGTH)
-    asksList.value = item.asks.slice(0, MAX_DEPTH_LENGTH)
+	// 对实时数据也添加长度限制
+	bidsList.value = item.bids.slice(0, MAX_DEPTH_LENGTH)
+	asksList.value = item.asks.slice(0, MAX_DEPTH_LENGTH)
 		if(props.type === 'METALS'){
 			depthMetalsData(bidsList.value,asksList.value)
 		}else{

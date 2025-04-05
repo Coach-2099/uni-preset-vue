@@ -10,13 +10,13 @@ interface ControlStae {  // 修正拼写错误
 export const useControlStore = defineStore('controlStore', {
   state: (): ControlStae => ({
     inputShow: false,
-    quotesData: {}, //现货交易对监听
+    quotesData: {}, //根据类型交易对监听
 	noPopupWindows: false, //是否弹窗显示下单信息
 	canceled:false, //是否已撤单
   }),
   getters: {
     getInputShow: (state) => state.inputShow,
-    getQuotesData: (state) => state.quotesData, // 修正拼写错误，应该是 getQuotesData 而不是 getQuotesDat
+    // getQuotesData: (state) => state.quotesData, // 修正拼写错误，应该是 getQuotesData 而不是 getQuotesDat
 	getNoPopupWindows: (state) => state.noPopupWindows,
 	getCanceled: (state) =>state.canceled
   },
@@ -24,9 +24,12 @@ export const useControlStore = defineStore('controlStore', {
     setInputShow(show: boolean) {
       this.inputShow = show
     },
-    setQuotesData(data: any) {
-      this.quotesData = data
+    setQuotesData(type:string,data: any) {
+      this.quotesData[type] = data
     },
+	getQuotesData(type:string){
+		return this.quotesData[type]
+	},
 	setNoPopupWindows(show: boolean){
 		this.noPopupWindows = show
 	},

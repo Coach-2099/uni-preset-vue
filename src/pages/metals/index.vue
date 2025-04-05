@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed,onMounted,nextTick,onUnmounted } from 'vue';
+import { ref, computed,onMounted,nextTick,onUnmounted,watch } from 'vue';
 import { onHide, onLoad } from "@dcloudio/uni-app";
 import CustomNavBar from '@/components/customNavBar/index.vue';
 import trendChart from '@/components/trendChart/index.vue';
@@ -82,35 +82,40 @@ const realTimeTransactionsRef: any = ref(null)
 const transactionOrderRef: any = ref(null)
 const symbol = ref('XAU/USD') //默认交易对
 
+watch(
+  () => controlStore.getQuotesData('METALS')?.symbol,
+  (newVal, oldVal) => {
+	if(newVal){
+		loadInfo(newVal); //订阅新的交易对
+		symbol.value = newVal
+	}
+  }
+)
+
 onLoad(() => {
   // 修正类型错误，确保赋值为 'left' 或 'right'
-  if(controlStore.quotesData.symbol){
-  	  symbol.value= controlStore.quotesData.symbol
+  if(controlStore.getQuotesData('METALS')?.symbol){
+  	  symbol.value= controlStore.getQuotesData('METALS')?.symbol
   }else{
-	  controlStore.setQuotesData({
+	  controlStore.setQuotesData('METALS',{
 		  symbol:symbol.value,
 		  activeType:'right'
 	  })
   }
-  console.log('symbol.value=',symbol.value)
-   nextTick(() => {
-  	if(activeTab.value === 'left'){
-  		realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
-  		  klineType: 'METALS',
-  		  symbol: symbol.value
-  		})
-  	}
-  })
-  activeTab.value = controlStore.quotesData.activeType || 'left';
+	loadInfo(symbol.value)
+  activeTab.value = controlStore.getQuotesData('METALS')?.activeType || 'left';
 })
 
-onHide(()=>{
-	controlStore.setQuotesData({
-		symbol:''
+const loadInfo =(symbol:string)=>{
+	nextTick(()=>{
+		setTimeout(()=>{
+			realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
+			  klineType: 'METALS',
+			  symbol: symbol
+			})
+		},100)
 	})
-})
-onMounted(() => {
-})
+}
 
 //调换订单历史
 const goOrder = () => {
