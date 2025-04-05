@@ -30,8 +30,8 @@
       </div>
       <div class="sellAndBuyTip text-gray fs-14 mt-5 flex justify-between">
         <div class="fs-14 text-gray">买入</div>
-        <div class="fs-14 text-gray">卖出</div>
-        <div class="fs-14">0.1</div>
+        <div class="fs-14 text-gray"></div>
+        <div class="fs-14">卖出<!-- 0.1 --></div>
       </div>
       <div>
         <div class="contentTip text-gray fs-14 flex justify-between mt-20">
@@ -42,8 +42,8 @@
         <div class="contentBuySell w-100 flex justify-between mt-15">
           <div class="tempBox w-100">
             <div v-for="(item, index) in bidsList" :key="index" class="buyTemp pos-relative flex flex-1 justify-between">
-              <div class="fs-12 text-black">{{item[1]}}</div>
-              <div class="fs-12 text-light-green">{{item[0]}}</div>
+              <div class="fs-12 text-black">{{type === 'METALS'?item.price.toFixed(2):item[1]}}</div>
+              <div class="fs-12 text-light-green">{{type === 'METALS'?item.volume.toFixed(2):item[0]}}</div>
               <!-- 绿色背景层 -->
               <div 
                 class="bg-layer pos-absolute"
@@ -53,8 +53,8 @@
           </div>
           <div class="tempBox w-100">
             <div v-for="(item, index) in asksList" :key="index" class="sellTemp pos-relative flex flex-1 justify-between">
-              <div class="fs-12 text-red">{{ item[0] }}</div>
-              <div class="fs-12 text-black">{{ item[1] }}</div>
+              <div class="fs-12 text-red">{{ type === 'METALS'?item.volume.toFixed(2):item[0] }}</div>
+              <div class="fs-12 text-black">{{ type === 'METALS'?item.price.toFixed(2):item[1] }}</div>
               <!-- 红色背景层 -->
               <div 
                 class="bg-layer pos-absolute"
@@ -74,6 +74,14 @@ import { getDepth } from '@/api/quotes'
 import { useUserStore } from '@/stores/user';
 import { useControlStore } from '@/stores/control';
 import dataDefault from '@/components/dataDefault/index.vue';
+import { onShow } from '@dcloudio/uni-app';
+
+const props = defineProps({
+  type:{
+	  type:String,
+	  default:'SPOT'
+  }
+})
 
 const controlStore = useControlStore();
 
@@ -110,17 +118,48 @@ const loadData = async (params: any) => {
   tradeToken.value = symbol[0]
   basicToken.value = symbol[1]
   depthData(bidsList.value,asksList.value)
-  if(!controlStore.quotesData.symbol){
-	  subSymbol.value = params.symbol
-	 socketService.value.subscribe('depth',params.symbol);
-	 socketService.value.on(`${params.symbol}-depth`, (item: any) => {
-		bidsList.value = item.bids
-		asksList.value = item.asks
-		depthData(bidsList.value,asksList.value)
-	 })
+  if(params.symbol){
+  	  subSymbol.value = params.symbol
+  }else{
+  	  subSymbol.value = controlStore.quotesData.symbol
   }
-
+  console.log('subSymbol.value =',subSymbol.value)
+  socketService.value.subscribe('depth',subSymbol.value);
+  socketService.value.on(`${subSymbol.value}-depth`, (item: any) => {
+	bidsList.value = item.bids
+	asksList.value = item.asks
+	if(props.type === 'METALS'){
+		depthMetalsData(bidsList.value,asksList.value)
+	}else{
+		depthData(bidsList.value,asksList.value)
+	}
+ })
 }
+
+onShow(()=>{
+	if(controlStore.quotesData.symbol){
+		  subSymbol.value = controlStore.quotesData.symbol
+	}
+	const params = {
+	  klineType: props.type,
+	  symbol: subSymbol.value
+	}
+	loadData(params)
+})
+//贵金属行情数据格式不一样
+const depthMetalsData =(bidsList:any,asksList:any)=>{
+	// 新增计算逻辑
+	const bidsTotal = bidsList.reduce((sum, item) => sum + Number(item.volume).toFixed(4), 0)
+	const asksTotal = asksList.reduce((sum, item) => sum + Number(item.volume).toFixed(4), 0)
+	const total = bidsTotal + asksTotal
+	
+	// 计算百分比
+	leftWidth.value = total > 0
+	  ? Number(((asksTotal / total) * 100).toFixed(0))
+	  : 50 // 默认值防止除零错误
+	  rightWidth.value = Number(100 - leftWidth.value).toFixed(0)
+}
+
 
 const depthData =(bidsList:any,asksList:any)=>{
 	// 新增计算逻辑

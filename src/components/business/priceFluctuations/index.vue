@@ -22,8 +22,8 @@
 	<div class="contentTemp">
 	  <div class="listBox">
 	    <div v-for="(item, index) in bidsList" :key="index" class="contentList pos-relative flex justify-between items-center">
-	      <div class="fs-12 text-red">{{item[0]}}</div>
-	      <div class="fs-12 text-black">{{item[1]}}</div>
+	      <div class="fs-12 text-red">{{type === 'METALS'?item.price.toFixed(2):item[0]}}</div>
+	      <div class="fs-12 text-black">{{type === 'METALS'?item.volume.toFixed(2):item[1]}}</div>
 	      <div
 	        class="bg-layer pos-absolute sellTemp"
 	        :style="{ 'width': fluctuationWidth +'%' }"
@@ -43,8 +43,8 @@
    <div class="contentTemp">
      <div class="listBox">
        <div v-for="(item, index) in asksList" :key="index" class="contentList pos-relative flex justify-between items-center">
-         <div class="fs-12 text-light-green">{{item[0]}}</div>
-         <div class="fs-12 text-black">{{item[1]}}</div>
+         <div class="fs-12 text-light-green">{{type === 'METALS'?item.price.toFixed(2):item[0]}}</div>
+         <div class="fs-12 text-black">{{type === 'METALS'?item.volume.toFixed(2):item[1]}}</div>
          <div
            class="bg-layer pos-absolute buyTemp"
            :style="{ 'width': fluctuationWidth +'%' }"
@@ -108,6 +108,10 @@ const props = defineProps({
   lastPrice: {
     type: Number,
     default: 0
+  },
+  type:{
+	  type:String,
+	  default:'SPOT'
   }
 })
 
@@ -135,6 +139,7 @@ const MAX_DEPTH_LENGTH = 7 // 最大显示20条深度数据
 watch(
   () => controlStore.quotesData.symbol,
   (newVal, oldVal) => {
+	  console.log('newVal =',newVal)
 	socketService.value.unsubscribe('depth',oldVal); //取消原有订阅
     socketService.value.subscribe('depth',newVal); //订阅新的交易对
 	subSymbol.value = newVal
@@ -150,19 +155,38 @@ const loadData = async (params: any) => {
   tradeToken.value = symbol[0]
   basicToken.value = symbol[1]
   depthData(bidsList.value,asksList.value)
-  if(!controlStore.quotesData.symbol){
+  if(params.symbol){
 	  subSymbol.value = params.symbol
-	 socketService.value.subscribe('depth',params.symbol);
-	 socketService.value.on(`${params.symbol}-depth`, (item: any) => {
+  }else{
+	  subSymbol.value = controlStore.quotesData.symbol
+  }
+	socketService.value.subscribe('depth',subSymbol.value);
+	 socketService.value.on(`${subSymbol.value}-depth`, (item: any) => {
 		bidsList.value = item.bids
 		asksList.value = item.asks
     // 对实时数据也添加长度限制
     bidsList.value = item.bids.slice(0, MAX_DEPTH_LENGTH)
     asksList.value = item.asks.slice(0, MAX_DEPTH_LENGTH)
-		depthData(bidsList.value,asksList.value)
+		if(props.type === 'METALS'){
+			depthMetalsData(bidsList.value,asksList.value)
+		}else{
+			depthData(bidsList.value,asksList.value)
+		}
 	 })
-  }
+}
 
+//贵金属行情数据格式不一样
+const depthMetalsData =(bidsList:any,asksList:any)=>{
+	// 新增计算逻辑
+	const bidsTotal = bidsList.reduce((sum, item) => sum + Number(item.volume).toFixed(4), 0)
+	const asksTotal = asksList.reduce((sum, item) => sum + Number(item.volume).toFixed(4), 0)
+	const total = bidsTotal + asksTotal
+	
+	// 计算百分比
+	leftWidth.value = total > 0
+	  ? Number(((asksTotal / total) * 100).toFixed(0))
+	  : 50 // 默认值防止除零错误
+	  rightWidth.value = Number(100 - leftWidth.value).toFixed(0)
 }
 
 const depthData =(bidsList:any,asksList:any)=>{

@@ -59,6 +59,7 @@
 import { nextTick, ref } from 'vue';
 import type { Component } from 'vue';
 import selectSpot from '@/components/business/selectSpot/index.vue';
+import { onShow } from '@dcloudio/uni-app';
 
 const spotSelectSpotRef: any = ref(null)
 const futureGoodsSelectSpotRef: any = ref(null)
@@ -82,7 +83,7 @@ const  showFLoatingPanel = (data: any) => {
         if (data.type === 'SPOT') {
           active.value = 0
           spotSelectSpotRef.value?.loadData(data.type)
-        } else if (data.type === 'FUTURE') {
+        } else if (data.type === 'FUTURES') {
           active.value = 1
           futureGoodsSelectSpotRef.value?.loadData(data.type) 
         } else if (data.type === 'METALS') {
@@ -101,12 +102,14 @@ const  showFLoatingPanel = (data: any) => {
         uni.switchTab({
           url: '/pages/trade/index'
         })
-      } else if (data.jumpType === 'FUTURE') {
+      } else if (data.jumpType === 'FUTURES') {
         uni.switchTab({
           url: '/pages/contract/index'
         })
       } else if (data.jumpType === 'METALS') {
-        // 前往贵金属页面
+		   uni.switchTab({
+			 url: '/pages/metals/index'
+		   })
       }
     }
   })
@@ -127,7 +130,7 @@ const onClickTab = (e: any) => {
         break
         case 1:
       currentRef = futureGoodsSelectSpotRef
-      kType = 'FUTURE'
+      kType = 'FUTURES'
         break
       case 2:
         currentRef =metalsGoodsSelectSpotRef
@@ -150,7 +153,7 @@ const jumpToAge = (data: any) => {
     uni.switchTab({
       url: '/pages/trade/index'
     })
-  } else if (data.type === 'FUTURE') {
+  } else if (data.type === 'FUTURES') {
     uni.switchTab({
       url: '/pages/contract/index'
     })

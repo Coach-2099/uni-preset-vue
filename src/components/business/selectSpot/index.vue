@@ -163,7 +163,7 @@ const checkBitItem = (item: any) => {
   const activeType = controlStore.quotesData.activeType
   controlStore.setQuotesData({
     symbol: item.symbol,
-    activeType: activeType || 'left'
+    activeType: activeType || 'left',
   })
   // 选中后父组件触发加载事件
   emit('closeModel', {jumpType: klineType.value})

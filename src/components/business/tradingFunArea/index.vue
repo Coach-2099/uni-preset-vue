@@ -28,11 +28,11 @@
     <div class="mt-15 buyAndSellBox flex justify-between items-stretch" :class="{'marginTop75': !showChart}">
       <div class="buyAndSellMoudle flex-1">
         <buyAndSell v-if="buyAndSellType == 'SPOT'" :lastPrice="lastPrice" :symbol="symbol"></buyAndSell>
-        <buyAndSellContract v-if="buyAndSellType == 'FUTURES'|| buyAndSellType == 'METALS'" :lastPrice="lastPrice" :symbol="symbol"></buyAndSellContract>
+        <buyAndSellContract v-if="buyAndSellType == 'FUTURES'|| buyAndSellType == 'METALS'" :type="buyAndSellType" :lastPrice="lastPrice" :symbol="symbol"></buyAndSellContract>
       </div>
       <!-- <div class="flex-1"> -->
       <div class="rightDev">
-        <priceFluctuations :lastPrice="lastPrice" ref="priceFluctuationsRef"></priceFluctuations>
+        <priceFluctuations :lastPrice="lastPrice" ref="priceFluctuationsRef" :type="buyAndSellType"></priceFluctuations>
       </div>
     </div> 
 
@@ -49,6 +49,7 @@ import floatingPanelProps from '@/components/business/floatingPanelSpot/index.vu
 import { useControlStore } from '@/stores/control';
 
 import { useUserStore } from '@/stores/user';
+import { getTicker } from '@/api/quotes';
 
 // stores
 const controlStore = useControlStore();
@@ -56,7 +57,7 @@ const userStore = useUserStore();
 const socketService = computed(() => userStore.socketService);
 
 // 默认BTC/USDT
-const symbol = ref('BTC/USDT') //默认交易对
+// const symbol = ref('BTC/USDT') //默认交易对
 const showFLoatingPanel = ref(false) //是否加载行情列表
 const floatingPanelPropsRef: any = ref(null) //行情列表引用
 const priceFluctuationsRef: any = ref(null) //深度引用
@@ -69,27 +70,41 @@ const props = defineProps({
   buyAndSellType: {
     type: String,
     default: 'SPOT'
+  },
+  symbol:{
+	  type:String,
+	  default:'BTC/USDT'
   }
 })
 
 onMounted(() => {
   nextTick(() => {
-	  if (controlStore.quotesData.symbol){
-	  		symbol.value = controlStore.quotesData.symbol
-	  }
 	  setTimeout(()=>{
-		  socketService.value.subscribe('ticker',symbol.value);
-		  socketService.value.on(`${symbol.value}-ticker`, (data: any) => {
+		  socketService.value.subscribe('ticker',props.symbol);
+		  socketService.value.on(`${props.symbol}-ticker`, (data: any) => {
 		  lastPrice.value = data.close
 				rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
 		  })
 	  },100)
 	  priceFluctuationsRef.value?.loadData({
 	    klineType: props.buyAndSellType,
-	    symbol: symbol.value
+	    symbol: props.symbol
 	  })
+	  if(lastPrice.value === 0){
+		  getLastPrice()
+	  }
   })
 })
+
+	
+const getLastPrice=async()=>{
+	const params ={
+		klineType: props.buyAndSellType,
+		symbol: props.symbol
+	}
+	const data = await getTicker(params)
+	lastPrice.value = data.close
+}
 
 //默认切换显示的行情类型
 const checkBit = () => {

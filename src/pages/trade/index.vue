@@ -57,7 +57,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref, computed, nextTick } from 'vue'
-import { onLaunch, onLoad, onShow } from "@dcloudio/uni-app";
+import { onHide, onLaunch, onLoad, onShow } from "@dcloudio/uni-app";
 import CustomNavBar from '@/components/customNavBar/index.vue';
 import trendChart from '@/components/trendChart/index.vue';
 import realTimeTransactions from '@/components/business/realTimeTransactions/index.vue'
@@ -80,13 +80,25 @@ const tradeOrderRef: any = ref(null)
 const symbol = ref('BTC/USDT')
 
 onLoad(() => {
-  console.log('params', controlStore.quotesData.symbol)
-  console.log('params', controlStore.quotesData.activeType)
   if(controlStore.quotesData.symbol){
 	  symbol.value= controlStore.quotesData.symbol
   }
+  nextTick(() => {
+  	if(activeTab.value === 'left'){
+  		realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
+  		  klineType: 'SPOT',
+  		  symbol: symbol.value
+  		})
+  	}
+  })
   // 修正类型错误，确保赋值为 'left' 或 'right'
-  activeTab.value = controlStore.quotesData.activeType || 'left';
+  activeTab.value = controlStore.quotesData?.activeType || 'left';
+})
+
+onHide(()=>{
+	controlStore.setQuotesData({
+		symbol:''
+	})
 })
 
 
@@ -94,14 +106,6 @@ onMounted(() => {
 	if(controlStore.quotesData.symbol){
 		  symbol.value= controlStore.quotesData.symbol
 	}
-	 nextTick(() => {
-		if(activeTab.value === 'left'){
-			realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
-			  klineType: 'SPOT',
-			  symbol: symbol.value
-			})
-		}
-	})
 })
 
 onLaunch(() => {

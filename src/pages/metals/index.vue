@@ -21,23 +21,23 @@
       </div>
       <div class="tabBox">
         <div v-if="activeTab === 'left'">
-          <trendChart></trendChart>
+          <trendChart type="METALS"></trendChart>
         </div>
         <div v-if="activeTab === 'right'">
-          <tradingFunArea buyAndSellType="METALS"></tradingFunArea>
+          <tradingFunArea buyAndSellType="METALS" :symbol="symbol"></tradingFunArea>
         </div>
       </div>
     </div>
     <div class="bottom bg-white mt-5 px-10">
       <van-tabs v-model:active="active" offset-top="74" @click-tab="onClickTab" shrink sticky>
         <van-tab v-if="activeTab === 'left'" title="订单表">
-          <realTimeTransactions ref="realTimeTransactionsRef"></realTimeTransactions>
+          <realTimeTransactions ref="realTimeTransactionsRef" type="METALS"></realTimeTransactions>
         </van-tab>
         <van-tab v-if="activeTab === 'left'" title="成交">
           <transactionOrder  ref="transactionOrderRef" type="METALS"></transactionOrder>
         </van-tab>
         <van-tab v-if="activeTab === 'right'" title="仓位">
-          <positionOrder></positionOrder>
+          <positionOrder accountType="METALS"></positionOrder>
         </van-tab>
 		<div v-if="activeTab === 'right'" class="orderIconBox pos-absolute" @click="goOrder">
 		  <image
@@ -57,7 +57,7 @@
 
 <script lang="ts" setup>
 import { ref, computed,onMounted,nextTick,onUnmounted } from 'vue';
-import { onLoad } from "@dcloudio/uni-app";
+import { onHide, onLoad } from "@dcloudio/uni-app";
 import CustomNavBar from '@/components/customNavBar/index.vue';
 import trendChart from '@/components/trendChart/index.vue';
 import realTimeTransactions from '@/components/business/realTimeTransactions/index.vue'
@@ -67,6 +67,7 @@ import tradingFunArea from '@/components/business/tradingFunArea/index.vue'
 import { useControlStore } from '@/stores/control';
 
 import { useUserStore } from '@/stores/user';
+
 const controlStore = useControlStore();
 const userStore = useUserStore();
 const socketService = computed(() => userStore.socketService);
@@ -83,20 +84,32 @@ const symbol = ref('XAU/USD') //默认交易对
 
 onLoad(() => {
   // 修正类型错误，确保赋值为 'left' 或 'right'
+  if(controlStore.quotesData.symbol){
+  	  symbol.value= controlStore.quotesData.symbol
+  }else{
+	  controlStore.setQuotesData({
+		  symbol:symbol.value,
+		  activeType:'right'
+	  })
+  }
+  console.log('symbol.value=',symbol.value)
+   nextTick(() => {
+  	if(activeTab.value === 'left'){
+  		realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
+  		  klineType: 'METALS',
+  		  symbol: symbol.value
+  		})
+  	}
+  })
   activeTab.value = controlStore.quotesData.activeType || 'left';
 })
-onMounted(() => {
-	if(controlStore.quotesData.symbol){
-		  symbol.value= controlStore.quotesData.symbol
-	}
-	 nextTick(() => {
-		if(activeTab.value === 'left'){
-			realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
-			  klineType: 'METALS',
-			  symbol: symbol.value
-			})
-		}
+
+onHide(()=>{
+	controlStore.setQuotesData({
+		symbol:''
 	})
+})
+onMounted(() => {
 })
 
 //调换订单历史

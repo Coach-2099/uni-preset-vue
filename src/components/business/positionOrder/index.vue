@@ -64,6 +64,13 @@ import { onShow } from '@dcloudio/uni-app';
 import dataDefault from '@/components/dataDefault/index.vue';
 import { useControlStore } from '@/stores/control';
 
+const props = defineProps({
+  accountType:{
+	  type:String,
+	  default:'FUTURES'
+  }
+})
+
 const controlStore = useControlStore();
 const userStore = useUserStore();
 const socketService = computed(() => userStore.socketService);
@@ -106,7 +113,7 @@ const calculateUnrealizedProfit=(close: number,direction:string,quantity: number
 const loadPositions=async()=>{
 	const params ={
 		status:['OPEN','POSITIONING'],
-		accountType:'FUTURES',//查询合约账户
+		accountType: props.accountType,//查询合约账户
 		current:current.value,
 		size:size.value
 	}

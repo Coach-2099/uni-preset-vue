@@ -243,7 +243,6 @@ const loadData = async () => {
 	  symbolMap.set(item.symbol,item)
       // item.price = item.price.toFixed(2)
     })
-    console.log('listData', symbolMap)
   } catch (error) {
     console.error('Error fetching data:', error);
   } finally {
@@ -264,8 +263,8 @@ const refreshData= (ticker: any) => {
 		const showUnit = symbolMap.get(ticker.symbol).showUnit
 		ticker.showUnit = showUnit
 		ticker.close = ticker.close.toFixed(showUnit)
+		symbolMap.set(ticker.symbol,ticker)
 	}
-	symbolMap.set(ticker.symbol,ticker)
 }
 
 const clearData = () => {

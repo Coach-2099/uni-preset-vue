@@ -364,6 +364,10 @@ const props = defineProps({
   lastPrice:{ //最新价
 	  type:Number,
 	  default: 0
+  },
+  type:{
+	  type:String,
+	  default:'FUTURES'
   }
 })
 
@@ -445,7 +449,7 @@ const onSelect = (action: any) => {
 //获取合约账户可用保证金
 const loadSwapBalance = async () => {
 	const params = {
-	  accounType: 'FUTURES'
+	  accounType: props.type
 	}
   const data = await getSwapBalance(params)
   marginBalance.value = data //获取余额数据

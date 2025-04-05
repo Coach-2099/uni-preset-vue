@@ -24,7 +24,7 @@
           <trendChart></trendChart>
         </div>
         <div v-if="activeTab === 'right'">
-          <tradingFunArea buyAndSellType="FUTURES"></tradingFunArea>
+          <tradingFunArea buyAndSellType="FUTURES" :symbol="symbol"></tradingFunArea>
         </div>
       </div>
     </div>
@@ -37,7 +37,7 @@
           <transactionOrder  ref="transactionOrderRef" type="FUTURES"></transactionOrder>
         </van-tab>
         <van-tab v-if="activeTab === 'right'" title="仓位">
-          <positionOrder></positionOrder>
+          <positionOrder accountType="FUTURES"></positionOrder>
         </van-tab>
 		<div v-if="activeTab === 'right'" class="orderIconBox pos-absolute" @click="goOrder">
 		  <image
@@ -57,7 +57,7 @@
 
 <script lang="ts" setup>
 import { ref, computed,onMounted,nextTick,onUnmounted } from 'vue';
-import { onLoad } from "@dcloudio/uni-app";
+import { onHide, onLoad } from "@dcloudio/uni-app";
 import CustomNavBar from '@/components/customNavBar/index.vue';
 import trendChart from '@/components/trendChart/index.vue';
 import realTimeTransactions from '@/components/business/realTimeTransactions/index.vue'
@@ -82,13 +82,14 @@ const transactionOrderRef: any = ref(null)
 const symbol = ref('BTC/USDT') //默认交易对
 
 onLoad(() => {
-  // 修正类型错误，确保赋值为 'left' 或 'right'
-  activeTab.value = controlStore.quotesData.activeType || 'left';
-})
-onMounted(() => {
 	if(controlStore.quotesData.symbol){
 		  symbol.value= controlStore.quotesData.symbol
-	}
+	}else{
+	  controlStore.setQuotesData({
+		  symbol:symbol.value,
+		  activeType:'right'
+	  })
+  }
 	 nextTick(() => {
 		if(activeTab.value === 'left'){
 			realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
@@ -96,6 +97,17 @@ onMounted(() => {
 			  symbol: symbol.value
 			})
 		}
+	})
+  // 修正类型错误，确保赋值为 'left' 或 'right'
+  activeTab.value = controlStore.quotesData.activeType || 'left';
+})
+onMounted(() => {
+	
+})
+
+onHide(()=>{
+	controlStore.setQuotesData({
+		symbol:''
 	})
 })
 

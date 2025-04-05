@@ -57,44 +57,23 @@ import { onLoad, onShow } from '@dcloudio/uni-app';
 import { ref, defineComponent, onMounted, onUnmounted, nextTick, computed, watch } from 'vue';
 import lightWeightChart from '@/components/LightweightChart/index.vue';
 import type LightweightChartType from '@/components/LightweightChart/index.vue'
-import { getKlineHistory } from '@/api/quotes';
+import { getKlineHistory,getTicker } from '@/api/quotes';
 import { useControlStore } from '@/stores/control';
 import { useUserStore } from '@/stores/user';
 import floatingPanelProps from '@/components/business/floatingPanelSpot/index.vue';
 import type {  UTCTimestamp } from 'lightweight-charts';
 
+const props = defineProps({
+  type:{
+	  type:String,
+	  default:'SPOT'
+  }
+})
+
 // stores
 const controlStore = useControlStore();
 const userStore = useUserStore();
 const socketService = computed(() => userStore.socketService);
-
-// 新增以下监听代码,对新交易对进行订阅，取消老的订阅
-watch(
-  () => controlStore.quotesData.symbol,
-  (newSymbol, oldSymbol) => {
-    if (newSymbol && newSymbol!=symbolInfo.value) { //切换的交易对与原交易对相同不做处理
-      // 取消旧symbol的订阅和监听
-	  socketService.value.unsubscribe('ticker', symbolInfo.value);
-	  socketService.value.off(`${symbolInfo.value}-ticker`);
-
-      symbolInfo.value = newSymbol
-	  // 这里可以添加symbol变化后的处理逻辑
-	  handleIntervalChange(currentInterval.value)
-      
-      // 设置新symbol的订阅和监听
-      socketService.value.subscribe('ticker', newSymbol);
-      socketService.value.on(`${newSymbol}-ticker`, (data: any) => {
-        rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
-        HIGH24h.value = data.high
-        LOW24h.value = data.low
-        VOL24h.value = data.vol
-        lastPrice.value = data.close
-      })
-    }
-  },
-  { immediate: true } // 立即执行一次以获取初始值
-)
-
 const chartRef = ref<InstanceType<typeof LightweightChartType>>()
 const floatingPanelPropsRef: any = ref(null) //行情列表引用
 
@@ -155,6 +134,35 @@ const candleColors = ref({
   priceLineVisible: true // 显示价格线
 })
 
+
+// 新增以下监听代码,对新交易对进行订阅，取消老的订阅
+watch(
+  () => controlStore.quotesData.symbol,
+  (newSymbol, oldSymbol) => {
+    if (newSymbol) { //切换的交易对与原交易对相同不做处理
+      // 取消旧symbol的订阅和监听
+	  socketService.value.unsubscribe('ticker', symbolInfo.value);
+	  socketService.value.off(`${symbolInfo.value}-ticker`);
+
+      symbolInfo.value = newSymbol
+	  // 这里可以添加symbol变化后的处理逻辑
+	  handleIntervalChange(currentInterval.value)
+      
+      // 设置新symbol的订阅和监听
+      socketService.value.subscribe('ticker', newSymbol);
+      socketService.value.on(`${newSymbol}-ticker`, (data: any) => {
+        rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
+        HIGH24h.value = data.high
+        LOW24h.value = data.low
+        VOL24h.value = data.vol
+        lastPrice.value = data.close
+      })
+    }
+  },
+  { immediate: true } // 立即执行一次以获取初始值
+)
+
+
 onMounted(() => {
   nextTick(() => {
 	  if (controlStore.quotesData.symbol){
@@ -171,6 +179,10 @@ onMounted(() => {
 		  VOL24h.value = data.vol
 		  lastPrice.value = data.close
 		  })
+		  
+		  if(lastPrice.value===0){
+			  getLastPrice()
+		  }
 
 		// 订阅k线
 		socketService.value.subscribe('kline',symbolInfo.value);
@@ -214,6 +226,20 @@ onShow(() => {
   if (controlStore.quotesData.symbol) symbolInfo.value = controlStore.quotesData.symbol
   // loadData()
 })
+
+	
+const getLastPrice=async()=>{
+	const params ={
+		klineType: props.type,
+		symbol: symbolInfo.value
+	}
+	const data = await getTicker(params)
+	rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
+	HIGH24h.value = data.high
+	LOW24h.value = data.low
+	VOL24h.value = data.vol
+	lastPrice.value = data.close
+}
 
 
 const loadData = async (startTime: number,endTime:number,isFisrtLoad: boolean) => {
