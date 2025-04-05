@@ -1,83 +1,101 @@
 <template>
   <div class="modifyPhone-index">
     <navigationBar :title="$t('navigationBarTitle.bindPhone')"></navigationBar>
-    <div class="inputBox mt-25 px-20">
-      <div>
-        <div class="flex justify-between items-center">
-          <p class="fs-14 text-black">{{ $t('common.phone') }}</p>
-        </div>
-        <div class="flex">
+    <div v-if="showEnterVcode" class="myEnterVcode">
+      <van-password-input
+        :value="vCode"
+        :mask="false"
+        :focused="true"
+        :length="6"
+        :gutter="10"
+        @focus="showKeyboard = true"
+      />
+      <!-- 数字键盘 -->
+      <van-number-keyboard
+        v-model="vCode"
+        :show="showKeyboard"
+        @blur="showKeyboard = false"
+      />
+    </div>
+    <div v-else>
+      <div class="inputBox mt-25 px-20">
+        <div>
+          <div class="flex justify-between items-center">
+            <!-- <p class="fs-14 text-black">{{ $t('common.phone') }}</p> -->
+          </div>
           <div class="flex">
-            <div class="countryBox mr-10">
-              <van-button type="default" style="width: 90px;background-color: #F6F7FB;border: none;" @click="checkCountryFun">
-                <template #default>
-                  <div class="flex items-center inputTemp">
-                    <image
-                      class="leftPhoneIcon mx-10"
-                      src="@/static/images/phoneIcon.png"
-                    />
-                    <div>+{{ countryCode }}</div>
-                    <image
-                      class="rightDownIcon mx-10"
-                      src="@/static/images/down.png"
-                    />
-                  </div>
-                </template>
-              </van-button>
-              <van-popup v-model:show="showPicker" destroy-on-close position="bottom">
-                <van-picker
-                  :columns="countryCodeArray"
-                  :model-value="pickVal"
-                  @confirm="onConfirm"
-                  @cancel="showPicker = false"
-                >
-                  <template #option="option">
-                    <img :src="option.flag" alt="flag" style="width: 25px; height: 18px; margin-right: 5px;" />
-                    {{ option.text }}
+            <div class="flex">
+              <div class="countryBox mr-10">
+                <van-button type="default" style="width: 90px;background-color: #F6F7FB;border: none;" @click="checkCountryFun">
+                  <template #default>
+                    <div class="flex items-center inputTemp">
+                      <image
+                        class="leftPhoneIcon mx-10"
+                        src="@/static/images/phoneIcon.png"
+                      />
+                      <div>+{{ countryCode }}</div>
+                      <image
+                        class="rightDownIcon mx-10"
+                        src="@/static/images/down.png"
+                      />
+                    </div>
                   </template>
-                </van-picker>
-              </van-popup>
+                </van-button>
+                <van-popup v-model:show="showPicker" destroy-on-close position="bottom">
+                  <van-picker
+                    :columns="countryCodeArray"
+                    :model-value="pickVal"
+                    @confirm="onConfirm"
+                    @cancel="showPicker = false"
+                  >
+                    <template #option="option">
+                      <img :src="option.flag" alt="flag" style="width: 25px; height: 18px; margin-right: 5px;" />
+                      {{ option.text }}
+                    </template>
+                  </van-picker>
+                </van-popup>
+              </div>
+            </div>
+            <div class="baseInput w-100 flex justify-between items-center">
+              <input
+                v-model="phone"
+                class="myInput flex-1 px-10 py-10 w-100"
+                :placeholder="$t('tips.enterPhone')"
+              />
             </div>
           </div>
-          <div class="baseInput w-100 flex justify-between items-center">
+        </div>
+        <!-- <div class="mt-10">
+          <div class="flex justify-between items-center">
+            <p class="fs-14 text-black">{{ $t('common.vCode') }}</p>
+          </div>
+          <div class="baseInput mt-5 flex justify-between items-center">
             <input
-              v-model="phone"
-              class="myInput flex-1 px-10 py-10 w-100"
-              :placeholder="$t('tips.enterPhone')"
+              v-model="vCode"
+              class="myInput flex-1 px-10 py-10 w-100 mr-10"
+              :placeholder="$t('tips.enterVCode')"
+            />
+            <baseVCodeButton
+              ref="vcodeRef"
+              :disabled="!phone"
+              @get-code="getCode"
             />
           </div>
-        </div>
+        </div> -->
       </div>
-      <div class="mt-10">
-        <div class="flex justify-between items-center">
-          <p class="fs-14 text-black">{{ $t('common.vCode') }}</p>
-        </div>
-        <div class="baseInput mt-5 flex justify-between items-center">
-          <input
-            v-model="vCode"
-            class="myInput flex-1 px-10 py-10 w-100 mr-10"
-            :placeholder="$t('tips.enterVCode')"
-          />
-          <baseVCodeButton
-            ref="vcodeRef"
-            :disabled="!phone"
-            @get-code="getCode"
-          />
-        </div>
+      <div class="btnBox bg-white w-100 pos-fixed">
+        <van-button
+          class="confirmBtn w-100 fw-b fs-20"
+          type="primary"
+          @click="confirm"
+        >{{ $t('common.confirm') }}</van-button>
       </div>
-    </div>
-    <div class="btnBox bg-white w-100 pos-fixed">
-      <van-button
-        class="confirmBtn w-100 fw-b fs-20"
-        type="primary"
-        @click="confirm"
-      >{{ $t('common.confirm') }}</van-button>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue';
 import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
 import { useUserStore } from '@/stores/user';
@@ -86,6 +104,8 @@ import { bindPhoneOrEmail } from '@/api/user'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
+const showEnterVcode = ref(true)
+const showKeyboard = ref(true)
 const userStore = useUserStore();
 const vcodeRef = ref()
 const phone = ref('')
@@ -104,6 +124,15 @@ const countryCodeArray = [
   { value: '886', text: 'Taiwan +886', name: 'TW', flag: '/static/images/flags/TW.png' }
 ];
 
+// 添加监听器
+watch(() => vCode.value, (newVal) => {
+  if (newVal.length === 6) {
+    // confirm() // 当验证码长度为6时自动触发确认方法
+    showKeyboard.value = false
+    verifyVcode()
+  }
+})
+
 
 const getCode = async () => {
   vcodeRef.value.startCountdown()
@@ -117,6 +146,11 @@ const getCode = async () => {
     title: t('tips.vCodeHasSent'),
     icon: 'none'
   })
+}
+
+const verifyVcode = () => {
+  showEnterVcode.value = false
+
 }
 
 const confirm = async () => {
@@ -162,6 +196,20 @@ const onConfirm = ({ selectedValues, selectedOptions }: PickerConfirmEvent) => {
 }
 
 </script>
+
+<style lang="scss" scoped>
+.modifyPhone-index {
+  .myEnterVcode {
+    margin-top: 30px;
+    :deep(.van-password-input__security) {
+      .van-password-input__item {
+        background-color: #f7f8fa !important;
+      }
+    }
+  }
+}
+</style>
+
 
 <style lang="scss">
 .modifyPhone-index {

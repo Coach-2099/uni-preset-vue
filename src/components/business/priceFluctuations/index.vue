@@ -56,7 +56,7 @@
     <div class="sellAndBuyTemp flex justify-between items-center mt-5">
       <div 
         class="trapezoidLeft"
-        :style="{ width: leftWidth + '%', 'min-width': '30%' }"
+        :style="{ width: leftWidth + '%', 'min-width': '35%' }"
       >
         <div class="leftBox flex items-center pr-5">
           <image
@@ -68,7 +68,7 @@
       </div>
       <div 
         class="trapezoidRight text-right"
-        :style="{ width: rightWidth + '%', 'min-width': '30%' }"
+        :style="{ width: rightWidth + '%', 'min-width': '35%' }"
       >
         <div class="rightBox flex items-center pl-5">
           <div class="fs-8 mr-5">{{ rightWidth }}%</div>

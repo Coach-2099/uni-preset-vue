@@ -22,7 +22,9 @@
           <text v-else-if="userInfo.securityLevel == 2">中</text>
           <text v-else-if="userInfo.securityLevel == 3">高</text>
         </div>
-        <div class="iconTip">
+        <div
+         v-if="userInfo.securityLevel !== 3"
+         class="iconTip">
           <image
             class="mt-15"
             src="/static/svg/tools/ex_mark.svg"
@@ -133,12 +135,11 @@ const gomodifyEmail = () => {
 }
 
 const gomodifyPhone = () => {
-  console.log('value::', userInfo.value)
-  if (!userInfo.value.phone) {
+  // if (!userInfo.value.phone) {
     uni.navigateTo({
       url: '/pages/modifyPhone/index'
     })
-  }
+  // }
 }
 
 const goUser = () => {
