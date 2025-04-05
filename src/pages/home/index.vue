@@ -276,7 +276,7 @@ const socketService = computed(() => userStore.socketService);
 
   const goInvite = () => {
     uni.navigateTo({
-      url: '/pages/invite/index',
+      url: '/pages/InviteFriends/index',
     });
   }
 

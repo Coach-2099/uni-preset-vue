@@ -317,10 +317,12 @@ const submitTrade = async () => {
 	  tradeType: orderTypeObj.value.value,
 	  direction: checkActive.value.toLocaleUpperCase(),
 	}
-	await spotTrade(params) //合约下单
+	const data = await spotTrade(params) //合约下单
+	if(!data.errMsg){
+		uni.showToast({title: '下单成功', icon: 'success'})
+	}
 	loadSpotBalance() //下单成功重新读取可用余额
 	clearParams()
-	uni.showToast({title: '下单成功', icon: 'success'})
 }
 
 //清空交易参数

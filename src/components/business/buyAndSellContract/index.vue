@@ -580,11 +580,14 @@ const submitTrade = async () => {
 	  stopLoss: stopLossVal.value,
 	  allIn:value.value===100?true:false //是否全部
 	}
-	await futuresTrade(params) //合约下单
+	const data = await futuresTrade(params) //合约下单
+	console.log('trade result =',data)
+	if(!data.errMsg){
+		uni.showToast({title: '下单成功', icon: 'success'})
+	}
 	showBuyPopup.value = false 
 	loadSwapBalance() //下单成功重新读取可用保证金
 	clearParams()
-	uni.showToast({title: '下单成功', icon: 'success'})
 }
 
 //清空交易参数

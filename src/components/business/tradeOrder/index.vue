@@ -74,9 +74,11 @@ const cancel =async(orderNo: string)=>{
 	const params = {
 		orderNo:orderNo,
 	}
-	await cancelOrder(params)
+	const data = await cancelOrder(params)
+	if(!data.errMsg){
+		uni.showToast({title: '已成功取消', icon: 'success'})
+	}
 	controlStore.setCanceled(!controlStore.getCanceled)
-	uni.showToast({title: '已成功取消', icon: 'success'})
 }
 
 const loadSpotOrders=async()=>{

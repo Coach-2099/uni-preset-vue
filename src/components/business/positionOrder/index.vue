@@ -88,9 +88,11 @@ const close =async(orderNo: string,quantity: number)=>{
 		orderNo:orderNo,
 		closeQuantity:quantity
 	}
-	await closeOrder(params)
+	const data = await closeOrder(params)
+	if(!data.errMsg){
+		uni.showToast({title: '已平仓', icon: 'success'})
+	}
 	controlStore.setCanceled(!controlStore.getCanceled)
-	uni.showToast({title: '已平仓', icon: 'success'})
 }
 
 //平仓
@@ -98,9 +100,11 @@ const cancel =async(orderNo: string)=>{
 	const params = {
 		orderNo:orderNo,
 	}
-	await cancelFuturesOrder(params)
+	const data = await cancelFuturesOrder(params)
+	if(!data.errMsg){
+		uni.showToast({title: '已成功取消', icon: 'success'})
+	}
 	controlStore.setCanceled(!controlStore.getCanceled)
-	uni.showToast({title: '已成功取消', icon: 'success'})
 }
 //计算实时盈亏
 const calculateUnrealizedProfit=(close: number,direction:string,quantity: number,entryPrice:number)=>{
