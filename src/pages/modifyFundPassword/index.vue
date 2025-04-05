@@ -2,18 +2,18 @@
   <div class="modifyFundPassword-index">
     <navigationBar title="资金密码"></navigationBar>
     <div class="inputTemp mt-25 px-20">
-      <!-- <div class="mt-10">
+      <div class="mt-10">
         <div class="flex justify-between items-center">
           <p class="fs-14 text-black">{{ $t('common.account') }}</p>
         </div>
         <div class="baseInput mt-5 flex justify-between items-center">
           <input
-            v-model="accountNumber"
+            v-model="userName"
             class="myInput flex-1 px-10 py-10 w-100"
-            placeholder="enter your account"
+            :disabled="true"
           />
         </div>
-      </div> -->
+      </div>
       <div class="mt-10">
         <div class="flex justify-between items-center">
           <p class="fs-14 text-black">{{ $t('common.vCode') }}</p>
@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue';
 import { sendmsg } from '@/api/account'
 import { setTradepwd } from '@/api/user'
@@ -70,14 +70,25 @@ const { t } = useI18n()
 
 const vcodeRef = ref()
 const userStore = useUserStore();
+const userName = userStore.userInfo.username;
 const accountNumber = ref('')
 const password = ref('')
 const verificationCode = ref('')
 const showPassword = ref(true);
 
+onMounted(() => {
+
+})
 
 // 点击确认按钮
 const confirmFun = async () => {
+  if (!verificationCode.value && !password.value) {
+    uni.showToast({
+      title: t('tips.pleaseImproveTheInfo'),
+      icon: 'none'
+    })
+    return
+  }
   const params = {
     username: accountNumber.value,
     code: verificationCode.value,
@@ -88,15 +99,17 @@ const confirmFun = async () => {
     title: t('tips.success'),
     icon: 'none'
   })
+  await userStore.getUser()
+  setTimeout(() => {
+    uni.navigateBack()
+  }, 1000)
 }
 
 // 获取验证码
 const getCode = async () => {
   const phone = userStore.userInfo.phone;
   const email = userStore.userInfo.email;
-  console.log('phone', phone)
-  console.log('email', email)
-  if (!phone && !email) {
+  if (!phone || !email) {
     uni.showToast({
       title: t('tips.bindPhoneOrEmail'),
       icon: 'none'
@@ -117,7 +130,7 @@ const getCode = async () => {
   }
   await sendmsg(params)
   uni.showToast({
-    title: t('tips.vCodeSend'),
+    title: t('tips.vCodeHasSent'),
     icon: 'none'
   })
 }

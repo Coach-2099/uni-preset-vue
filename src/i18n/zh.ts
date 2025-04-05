@@ -79,7 +79,6 @@ export default {
     noData: '暂无数据',
     noMoreData: '没有更多数据了',
     loading: '加载中...',
-    vCodeSend: '验证码已发送,请查收',
     enterAccount: '请输入账号',
     enterPassword: '请输入密码',
     enterVCode: '请输入验证码',
@@ -96,6 +95,13 @@ export default {
     bindSuccess: '绑定成功',
     emailFormatIsIncorrect: '邮箱格式不正确',
     bindPhoneOrEmail: '请先绑定手机号或邮箱',
+    pleaseImproveTheInfo: '请完善信息',
+    modifySuccess: '修改成功,请重新登录'
+  },
+  navigationBarTitle: {
+    bindPhone: '绑定手机',
+    bindEmail: '绑定邮箱',
+    bindFundPassword: '设置资金密码',
   },
   homeIndex: {
     login: {

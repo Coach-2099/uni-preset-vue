@@ -11,5 +11,5 @@ export function setTradepwd(data: any) {
 
 // 绑定手机号或邮箱
 export function bindPhoneOrEmail(data: any) {
-  return request.put({ url: '/admin/user/bindPhoneOrEmail', data })
+  return request.post({ url: '/admin/user/bindPhoneOrEmail', data })
 }

@@ -197,16 +197,27 @@ const getUser = async () => {
   await userStore.getUser()
   userInfo.value = {
     username: userStore.userInfo.userName,
-    userId: userStore.userInfo.userId,
+    phone: userStore.userInfo.phone,
+    email: userStore.userInfo.email,
     avatar: userStore.userInfo.avatar
   }
-  if(!userInfo.value.username || !userInfo.value.userId) {
+
+  if(!userInfo.value.phone) {
     showConfirmDialog({
       showCancelButton: false,
-      message:'请先前往安全页面绑定手机号和邮箱',
+      message:'请先前往绑定手机号',
     }).then(() => {
       uni.navigateTo({
-        url: '/pages/securitySettings/index'
+        url: '/pages/modifyPhone/index'
+      })
+    })
+  } else if (!userInfo.value.email) {
+    showConfirmDialog({
+      showCancelButton: false,
+      message:'请先前往绑定邮箱',
+    }).then(() => {
+      uni.navigateTo({
+        url: '/pages/modifyEmail/index'
       })
     })
   } else {

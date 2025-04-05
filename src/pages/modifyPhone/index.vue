@@ -1,6 +1,6 @@
 <template>
   <div class="modifyPhone-index">
-    <navigationBar title="绑定手机"></navigationBar>
+    <navigationBar :title="$t('navigationBarTitle.bindPhone')"></navigationBar>
     <div class="inputBox mt-25 px-20">
       <div>
         <div class="flex justify-between items-center">
@@ -80,11 +80,13 @@
 import { ref } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue';
 import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
+import { useUserStore } from '@/stores/user';
 import { sendmsg } from '@/api/account'
 import { bindPhoneOrEmail } from '@/api/user'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
+const userStore = useUserStore();
 const vcodeRef = ref()
 const phone = ref('')
 const vCode = ref('')
@@ -119,7 +121,7 @@ const getCode = async () => {
 
 const confirm = async () => {
   if (!phone.value) {
-    return uni.showToast({ title: t('tips.enterEmail'), icon: 'none' })
+    return uni.showToast({ title: t('tips.enterPhone'), icon: 'none' })
   }
   if (!vCode.value) {
     return uni.showToast({ title: t('tips.enterVCode'), icon: 'none' })
@@ -134,6 +136,7 @@ const confirm = async () => {
     title: t('tips.bindSuccess'),
     icon: 'none'
   })
+  await userStore.getUser()
   setTimeout(() => {
     uni.navigateBack()
   }, 1000)

@@ -136,7 +136,7 @@ const getCode = async () => {
   }
   await sendmsg(params)
   uni.showToast({
-    title: t('tips.vCodeSend'),
+    title: t('tips.vCodeHasSent'),
     icon: 'none'
   })
 }

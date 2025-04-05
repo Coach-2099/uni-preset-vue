@@ -2,7 +2,6 @@
   <div class="modifyPwd-index">
     <navigationBar title="修改密码"></navigationBar>
     <div class="inputTemp mt-25 px-20">
-
       <div class="mt-20">
         <div class="flex justify-between items-center">
           <p class="fs-14 text-black">账号</p>
@@ -10,10 +9,9 @@
         <div class="baseInput mt-5 flex justify-between items-center">
           <input
             v-model="userName"
-            class="myInput mr-10 flex-1 px-10 py-10 w-100"
-            placeholder="enter your password"
+            class="myInput readOnly mr-10 flex-1 px-10 py-10 w-100"
+            placeholder="enter your account"
             disabled="true"
-            @input="inputPassword"
           />
         </div>
       </div>
@@ -26,7 +24,6 @@
             v-model="phoneCode"
             class="myInput flex-1 px-10 py-10 w-100 mr-10"
             :placeholder="$t('tips.enterVCode')"
-            @input="inputPassword"
           />
           <baseVCodeButton
             ref="vcodeRef"
@@ -45,34 +42,19 @@
             class="myInput flex-1 px-10 py-10 w-100"
             :placeholder="$t('tips.enterPassword')"
             :password="showPassword"
-            @input="inputPassword"
           />
           <text class="uni-icon flex justify-center items-center pr-5 right-icon">
             <van-icon name="eye" @click="changePassword"/>
           </text>
         </div>
       </div>
-      <!-- <div class="mt-10">
-        <div class="flex justify-between items-center">
-          <p class="fs-14 text-black">旧密码</p>
-        </div>
-        <div class="baseInput mt-5 flex justify-between items-center">
-          <input
-            v-model="password"
-            class="myInput flex-1 px-10 py-10 w-100"
-            placeholder="enter your password"
-            :password="showPassword"
-            @input="inputPassword"
-          />
-        </div>
-      </div> -->
     </div>
     <div class="btnBox bg-white w-100 pos-fixed">
       <van-button
         class="confirmBtn w-100 fw-b fs-20"
         type="primary"
         @click="confirmFun"
-      >confirm</van-button>
+      >{{ $t('common.confirm') }}</van-button>
     </div>
   </div>
 </template>
@@ -83,6 +65,9 @@ import navigationBar from '@/components/navigationBar/index.vue';
 import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
 import { sendmsg, updatepwd } from '@/api/account'
 import { useUserStore } from '@/stores/user';
+import { showDialog } from 'vant';
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const vcodeRef = ref();
 const userStore = useUserStore();
@@ -104,10 +89,6 @@ const changePassword = () => {
   showPassword.value = !showPassword.value
 }
 
-const inputPassword = () => {
-  console.log(password.value);
-}
-
 const getCode = async () => {
   vcodeRef.value.startCountdown()
   const params = {
@@ -117,29 +98,31 @@ const getCode = async () => {
   }
   await sendmsg(params)
   uni.showToast({
-    title: '验证码已发送,请查收',
+    title: t('tips.vCodeHasSent'),
     icon: 'none'
   })
 }
 
 const confirmFun = async () => {
+  if (userName.value || password.value || phoneCode.value) {
+    uni.showToast({
+      title: t('tips.pleaseImproveTheInfo'),
+      icon: 'none'
+    })
+  }
   const params = {
     username: userName.value,
     password: password.value,
     code: phoneCode.value
   }
   await updatepwd(params)
-  uni.showToast({
-    title: '修改成功,3s后前往登录',
-    icon: 'none',
-    duration: 3000,
-    mask: true
-  })
-  setTimeout(() => {
+  showDialog({
+    message: t('tips.modifySuccess'),
+  }).then(() => {
     uni.navigateTo({
       url: '/pages/login/index' 
     })
-  }, 3000)
+  })
 }
 
 </script>
@@ -153,6 +136,13 @@ const confirmFun = async () => {
         min-height: 45px;
         background: #F6F7FB;
         border-radius: 8px 8px 8px 8px;
+      }
+      .readOnly {
+        .uni-input-wrapper {
+          .uni-input-input:disabled {
+            color: #1777FF !important; // 字体颜色
+          }
+        }
       }
       .rightText {
         background: #F6F7FB;

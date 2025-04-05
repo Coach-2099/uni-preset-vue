@@ -47,10 +47,12 @@ import { ref } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue';
 import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
 import { sendmsg } from '@/api/account'
+import { useUserStore } from '@/stores/user';
 import { bindPhoneOrEmail } from '@/api/user'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
+const userStore = useUserStore();
 const vcodeRef = ref()
 const vCode = ref('')
 const email = ref('')
@@ -81,12 +83,17 @@ const confirm = async () => {
   if (!vCode.value) {
     return uni.showToast({ title: t('tips.enterVCode'), icon: 'none' })
   }
-  const params = {}
+  const params = {
+    userName: email.value,
+    msgCode: vCode.value,
+    countryCode: ''
+  }
   await bindPhoneOrEmail(params)
   uni.showToast({
     title: t('tips.bindSuccess'),
     icon: 'none'
   })
+  await userStore.getUser()
   setTimeout(() => {
     uni.navigateBack()
   }, 1000)

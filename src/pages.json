@@ -6,18 +6,18 @@
 			{
 				"pagePath": "pages/home/index"
 			},
-			// {
-			// 	"pagePath": "pages/quotes/index"
-			// },
+			{
+				"pagePath": "pages/quotes/index"
+			},
 			{
 				"pagePath": "pages/trade/index"
 			},
 			{
 				"pagePath": "pages/contract/index"
 			},
-			{
-				"pagePath": "pages/metals/index"
-			},
+			// {
+			// 	"pagePath": "pages/metals/index"
+			// },
 			{
 				"pagePath": "pages/myAssets/index"
 			}
@@ -33,15 +33,15 @@
 				"disableScroll": true
 			}
 		},
-		// {
-		// 	"path": "pages/quotes/index",
-		// 	"style": {
-		// 		"navigationStyle": "custom",
-		// 		"navigationBarTitleText": "行情页",
-		// 		"enablePullDownRefresh": false,
-		// 		"disableScroll": true
-		// 	}
-		// },
+		{
+			"path": "pages/quotes/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "行情页",
+				"enablePullDownRefresh": false,
+				"disableScroll": true
+			}
+		},
 		{
 			"path": "pages/contract/index",
 			"style": {

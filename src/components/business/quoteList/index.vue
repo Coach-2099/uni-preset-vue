@@ -68,24 +68,29 @@
             </div>
           </div>
           <!-- 行情列表 -->
-          <div v-for="(item, index) in listData" :key="index">
+          <div v-for="[k, v] in symbolMap" :key="k">
             <div @click="goDetail(item)" class="mt-5 ml-15 mr-15 pb-5 flex ff-biance fw-b justify-between items-center">
               <div class="flex-1">
-                <text class="fs-16">{{ item.symbol1 }}</text>
-                <text class="fs-12 text-gray">/ {{ item.symbol2 }}</text>
-                <div>
+                <!-- <text class="fs-16">{{ v.symbol1 }}</text>
+                <text class="fs-12 text-gray">/ {{ v.symbol2 }}</text> -->
+                <!-- <div>
                   <text class="fs-12 text-gray">{{ formatVolume(item.vol) + ' ' + item.symbol2 }}</text>
+                </div> -->
+                <text class="fs-16">{{ v.tradeToken }}</text>
+                <text class="fs-12 text-gray">/ {{ v.basicToken }}</text>
+                <div>
+                  <text class="fs-12 text-gray">{{ formatVolume(v.vol) + ' ' + v.basicToken }}</text>
                 </div>
               </div>
               <div class="flex-1 flex justify-end items-center">
-                <div class="flex-1 text-right items-center mr-20">{{ item.close }}</div>
+                <div class="flex-1 text-right items-center mr-20">{{ v.close }}</div>
                 <van-button 
                   class="flex-1 text-right rises_falls_btn" 
-                  :class="item.rose > 0 ? 'rise_btn' : 'fall_btn'"
+                  :class="v.rose > 0 ? 'rise_btn' : 'fall_btn'"
                   style="width: 22.4vw;" 
                   size="small"
                 >
-                  <text class="fs-14 text-white">{{ formatChange(item.rose) }}</text>
+                  <text class="fs-14 text-white">{{ formatChange(v.rose) }}</text>
                 </van-button>
               </div>
             </div>
@@ -208,7 +213,6 @@ const props = defineProps({
 });
 
 const handleRefresh = (finish: any) => {
-  console.log('1111');
   loadData()
     .then(() => finish(true))  // 成功时调用
     .catch(() => finish(false)); // 失败时调用
@@ -218,10 +222,6 @@ onMounted(() => {
   // loadData()
 })
 
-// 自动响应 type 变化
-// watch(() => props.type, () => {
-//   loadData()
-// })
 
 // 自主获取数据
 const loadData = async () => {
@@ -234,13 +234,10 @@ const loadData = async () => {
       // sortDirection: sortDirection.value
     }
     const data = await getSymbolsLastPrice(params)
-    // 问题出在 listData 初始化为空数组时没有指定类型，TypeScript 默认推断为 never[]
-    // 这里将 listData 的类型明确指定为 any[]，以解决类型不匹配的问题
-    // listData.value.push(...data)
     data.forEach((item: any) => {
       item.tradeToken = item.symbol.split('/')[0]
       item.basicToken = item.symbol.split('/')[1]
-	  symbolMap.set(item.symbol,item)
+	    symbolMap.set(item.symbol,item)
       // item.price = item.price.toFixed(2)
     })
   } catch (error) {
@@ -310,13 +307,13 @@ const sortIcon = (field: string) => {
 
 
 // 排序后的列表
-const sortedList = computed(() => {
-  return [...listData.value].sort((a, b) => {
-    console.log('a',a)
-    console.log('b',b)
-    // 实际排序逻辑需要根据数据类型实现
-  });
-});
+// const sortedList = computed(() => {
+//   return [...listData.value].sort((a, b) => {
+//     console.log('a',a)
+//     console.log('b',b)
+//     // 实际排序逻辑需要根据数据类型实现
+//   });
+// });
 
 const formatVolume = (volume:any) => {
   const num = Number(volume)

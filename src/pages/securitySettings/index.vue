@@ -3,8 +3,8 @@
     <navigationBar title="安全设置"></navigationBar>
     <div class="safetyLevel bg-white pl-20 pr-20 pb-20">
       <p class="text-black fs-16">账户活动</p>
-      <p class="text-gray fs-12 pt-20">上次登录时间：2025-02-23  11:43:05</p>
-      <p class="text-gray fs-12 pt-10">登录设备：ios</p>
+      <p class="text-gray fs-12 pt-20">上次登录时间：{{ formatISODate(lastLoginTime) }}</p>
+      <!-- <p class="text-gray fs-12 pt-10">登录设备：ios</p> -->
       <p class="text-balck fs-16 pt-25">安全级别 
         <span v-if="userInfo.securityLevel == 1 || userInfo.securityLevel == 0" class="text-red">低</span>
         <span v-if="userInfo.securityLevel == 2" class="text-orange">中</span>
@@ -38,7 +38,7 @@
           <text class="text-black fs-16">修改登录密码</text>
         </div>
         <div>
-          <text class="fs-12 text-gray mr-5">尚未认证</text>
+          <!-- <text class="fs-12 text-gray mr-5">尚未认证</text> -->
           <image
             class="rightIcon"
             src="/static/svg/tools/right.svg"
@@ -51,8 +51,9 @@
           <text class="text-black fs-16">邮箱</text>
         </div>
         <div>
-          <text class="fs-12 text-gray mr-5">123@163.com</text>
+          <text class="fs-12 text-gray mr-5">{{ userInfo.email }}</text>
           <image
+            v-if="!userInfo.email"
             class="rightIcon"
             src="/static/svg/tools/right.svg"
             mode="scaleToFill"
@@ -64,8 +65,9 @@
           <text class="text-black fs-16">手机号</text>
         </div>
         <div>
-          <text class="fs-12 text-gray mr-5">158****9510</text>
+          <text class="fs-12 text-gray mr-5">{{ userInfo.phone }}</text>
           <image
+            v-if="!userInfo.phone"
             class="rightIcon"
             src="/static/svg/tools/right.svg"
             mode="scaleToFill"
@@ -93,8 +95,10 @@
 import { ref, onMounted, computed } from 'vue'
 import navigationBar from '@/components/navigationBar/index.vue'
 import { useUserStore } from '@/stores/user';
+import { formatISODate } from '@/utils/util'
 
 const userStore = useUserStore();
+const lastLoginTime = ref('');
 const DEFAULT_USER_INFO = {
   securityLevel: 3,
   hasTradePwd: 0
@@ -105,7 +109,7 @@ const userInfo = computed(() => {
 });
 
 onMounted(() => {
-  console.log('userInfo', userInfo.value)
+  lastLoginTime.value = userInfo.value.lastLoginTime || new Date().getTime(); // 假设 lastLoginTime 是从 store 中获取的
 })
 
 const goModifyPwd = () => {
@@ -121,15 +125,20 @@ const goModifyFundPassword = () => {
 }
 
 const gomodifyEmail = () => {
-  uni.navigateTo({
-    url: '/pages/modifyEmail/index'
-  })
+  if (!userInfo.value.email) {
+    uni.navigateTo({
+      url: '/pages/modifyEmail/index'
+    })
+  }
 }
 
 const gomodifyPhone = () => {
-  uni.navigateTo({
-    url: '/pages/modifyPhone/index'
-  })
+  console.log('value::', userInfo.value)
+  if (!userInfo.value.phone) {
+    uni.navigateTo({
+      url: '/pages/modifyPhone/index'
+    })
+  }
 }
 
 const goUser = () => {
