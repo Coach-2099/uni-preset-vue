@@ -141,24 +141,66 @@ watch(
   () => controlStore.getQuotesData(props.type)?.symbol,
   (newSymbol, oldSymbol) => {
     if (newSymbol) { //切换的交易对与原交易对相同不做处理
-      console.log('监听数据233')
+      console.log('数据', newSymbol, oldSymbol)
       // 取消旧symbol的订阅和监听
-      socketService.value.unsubscribe('ticker', symbolInfo.value);
-      socketService.value.off(`${symbolInfo.value}-ticker`);
+      // 如果存在旧数据则取消就数据的监听
+      // 同时存在新数据和旧数据 则说明是切换 此时可以做取消监听 和 新数据监听
+      // TODO: 是否需要判断同时存在新旧数据才会做新旧监听的改动？
+      if (oldSymbol && newSymbol) {
+        // 此处是交易数据监听
+        socketService.value.unsubscribe('ticker', oldSymbol);
+        socketService.value.off(`${oldSymbol}-ticker`);
 
-      symbolInfo.value = newSymbol
-      // 这里可以添加symbol变化后的处理逻辑
-      handleIntervalChange(currentInterval.value)
+        symbolInfo.value = newSymbol
+        // 这里可以添加symbol变化后的处理逻辑
+        handleIntervalChange(currentInterval.value)
+  
+        // 设置新symbol的订阅和监听
+        socketService.value.subscribe('ticker', newSymbol);
+        socketService.value.on(`${newSymbol}-ticker`, (data: any) => {
+          rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
+          HIGH24h.value = data.high
+          LOW24h.value = data.low
+          VOL24h.value = data.vol
+          lastPrice.value = data.close
+        })
 
-      // 设置新symbol的订阅和监听
-      socketService.value.subscribe('ticker', newSymbol);
-      socketService.value.on(`${newSymbol}-ticker`, (data: any) => {
-        rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
-        HIGH24h.value = data.high
-        LOW24h.value = data.low
-        VOL24h.value = data.vol
-        lastPrice.value = data.close
-      })
+        // 此处是k线数据监听
+        // 取消 旧数据的k线监听
+        socketService.value.unsubscribe('kline',oldSymbol);
+        socketService.value.off(`${oldSymbol}-kline`);
+
+        socketService.value.subscribe('kline',newSymbol);
+        socketService.value.on(`${newSymbol}-kline`, (data: any) => {
+        // 确保时间戳是有效的UTCTimestamp（秒级）
+        const candleTime = data.startTime / 1000
+
+          if (data.isFinish) {
+            // isFinish 为 true 时 push新数据
+            const candle = {
+              time: candleTime, // 转换为秒级时间戳
+              open: Number(data.open.toFixed(2)),
+              high: Number(data.high.toFixed(2)),
+              low: Number(data.low.toFixed(2)),
+              close: Number(lastPrice.value),
+              volume: Number(data.vol.toFixed(2))
+            }
+            chartRef.value?.appendNewCandle(candle)
+          } else {
+            // isFinish 为 false 时更新最新数据
+            const candle = {
+              open: Number(data.open.toFixed(2)),
+              high: Number(data.high.toFixed(2)),
+              low: Number(data.low.toFixed(2)),
+              close: Number(lastPrice.value),
+              time: candleTime,
+              volume: Number(data.vol.toFixed(2))
+            }
+            chartRef.value?.updateLastCandle(candle)
+          }
+        })
+      }
+
     }
   },
   { immediate: true } // 立即执行一次以获取初始值
@@ -270,26 +312,26 @@ const loadData = async (startTime: number,endTime:number,isFisrtLoad: boolean) =
 		  }
 			candleData.value.push(kline)
 	  }
-  }else{
+  } else {
     // 加载数据
     console.log(' init result ={}',candleData.value.length)
 	  const kl = klineList.length -1
 	  for (let i = kl; i >= 0; i--) {
 		  const kline = {
-			time: klineList[i].startTime/1000, // 转换为秒级时间戳
-			open: Number(klineList[i].open.toFixed(2)),
-			high: Number(klineList[i].high.toFixed(2)),
-			low: Number(klineList[i].low.toFixed(2)),
-			close: Number(klineList[i].close.toFixed(2)),
-			volume: Number(klineList[i].vol.toFixed(2))
+        time: klineList[i].startTime/1000, // 转换为秒级时间戳
+        open: Number(klineList[i].open.toFixed(2)),
+        high: Number(klineList[i].high.toFixed(2)),
+        low: Number(klineList[i].low.toFixed(2)),
+        close: Number(klineList[i].close.toFixed(2)),
+        volume: Number(klineList[i].vol.toFixed(2))
 		  }
-		  if(candleData.value[0].time > kline.time){
+		  if (candleData.value[0].time > kline.time) {
         candleData.value.unshift(kline)
-		  }else{
+		  } else {
 			  console.log('重复的time:'+candleData.value[0].startTime)
 		  }
 	  }
-	  console.log(' update result ={}',candleData.value.length)
+	  console.log('update result ={}',candleData.value.length)
 	  // chartRef.value?.updateChartData(candleData.value)
   }
   console.log('加载数据 ')
@@ -331,9 +373,9 @@ const handleIntervalChange = async (interval: number) => {
   console.log('修改bit了')
   // 先更新当前时间间隔
   currentInterval.value = interval
-  // candleData.value = []
+  candleData.value = []
   // 清空旧数据
-	chartRef.value?.clearData()
+	// chartRef.value?.clearData()
     // 重新加载数据
 	const currentTime = new Date().getTime()
 	const endTime = currentTime- intervalMap[getPeriodByInterval(currentInterval.value)]
