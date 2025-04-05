@@ -722,13 +722,15 @@ const initChartStructure = async () => {
       scaleMargins: {
         top: 0.85,
         bottom: 0
-      },    
+      },
     })
   }
 }
 
 // 修改后的数据渲染方法
 const renderChartData = async () => {
+  console.log('来重新渲染 chart', chart)
+  console.log('来重新渲染 candleSeries', candleSeries)
   if (!chart || !candleSeries) return
 
   // 新增数据排序和验证
@@ -737,14 +739,11 @@ const renderChartData = async () => {
 
   // 设置蜡烛图数据
   candleSeries.setData(props.data)
-  
+  console.log('设置蜡烛图 ', candleSeries)
+  console.log('props.data', props.data)
+
   // 设置成交量数据
-  const volumeData = props.data.map(d => ({
-    time: d.time,
-    value: d.volume,
-    color: d.close > d.open ? '#26a69a' : '#ef5350'
-  }))
-  volumeSeries.value?.setData(volumeData)
+  resetVolumeSeries()
 
   // 初始化EMA系列
   initEMASeries()
@@ -786,14 +785,49 @@ const removeChart = () => {
 
 // 新增重新绘制方法
 const redrawChart = async () => {
-  // 正确销毁图表实例
   // 清除所有引用
-  chart?.removeSeries(candleSeries)
+  // chart?.removeSeries(candleSeries)
+
+  // 移除tooltip元素
+  toolTip.value?.parentNode?.removeChild(toolTip.value)
+  // 清理EMA系列
+  emaSeriesMap.value.clear()
+  // 清理蜡烛图
+  candleSeries?.setData([]);
+  // 清理成交量
+  volumeSeries.value?.setData([]);
+  chart = null
+  candleSeries = null
+  // chart?.remove()
+  // 这里是清除所有引用
+  // chart?.removeSeries(candleSeries)
+}
+
+const resetVolumeSeries = () => {
+  // 仅更新数据而不重建系列
+  if (volumeSeries.value && props.data?.length) {
+    const volumeData = props.data.map(d => ({
+      time: d.time,
+      value: d.volume,
+      color: d.close > d.open ? '#26a69a' : '#ef5350'
+    }))
+    volumeSeries.value.setData(volumeData)
+    
+    // 确保价格刻度配置
+    const priceScale = chart?.priceScale('volume')
+    priceScale?.applyOptions({
+      visible: false,
+      scaleMargins: { top: 0.85, bottom: 0 }
+    })
+  }
 }
 
 // 主题响应优化
 watch(() => 
   props.data, (newVal:any, oldVal:any) => {
+    console.log('chart', chart)
+    console.log('candleSeries', candleSeries)
+    console.log('newVal', newVal)
     if (!chart || !candleSeries || newVal.length === 0) return
     // 存在图表实例才做图表重绘
     // if (chart && candleSeries) redrawChart()
@@ -889,6 +923,7 @@ const handleTimeSelect = (interval: number) => {
 
 // 数据更新示例方法（需根据实际业务实现）
 const updateChartData = (data: CandleData[]) => {
+  console.log('触发蜡烛图修改')
   candleSeries?.setData(data)
   chart?.timeScale().fitContent()
 }
@@ -929,7 +964,7 @@ defineExpose({
   updateChartData,
   getLastCandleTime,
   removeChart,
-  redrawChart // 暴露新方法
+  redrawChart, // 暴露新方法
 })
 </script>
 
