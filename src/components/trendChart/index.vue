@@ -135,7 +135,6 @@ const candleColors = ref({
   priceLineVisible: true // 显示价格线
 })
 
-
 // 新增以下监听代码,对新交易对进行订阅，取消老的订阅
 watch(
   () => controlStore.getQuotesData(props.type)?.symbol,

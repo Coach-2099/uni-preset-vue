@@ -754,7 +754,9 @@ onMounted(async () => {
 
 
 onUnmounted(() => {
-  emaSeriesMap.value.forEach(series => chart?.removeSeries(series))
+  // emaSeriesMap.value.forEach(series => chart?.removeSeries(series))
+  // clearEMAData()
+  // 清理整个图表
   chart?.remove()
 })
 
