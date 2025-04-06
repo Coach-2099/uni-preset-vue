@@ -7,11 +7,11 @@
         </div>
         <div class="fw-b fs-26 text-black ml-20">XAUSWAP</div>
         <div class="flex justify-between">
-          <div class="flex items-center home_right_icon mr-20">
+          <div class="flex items-center home_right_icon mr-20" @click="goCustomerService">
             <image
               src="/static/svg/home/c_service.svg"
               mode="scaleToFill"
-          />
+            />
           </div>
           <div class="flex items-center home_right_icon" @click="goMessageList">
              <image
@@ -73,7 +73,7 @@
     </div>
     <div class="pl-20 pr-20 pt-15 pb-10 bg-white">
       <div class="pl-20 pr-20 pt-15 pb-15 flex justify-between ribbon">
-        <div class="flex-col items-center" @click="sendMessage">
+        <div class="flex-col items-center" @click="goRecharge">
           <van-image width="28" hidden="30" src="/static/svg/home/recharge.svg" />
           <p class="mt-5 text-by-black" style="font-size: 3.2vw;">{{ $t('noun.recharge') }}</p>
         </div>
@@ -283,8 +283,8 @@ const socketService = computed(() => userStore.socketService);
  
  const loadNoticeData = async () => {
    const data = await getNotice({pages: pages.value})
-   noticeList.value = [{title: '这是公告1'}, {title: '这是公告2'}, {title: '这是公告3'}]
-  //  noticeList.value = data.records
+  //  noticeList.value = [{title: '这是公告1'}, {title: '这是公告2'}, {title: '这是公告3'}]
+   noticeList.value = data.records
  }
 
   const subscribeFun = () => {
@@ -299,7 +299,7 @@ const socketService = computed(() => userStore.socketService);
 
   const goWithdraw = () => {
     uni.navigateTo({
-      url: '/pages/withdrawl/index',
+      url: '/pages/withdrawal/index',
     });
   }
 
@@ -315,9 +315,10 @@ const socketService = computed(() => userStore.socketService);
     });
   };
   // Function to send a message
-  const sendMessage = () => {
-    console.log('发送消息')
-    socketService.value.emit('message', 'Hello from client');
+  const goRecharge = () => {
+    uni.navigateTo({
+      url: '/pages/recharge/index'
+    })
   };
 
   // 切换标签
@@ -357,6 +358,11 @@ const socketService = computed(() => userStore.socketService);
     uni.navigateTo({
       url: '/pages/messageList/index',
     });
+  }
+  const goCustomerService = () => {
+    // uni.navigateTo({
+    //   url: '/pages/customerService/index',
+    // });
   }
 
 </script>
@@ -424,7 +430,7 @@ const socketService = computed(() => userStore.socketService);
       width: 100%;
       overflow: hidden;
       position: relative;
-      
+      min-height: 20px;
       .marquee-content {
         display: flex;
         animation: marquee 10s linear infinite;  // 增加动画时长

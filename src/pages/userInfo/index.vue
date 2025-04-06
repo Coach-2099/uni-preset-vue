@@ -3,7 +3,7 @@
     <navigationBar title="">
       <template #right>
         <div class="flex justify-between">
-          <div class="flex items-center home_right_icon mr-15">
+          <div class="flex items-center home_right_icon mr-15" @click="goCustomerService">
             <image
               src="/static/svg/home/c_service.svg"
               mode="scaleToFill"
@@ -40,35 +40,35 @@
         <div class="flex items-center">
           <!-- @click="clickTab(0)" -->
           <div class="text-black fw-b fs-12 tabBox mr-15 text-center pos-relative">
-            <div>普通用户</div>
+            <div>{{ $t('userInfo.ordinaryUsers') }}</div>
             <!-- <div v-if="tabVal == 0" class="triangle-up-border pos-absolute"></div> -->
           </div>
           <div @click="clickTab(1)" class="text-black fw-b fs-12 tabBox mr-15 text-center pos-relative">
             <div class="certification">
               <image v-if="userInfo.isValid !== 2" class="mr-5" src="/static/svg/tools/ex_mark.svg" />
               <image v-else-if="userInfo.isValid === 2" class="mr-5" src="/static/images/success.png" mode="scaleToFill" />
-              <text v-if="userInfo.isValid === 0">未完成身份认证</text>
-              <text v-else-if="userInfo.isValid === 1">身份认证中</text>
-              <text v-else-if="userInfo.isValid === 2">身份已认证</text>
+              <text v-if="userInfo.isValid === 0">{{ $t('userInfo.IdNotCompleted') }}</text>
+              <text v-else-if="userInfo.isValid === 1">{{ $t('userInfo.IdentityDuthentication') }}</text>
+              <text v-else-if="userInfo.isValid === 2">{{ $t('userInfo.IdentityDuthenticationSuccess') }}</text>
             </div> 
             <div v-if="tabVal == 1" class="triangle-up-border pos-absolute"></div>
           </div>
         </div>
         <div v-if="userInfo.isValid !== 2" class="infoBox mt-10 px-10 pt-25">
-          <div class="text-black fs-14">完成身份认证以进行充值和交易</div>
+          <div class="text-black fs-14">{{ $t('userInfo.completeIDforTransactions') }}</div>
           <div class="CertificationBox mt-5">
             <van-button @click="goIdentityAuth" v-if="userInfo.isValid == 0" class="BtnBox" color="#1777FF">
-              <text  class="fw-b fs-14">认证</text>
+              <text  class="fw-b fs-14">{{ $t('userInfo.goCertification') }}</text>
             </van-button>
             <van-button v-if="userInfo.isValid == 1" class="BtnBox" color="#1777FF">
-              <text class="fw-b fs-14">认证中</text>
+              <text class="fw-b fs-14">{{ $t('userInfo.certification') }}</text>
             </van-button>
           </div>
         </div>
       </div>
       <div class="optionBox bg-white mt-5">
         <div class="pl-20 pr-20 pt-20">
-          <div class="fw-b fs-16">账户信息</div>
+          <div class="fw-b fs-16">{{ $t('userInfo.accountInfo') }}</div>
           <div @click="goIdentityAuth" class="pt-25 flex justify-between">
             <div class="flex items-center">
               <image

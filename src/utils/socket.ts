@@ -87,11 +87,11 @@ class SocketService {
   // 恢复订阅
   private restoreSubscriptions() {
     // 实现原有的订阅恢复逻辑...
-	const  subscribes = Array.from(this.subscriptions)
-	console.log('this.subscriptions= {0}',subscribes)
-	subscribes.forEach(topic=>{
-		this.subscribe(topic,'')
-	})
+    const  subscribes = Array.from(this.subscriptions)
+    console.log('this.subscriptions= {0}',subscribes)
+    subscribes.forEach(topic=>{
+      this.subscribe(topic,'')
+    })
   }
 
 
@@ -110,7 +110,7 @@ class SocketService {
       }
       if (!this.subscriptions.has(topic)) {
         // {"event":"subscribe","data":"ticker"}
-		this.ws?.send(JSON.stringify({ event: 'subscribe', data: topic }));	
+		    this.ws?.send(JSON.stringify({ event: 'subscribe', data: topic }));	
         this.subscriptions.add(topic);
       }
     }
@@ -261,9 +261,9 @@ class SocketService {
     this.stopHeartbeat();
     this.disconnect();
     setTimeout(() => {
-		this.connect()
-		location.reload() //为了防止页面断开时已订阅内容数据无法重新监听，强制刷新
-	}
+      this.connect()
+      location.reload() //为了防止页面断开时已订阅内容数据无法重新监听，强制刷新
+    }
 	, 3000); // 3秒后尝试重连
   }
 

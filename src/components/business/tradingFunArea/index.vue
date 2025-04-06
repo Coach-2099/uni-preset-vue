@@ -23,9 +23,12 @@
       </div>
     </div>
     <div v-if="showChart" class="lineChartBox mt-25">
-      折线图1
+      <!-- 折线图1 -->
     </div>
-    <div class="mt-15 buyAndSellBox flex justify-between items-stretch" :class="{'marginTop75': !showChart}">
+    <div
+      class="mt-15 buyAndSellBox flex justify-between items-stretch"
+      :class="{'marginTop75': !showChart}"
+    >
       <div class="buyAndSellMoudle flex-1">
         <buyAndSell v-if="type == 'SPOT'" :lastPrice="lastPrice" :symbol="symbol"></buyAndSell>
         <buyAndSellContract v-if="type == 'FUTURES'|| type == 'METALS'" :type="type" :lastPrice="lastPrice" :symbol="symbol"></buyAndSellContract>
@@ -34,7 +37,7 @@
       <div class="rightDev">
         <priceFluctuations :lastPrice="lastPrice" ref="priceFluctuationsRef" :type="type"></priceFluctuations>
       </div>
-    </div> 
+    </div>
 
     <floatingPanelProps ref="floatingPanelPropsRef"></floatingPanelProps>
   </div>
@@ -50,6 +53,7 @@ import { useControlStore } from '@/stores/control';
 
 import { useUserStore } from '@/stores/user';
 import { getTicker } from '@/api/quotes';
+import { onLoad, onShow } from '@dcloudio/uni-app';
 
 // stores
 const controlStore = useControlStore();
@@ -87,14 +91,14 @@ watch(
   }
 );
 
-onMounted(() => {
+onShow(() => {
 	nextTick(() => {
 		loadInfo(props.symbol)
 	})
 })
 
 const loadInfo=(symbol:string)=>{
-	
+	console.log('load数据info')
 	socketService.value.subscribe('ticker',symbol);
 	socketService.value.on(`${symbol}-ticker`, (data: any) => {
 		lastPrice.value = data.close

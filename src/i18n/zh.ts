@@ -126,6 +126,16 @@ export default {
       available: '可用',
     }
   },
+  userInfo: {
+    ordinaryUsers: '普通用户',
+    IdNotCompleted: '未完成身份认证',
+    IdentityDuthentication: '身份认证中',
+    IdentityDuthenticationSuccess: '身份已认证',
+    completeIDforTransactions: '完成身份认证以进行充值和交易',
+    goCertification: '认证',
+    certification: '认证中',
+    accountInfo: '账户信息'
+  },
   contract: {
     buyAndSellContract: {
       popup: {

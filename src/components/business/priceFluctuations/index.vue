@@ -98,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch ,computed,onMounted} from 'vue';
+import { ref, watch ,computed,onMounted, onUnmounted, onDeactivated} from 'vue';
 import { getDepth } from '@/api/quotes'
 import { useControlStore } from '@/stores/control'
 import { storeToRefs } from 'pinia'
@@ -139,19 +139,35 @@ const MAX_DEPTH_LENGTH = 7 // 最大显示20条深度数据
 watch(
   () => controlStore.getQuotesData(props.type)?.symbol,
   (newVal, oldVal) => {
-	if(newVal){
-		socketService.value.unsubscribe('depth',oldVal); //取消原有订阅
-	}
+    if(newVal){
+      console.log('监听交易对: ',newVal)
+      socketService.value.unsubscribe('depth',oldVal); //取消原有订阅
+    }
   }
 );
+
+
 onMounted(()=>{
 	if(controlStore.getQuotesData(props.type)?.symbol){
 		subSymbol.value = controlStore.getQuotesData(props.type)?.symbol
 	}
-	loadData({klineType: props.type,
-		  symbol: subSymbol.value})
+	loadData({klineType: props.type, symbol: subSymbol.value})
 })
+
+onUnmounted(() => {})
+
+onDeactivated(() => {
+  // 原代码中 controlStore.getQuotesData 是一个函数，需要传入参数调用后才能访问 symbol 属性
+  // 修改为调用函数并传入 props.type 参数
+  console.log('组件销毁')
+
+  const NowSymbol = controlStore.getQuotesData(props.type)?.symbol
+  socketService.value.unsubscribe('depth',NowSymbol);
+})
+
+// 加载数据
 const loadData = async (params: any) => {
+  console.log('切换后load数据')
   const data = await getDepth(params)
   bidsList.value = data.bids
   asksList.value = data.asks
@@ -171,14 +187,14 @@ const loadData = async (params: any) => {
 
 const subdepth =(symbol:string)=>{
 	socketService.value.subscribe('depth',symbol);
-	 socketService.value.on(`${symbol}-depth`, (item: any) => {
+  socketService.value.on(`${symbol}-depth`, (item: any) => {
 		bidsList.value = item.bids
 		asksList.value = item.asks
-	// 对实时数据也添加长度限制
-	bidsList.value = item.bids.slice(0, MAX_DEPTH_LENGTH)
-	asksList.value = item.asks.slice(0, MAX_DEPTH_LENGTH)
+    // 对实时数据也添加长度限制
+    bidsList.value = item.bids.slice(0, MAX_DEPTH_LENGTH)
+    asksList.value = item.asks.slice(0, MAX_DEPTH_LENGTH)
 		depthData(bidsList.value,asksList.value,props.type)
-	 })
+  })
 }
 
 const depthData =(bidsList:any,asksList:any,type:string)=>{
@@ -194,7 +210,6 @@ const depthData =(bidsList:any,asksList:any,type:string)=>{
 		asksTotal = asksList.reduce((sum, item) => sum + Number(item[1]), 0)
 	}
 	const total = bidsTotal + asksTotal
-	
 	// 计算百分比
 	leftWidth.value = total > 0
 	  ? Number(((asksTotal / total) * 100).toFixed(0))
