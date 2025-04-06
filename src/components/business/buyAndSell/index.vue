@@ -27,7 +27,7 @@
         >
           <template #reference>
             <div class="baseSelect w-100 py-5 flex justify-between items-center">
-              <div class="leftBox flex items-center">
+              <div class="leftBox flex-1  items-center">
                 <p class="fs-14 text-black">{{ orderTypeObj?.text }}</p>
               </div>
               <div class="rightBox flex items-center">
@@ -72,7 +72,7 @@
             v-if="showPriceInput"
             :focus="showPriceInput"
             v-model="tradeNum"
-			@input="calculateMargin(tradeNum)"
+			      @input="calculateMargin(tradeNum)"
             class="myInput flex-1 w-100"
             :placeholder="$t('tips.enterQuantity')"
             placeholder-class="input-placeholder"
@@ -123,7 +123,7 @@
           <input
             v-if="showPriceInput"
             :focus="showPriceInput"
-			disabled="true"
+			      disabled="true"
             v-model="tradeVal"
             class="myInput flex-1 w-100"
             :placeholder="$t('tips.enterOrderAmount')"
@@ -333,6 +333,12 @@ const clearParams= ()=>{
 }
 
 </script>
+
+<style lang="scss" scoped>
+:deep(.van-popover__wrapper) {
+  width: 100%;
+}
+</style>
 
 <style lang="scss" scoped>
 .buyAndSellMoudle-index {
