@@ -98,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch ,computed} from 'vue';
+import { ref, watch ,computed,onMounted} from 'vue';
 import { getDepth } from '@/api/quotes'
 import { useControlStore } from '@/stores/control'
 import { storeToRefs } from 'pinia'
@@ -144,6 +144,13 @@ watch(
 	}
   }
 );
+onMounted(()=>{
+	if(controlStore.getQuotesData(props.type)?.symbol){
+		subSymbol.value = controlStore.getQuotesData(props.type)?.symbol
+	}
+	loadData({klineType: props.type,
+		  symbol: subSymbol.value})
+})
 const loadData = async (params: any) => {
   const data = await getDepth(params)
   bidsList.value = data.bids

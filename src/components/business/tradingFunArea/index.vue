@@ -88,14 +88,13 @@ watch(
 );
 
 onMounted(() => {
-  nextTick(() => {
-	  console.log('onMounted =',props.symbol)
-	  loadInfo(props.symbol)
-  })
+	nextTick(() => {
+		loadInfo(props.symbol)
+	})
 })
 
 const loadInfo=(symbol:string)=>{
-	console.log('symbol = ',symbol)
+	
 	socketService.value.subscribe('ticker',symbol);
 	socketService.value.on(`${symbol}-ticker`, (data: any) => {
 		lastPrice.value = data.close
