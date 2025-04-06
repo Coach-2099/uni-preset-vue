@@ -581,13 +581,13 @@ const removeChart = () => {
   if (chart) {
     // 移除tooltip元素
     toolTip.value?.parentNode?.removeChild(toolTip.value)
+    // 清理EMA系列
+    emaSeriesMap.value.clear()
     // 正确销毁图表实例
     chart.remove()
     // 清除所有引用
     chart = null
     candleSeries = null
-    // 清理EMA系列
-    emaSeriesMap.value.clear()
     // 移除DOM容器（重要！）
     chartContainer.value?.$el?.parentNode?.removeChild(chartContainer.value.$el)
   }
@@ -757,7 +757,9 @@ onUnmounted(() => {
   // emaSeriesMap.value.forEach(series => chart?.removeSeries(series))
   // clearEMAData()
   // 清理整个图表
-  chart?.remove()
+  // 测试热重载
+  // chart?.remove()
+  removeChart()
 })
 
 // 暴露方法给父组件
