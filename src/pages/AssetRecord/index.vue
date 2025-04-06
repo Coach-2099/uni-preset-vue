@@ -5,40 +5,18 @@
       <van-tabs
         title-active-color="#333333"
         title-inactive-color="#B0B0B0"
-        v-model:active="active" 
+        v-model:active="active"
+        @click-tab="tabclick"
         shrink
       >
         <van-tab title="Deposit">
           <assetList :data-list="dataList" @refresh="refreshFun"></assetList>
-          <!-- <div class="assetList mt-15">
-            <div 
-              v-for="index in 5" 
-              :key="index" 
-              class="assetSingle mt-15 flex justify-between items-center"
-              @click="goAssetDetail"
-            >
-              <div>
-                <p class="fs-16 text-black">USDT</p>
-                <p class="fs--12 text-gray">2025-02-23  11:43:05</p>
-              </div>
-              <div class="flex justify-between items-center">
-                <div class="mr-10">
-                  <p class="fs-16 text-black text-right">999,999</p>
-                  <div class="flex items-center">
-                    <div class="dot mr-5"></div>
-                    <p class="fs-12 text-gray">Succeeded</p>
-                  </div>
-                </div>
-                <div class="rightIcon"></div>
-              </div>
-            </div>
-          </div> -->
         </van-tab>
         <van-tab title="Withdraw">
-          Deposit
+          <assetList :data-list="dataList" @refresh="refreshFun"></assetList>
         </van-tab>
         <van-tab title="Transfer">
-          Deposit
+          <assetList :data-list="dataList" @refresh="refreshFun"></assetList>
         </van-tab>
       </van-tabs>
     </div>
@@ -49,7 +27,8 @@
 import { ref } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue'
 import assetList from '@/components/business/assetList/index.vue'
-import { getRechargeList } from '@/api/asset'
+import { getRechargeList, getWithdrawList, getTrasferList } from '@/api/asset'
+import { onLoad } from '@dcloudio/uni-app';
 
 const active = ref(0);
 const dataList = ref([]);
@@ -63,13 +42,44 @@ const refreshFun = () => {
   loadData()
 }
 
-const loadData = async () => {
+onLoad(() => {
+  loadData()
+
+})
+
+/**
+ * 加载数据
+ * @param type 类型 1:充值 2:提现 3:转账
+ */
+const loadData = async (type?: number) => {
   const params = {
     ...pages,
-    symbol: 'USDT'
+    // symbol: 'USDT'
   }
-  const data = await getRechargeList(params)
+  let loadFun:any = null
+  switch (type) {
+    case 1:
+      loadFun = getRechargeList
+      break
+    case 2:
+      loadFun = getWithdrawList
+      break
+    case 3:
+      loadFun = getTrasferList
+      break
+    default:
+    loadFun = getRechargeList
+      break
+  }
+  const data = await loadFun(params)
   dataList.value = data.records
+  console.log('dataList', dataList.value)
+}
+
+
+
+const tabclick = (e:any) => {
+  console.log('e', e)
 }
 
 </script>
