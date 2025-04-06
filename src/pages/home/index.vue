@@ -51,12 +51,24 @@
     <div class="pl-20 pr-20 pt-5 pb-5 pt-25 walletInfo">
       <div class="flex items-center">
         <van-image width="17.45" height="16" src="/static/svg/home/horn.svg" />
-        <p 
+        <div
           style="background: #F6F7FB;
           border-radius: 5px 5px 5px 5px;"
-          class="w-100 ml-5 pl-5 fs-14 bg-warning text-black" v-for="(item,index) in noticeList" :key="index">
-          {{item.title}}
-        </p>
+          class="w-100 ml-5 pl-5 fs-14 bg-warning text-black"
+        >
+          <div class="marquee-container flex">
+            <div
+              class="marquee-content"
+              :style="{ width: `${noticeList.length * 100}%` }"
+            >
+              <div 
+                v-for="(item,index) in noticeList"
+                :key="index"
+                class="marquee-item"
+              >{{item.title}}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="pl-20 pr-20 pt-15 pb-10 bg-white">
@@ -220,6 +232,9 @@ const socketService = computed(() => userStore.socketService);
   onMounted(() => {
     // 切换类型时请求
     nextTick(() => {
+      // 请求公告信息
+      loadNoticeData()
+      // 切换货币信息
       onClickTab({name: 0})
       // 订阅BTC/USDT的实时行情
       setTimeout(()=>{
@@ -268,7 +283,8 @@ const socketService = computed(() => userStore.socketService);
  
  const loadNoticeData = async () => {
    const data = await getNotice({pages: pages.value})
-   noticeList.value = data.records
+   noticeList.value = [{title: '这是公告1'}, {title: '这是公告2'}, {title: '这是公告3'}]
+  //  noticeList.value = data.records
  }
 
   const subscribeFun = () => {
@@ -403,6 +419,32 @@ const socketService = computed(() => userStore.socketService);
   }
   .walletInfo {
     background: #fff;
+      /* 新增公告滚动样式 */
+    .marquee-container {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      
+      .marquee-content {
+        display: flex;
+        animation: marquee 10s linear infinite;  // 增加动画时长
+        width: auto;  // 移除动态宽度计算
+        
+        .marquee-item {
+          flex: 0 0 100%;  // 强制每个项占满容器
+          min-width: 100%;
+          text-align: left;
+          padding: 0 15px;
+          box-sizing: border-box;
+          white-space: nowrap;  // 防止文字换行
+        }
+      }
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-245%); }  // 改为相对自身宽度的位移
+    }
   }
   .ribbon {
     background: #FFFFFF;
