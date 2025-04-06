@@ -134,7 +134,13 @@ export default {
     completeIDforTransactions: '完成身份认证以进行充值和交易',
     goCertification: '认证',
     certification: '认证中',
-    accountInfo: '账户信息'
+    accountInfo: '账户信息',
+    identityAuthentication: '身份认证',
+    notCertifiedYet: '尚未认证',
+    authentication: '认证中',
+    authenticationSuccess: '已认证',
+    securitySettings: '安全设置'
+
   },
   contract: {
     buyAndSellContract: {

@@ -76,12 +76,12 @@
                 src="/static/svg/tools/identity.svg"
                 mode="scaleToFill"
               />
-              <text class="text-black fs-16">身份认证</text>
+              <text class="text-black fs-16">{{ $t('userInfo.identityAuthentication') }}</text>
             </div>
             <div>
-              <text v-if="userInfo.isValid == 0" class="fs-12 text-gray mr-5">尚未认证</text>
-              <text v-if="userInfo.isValid == 1" class="fs-12 text-gray mr-5">认证中</text>
-              <text v-if="userInfo.isValid == 2" class="fs-12 text-gray mr-5">已认证</text>
+              <text v-if="userInfo.isValid == 0" class="fs-12 text-gray mr-5">{{ $t('userInfo.notCertifiedYet') }}</text>
+              <text v-if="userInfo.isValid == 1" class="fs-12 text-gray mr-5">{{ $t('userInfo.authentication') }}</text>
+              <text v-if="userInfo.isValid == 2" class="fs-12 text-gray mr-5">{{ $t('userInfo.authenticationSuccess') }}</text>
               <image
                 class="rightIcon"
                 src="/static/svg/tools/right.svg"
@@ -96,7 +96,7 @@
                 src="/static/svg/tools/security.svg"
                 mode="scaleToFill"
               />
-              <text class="text-black fs-16">安全设置</text>
+              <text class="text-black fs-16">{{ $t('userInfo.securitySettings') }}</text>
             </div>
             <div>
               <image
