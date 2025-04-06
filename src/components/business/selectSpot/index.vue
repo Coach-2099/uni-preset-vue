@@ -173,11 +173,12 @@ const searchFun = async () => {
 }
 
 const checkBitItem = (item: any) => {
-  const activeType = controlStore.quotesData.activeType
+  const activeType = controlStore.getQuotesData(props.type)?.activeType
   controlStore.setQuotesData(props.type,{
     symbol: item.symbol,
     activeType: activeType || 'left',
   })
+  console.log('controlStore.getQuotesData(props.type) =',controlStore.getQuotesData(props.type))
   // 选中后父组件触发加载事件
   emit('closeModel', {jumpType: klineType.value})
 }

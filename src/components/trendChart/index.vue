@@ -135,6 +135,47 @@ const candleColors = ref({
   priceLineVisible: true // 显示价格线
 })
 
+const subScribe =(symbol:string)=>{
+	// 设置新symbol的订阅和监听
+	socketService.value.subscribe('ticker', symbol);
+	socketService.value.on(`${symbol}-ticker`, (data: any) => {
+	  rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
+	  HIGH24h.value = data.high
+	  LOW24h.value = data.low
+	  VOL24h.value = data.vol
+	  lastPrice.value = data.close
+	})
+	
+	socketService.value.subscribe('kline',symbol);
+	socketService.value.on(`${symbol}-kline`, (data: any) => {
+	// 确保时间戳是有效的UTCTimestamp（秒级）
+	const candleTime = data.startTime / 1000
+	
+	  if (data.isFinish) {
+	    // isFinish 为 true 时 push新数据
+	    const candle = {
+	      time: candleTime, // 转换为秒级时间戳
+	      open: Number(data.open.toFixed(2)),
+	      high: Number(data.high.toFixed(2)),
+	      low: Number(data.low.toFixed(2)),
+	      close: Number(lastPrice.value),
+	      volume: Number(data.vol.toFixed(2))
+	    }
+	    chartRef.value?.appendNewCandle(candle)
+	  } else {
+	    // isFinish 为 false 时更新最新数据
+	    const candle = {
+	      open: Number(data.open.toFixed(2)),
+	      high: Number(data.high.toFixed(2)),
+	      low: Number(data.low.toFixed(2)),
+	      close: Number(lastPrice.value),
+	      time: candleTime,
+	      volume: Number(data.vol.toFixed(2))
+	    }
+	    chartRef.value?.updateLastCandle(candle)
+	  }
+	})
+}
 
 // 新增以下监听代码,对新交易对进行订阅，取消老的订阅
 watch(
@@ -148,57 +189,15 @@ watch(
       // TODO: 是否需要判断同时存在新旧数据才会做新旧监听的改动？
       if (oldSymbol && newSymbol) {
         // 此处是交易数据监听
-        socketService.value.unsubscribe('ticker', oldSymbol);
-        socketService.value.off(`${oldSymbol}-ticker`);
+        socketService.value.unsubscribe('ticker', symbolInfo.value);
+		// 此处是k线数据监听
+		// 取消 旧数据的k线监听
+		socketService.value.unsubscribe('kline',symbolInfo.value);
 
         symbolInfo.value = newSymbol
         // 这里可以添加symbol变化后的处理逻辑
         handleIntervalChange(currentInterval.value)
-  
-        // 设置新symbol的订阅和监听
-        socketService.value.subscribe('ticker', newSymbol);
-        socketService.value.on(`${newSymbol}-ticker`, (data: any) => {
-          rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
-          HIGH24h.value = data.high
-          LOW24h.value = data.low
-          VOL24h.value = data.vol
-          lastPrice.value = data.close
-        })
-
-        // 此处是k线数据监听
-        // 取消 旧数据的k线监听
-        socketService.value.unsubscribe('kline',oldSymbol);
-        socketService.value.off(`${oldSymbol}-kline`);
-
-        socketService.value.subscribe('kline',newSymbol);
-        socketService.value.on(`${newSymbol}-kline`, (data: any) => {
-        // 确保时间戳是有效的UTCTimestamp（秒级）
-        const candleTime = data.startTime / 1000
-
-          if (data.isFinish) {
-            // isFinish 为 true 时 push新数据
-            const candle = {
-              time: candleTime, // 转换为秒级时间戳
-              open: Number(data.open.toFixed(2)),
-              high: Number(data.high.toFixed(2)),
-              low: Number(data.low.toFixed(2)),
-              close: Number(lastPrice.value),
-              volume: Number(data.vol.toFixed(2))
-            }
-            chartRef.value?.appendNewCandle(candle)
-          } else {
-            // isFinish 为 false 时更新最新数据
-            const candle = {
-              open: Number(data.open.toFixed(2)),
-              high: Number(data.high.toFixed(2)),
-              low: Number(data.low.toFixed(2)),
-              close: Number(lastPrice.value),
-              time: candleTime,
-              volume: Number(data.vol.toFixed(2))
-            }
-            chartRef.value?.updateLastCandle(candle)
-          }
-        })
+		subScribe(newSymbol)
       }
 
     }
@@ -215,49 +214,10 @@ onMounted(() => {
     //延迟100毫秒订阅
     setTimeout(()=>{
       // 订阅 ticker
-      socketService.value.subscribe('ticker',symbolInfo.value);
-      socketService.value.on(`${symbolInfo.value}-ticker`, (data: any) => {
-        rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
-        HIGH24h.value = data.high
-        LOW24h.value = data.low
-        VOL24h.value = data.vol
-        lastPrice.value = data.close
-      })
-
-      if(lastPrice.value===0){
-        getLastPrice()
-      }
-
-      // 订阅k线
-      socketService.value.subscribe('kline',symbolInfo.value);
-      socketService.value.on(`${symbolInfo.value}-kline`, (data: any) => {
-      // 确保时间戳是有效的UTCTimestamp（秒级）
-      const candleTime = data.startTime / 1000
-
-        if (data.isFinish) {
-          // isFinish 为 true 时 push新数据
-          const candle = {
-            time: candleTime, // 转换为秒级时间戳
-            open: Number(data.open.toFixed(2)),
-            high: Number(data.high.toFixed(2)),
-            low: Number(data.low.toFixed(2)),
-            close: Number(lastPrice.value),
-            volume: Number(data.vol.toFixed(2))
-          }
-          chartRef.value?.appendNewCandle(candle)
-        } else {
-          // isFinish 为 false 时更新最新数据
-          const candle = {
-            open: Number(data.open.toFixed(2)),
-            high: Number(data.high.toFixed(2)),
-            low: Number(data.low.toFixed(2)),
-            close: Number(lastPrice.value),
-            time: candleTime,
-            volume: Number(data.vol.toFixed(2))
-          }
-          chartRef.value?.updateLastCandle(candle)
-        }
-      })
+	  if(lastPrice.value===0){
+	    getLastPrice()
+	  }
+      subScribe(symbolInfo.value)
     },100)
     // 第一次进入要加载数据
     const currentTime = new Date().getTime()

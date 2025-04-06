@@ -126,9 +126,6 @@ const volumeSeries = ref<ISeriesApi<'Histogram'> | null>(null) // 成交量系�
 // 主题响应优化
 watch(() => 
   props.data, (newVal:any, oldVal:any) => {
-    console.log('chart', chart)
-    console.log('candleSeries', candleSeries)
-    console.log('newVal', newVal)
     if (!chart || !candleSeries || newVal.length === 0) return
     // 存在图表实例才做图表重绘
     // if (chart && candleSeries) redrawChart()
@@ -525,8 +522,6 @@ const initChartStructure = async () => {
 
 // 修改后的数据渲染方法
 const renderChartData = async () => {
-  console.log('来重新渲染 chart', chart)
-  console.log('来重新渲染 candleSeries', candleSeries)
   if (!chart || !candleSeries) return
 
   // 新增数据排序和验证

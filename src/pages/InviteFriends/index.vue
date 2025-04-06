@@ -4,10 +4,9 @@
     <div class="content">
       <div class="bannerBox">
         <van-swipe class="my-swipe bg-light-gray text-cneter" :autoplay="3000" >
-          <van-swipe-item>1</van-swipe-item>
-          <van-swipe-item>2</van-swipe-item>
-          <van-swipe-item>3</van-swipe-item>
-          <van-swipe-item>4</van-swipe-item>
+          <van-swipe-item v-for="(item,index) in bannerList" :key="index">
+			  <image :src="item.url" mode="scaleToFill"></image>
+		  </van-swipe-item>
         </van-swipe>
       </div>
       <div class="mt-25">
@@ -29,9 +28,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue'
 import { useUserStore } from '@/stores/user';
+import { getBanner } from '@/api/common';
 import QrcodeVue from 'qrcode.vue'
 const userStore = useUserStore();
 const inviteUrl = ref(window.location.protocol+'//'+document.domain+'/#/pages/register/index?inviteCode='+userStore.userInfo.inviteCode);
@@ -47,6 +47,20 @@ const copyText = () => {
   })
 }
 
+const bannerList = ref([])
+onMounted(()=>{
+	banners()
+})
+
+const banners = async()=>{
+	const params={
+		clientType:'INVITE',
+		size:10,
+		current:1
+	}
+	const data = await getBanner(params)
+	bannerList.value = data.records
+}
 </script>
 
 <style lang="scss" scoped>

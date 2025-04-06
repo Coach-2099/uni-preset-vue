@@ -21,17 +21,17 @@
       </div>
       <div class="tabBox">
         <div v-if="activeTab === 'left'">
-          <trendChart></trendChart>
+          <trendChart type="SPOT"></trendChart>
         </div>
         <div v-if="activeTab === 'right'">
-          <tradingFunArea buyAndSellType="SPOT"></tradingFunArea>
+          <tradingFunArea type="SPOT" :symbol="symbol"></tradingFunArea>
         </div>
       </div>
     </div>
     <div class="bottom pos-relative bg-white mt-5 px-10">
       <van-tabs v-model:active="active" offset-top="74" @click-tab="onClickTab" shrink sticky>
         <van-tab v-if="activeTab === 'left'" title="订单表">
-          <realTimeTransactions ref="realTimeTransactionsRef"></realTimeTransactions>
+          <realTimeTransactions ref="realTimeTransactionsRef" type="SPOT"></realTimeTransactions>
         </van-tab>
         <van-tab v-if="activeTab === 'left'" title="成交">
           <transactionOrder ref="transactionOrderRef" type="SPOT"></transactionOrder>
