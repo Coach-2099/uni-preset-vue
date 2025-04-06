@@ -347,7 +347,7 @@ const isWithdraw = async (Object: any) => {
     emailCode: Object.emailvCode // 邮箱验证码
   }
   const data = await withdraw(params)
-  if(!data.errMsg){
+ if(!data || !data.errMsg){
   	uni.showToast({title: '提币申请已提交', icon: 'success'})
 	balance(symbol.value) //查询余额
   }

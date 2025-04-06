@@ -75,7 +75,7 @@ const cancel =async(orderNo: string)=>{
 		orderNo:orderNo,
 	}
 	const data = await cancelOrder(params)
-	if(!data.errMsg){
+	if(!data || !data.errMsg){
 		uni.showToast({title: '已成功取消', icon: 'success'})
 	}
 	controlStore.setCanceled(!controlStore.getCanceled)

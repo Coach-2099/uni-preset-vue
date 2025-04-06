@@ -75,7 +75,6 @@ import { useUserStore } from '@/stores/user';
 import { useControlStore } from '@/stores/control';
 import dataDefault from '@/components/dataDefault/index.vue';
 import { onShow } from '@dcloudio/uni-app';
-import { nextTick } from 'process';
 
 const props = defineProps({
   type:{
@@ -112,13 +111,11 @@ watch(
 );
 
 onMounted(()=>{
-	nextTick(()=>{
-		if(controlStore.getQuotesData(props.type)?.symbol){
-			subSymbol.value = controlStore.getQuotesData(props.type)?.symbol
-		}
-		loadData({klineType: props.type,
-			  symbol: subSymbol.value})
-	})
+	if(controlStore.getQuotesData(props.type)?.symbol){
+		subSymbol.value = controlStore.getQuotesData(props.type)?.symbol
+	}
+	loadData({klineType: props.type,
+		  symbol: subSymbol.value})
 })
 
 const loadData = async (params: any) => {

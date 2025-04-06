@@ -104,12 +104,11 @@ const showFLoatingPanel = (data: any) => {
     console.log('跳转', data)
     // 此处是选中货币后 则跳转到相关页面
     if (data.jumpType) {
+	  socketService.value.unsubscribe('ticker');
       if (jumpKlineType.value == data.jumpType) {
         showBottom.value =!showBottom.value;
-        socketService.value.unsubscribe('ticker');
         return
       }
-      socketService.value.unsubscribe('ticker');
       if (data.jumpType === 'SPOT') {
         uni.switchTab({
           url: '/pages/trade/index'

@@ -46,8 +46,8 @@ class SocketService {
       console.log('WebSocket连接成功');
       // this.isConnected.value = true;
       this.startHeartbeat();
-      // 重连时恢复订阅
-      this.restoreSubscriptions();
+      // 重连时恢复订阅, 已刷新当前页，重新恢复订阅无效，因数据无法被监听处理
+      // this.restoreSubscriptions();
     };
 
     this.ws.onclose = (e) => {
@@ -141,7 +141,7 @@ class SocketService {
      */
     subscribeUser(userId: string) {
       if (!this.userSubscriptions.has(userId)) {
-        this.ws?.send(JSON.stringify({ event: 'subscribe_user', data: userId }));
+			this.ws?.send(JSON.stringify({ event: 'subscribe_user', data: userId }));
         this.userSubscriptions.add(userId);
       }
     }

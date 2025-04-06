@@ -318,7 +318,7 @@ const submitTrade = async () => {
 	  direction: checkActive.value.toLocaleUpperCase(),
 	}
 	const data = await spotTrade(params) //合约下单
-	if(!data.errMsg){
+	if(!data || !data.errMsg){
 		uni.showToast({title: '下单成功', icon: 'success'})
 	}
 	loadSpotBalance() //下单成功重新读取可用余额

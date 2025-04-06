@@ -29,7 +29,7 @@
           </div>
           <div class="detailBox w-20">
             <p class="fs-12 text-gray">持仓保证金</p>
-            <p class="fs-12 text-black mt-5">{{value.margin}}</p>
+            <p class="fs-12 text-black mt-5">{{value.margin.toFixed(2)}}</p>
           </div>
           <!-- <div class="detailBox w-25">
             <p class="fs-12 text-gray text-right">预计强平价格</p>
@@ -89,7 +89,7 @@ const close =async(orderNo: string,quantity: number)=>{
 		closeQuantity:quantity
 	}
 	const data = await closeOrder(params)
-	if(!data.errMsg){
+	if(!data || !data.errMsg){
 		uni.showToast({title: '已平仓', icon: 'success'})
 	}
 	controlStore.setCanceled(!controlStore.getCanceled)
@@ -101,7 +101,7 @@ const cancel =async(orderNo: string)=>{
 		orderNo:orderNo,
 	}
 	const data = await cancelFuturesOrder(params)
-	if(!data.errMsg){
+	if(!data || !data.errMsg){
 		uni.showToast({title: '已成功取消', icon: 'success'})
 	}
 	controlStore.setCanceled(!controlStore.getCanceled)

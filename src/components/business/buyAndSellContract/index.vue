@@ -581,8 +581,7 @@ const submitTrade = async () => {
 	  allIn:value.value===100?true:false //是否全部
 	}
 	const data = await futuresTrade(params) //合约下单
-	console.log('trade result =',data)
-	if(!data.errMsg){
+	if(!data || !data.errMsg){
 		uni.showToast({title: '下单成功', icon: 'success'})
 	}
 	showBuyPopup.value = false 
