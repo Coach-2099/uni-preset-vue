@@ -24,7 +24,7 @@
           <trendChart type="METALS"></trendChart>
         </div>
         <div v-if="activeTab === 'right'">
-          <tradingFunArea buyAndSellType="METALS" :symbol="symbol"></tradingFunArea>
+          <tradingFunArea type="METALS" :symbol="symbol"></tradingFunArea>
         </div>
       </div>
     </div>

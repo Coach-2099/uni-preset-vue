@@ -69,12 +69,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref,computed,watch} from 'vue'
+import { ref,computed,watch, onMounted} from 'vue'
 import { getDepth } from '@/api/quotes'
 import { useUserStore } from '@/stores/user';
 import { useControlStore } from '@/stores/control';
 import dataDefault from '@/components/dataDefault/index.vue';
 import { onShow } from '@dcloudio/uni-app';
+import { nextTick } from 'process';
 
 const props = defineProps({
   type:{
@@ -110,6 +111,16 @@ watch(
   }
 );
 
+onMounted(()=>{
+	nextTick(()=>{
+		if(controlStore.getQuotesData(props.type)?.symbol){
+			subSymbol.value = controlStore.getQuotesData(props.type)?.symbol
+		}
+		loadData({klineType: props.type,
+			  symbol: subSymbol.value})
+	})
+})
+
 const loadData = async (params: any) => {
   const data = await getDepth(params)
   bidsList.value = data.bids
@@ -117,7 +128,7 @@ const loadData = async (params: any) => {
   const symbol = params.symbol.split('/')
   tradeToken.value = symbol[0]
   basicToken.value = symbol[1]
-  depthData(bidsList.value,asksList.value)
+  depthData(bidsList.value,asksList.value,props.type)
   if(params.symbol){
   	  subSymbol.value = params.symbol
   }else{
@@ -132,36 +143,22 @@ const subdepth =(symbol:string)=>{
 	 socketService.value.on(`${symbol}-depth`, (item: any) => {
 		bidsList.value = item.bids
 		asksList.value = item.asks
-	// 对实时数据也添加长度限制
-	bidsList.value = item.bids.slice(0, MAX_DEPTH_LENGTH)
-	asksList.value = item.asks.slice(0, MAX_DEPTH_LENGTH)
-		if(props.type === 'METALS'){
-			depthMetalsData(bidsList.value,asksList.value)
-		}else{
-			depthData(bidsList.value,asksList.value)
-		}
+		depthData(bidsList.value,asksList.value,props.type)
 	 })
 }
 
-//贵金属行情数据格式不一样
-const depthMetalsData =(bidsList:any,asksList:any)=>{
+const depthData =(bidsList:any,asksList:any,type:string)=>{
 	// 新增计算逻辑
-	const bidsTotal = bidsList.reduce((sum, item) => sum + Number(item.volume).toFixed(4), 0)
-	const asksTotal = asksList.reduce((sum, item) => sum + Number(item.volume).toFixed(4), 0)
-	const total = bidsTotal + asksTotal
-	
-	// 计算百分比
-	leftWidth.value = total > 0
-	  ? Number(((asksTotal / total) * 100).toFixed(0))
-	  : 50 // 默认值防止除零错误
-	  rightWidth.value = Number(100 - leftWidth.value).toFixed(0)
-}
-
-
-const depthData =(bidsList:any,asksList:any)=>{
-	// 新增计算逻辑
-	const bidsTotal = bidsList.reduce((sum, item) => sum + Number(item[1]), 0)
-	const asksTotal = asksList.reduce((sum, item) => sum + Number(item[1]), 0)
+	let bidsTotal = 0
+	let asksTotal = 0
+	if(type === 'METALS'){
+	//贵金属行情数据格式不一样
+		bidsTotal = bidsList.reduce((sum, item) => sum + Number(item.volume).toFixed(4), 0)
+		asksTotal = asksList.reduce((sum, item) => sum + Number(item.volume).toFixed(4), 0)
+	}else{
+		bidsTotal = bidsList.reduce((sum, item) => sum + Number(item[1]), 0)
+		asksTotal = asksList.reduce((sum, item) => sum + Number(item[1]), 0)
+	}
 	const total = bidsTotal + asksTotal
 	
 	// 计算百分比（保留两位小数）

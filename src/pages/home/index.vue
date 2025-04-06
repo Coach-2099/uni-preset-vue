@@ -54,8 +54,8 @@
         <p 
           style="background: #F6F7FB;
           border-radius: 5px 5px 5px 5px;"
-          class="w-100 ml-5 pl-5 fs-14 bg-warning text-black">
-          This is Broadcast
+          class="w-100 ml-5 pl-5 fs-14 bg-warning text-black" v-for="(item,index) in noticeList" :key="index">
+          {{item.title}}
         </p>
       </div>
     </div>
@@ -184,6 +184,7 @@ import quoteList from '@/components/business/quoteList/index.vue'; // 使用大�
 import { useUserStore } from '@/stores/user';
 import { getAsset } from '@/api/asset';
 import { roundDown } from '@/utils/util';
+import { getNotice } from '@/api/common';
 
 const userStore = useUserStore();
 
@@ -198,6 +199,13 @@ const userData = ref({
   balance: 0,
   orders: [] as any[]
 });
+
+const pages = ref({
+  size: 3,
+  current: 1
+})
+
+const noticeList =ref([]) //消息列表
 
 const spotQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const futuresQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
@@ -256,6 +264,11 @@ const socketService = computed(() => userStore.socketService);
 	 }
 	 const data = await  getAsset(params)
 	 balance.value = roundDown(data.total,2)
+ }
+ 
+ const loadNoticeData = async () => {
+   const data = await getNotice({pages: pages.value})
+   noticeList.value = data.records
  }
 
   const subscribeFun = () => {

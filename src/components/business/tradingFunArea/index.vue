@@ -27,12 +27,12 @@
     </div>
     <div class="mt-15 buyAndSellBox flex justify-between items-stretch" :class="{'marginTop75': !showChart}">
       <div class="buyAndSellMoudle flex-1">
-        <buyAndSell v-if="buyAndSellType == 'SPOT'" :lastPrice="lastPrice" :symbol="symbol"></buyAndSell>
-        <buyAndSellContract v-if="buyAndSellType == 'FUTURES'|| buyAndSellType == 'METALS'" :type="buyAndSellType" :lastPrice="lastPrice" :symbol="symbol"></buyAndSellContract>
+        <buyAndSell v-if="type == 'SPOT'" :lastPrice="lastPrice" :symbol="symbol"></buyAndSell>
+        <buyAndSellContract v-if="type == 'FUTURES'|| type == 'METALS'" :type="type" :lastPrice="lastPrice" :symbol="symbol"></buyAndSellContract>
       </div>
       <!-- <div class="flex-1"> -->
       <div class="rightDev">
-        <priceFluctuations :lastPrice="lastPrice" ref="priceFluctuationsRef" :type="buyAndSellType"></priceFluctuations>
+        <priceFluctuations :lastPrice="lastPrice" ref="priceFluctuationsRef" :type="type"></priceFluctuations>
       </div>
     </div> 
 
@@ -67,7 +67,7 @@ const rose = ref(0) //实时最新涨跌幅比例
 
 
 const props = defineProps({
-  buyAndSellType: {
+  type: {
     type: String,
     default: 'SPOT'
   },
@@ -78,7 +78,7 @@ const props = defineProps({
 })
 
 watch(
-  () => controlStore.getQuotesData(props.buyAndSellType)?.symbol,
+  () => controlStore.getQuotesData(props.type)?.symbol,
   (newVal, oldVal) => {
 	if(newVal){
 		socketService.value.unsubscribe('depth',oldVal); //取消原有订阅
@@ -89,18 +89,20 @@ watch(
 
 onMounted(() => {
   nextTick(() => {
+	  console.log('onMounted =',props.symbol)
 	  loadInfo(props.symbol)
   })
 })
 
 const loadInfo=(symbol:string)=>{
+	console.log('symbol = ',symbol)
 	socketService.value.subscribe('ticker',symbol);
 	socketService.value.on(`${symbol}-ticker`, (data: any) => {
 		lastPrice.value = data.close
 		rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
 	})
 	priceFluctuationsRef.value?.loadData({
-	  klineType: props.buyAndSellType,
+	  klineType: props.type,
 	  symbol: symbol
 	})
 	if(lastPrice.value === 0){
@@ -111,7 +113,7 @@ const loadInfo=(symbol:string)=>{
 	
 const getLastPrice=async(symbol:string)=>{
 	const params ={
-		klineType: props.buyAndSellType,
+		klineType: props.type,
 		symbol: symbol
 	}
 	const data = await getTicker(params)
@@ -120,7 +122,7 @@ const getLastPrice=async(symbol:string)=>{
 
 //默认切换显示的行情类型
 const checkBit = () => {
-  floatingPanelPropsRef.value?.showFLoatingPanel({type: props.buyAndSellType})
+  floatingPanelPropsRef.value?.showFLoatingPanel({type: props.type})
 }
 
 const showChartBtn = () => {
