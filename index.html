@@ -6,9 +6,11 @@
     <meta name="format-detection" content="telephone=no">
     <!-- 防止将邮箱识别为可以点击的链接 -->
     <meta name="format-detection" content="email=no">
+    <!-- 新增 iOS 专用禁止缩放 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
     <!-- 设置禁止缩放以及比例 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- 设置标题 -->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,viewport-fit=cover">    <!-- 设置标题 -->
     <meta name="apple-mobile-web-app-title" content="Bybit">
     <!-- 设置icon -->
     <link rel="icon" sizes="16" href="/src/static/svg/logo.svg" type="image/x-icon">
@@ -22,6 +24,23 @@
     <title></title>
     <!--preload-links-->
     <!--app-context-->
+    <!-- 添加触摸事件阻止 -->
+    <style>
+      html {
+        touch-action: manipulation; /* 禁用双指缩放 */
+        /* user-select: none; 禁用文本选择 */
+        -webkit-user-select: none;
+      }
+    </style>
+    <script>
+      // 阻止双击放大
+      document.addEventListener('dblclick', e => {
+        e.preventDefault()
+      }, { passive: false });
+      
+      // 阻止手势缩放
+      document.addEventListener('gesturestart', e => e.preventDefault());
+    </script>
   </head>
   <body>
     <div id="app"><!--app-html--></div>
