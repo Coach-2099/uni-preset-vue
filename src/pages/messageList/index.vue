@@ -2,7 +2,7 @@
   <div class="messageList-index bg-white">
     <navigationBar title="消息列表">
       <template #right>
-        <div class="flex items-center home_right_icon mr-20">
+        <div class="flex items-center home_right_icon mr-20" @click="goCustomerService">
           <image
             src="/static/svg/home/c_service.svg"
             mode="scaleToFill"

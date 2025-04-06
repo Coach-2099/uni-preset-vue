@@ -90,6 +90,9 @@ const VOL24h = ref(0) //24h交易额
 const lastPrice = ref(0) //最新成交价
 const hasMore = ref(true) //是否已读完K线全部数据
 
+// 默认socket 时间间隔为5m
+const defaultSocketVal = ref('5m'); // 5m
+
 // 新增时间间隔映射
 const intervalMap:any = {
   'min_1': 60 * 100 * 1000,    // 分钟
@@ -145,12 +148,13 @@ const subScribe =(symbol:string)=>{
 	  VOL24h.value = data.vol
 	  lastPrice.value = data.close
 	})
-	
-	socketService.value.subscribe('kline',symbol);
-	socketService.value.on(`${symbol}-kline`, (data: any) => {
+
+	// 订阅K线数据
+  console.log('k线数据')
+	socketService.value.subscribe(`kline-${defaultSocketVal.value}`,symbol);
+	socketService.value.on(`${symbol}-kline-${defaultSocketVal.value}`, (data: any) => {
 	// 确保时间戳是有效的UTCTimestamp（秒级）
 	const candleTime = data.startTime / 1000
-	
 	  if (data.isFinish) {
 	    // isFinish 为 true 时 push新数据
 	    const candle = {
@@ -161,6 +165,7 @@ const subScribe =(symbol:string)=>{
 	      close: Number(lastPrice.value),
 	      volume: Number(data.vol.toFixed(2))
 	    }
+      // 判断当前要push的数据和store中的数据是否一致
 	    chartRef.value?.appendNewCandle(candle)
 	  } else {
 	    // isFinish 为 false 时更新最新数据
@@ -190,16 +195,15 @@ watch(
       if (oldSymbol && newSymbol) {
         // 此处是交易数据监听
         socketService.value.unsubscribe('ticker', symbolInfo.value);
-		// 此处是k线数据监听
-		// 取消 旧数据的k线监听
-		socketService.value.unsubscribe('kline',symbolInfo.value);
+        // 此处是k线数据监听
+        // 取消 旧数据的k线监听
+        socketService.value.unsubscribe(`kline-${defaultSocketVal.value}`,symbolInfo.value);
 
         symbolInfo.value = newSymbol
         // 这里可以添加symbol变化后的处理逻辑
-        handleIntervalChange(currentInterval.value)
-		subScribe(newSymbol)
+        handleIntervalChange(currentInterval.value, defaultSocketVal.value)
+        subScribe(newSymbol)
       }
-
     }
   },
   { immediate: true } // 立即执行一次以获取初始值
@@ -214,9 +218,9 @@ onMounted(() => {
     //延迟100毫秒订阅
     setTimeout(()=>{
       // 订阅 ticker
-	  if(lastPrice.value===0){
-	    getLastPrice()
-	  }
+      if(lastPrice.value===0){
+        getLastPrice()
+      }
       subScribe(symbolInfo.value)
     },100)
     // 第一次进入要加载数据
@@ -320,7 +324,7 @@ const getPeriodByInterval = (interval: number) => {
 const checkBit = () => {
   console.log('点击')
   // METALS  SPOT   FUTURE
-  floatingPanelPropsRef.value?.showFLoatingPanel({type: 'SPOT'})
+  floatingPanelPropsRef.value?.showFLoatingPanel({type: props.type})
 }
 
 // 切换主题
@@ -329,10 +333,10 @@ const toggleTheme = () => {
 }
 
 // 处理时间周期变化
-const handleIntervalChange = async (interval: number) => {
-  console.log('修改bit了')
+const handleIntervalChange = async (interval: number, socketVal: string) => {
   // 先更新当前时间间隔
   currentInterval.value = interval
+  defaultSocketVal.value = socketVal
   candleData.value = []
   // 清空旧数据
 	// chartRef.value?.clearData()

@@ -66,6 +66,7 @@ interface CandleData {
 type TimeInterval = {
   value: number // 单位秒
   label: string
+  socketVal: string
   showHeader: boolean
   formatter: (timestamp: UTCTimestamp) => string
 }
@@ -88,7 +89,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'interval-change', interval: number): void
+  (e: 'interval-change', interval: number, socketVal: string): void
   (e: 'load-more-data', payload: { start: number; end: number }): void
 }>()
 
@@ -130,7 +131,6 @@ watch(() =>
     // 存在图表实例才做图表重绘
     // if (chart && candleSeries) redrawChart()
     if (newVal.length > 0 && chart) {
-      console.log('修改!!!!!!!')
       renderChartData()  // 数据变化时只更新渲染
     }
   },
@@ -144,7 +144,8 @@ watch(() =>
 const timeIntervals = ref<TimeInterval[]>([
   { 
     value: 60,    
-    label: '1分', 
+    label: '1分',
+    socketVal: '1m',
     showHeader: true, 
     formatter: (t: UTCTimestamp) => {
       const date = new Date(t * 1000)
@@ -153,7 +154,8 @@ const timeIntervals = ref<TimeInterval[]>([
   },
   { 
     value: 300,   
-    label: '5分', 
+    label: '5分',
+    socketVal: '5m',
     showHeader: true, 
     formatter: (t: UTCTimestamp) => {
       const date = new Date(t * 1000)
@@ -163,6 +165,7 @@ const timeIntervals = ref<TimeInterval[]>([
   { 
     value: 900,   // 新增15分钟配置
     label: '15分',
+    socketVal: '15m',
     showHeader: true,
     formatter: (t: UTCTimestamp) => {
       const date = new Date(t * 1000)
@@ -172,6 +175,7 @@ const timeIntervals = ref<TimeInterval[]>([
   { 
     value: 1800,  // 新增30分钟配置
     label: '30分',
+    socketVal: '30m',
     showHeader: true,
     formatter: (t: UTCTimestamp) => {
       const date = new Date(t * 1000)
@@ -181,6 +185,7 @@ const timeIntervals = ref<TimeInterval[]>([
   { 
     value: 3600,  
     label: '1时', 
+    socketVal: '1h',
     showHeader: true, 
     formatter: (t: UTCTimestamp) => {
       const date = new Date(t * 1000)
@@ -189,7 +194,8 @@ const timeIntervals = ref<TimeInterval[]>([
   },
   { 
     value: 14400, 
-    label: '4时', 
+    label: '4时',
+    socketVal: '4h',
     showHeader: true, 
     formatter: (t: UTCTimestamp) => {
       const date = new Date(t * 1000)
@@ -198,7 +204,8 @@ const timeIntervals = ref<TimeInterval[]>([
   },
   { 
     value: 86400, 
-    label: '1日', 
+    label: '1日',
+    socketVal: '1d',
     showHeader: true, 
     formatter: (t: UTCTimestamp) => {
       const date = new Date(t * 1000)
@@ -705,9 +712,10 @@ const updateTimeFormatter = () => {
 }
 
 // 处理时间选择
-const handleTimeSelect = (interval: number) => {
+const handleTimeSelect = (interval: number, socketVal: string) => {
+  console.log('选中', interval)
   selectedInterval.value = interval
-  emit('interval-change', interval)
+  emit('interval-change', interval, socketVal)
   updateTimeFormatter()
   
   // 调整时间刻度可见性

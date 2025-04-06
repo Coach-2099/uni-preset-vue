@@ -103,20 +103,7 @@
       </div>
     </div> -->
     <div class="textDescription fs-12 pt-5 mt-25">
-      <div class="bg-white pt-20 px-20" >
-		<div v-html="rechargeDesc"></div>
-        <!-- <p>View all deposit and withdrawal statuses?</p>
-        <p>点击这里</p>
-        <p class="mt-10 fw-b">
-          In upholding the integrity and safety of our platform's trading environment, Bybit is dedicated to combating financial crime and ensuring adherence to anti-money laundering measures.
-        </p>
-        <p class="mt-10">
-          Please make sure that only USDT deposit is made via this address. Otherwise, your deposited funds will not be added to your available balance - nor will it be refunded.
-        </p>
-        <p class="mt-10">
-          Please make sure that your Bybit deposit address is correct. Otherwise
-          your deposited funds will not be added to your available balance - nor
-        </p> -->
+      <div class="bg-white pt-20 px-20" v-html="rechargeDesc">
       </div>
     </div>
 

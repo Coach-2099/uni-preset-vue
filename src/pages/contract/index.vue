@@ -39,12 +39,12 @@
         <van-tab v-if="activeTab === 'right'" title="仓位">
           <positionOrder accountType="FUTURES"></positionOrder>
         </van-tab>
-		<div v-if="activeTab === 'right'" class="orderIconBox pos-absolute" @click="goOrder">
-		  <image
-		    src="/static/images/checkBit.png"
-		    mode="scaleToFill"
-		  />
-		</div>
+        <div v-if="activeTab === 'right'" class="orderIconBox pos-absolute" @click="goOrder">
+          <image
+            src="/static/images/checkBit.png"
+            mode="scaleToFill"
+          />
+        </div>
       </van-tabs>
     </div>
     <div v-if="activeTab === 'left'" class="btnBox pos-fixed w-100 flex">
