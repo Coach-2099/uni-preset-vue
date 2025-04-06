@@ -25,7 +25,7 @@
         <div class="leftBox flex items-center">
           <image
             class="baseImg"
-            src="/static/images/OIP-C.jpg"
+            :src="img"
             mode="scaleToFill"
           />
           <p class="fs-14 fw-b ml-5 mr-5 text-black">{{symbol}}</p>
@@ -74,7 +74,7 @@
         />
       </div>
     </div>
-    <div class="basicInfo px-20">
+   <!-- <div class="basicInfo px-20">
       <div class="flex justify-between items-center mt-10">
         <p class="fs-14 text-gray">Route Deposits To</p>
         <div class="flex justify-between items-baseline">
@@ -101,9 +101,10 @@
           <div class="rightIcon ml-10"></div>
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="textDescription fs-12 pt-5 mt-25">
-      <div class="bg-white pt-20 px-20" v-html="rechargeDesc">
+      <div class="bg-white pt-20 px-20" >
+		<div v-html="rechargeDesc"></div>
         <!-- <p>View all deposit and withdrawal statuses?</p>
         <p>点击这里</p>
         <p class="mt-10 fw-b">
@@ -145,6 +146,7 @@ import QrcodeVue from 'qrcode.vue'
 const address = ref('') //地址
 const rechargeDesc = ref('') //币种描述
 const name = ref('') //币种全称
+const img = ref('')
 const currentSelectRef:any = ref(null)
 const networkSelectPopupRef:any = ref(null)
 const symbol =ref('USDT')
@@ -181,7 +183,9 @@ const openNetworkPopup = () => {
 const chooseToken =(item: any) =>{
 	symbol.value = item.token
 	rechargeDesc.value = item.desc
+	console.log('rechargeDesc.value=',rechargeDesc.value)
 	name.value = item.name
+	img.value = item.name
 	if(item.protocolTypes && item.protocolTypes.length>1){
 		networkSelectPopupRef.value?.showFLoatingPanel(item.protocolTypes)	
 		networkShow.value = true
