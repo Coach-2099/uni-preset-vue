@@ -14,7 +14,7 @@
         shrink
         @click-tab="onClickTab"
       >
-        <van-tab title="email">
+        <van-tab title="Email">
           <div class="inputBox mt-20">
             <div class="flex items-center inputTemp">
               <image
@@ -34,7 +34,7 @@
             </div>
           </div>
         </van-tab>
-        <van-tab title="phone">
+        <van-tab title="Phone">
           <div class="inputBox mt-20">
             <!-- <div class="inputTitle fw-b mb-5">{{ $t('common.phone') }}</div> -->
             <div class="flex">
@@ -171,16 +171,16 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import { chkAccount, sendmsg, register } from '@/api/account'
-import { getUrlParams } from '@/utils/util'
+import { getUrlParams, isEmail } from '@/utils/util'
 import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const active = ref(0)
 const showPicker = ref(false)
-const countryCode = ref('86')
+const countryCode = ref('1')
 const pickVal = ref<number[]>([])
-const checkCountry = ref({ value: '86', text: 'China +86', name: 'CN', flag: '/static/images/flags/CN.png' })
+const checkCountry = ref({ value: '1', text: 'USA +1', name: 'USA', flag: '/static/images/flags/US.png' })
 
 // 使用 ref 创建响应式数据
 const countryCodeArray = [
@@ -224,7 +224,7 @@ const getCode = async () => {
   const params = {
     sendMsgType: '', // 手机或者邮箱
     userName: userName.value,
-    countryCode: countryCode.value,
+    countryCode: isEmail(userName.value)?'':countryCode.value,
   }
   await sendmsg(params)
   uni.showToast({
@@ -308,14 +308,22 @@ const signUp = async () => {
     username: userName.value ,
     password: password.value,
     countryName: '',
-    countryCode: '',
+    countryCode: isEmail(userName.value)?'':countryCode.value,
     // countryName: checkCountry.value.name,
     // countryCode: checkCountry.value.value,
-    code: '111111',
+    code: vCode.value,
     inviteCode: InvitationCode.value
   }
   const data = await register(params)
-  console.log('data', data)
+  if(!data || !data.errMsg){
+	  uni.showToast({
+	  		title: t('tips.registerSuccess'),
+	  		icon: 'success'
+	  })
+	  setTimeout(() => {
+	  		goLogin()
+	  }, 2000)
+  }
 }
 
 </script>

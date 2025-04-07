@@ -61,3 +61,9 @@ export function updatepwd(data: Record<string, any>) {
   return request.put({ url: "/admin/user/updatepwd", data });
 }
 
+// 检测用户名验证码是否正确
+export function checkCodeRight(data: Record<string, any>) {
+  return request.get({ url: "/admin/user/checkCodeRight", data });
+}
+
+

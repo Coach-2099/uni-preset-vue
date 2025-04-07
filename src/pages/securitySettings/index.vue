@@ -135,11 +135,11 @@ const gomodifyEmail = () => {
 }
 
 const gomodifyPhone = () => {
-  // if (!userInfo.value.phone) {
+  if (!userInfo.value.phone) {
     uni.navigateTo({
       url: '/pages/modifyPhone/index'
     })
-  // }
+  }
 }
 
 const goUser = () => {

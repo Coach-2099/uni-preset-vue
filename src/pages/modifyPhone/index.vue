@@ -65,23 +65,23 @@
             </div>
           </div>
         </div>
-        <!-- <div class="mt-10">
+        <div class="mt-10">
           <div class="flex justify-between items-center">
             <p class="fs-14 text-black">{{ $t('common.vCode') }}</p>
           </div>
           <div class="baseInput mt-5 flex justify-between items-center">
             <input
-              v-model="vCode"
+              v-model="phoneCode"
               class="myInput flex-1 px-10 py-10 w-100 mr-10"
               :placeholder="$t('tips.enterVCode')"
             />
             <baseVCodeButton
               ref="vcodeRef"
               :disabled="!phone"
-              @get-code="getCode"
+              @get-code="getCode(phone,true)"
             />
           </div>
-        </div> -->
+        </div>
       </div>
       <div class="btnBox bg-white w-100 pos-fixed">
         <van-button
@@ -95,11 +95,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { ref, watch ,onMounted} from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue';
 import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
 import { useUserStore } from '@/stores/user';
-import { sendmsg } from '@/api/account'
+import { sendmsg ,checkCodeRight} from '@/api/account'
 import { bindPhoneOrEmail } from '@/api/user'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
@@ -107,10 +107,12 @@ const { t } = useI18n()
 const showEnterVcode = ref(true)
 const showKeyboard = ref(true)
 const userStore = useUserStore();
+const userInfo = ref(); // 用户信息 re
 const vcodeRef = ref()
 const phone = ref('')
-const vCode = ref('')
-const countryCode = ref('86')
+const vCode = ref('') //用户名验证码
+const phoneCode = ref('') //手机验证码
+const countryCode = ref('1')
 const showPicker = ref(false)
 const pickVal = ref<number[]>([])
 const checkCountry = ref({ value: '86', text: 'China +86', name: 'CN', flag: '/static/images/flags/CN.png' })
@@ -129,16 +131,22 @@ watch(() => vCode.value, (newVal) => {
   if (newVal.length === 6) {
     // confirm() // 当验证码长度为6时自动触发确认方法
     showKeyboard.value = false
-    verifyVcode()
+    verifyVcode(newVal)
   }
 })
 
+onMounted(() => {
+  userInfo.value = userStore.userInfo;
+  getCode(userInfo.value.username,false)
+})
 
-const getCode = async () => {
-  vcodeRef.value.startCountdown()
+const getCode = async (username:string,needCountDown:boolean) => {
+  if(needCountDown){
+	vcodeRef.value.startCountdown()
+  }
   const params = {
     sendMsgType: '', // 手机或者邮箱
-    userName: phone.value,
+    userName: username,
     countryCode: countryCode.value,
   }
   await sendmsg(params)
@@ -148,32 +156,38 @@ const getCode = async () => {
   })
 }
 
-const verifyVcode = () => {
-  showEnterVcode.value = false
-
+const verifyVcode = (val:string) => {
+	const params={
+		msgCode:val
+	}
+  checkCodeRight(params).then((res:any)=>{
+		showEnterVcode.value = false
+  })
 }
 
 const confirm = async () => {
   if (!phone.value) {
     return uni.showToast({ title: t('tips.enterPhone'), icon: 'none' })
   }
-  if (!vCode.value) {
+  if (!phoneCode.value) {
     return uni.showToast({ title: t('tips.enterVCode'), icon: 'none' })
   }
   const params = {
     userName: phone.value,
-    msgCode: vCode.value,
+    msgCode: phoneCode.value,
     countryCode: countryCode.value,
   }
-  await bindPhoneOrEmail(params)
-  uni.showToast({
-    title: t('tips.bindSuccess'),
-    icon: 'none'
-  })
-  await userStore.getUser()
-  setTimeout(() => {
-    uni.navigateBack()
-  }, 1000)
+  const data = await bindPhoneOrEmail(params)
+  if(!data || !data.errMsg){
+	  uni.showToast({
+		title: t('tips.bindSuccess'),
+		icon: 'none'
+	  })
+	  await userStore.getUser()
+	  setTimeout(() => {
+		uni.navigateBack()
+	  }, 1000)
+  }
 }
 
 const checkCountryFun = () => {
@@ -186,8 +200,6 @@ interface PickerConfirmEvent {
 }
 
 const onConfirm = ({ selectedValues, selectedOptions }: PickerConfirmEvent) => {
-  console.log('selectedValues', selectedValues);
-  console.log('selectedOptions', selectedOptions[0]);
   countryCode.value = selectedOptions[0].value;
   checkCountry.value = selectedOptions[0];
   // 修复类型错误，将 pickVal 的类型定义为 number[]

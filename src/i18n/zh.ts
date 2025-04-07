@@ -96,7 +96,8 @@ export default {
     emailFormatIsIncorrect: '邮箱格式不正确',
     bindPhoneOrEmail: '请先绑定手机号或邮箱',
     pleaseImproveTheInfo: '请完善信息',
-    modifySuccess: '修改成功,请重新登录'
+    modifySuccess: '修改成功,请重新登录',
+	registerSuccess: '注册成功',
   },
   navigationBarTitle: {
     bindPhone: '绑定手机',

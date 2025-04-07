@@ -32,23 +32,23 @@
             />
           </div>
         </div>
-        <!-- <div class="mt-10">
+        <div class="mt-10">
           <div class="flex justify-between items-center">
             <p class="fs-14 text-black">验证码</p>
           </div>
           <div class="baseInput mt-5 flex justify-between items-center">
             <input
-              v-model="vCode"
+              v-model="emailCode"
               class="myInput flex-1 px-10 py-10 w-100 mr-10"
               :placeholder="$t('tips.enterVCode')"
             />
             <baseVCodeButton
               ref="vcodeRef"
               :disabled="!email"
-              @get-code="getCode"
+              @get-code="getCode(email,true)"
             />
           </div>
-        </div> -->
+        </div>
       </div>
       <div class="btnBox bg-white w-100 pos-fixed">
         <van-button
@@ -65,7 +65,7 @@
 import { onMounted, ref, watch } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue';
 import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
-import { sendmsg } from '@/api/account'
+import { sendmsg ,checkCodeRight} from '@/api/account'
 import { useUserStore } from '@/stores/user';
 import { bindPhoneOrEmail } from '@/api/user'
 import { useI18n } from 'vue-i18n'
@@ -77,29 +77,35 @@ const showEnterVcode = ref(true) // 是否显示验证码输入 fiel
 const userStore = useUserStore();
 const userInfo = ref(); // 用户信息 re
 const vcodeRef = ref()
-const vCode = ref('')
+const vCode = ref('') //验证用户名哦验证码
 const email = ref('')
+const emailCode =ref('') //验证邮箱的验证码
 
 // 添加监听器
 watch(() => vCode.value, (newVal) => {
   if (newVal.length === 6) {
     // confirm() // 当验证码长度为6时自动触发确认方法
     showKeyboard.value = false
-    verifyVcode()
+    verifyVcode(newVal)
   }
 })
 
 
 onMounted(() => {
-  getCode()
+  userInfo.value = userStore.userInfo;
+  getCode(userInfo.value.username,false)
 })
 
-const getCode = async () => {
-  userInfo.value = userStore.userInfo;
-  console.log('userInfo.value', userInfo.value)
+const getCode = async (username:string,needCountDown:boolean) => {
+	if(needCountDown){
+		vcodeRef.value.startCountdown()
+	}
+	if (!username) {
+	  return uni.showToast({ title: t('tips.enterEmail'), icon: 'none' })
+	}
   const params = {
     sendMsgType: '', // 手机或者邮箱
-    userName: userInfo.value.username, // 手机号或者邮箱,
+    userName: username, // 手机号或者邮箱,
     // countryCode: countryCode.value,
   }
   await sendmsg(params)
@@ -109,32 +115,38 @@ const getCode = async () => {
   })
 }
 
-const verifyVcode = () => {
-  console.log('此处校验验证码是否正确')
-  showEnterVcode.value = false
+const verifyVcode = (val:string) => {
+	const params={
+		msgCode:val
+	}
+  checkCodeRight(params).then((res:any)=>{
+		showEnterVcode.value = false
+  })
 }
 
 const confirm = async () => {
   if (!email.value) {
     return uni.showToast({ title: t('tips.enterEmail'), icon: 'none' })
   }
-  if (!vCode.value) {
+  if (!emailCode.value) {
     return uni.showToast({ title: t('tips.enterVCode'), icon: 'none' })
   }
   const params = {
     userName: email.value,
-    msgCode: vCode.value,
+    msgCode: emailCode.value,
     countryCode: ''
   }
-  await bindPhoneOrEmail(params)
-  uni.showToast({
-    title: t('tips.bindSuccess'),
-    icon: 'none'
-  })
-  await userStore.getUser()
-  setTimeout(() => {
-    uni.navigateBack()
-  }, 1000)
+  const data = await bindPhoneOrEmail(params)
+  if(!data || !data.errMsg){
+	  uni.showToast({
+		title: t('tips.bindSuccess'),
+		icon: 'none'
+	  })
+	  await userStore.getUser()
+	  setTimeout(() => {
+		uni.navigateBack()
+	  }, 1000)
+  }
 }
 
 

@@ -245,3 +245,12 @@ export function formatISODate(date:string){
 export function formatDate(date:number,format:string){
 	return format(new Date(date),format)
 }
+
+/* 电子邮箱 */
+export function isEmail(value:string) {
+	const reg = new RegExp('^([-_A-Za-z0-9.]+)@([_A-Za-z0-9]+\\.)+[A-Za-z0-9]{2,3}$');
+	if (!reg.test(value)) {
+		return false
+	}
+	return true
+}

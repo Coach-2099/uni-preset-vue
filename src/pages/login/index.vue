@@ -65,7 +65,7 @@ const userStore = useUserStore();
 
 const account = ref('');
 const password = ref('');
-const showPassword = ref(false)
+const showPassword = ref(true)
 
 
 const signIn = async () => {
