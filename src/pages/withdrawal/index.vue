@@ -226,7 +226,7 @@ const getUser = async () => {
         url: '/pages/modifyEmail/index'
       })
     })
-  }else if(userInfo.value.isValid!==2){
+  }else if(userInfo.value.isValid == 0){
 	  showConfirmDialog({
 	    showCancelButton: false,
 	    message:'请先进行实名认证',
@@ -235,6 +235,9 @@ const getUser = async () => {
 	      url: '/pages/IdentityAuth/index'
 	    })
 	  })
+  } else if (userInfo.value.isValid == 1) {
+    // 认证中页面跳转
+    
   } else {
     // 手机号和邮箱都绑定了再进行选择
     currentSelectRef.value?.showFLoatingPanel('withdraw')
@@ -243,7 +246,7 @@ const getUser = async () => {
 
 const goAssetRecord = () => {
   uni.navigateTo({
-    url: '/pages/AssetRecord/index'
+    url: '/pages/AssetRecord/index?type=Withdraw'
   })
 }
 

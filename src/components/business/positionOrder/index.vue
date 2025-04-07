@@ -37,7 +37,7 @@
           </div> -->
         </div>
         <div class="btnBox flex justify-between mt-15">
-          <van-button class="myBtn flex-1" type="default">
+          <van-button class="myBtn flex-1" type="default" @click="settingProfitAndLoss">
             <text class="fs-12 text-gray">设置止盈止损</text>
           </van-button>
           <!-- <van-button class="myBtn flex-1" type="default">
@@ -52,6 +52,44 @@
         </div>
       </div>
     </div>
+
+    <!-- 设置止盈止损 -->
+    <van-dialog
+      v-model:show="showDialog"
+      title="设置止盈止损"
+      show-cancel-button
+      @confirm="myConfirm"
+      @cancel="myCancel"
+    >
+      <div class="myDialog px-10">
+        <div class="flex items-center justify-center mt-20">
+          <div class="mr-10 fs-14 fw-b">
+            <div>{{ $t('noun.takeProfit') }}</div>
+          </div>
+          <div class="baseInput pr-10 flex justify-between items-center">
+            <input
+              v-model="profitVal"
+              class="myInput px-10 w-50"
+              :placeholder="$t('noun.takeProfit')"
+              placeholder-class="input-placeholder"
+            />
+          </div>
+        </div>
+        <div class="flex items-center justify-center mt-10 mb-20">
+          <div class="mr-10 fs-14 fw-b">
+            <div>{{ $t('noun.stopLoss') }}</div>
+          </div>
+          <div class="baseInput pr-10 flex justify-between items-center">
+            <input
+              v-model="lossVal"
+              class="myInput px-10 w-50"
+              :placeholder="$t('noun.stopLoss')"
+              placeholder-class="input-placeholder"
+            />
+          </div>
+        </div>
+      </div>
+    </van-dialog>
   </div>
 </template>
 
@@ -81,6 +119,23 @@ const ordersMap = ref(new Map())
 const size = ref(10)
 const current = ref(1)
 const symbolMap =ref(new Map()) //存储当前持仓单交易对
+const showDialog = ref(false)
+const profitVal = ref('')
+const lossVal = ref('')
+
+const settingProfitAndLoss = () => {
+  console.log('设置止盈止损')
+  showDialog.value = true;
+}
+
+const myConfirm= () => {
+  console.log('确认')
+}
+
+const myCancel = () => {
+  console.log('取消')
+}
+
 
 //平仓
 const close =async(orderNo: string,quantity: number)=>{
@@ -129,6 +184,8 @@ const loadPositions=async()=>{
 			symbolMap.value.set(item.symbol,'')
 		}
 	})
+  ordersMap.value.set('123', {symbol: 'BTCUSDT', direction: 'LONG', quantity: 100, entryPrice: 80000, unrealizedProfit: 100, unrealizedProfitScale: 1.5, status: 'POSITIONING', margin: 800000, orderNo: '123'})
+
 }
 
 onShow(()=>{
@@ -196,6 +253,26 @@ onUnmounted(() => {
           border-radius: 6px;
           background: #F6F7FB;
         }
+      }
+    }
+  }
+  .myDialog {
+    .baseInput {
+      background: #F6F7FB;
+      border-radius: 8px 8px 8px 8px;
+      height: 42px;
+      .myInput {
+
+      }
+      .rightBox {
+        image {
+          width: 9px;
+          height: 7px;
+        }
+      }
+      .input-placeholder {
+        font-size: 14px;
+        color: #B0B0B0;
       }
     }
   }

@@ -1,6 +1,16 @@
 <template>
   <div class="transfer-index">
-    <navigationBar title="划转"></navigationBar>
+    <navigationBar title="划转">
+      <template #right>
+        <div class="headerRightIcon" @click="goAssetRecord">
+          <image
+            class="rechargeImg"
+            src="/static/svg/tools/rechargeLog.svg"
+            mode="scaleToFill"
+          />
+        </div>
+      </template>
+    </navigationBar>
     <div class="accountTemp pt-25 pb-25 px-25 bg-white">
       <transition-group name="flip" tag="div" class="account-container">
         <div key="from" class="flex justify-between items-center">
@@ -240,7 +250,6 @@ const loadTrasferCoins = async () => {
 }
 
 const exchange = () => {
-  console.log('交换上下')
     // 交换账户
     const temp = fromAccount.value
     fromAccount.value = toAccount.value
@@ -275,11 +284,24 @@ const transfer =async() =>{
 	}
 }
 
+// 前往订单
+const goAssetRecord = () => {
+  uni.navigateTo({
+    url: '/pages/AssetRecord/index?type=Transfer'
+  })
+}
+
 </script>
 
 <style lang="scss" scoped>
 .transfer-index {
   background: #F6F7FB;
+  .headerRightIcon {
+    .rechargeImg {
+      width: 22px;
+      height: 22px;
+    }
+  }
   .accountTemp {
     .downIcon {
       width: 13px;

@@ -154,7 +154,7 @@ const getRechargeAddres = async () => {
 const goAssetRecord = () => {
   console.log('资产列表')
   uni.navigateTo({
-    url: '/pages/AssetRecord/index'
+    url: '/pages/AssetRecord/index?type=Deposit'
   })
 }
 

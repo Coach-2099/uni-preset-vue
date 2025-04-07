@@ -62,7 +62,7 @@
             >
               <div class="upuloadTemp flex-col items-center">
                 <image
-                  src="/static/svg/tools/upload.svg"
+                  src="/static/images/IDCardFront.png "
                   mode="scaleToFill"
                 />
                 <p class="mt-15 fs-12">Front photo of ID card</p>
@@ -86,7 +86,7 @@
             >
               <div class="upuloadTemp flex-col items-center">
                 <image
-                  src="/static/svg/tools/upload.svg"
+                  src="/static/images/IDCardBack.png"
                   mode="scaleToFill"
                 />
                 <p class="mt-15 fs-12 text-black">Reverse photo of ID card</p>

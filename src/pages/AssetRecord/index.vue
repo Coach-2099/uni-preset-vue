@@ -9,12 +9,15 @@
         @click-tab="tabclick"
         shrink
       >
+        <!-- 充值 -->
         <van-tab title="Deposit">
           <assetList :data-list="dataList" type="Deposit" @refresh="refreshFun"></assetList>
         </van-tab>
+        <!-- 提现 -->
         <van-tab title="Withdraw">
           <assetList :data-list="dataList" type="Withdraw" @refresh="refreshFun"></assetList>
         </van-tab>
+        <!-- 转账 -->
         <van-tab title="Transfer">
           <assetList :data-list="dataList" type="Transfer" @refresh="refreshFun"></assetList>
         </van-tab>
@@ -42,9 +45,9 @@ const refreshFun = () => {
   loadData()
 }
 
-onLoad(() => {
+onLoad((options: any) => {
+  console.log('options!!!', options)
   loadData()
-
 })
 
 /**
