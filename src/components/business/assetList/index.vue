@@ -7,24 +7,58 @@
     <template #content>
       <div class="assetList mt-15">
         <div 
-          v-for="index in 5" 
+          v-for="(item, index) in dataList" 
           :key="index" 
-          class="assetSingle mt-15 flex justify-between items-center"
-          @click="goAssetDetail"
+          class=""
+          @click="goAssetDetail(item)"
         >
-          <div>
-            <p class="fs-16 text-black">USDT</p>
-            <p class="fs--12 text-gray">2025-02-23  11:43:05</p>
-          </div>
-          <div class="flex justify-between items-center">
-            <div class="mr-10">
-              <p class="fs-16 text-black text-right">999,999</p>
-              <div class="flex items-center">
-                <div class="dot mr-5"></div>
-                <p class="fs-12 text-gray">Succeeded</p>
-              </div>
+          <div v-if="type='Deposit'" class="assetSingle mt-15 flex justify-between items-center">
+            <div>
+              <p class="fs-16 text-black">{{ item.symbol }}</p>
+              <p class="fs--12 text-gray">{{ formatISODate(item.createTime) }}</p>
             </div>
-            <div class="rightIcon"></div>
+            <div class="flex justify-between items-center">
+              <div class="mr-10">
+                <p class="fs-16 text-black text-right">{{ item.rechargeAmount }}</p>
+                <div class="flex items-center">
+                  <div class="dot mr-5"></div>
+                  <p class="fs-12 text-gray">Succeeded</p>
+                </div>
+              </div>
+              <div class="rightIcon"></div>
+            </div>
+          </div>
+          <div v-else-if="type='Withdraw'" class="assetSingle mt-15 flex justify-between items-center">
+            <div>
+              <p class="fs-16 text-black">{{ item.symbol }}</p>
+              <p class="fs--12 text-gray">{{ formatISODate(item.createTime) }}</p>
+            </div>
+            <div class="flex justify-between items-center">
+              <div class="mr-10">
+                <p class="fs-16 text-black text-right">{{ item.arrivalAmoumt }}</p>
+                <div class="flex items-center">
+                  <div class="dot mr-5"></div>
+                  <p class="fs-12 text-gray">{{ formatStatus(item.status) }}</p>
+                </div>
+              </div>
+              <div class="rightIcon"></div>
+            </div>
+          </div>
+          <div v-else-if="type='Transfer'" class="assetSingle mt-15 flex justify-between items-center">
+            <div>
+              <p class="fs-16 text-black">{{ item.symbol }}</p>
+              <p class="fs--12 text-gray">{{ formatISODate(item.createTime) }}</p>
+            </div>
+            <div class="flex justify-between items-center">
+              <div class="mr-10">
+                <p class="fs-16 text-black text-right">{{ item.arrivalAmoumt }}</p>
+                <div class="flex items-center">
+                  <div class="dot mr-5"></div>
+                  <p class="fs-12 text-gray">{{ formatStatus(item.status) }}</p>
+                </div>
+              </div>
+              <div class="rightIcon"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -35,13 +69,34 @@
 <script lang="ts" setup>
 import { ref, defineProps, defineEmits } from 'vue'
 import basePullRefresh from '@/components/basePullRefresh/index.vue'
+import { formatISODate } from '@/utils/util'
+import { onShow } from '@dcloudio/uni-app'
 
 const props = defineProps({
   dataList: {
     type: Array,
     default: []
-  }
+  },
+  type: {
+    type: String,
+    default: 'Deposit'
+  },
 })
+
+// 在现有代码中添加格式化方法
+const formatStatus = (status: number) => {
+  const statusMap: { [key: number]: string } = {
+    0: '待审核',
+    1: '已审核',
+    2: '区块链已扫描提现信息',
+    3: '转账中',
+    4: '提现审核未通过转账失败',
+    5: '转账成功',
+    6: '预出金资金冻结失败',
+    7: '提交提币申请'
+  }
+  return statusMap[status] || '未知状态'
+}
 
 const isLoading = ref(false)
 const pages = {
@@ -51,6 +106,10 @@ const pages = {
 
 const emit = defineEmits(['refresh'])
 
+onShow(()=> {
+  console.log('props11', props.type)
+})
+
 const handleRefresh = (finish: any) => {
   emit('refresh')
   setTimeout(() => {
@@ -58,9 +117,12 @@ const handleRefresh = (finish: any) => {
   }, 1000)
 }
 
-const goAssetDetail = () => {
+const goAssetDetail = (item: any) => {
+  console.log('item', item)
+  console.log('xxxxx', encodeURIComponent(JSON.stringify(item)))
   uni.navigateTo({
-    url: '/pages/assetDetail/index'
+    // url: '/pages/assetDetail/index?type=' + props.type + '&' + encodeURIComponent(JSON.stringify(item))
+    url: `/pages/assetDetail/index?type=${props.type}&item=${encodeURIComponent(JSON.stringify(item))}`
   })
 };
 

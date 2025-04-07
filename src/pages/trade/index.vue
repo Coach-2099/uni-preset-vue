@@ -222,6 +222,7 @@ const onClickTab = (e: any) => {
     gap: 7px;
     height: 50px;
     background: #fff;
+    z-index: 99;
     .van-button {
       border-radius: 6px;
       height: 40px;

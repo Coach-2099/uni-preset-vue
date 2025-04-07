@@ -10,13 +10,13 @@
         shrink
       >
         <van-tab title="Deposit">
-          <assetList :data-list="dataList" @refresh="refreshFun"></assetList>
+          <assetList :data-list="dataList" type="Deposit" @refresh="refreshFun"></assetList>
         </van-tab>
         <van-tab title="Withdraw">
-          <assetList :data-list="dataList" @refresh="refreshFun"></assetList>
+          <assetList :data-list="dataList" type="Withdraw" @refresh="refreshFun"></assetList>
         </van-tab>
         <van-tab title="Transfer">
-          <assetList :data-list="dataList" @refresh="refreshFun"></assetList>
+          <assetList :data-list="dataList" type="Transfer" @refresh="refreshFun"></assetList>
         </van-tab>
       </van-tabs>
     </div>
