@@ -47,6 +47,13 @@ const refreshFun = () => {
 
 onLoad((options: any) => {
   console.log('options!!!', options)
+  if (options.type == 'Withdraw') {
+    active.value = 1 // 提现tab 高亮
+  } else if (options.type == 'Transfer') {
+    active.value = 2 // 转账tab 高亮
+  } else if (options.type == 'Deposit') {
+    active.value = 0 // 充值tab 高亮
+  }
   loadData()
 })
 
