@@ -188,6 +188,7 @@ import basePullRefresh from '@/components/basePullRefresh/index.vue';
 import { getSymbolsLastPrice } from '@/api/quotes'
 
 import { useControlStore } from '@/stores/control';
+import { roundDown } from '@/utils/util';
 
 // stores
 const controlStore = useControlStore();
@@ -259,7 +260,7 @@ const refreshData= (ticker: any) => {
 	if(symbolMap.has(ticker.symbol)){
 		const showUnit = symbolMap.get(ticker.symbol).showUnit
 		ticker.showUnit = showUnit
-		ticker.close = ticker.close.toFixed(showUnit)
+		ticker.close = roundDown(ticker.close,showUnit)
 		symbolMap.set(ticker.symbol,ticker)
 	}
 }

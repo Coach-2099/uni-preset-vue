@@ -357,10 +357,6 @@ import { onShow } from '@dcloudio/uni-app';
 const controlStore = useControlStore();
 
 const props = defineProps({
-  symbol: {
-    type: String,
-    default: 'BTC/USDT'
-  },
   lastPrice:{ //最新价
 	  type:Number,
 	  default: 0
@@ -382,7 +378,7 @@ watch(
 
 const checkedSettings = ref('1') //价值切换 
 const settingAfterConfirmation = ref('1') //价值切换值
-
+const symbol = ref('') //
 const price = ref(0); //交易价格
 const tradeNum = ref(0); //交易量
 const showPriceInput = ref(false) //是否显示价格输入
@@ -458,20 +454,27 @@ const loadSwapBalance = async () => {
 onMounted(() => {
 	loadLeverages()
 	// 进入页面请求获取配置的接口
-	getBuyAndSellConfig()
-	const tradeSymbol = props.symbol.split('/')
-	tradeToken.value = tradeSymbol[0]
-	basicToken.value = tradeSymbol[1]
+	loadSwapBalance()
 })
 
 onShow(()=>{
 	loadSwapBalance()
 })
 
+const loadData =(params:any)=>{
+	symbol.value = params.symbol
+	// 进入页面请求获取配置的接口
+	getBuyAndSellConfig()
+	const tradeSymbol = symbol.value.split('/')
+	tradeToken.value = tradeSymbol[0]
+	basicToken.value = tradeSymbol[1]
+	loadSwapBalance()
+}
+
 //获取交易对配置信息
 const getBuyAndSellConfig = async () => {
   const params = {
-    symbol: props.symbol
+    symbol: symbol.value
   }
   const data = await getSymbolInfo(params)
   tradeSymbol.value = data
@@ -570,7 +573,7 @@ const submitTrade = async () => {
 		return uni.showToast({title: '请输入正确的交易数量', icon: 'none'})
 	}
 	const params = {
-	  symbol: props.symbol,
+	  symbol: symbol.value,
 	  tradeAmount: tradeNum.value,
 	  tradePrice: price.value,
 	  tradeType: orderTypeObj.value.value,
@@ -598,6 +601,9 @@ const clearParams= ()=>{
 	tradeVal.value = 0 
 	margin.value =0 
 }
+defineExpose({
+  loadData
+})
 </script>
 
 <style scoped lang="scss">

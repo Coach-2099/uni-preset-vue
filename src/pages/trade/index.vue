@@ -130,7 +130,7 @@ const sliderStyle = computed(() => ({
 
 const goOrder = () => {
   uni.navigateTo({
-    url: '/pages/transactionOrder/index'
+    url: '/pages/transactionOrder/index?type=SPOT'
   })
 }
 

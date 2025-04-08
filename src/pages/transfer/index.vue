@@ -217,6 +217,7 @@ const onSelectTransferToken = (action: any) => {
 			return uni.showToast({title: '合约账户只能划转USD', icon: 'none'})
 		}
 		transferToken.value = action
+		balance()
 }
 
 onMounted(() => {

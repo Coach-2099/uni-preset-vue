@@ -5,63 +5,98 @@
     @refresh="handleRefresh"
   >
     <template #content>
-      <div class="assetList mt-15">
-        <div 
+	<div class="transactionOrder-index">
+      <div class="orderList px-20 pt-5 pb-25">
+        <div v-if="dataList.length>0"
           v-for="(item, index) in dataList" 
           :key="index" 
-          class=""
+          class="orderBox mt-20 bg-white"
           @click="goAssetDetail(item)"
         >
-          <div v-if="type='Deposit'" class="assetSingle mt-15 flex justify-between items-center">
-            <div>
-              <p class="fs-16 text-black">{{ item.symbol }}</p>
-              <p class="fs--12 text-gray">{{ formatISODate(item.createTime) }}</p>
-            </div>
-            <div class="flex justify-between items-center">
-              <div class="mr-10">
-                <p class="fs-16 text-black text-right">{{ item.rechargeAmount }}</p>
-                <div class="flex items-center">
-                  <div class="dot mr-5"></div>
-                  <p class="fs-12 text-gray">Succeeded</p>
-                </div>
-              </div>
-              <div class="rightIcon"></div>
-            </div>
-          </div>
-          <div v-else-if="type='Withdraw'" class="assetSingle mt-15 flex justify-between items-center">
-            <div>
-              <p class="fs-16 text-black">{{ item.symbol }}</p>
-              <p class="fs--12 text-gray">{{ formatISODate(item.createTime) }}</p>
-            </div>
-            <div class="flex justify-between items-center">
-              <div class="mr-10">
-                <p class="fs-16 text-black text-right">{{ item.arrivalAmoumt }}</p>
-                <div class="flex items-center">
-                  <div class="dot mr-5"></div>
-                  <p class="fs-12 text-gray">{{ formatStatus(item.status) }}</p>
-                </div>
-              </div>
-              <div class="rightIcon"></div>
-            </div>
-          </div>
-          <div v-else-if="type='Transfer'" class="assetSingle mt-15 flex justify-between items-center">
-            <div>
-              <p class="fs-16 text-black">{{ item.symbol }}</p>
-              <p class="fs--12 text-gray">{{ formatISODate(item.createTime) }}</p>
-            </div>
-            <div class="flex justify-between items-center">
-              <div class="mr-10">
-                <p class="fs-16 text-black text-right">{{ item.arrivalAmoumt }}</p>
-                <div class="flex items-center">
-                  <div class="dot mr-5"></div>
-                  <p class="fs-12 text-gray">{{ formatStatus(item.status) }}</p>
-                </div>
-              </div>
-              <div class="rightIcon"></div>
-            </div>
-          </div>
+		<div v-if="type==='Deposit'" class="content">
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>币种</p>
+		    <p>{{ item.symbol }}</p>
+		  </div>
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>数量</p>
+		    <p>{{ item.rechargeAmount }}</p>
+		  </div>
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>充值地址</p>
+		    <p>{{ item.userAddress }}</p>
+		  </div>
+		  <div v-if="item.protocolType" class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>所属公链</p>
+		    <p>{{ item.protocolType }}</p>
+		  </div>
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>交易Hash</p>
+		    <p>{{ item.blockOrderId }}</p>
+		  </div>
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>时间</p>
+		    <p>{{ formatISODate(item.createTime) }}</p>
+		  </div>
+		</div>
+		<div v-if="type==='Withdraw'" class="content">
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>币种</p>
+		    <p>{{ item.symbol }}</p>
+		  </div>
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>数量</p>
+		    <p>{{ item.tradeAmount }}</p>
+		  </div>
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>提币地址</p>
+		    <p>{{ item.userAddress }}</p>
+		  </div>
+		  <div v-if="item.protocolType" class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>所属公链</p>
+		    <p>{{ item.protocolType }}</p>
+		  </div>
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>手续费</p>
+		    <p>{{ item.chargeAmount }}</p>
+		  </div>
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>交易Hash</p>
+		    <p>{{ item.transactionId }}</p>
+		  </div>
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>时间</p>
+		    <p>{{ formatISODate(item.createTime) }}</p>
+		  </div>
+		</div>
+		<div v-if="type==='Transfer'" class="content">
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>转出账户</p>
+		    <p>{{ item.fromAccount }}</p>
+		  </div>
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>转入账户</p>
+		    <p>{{ item.toAccount }}</p>
+		  </div>
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>币种</p>
+		    <p>{{ item.token }}</p>
+		  </div>
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>数量</p>
+		    <p>{{ item.transferAmount }}</p>
+		  </div>
+		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
+		    <p>时间</p>
+		    <p>{{ formatISODate(item.createTime) }}</p>
+		  </div>
+		</div>
         </div>
+		<div v-else class="defaultTemp">
+		  <dataDefault></dataDefault>
+		</div>
       </div>
+	  </div>
     </template>
   </basePullRefresh>
 </template>
@@ -71,6 +106,7 @@ import { ref, defineProps, defineEmits } from 'vue'
 import basePullRefresh from '@/components/basePullRefresh/index.vue'
 import { formatISODate } from '@/utils/util'
 import { onShow } from '@dcloudio/uni-app'
+import dataDefault from '@/components/dataDefault/index.vue'
 
 const props = defineProps({
   dataList: {
@@ -83,18 +119,16 @@ const props = defineProps({
   },
 })
 
+const statusMap: { [key: number]: string } = {
+    0: '待审核',
+    1: '提币审核成功',
+    2: '提币审核驳回',
+    3: '提币到账成功',
+    4: '提币失败',
+}
+
 // 在现有代码中添加格式化方法
 const formatStatus = (status: number) => {
-  const statusMap: { [key: number]: string } = {
-    0: '待审核',
-    1: '已审核',
-    2: '区块链已扫描提现信息',
-    3: '转账中',
-    4: '提现审核未通过转账失败',
-    5: '转账成功',
-    6: '预出金资金冻结失败',
-    7: '提交提币申请'
-  }
   return statusMap[status] || '未知状态'
 }
 
@@ -107,7 +141,7 @@ const pages = {
 const emit = defineEmits(['refresh'])
 
 onShow(()=> {
-  console.log('props11', props.type)
+  
 })
 
 const handleRefresh = (finish: any) => {
@@ -118,8 +152,6 @@ const handleRefresh = (finish: any) => {
 }
 
 const goAssetDetail = (item: any) => {
-  console.log('item', item)
-  console.log('xxxxx', encodeURIComponent(JSON.stringify(item)))
   uni.navigateTo({
     // url: '/pages/assetDetail/index?type=' + props.type + '&' + encodeURIComponent(JSON.stringify(item))
     url: `/pages/assetDetail/index?type=${props.type}&item=${encodeURIComponent(JSON.stringify(item))}`
@@ -129,34 +161,46 @@ const goAssetDetail = (item: any) => {
 </script>
 
 <style lang="scss" scoped>
-.assetList {
-  .assetSingle {
-    padding-left: 18px;
-    padding-right: 18px;
-  }
+.transactionOrder-index {
+  .orderList {
+    // height: 100%;
+    min-height: calc(100vh - 95px);
+    background-color: #f6f8fc;
+    .orderBox {
+      box-shadow: 0px 0px 6px 1px rgba(0,8,242,0.08);
+      border-radius: 16px;
+      padding: 14px 20px;
+      .header {
+        border-bottom: 2px solid #f6f7fb;
+        .top {
+          .orderTypeTemp {
+            height: 16px;
+            line-height: 16px;
+            padding-left: 2px;
+            padding-right: 2px;
+            background: #FFD3D9;
+            border-radius: 3px 3px 3px 3px;
+          }
+        }
+        .bottom {
+          .rightTemp {
+            .copyImg {
+              image {
+                width: 10px;
+                height: 10px;
+              }
+            }
+          }
+        }
+      }
+      .content {
 
-  .dot {
-    width: 3px;
-    height: 3px;
-    background: #00B200;
-  }
-
-  .rightIcon {
-    position: relative;
-    width: 5px;
-    height: 10px;
-    cursor: pointer;
-  }
-  .rightIcon:before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border: solid #333;
-    border-width: 0 2px 2px 0;
-    transform: translate(-50%, -50%) rotate(-45deg);
-    position: absolute;
-    left: 50%;
-    top: 70%;
+      }
+    }
   }
 }
+.defaultTemp {
+    margin-top: 150px;
+    padding-bottom: 120px;
+  }
 </style>

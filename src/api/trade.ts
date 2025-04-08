@@ -60,3 +60,8 @@ export function closeOrder(data?: any) {
 export function metalsTrade(data?: any) {
   return request.post({ url: '/admin/trade/metalsTrade', data })
 }
+
+// 设置止盈止损
+export function setProfitOrLoss(data?: any) {
+  return request.post({ url: '/admin/trade/setProfitOrLoss', data })
+}

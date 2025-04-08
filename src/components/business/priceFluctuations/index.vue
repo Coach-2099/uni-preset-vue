@@ -203,8 +203,8 @@ const depthData =(bidsList:any,asksList:any,type:string)=>{
 	let asksTotal = 0
 	if(type === 'METALS'){
 	//贵金属行情数据格式不一样
-		bidsTotal = bidsList.reduce((sum, item) => sum + Number(item.volume).toFixed(4), 0)
-		asksTotal = asksList.reduce((sum, item) => sum + Number(item.volume).toFixed(4), 0)
+		bidsTotal = bidsList.reduce((sum, item) => sum + item.volume, 0)
+		asksTotal = asksList.reduce((sum, item) => sum + item.volume, 0)
 	}else{
 		bidsTotal = bidsList.reduce((sum, item) => sum + Number(item[1]), 0)
 		asksTotal = asksList.reduce((sum, item) => sum + Number(item[1]), 0)

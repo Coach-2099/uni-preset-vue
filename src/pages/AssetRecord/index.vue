@@ -47,6 +47,13 @@ const refreshFun = () => {
 
 onLoad((options: any) => {
   console.log('options!!!', options)
+  if(options.type === 'Deposit'){
+	  active.value = 0
+  }else if(options.type === 'Withdraw'){
+	  active.value = 1
+  }else{
+	  active.value = 2
+  }
   loadData()
 })
 
@@ -54,20 +61,20 @@ onLoad((options: any) => {
  * 加载数据
  * @param type 类型 1:充值 2:提现 3:转账
  */
-const loadData = async (type?: number) => {
+const loadData = async () => {
   const params = {
     ...pages,
     // symbol: 'USDT'
   }
   let loadFun:any = null
-  switch (type) {
-    case 1:
+  switch (active.value) {
+    case 0:
       loadFun = getRechargeList
       break
-    case 2:
+    case 1:
       loadFun = getWithdrawList
       break
-    case 3:
+    case 2:
       loadFun = getTrasferList
       break
     default:
@@ -82,7 +89,8 @@ const loadData = async (type?: number) => {
 
 
 const tabclick = (e:any) => {
-  console.log('e', e)
+ dataList.value =[]
+  loadData()
 }
 
 </script>

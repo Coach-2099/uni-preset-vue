@@ -120,7 +120,7 @@ const loadInfo =(symbol:string)=>{
 //调换订单历史
 const goOrder = () => {
   uni.navigateTo({
-    url: '/pages/transactionOrder/index'
+    url: '/pages/transactionOrder/index?type=METALS'
   })
 }
 

@@ -37,7 +37,7 @@
           </div> -->
         </div>
         <div class="btnBox flex justify-between mt-15">
-          <van-button class="myBtn flex-1" type="default" @click="settingProfitAndLoss">
+          <van-button class="myBtn flex-1" type="default" @click="settingProfitAndLoss(value.orderNo)">
             <text class="fs-12 text-gray">设置止盈止损</text>
           </van-button>
           <!-- <van-button class="myBtn flex-1" type="default">
@@ -68,7 +68,7 @@
           </div>
           <div class="baseInput pr-10 flex justify-between items-center">
             <input
-              v-model="profitVal"
+              v-model="stopProfit"
               class="myInput px-10 w-50"
               :placeholder="$t('noun.takeProfit')"
               placeholder-class="input-placeholder"
@@ -81,7 +81,7 @@
           </div>
           <div class="baseInput pr-10 flex justify-between items-center">
             <input
-              v-model="lossVal"
+              v-model="stopLess"
               class="myInput px-10 w-50"
               :placeholder="$t('noun.stopLoss')"
               placeholder-class="input-placeholder"
@@ -96,7 +96,7 @@
 <script lang="ts" setup>
 import { ref, onMounted ,computed,onUnmounted,nextTick} from 'vue';
 import { useUserStore } from '@/stores/user';
-import { closeOrder,getFuturesOrderList,cancelFuturesOrder } from '@/api/trade'
+import { closeOrder,getFuturesOrderList,cancelFuturesOrder,setProfitOrLoss} from '@/api/trade'
 import { roundDown } from '@/utils/util'
 import { onShow } from '@dcloudio/uni-app';
 import dataDefault from '@/components/dataDefault/index.vue';
@@ -120,20 +120,36 @@ const size = ref(10)
 const current = ref(1)
 const symbolMap =ref(new Map()) //存储当前持仓单交易对
 const showDialog = ref(false)
-const profitVal = ref('')
-const lossVal = ref('')
+const stopProfit = ref(0) //止盈价格
+const stopLess = ref(0) //止损价
+const orderNo = ref('')
 
-const settingProfitAndLoss = () => {
-  console.log('设置止盈止损')
+const settingProfitAndLoss = (orderId:string) => {
   showDialog.value = true;
+  orderNo.value = orderId
 }
 
 const myConfirm= () => {
-  console.log('确认')
+	if(!stopProfit.value && !stopLess.value){
+		return uni.showToast({title: '请输入止盈止损价格', icon: 'none'})
+	}else if(stopProfit.value<0){
+		return uni.showToast({title: '请输入正确的止盈止损价格', icon: 'none'})
+	}else if(stopLess.value<0 || stopLess.value){
+		return uni.showToast({title: '请输入正确的止损止损价格', icon: 'none'})
+	}
+	const params ={
+		stopProfit:stopProfit.value,
+		stopLoss:stopLess.value,
+		orderNo:orderNo.value
+	}
+	setProfitOrLoss(params).then((res:any)=>{
+		uni.showToast({title: '设置成功', icon: 'success'})
+	})
 }
 
 const myCancel = () => {
-  console.log('取消')
+	stopProfit.value = 0
+	stopLess.value = 0
 }
 
 
@@ -184,41 +200,44 @@ const loadPositions=async()=>{
 			symbolMap.value.set(item.symbol,'')
 		}
 	})
-  ordersMap.value.set('123', {symbol: 'BTCUSDT', direction: 'LONG', quantity: 100, entryPrice: 80000, unrealizedProfit: 100, unrealizedProfitScale: 1.5, status: 'POSITIONING', margin: 800000, orderNo: '123'})
 
 }
 
+const subWebsocket =()=>{
+	socketService.value.subscribe('ticker')
+	socketService.value.on('ticker',(data: any)=>{
+			  if(symbolMap.value.has(data.symbol)){
+				  for(let val of ordersMap.value.values()){
+				  	if(val.status==='POSITIONING'){
+				  		val.unrealizedProfit = calculateUnrealizedProfit(data.close,val.direction,val.quantity,val.entryPrice)
+				  		val.unrealizedProfitScale=roundDown(val.unrealizedProfit/val.margin*100,2)
+						val.close = data.close
+				  	}
+				  }
+			  }
+	})
+	socketService.value.subscribeUser(userStore.userInfo.userId)
+	socketService.value.on(userStore.userInfo.userId, (data: any,type:string) => {
+				const payload = data
+				if(type === 'FUTURES_ORDER_ENTRUSTMENT' || type === 'FUTURES_ORDER_POSITION'){
+					ordersMap.value.set(payload.orderNo,payload)
+					if(type === 'FUTURES_ORDER_POSITION'){
+						symbolMap.value.set(payload.symbol,'')	
+					}
+				}else if(type === 'FUTURES_ORDER_CANCEL' ||type === 'FUTURES_ORDER_BOOM' ||type === 'FUTURES_ORDER_CLOSED' ){
+					ordersMap.value.delete(payload.orderNo)
+				}
+	})
+}
 onShow(()=>{
 	loadPositions()
+	subWebsocket()
 })
 onMounted(() => {
   nextTick(() => {
-	  socketService.value.subscribe('ticker')
-	  socketService.value.on('ticker',(data: any)=>{
-		  if(symbolMap.value.has(data.symbol)){
-			  for(let val of ordersMap.value.values()){
-			  	if(val.status==='POSITIONING'){
-			  		val.unrealizedProfit = calculateUnrealizedProfit(data.close,val.direction,val.quantity,val.entryPrice)
-			  		val.unrealizedProfitScale=roundDown(val.unrealizedProfit/val.margin*100,2)
-			  	}
-			  }
-		  }
-	  })
-	  socketService.value.subscribeUser(userStore.userInfo.userId)
-	  socketService.value.on(userStore.userInfo.userId, (data: any,type:string) => {
-			const payload = data
-			if(type === 'FUTURES_ORDER_ENTRUSTMENT' || type === 'FUTURES_ORDER_POSITION'){
-				ordersMap.value.set(payload.orderNo,payload)
-				if(type === 'FUTURES_ORDER_POSITION'){
-					symbolMap.value.set(payload.symbol,'')	
-				}
-			}else if(type === 'FUTURES_ORDER_CANCEL' ||type === 'FUTURES_ORDER_BOOM' ||type === 'FUTURES_ORDER_CLOSED' ){
-				ordersMap.value.delete(payload.orderNo)
-			}
-	  })
+	  subWebsocket()
   })
 })
-
 onUnmounted(() => {
 	console.log('移除user_id监听')
 	socketService.value.unsubscribe('ticker');

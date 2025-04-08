@@ -169,10 +169,6 @@ import { onShow } from '@dcloudio/uni-app';
 
 const controlStore = useControlStore();
 const props = defineProps({
-  symbol: {
-    type: String,
-    default: 'BTC/USDT'
-  },
   lastPrice:{ //最新价
 	  type:Number,
 	  default: 0
@@ -185,7 +181,7 @@ watch(
 	loadSpotBalance()
   }
 );
-
+const symbol =ref('BTC/USDT')
 const showPopoverOrderType = ref(false) //显示交易方式变量
 const actionsOrderType = [
   { text: '市价单', value: 'MARKET' },
@@ -270,7 +266,7 @@ const calculateMargin = (val: number) =>{
 //获取用户当前交易对币种可用余额
 const loadSpotBalance = async () => {
 	const params = {
-	  symbol: props.symbol
+	  symbol: symbol.value
 	}
   const data = await getSpotBalance(params)
   tradeCoinBalance.value = data.tradeTokenBalance //获取余额数据
@@ -278,22 +274,28 @@ const loadSpotBalance = async () => {
 }
 
 onMounted(()=>{
-	getBuyAndSellConfig()
-	const tradeSymbol = props.symbol.split('/')
-	tradeToken.value = tradeSymbol[0]
-	basicToken.value = tradeSymbol[1]
-	showPriceInput.value  =true
-	price.value = props.lastPrice //初始化当前价格
+	
 })
 
 onShow(()=>{
 	loadSpotBalance() 
 })
 
+const loadData =(params:any)=>{
+	symbol.value = params.symbol
+	getBuyAndSellConfig()
+	const tradeSymbol = params.symbol.split('/')
+	tradeToken.value = tradeSymbol[0]
+	basicToken.value = tradeSymbol[1]
+	showPriceInput.value  =true
+	price.value = props.lastPrice //初始化当前价格
+	loadSpotBalance() 
+}
+
 //获取交易对配置信息
 const getBuyAndSellConfig = async () => {
   const params = {
-    symbol: props.symbol
+    symbol: symbol.value
   }
   const data = await getSymbolInfo(params)
   tradeSymbol.value = data
@@ -311,7 +313,7 @@ const submitTrade = async () => {
 		return uni.showToast({title: '请输入正确的交易数量', icon: 'none'})
 	}
 	const params = {
-	  symbol: props.symbol,
+	  symbol: symbol.value,
 	  tradeAmount: tradeNum.value,
 	  tradePrice: price.value,
 	  tradeType: orderTypeObj.value.value,
@@ -331,7 +333,9 @@ const clearParams= ()=>{
 	value.value =0
 	tradeVal.value = 0 
 }
-
+defineExpose({
+  loadData
+})
 </script>
 
 <style lang="scss" scoped>

@@ -30,8 +30,8 @@
       :class="{'marginTop75': !showChart}"
     >
       <div class="buyAndSellMoudle flex-1">
-        <buyAndSell v-if="type == 'SPOT'" :lastPrice="lastPrice" :symbol="symbol"></buyAndSell>
-        <buyAndSellContract v-if="type == 'FUTURES'|| type == 'METALS'" :type="type" :lastPrice="lastPrice" :symbol="symbol"></buyAndSellContract>
+        <buyAndSell v-if="type == 'SPOT'" ref="buySellRef" :lastPrice="lastPrice" :symbol="symbol"></buyAndSell>
+        <buyAndSellContract v-if="type == 'FUTURES'|| type == 'METALS'" ref="buyAndSellContractRef" :type="type" :lastPrice="lastPrice" :symbol="symbol"></buyAndSellContract>
       </div>
       <!-- <div class="flex-1"> -->
       <div class="rightDev">
@@ -65,6 +65,8 @@ const socketService = computed(() => userStore.socketService);
 const showFLoatingPanel = ref(false) //是否加载行情列表
 const floatingPanelPropsRef: any = ref(null) //行情列表引用
 const priceFluctuationsRef: any = ref(null) //深度引用
+const buySellRef: any = ref(null) //买卖引用
+const buyAndSellContractRef:any =ref(null) //合约买卖引用
 const showChart = ref(false)
 const lastPrice = ref(0) //实时最新价
 const rose = ref(0) //实时最新涨跌幅比例
@@ -81,10 +83,12 @@ const props = defineProps({
   }
 })
 
+
 watch(
   () => controlStore.getQuotesData(props.type)?.symbol,
   (newVal, oldVal) => {
 	if(newVal){
+		socketService.value.unsubscribe('ticker',oldVal);
 		socketService.value.unsubscribe('depth',oldVal); //取消原有订阅
 		loadInfo(newVal); //订阅新的交易对
 	}
@@ -108,6 +112,15 @@ const loadInfo=(symbol:string)=>{
 	  klineType: props.type,
 	  symbol: symbol
 	})
+	if(props.type==='SPOT'){
+		buySellRef.value?.loadData({
+		  symbol: symbol
+		})
+	}else{
+		buySellRef.value?.loadData({
+		  symbol: symbol
+		})
+	}
 	if(lastPrice.value === 0){
 		getLastPrice(symbol)
 	}

@@ -107,7 +107,7 @@
             :needPullRefresh="false"
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
-            <p class="fs-12">{{ $t('common.viewMore') }}</p>
+            <p class="fs-12">{{ $t('homeIndex.viewMore') }}</p>
             <van-image class="ml-5" width="8" height="10" src="/static/images/right.png" />
           </div>
         </van-tab>
@@ -118,7 +118,7 @@
             :needPullRefresh="false"
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
-            <p class="fs-12">{{ $t('common.viewMore') }}</p>
+            <p class="fs-12">{{ $t('homeIndex.viewMore') }}</p>
             <van-image class="ml-5" width="9" height="7" src="/static/images/right.png" />
           </div>
         </van-tab>
@@ -129,7 +129,7 @@
             :needPullRefresh="false"
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
-            <p class="fs-12">{{ $t('common.viewMore') }}</p>
+            <p class="fs-12">{{ $t('homeIndex.viewMore') }}</p>
             <van-image class="ml-5" width="9" height="7" src="/static/images/right.png" />
           </div>
         </van-tab>
@@ -236,28 +236,6 @@ const socketService = computed(() => userStore.socketService);
       loadNoticeData()
       // 切换货币信息
       onClickTab({name: 0})
-      // 订阅BTC/USDT的实时行情
-      setTimeout(()=>{
-        socketService.value.subscribe('ticker');
-        // 添加行情数据监听
-        socketService.value.on('ticker', (data: any) => {
-          // 示例数据结构处理：{ symbol: 'BTC/USDT', price: 50000, change: 0.22 }
-          // tickerData.value[data.symbol] = data;
-          let currentRef : any
-          switch(active.value){
-            case 0:
-            currentRef = spotQuoteListRefs
-            break
-            case 1:
-            currentRef = futuresQuoteListRefs
-            break
-          case 2:
-            currentRef =metalsQuoteListRefs
-            default:
-          }
-          currentRef.value?.refreshData(data);
-        });
-      },100)
     })
   });
   
@@ -265,7 +243,35 @@ const socketService = computed(() => userStore.socketService);
 	  if(userStore.userInfo.userId){
 	  	getBalance()
 	  }
+	  subTicker()
   })
+  
+  const subTicker=()=>{
+	  nextTick(() => {
+	  // 订阅BTC/USDT的实时行情
+	  setTimeout(()=>{
+	    socketService.value.subscribe('ticker');
+	    // 添加行情数据监听
+	    socketService.value.on('ticker', (data: any) => {
+	      // 示例数据结构处理：{ symbol: 'BTC/USDT', price: 50000, change: 0.22 }
+	      // tickerData.value[data.symbol] = data;
+	      let currentRef : any
+	      switch(active.value){
+	        case 0:
+	        currentRef = spotQuoteListRefs
+	        break
+	        case 1:
+	        currentRef = futuresQuoteListRefs
+	        break
+	      case 2:
+	        currentRef =metalsQuoteListRefs
+	        default:
+	      }
+	      currentRef.value?.refreshData(data);
+	    });
+	  },100)
+	  })
+  }
 
   // Disconnect from the socket server when the component is unmounted
   onUnmounted(() => {
