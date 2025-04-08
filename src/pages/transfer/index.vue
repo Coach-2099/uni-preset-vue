@@ -1,6 +1,6 @@
 <template>
   <div class="transfer-index">
-    <navigationBar title="划转">
+    <navigationBar :title="$t('transfer.title')">
       <template #right>
         <div class="headerRightIcon" @click="goAssetRecord">
           <image
@@ -16,7 +16,7 @@
         <div key="from" class="flex justify-between items-center">
           <div class="flex justify-between items-center w-100">
           <div class="flex justify-start items-center w-100">
-            <p class="text-gray fs-14 mr-25">从</p>
+            <p class="text-gray fs-14 mr-25">{{ $t('transfer.from') }}</p>
             <van-popover
               placement="bottom-start"
               :actions="actionsAccountType"
@@ -55,7 +55,7 @@
         <div key="to" class="flex justify-between items-center">
           <div class="flex justify-between items-center w-100">
             <div class="flex justify-between items-center w-100">
-              <p class="text-gray fs-14 mr-25">到</p>
+              <p class="text-gray fs-14 mr-25">{{ $t('transfer.to') }}</p>
               <van-popover
                 placement="bottom-start"
                 :actions="toAccountType"
@@ -88,7 +88,7 @@
     </div>
     <div class="inputBox mt-5 bg-white">
       <div class="pt-20 mb-20">
-        <p class="fs-16 text-black">币种</p>
+        <p class="fs-16 text-black">{{ $t('noun.currency') }}</p>
         <div class="baseSelect w-100 mt-10 pl-15 pr-25 flex justify-between items-cneter">
 			<van-popover
 			  placement="bottom-end"
@@ -114,7 +114,7 @@
       </div>
       <div class="mt-25">
         <div class="flex justify-between items-center">
-          <p class="fs-16 text-black">金额</p>
+          <p class="fs-16 text-black">{{ $t('withdrawal.amount') }}</p>
           <!-- <div class="flex items-end">
             <p class="fs-16 text-black mr-5">0</p>
             <div class="rightImg">
@@ -129,17 +129,17 @@
           <input
             v-model="amount"
             class="myInput flex-1 px-10 py-10 w-100"
-            placeholder="请输出转账金额"
+            :placeholder="$t('transfer.enterTransferAmount')"
             placeholder-class="input-placeholder"
           />
           <text class="fs-16 px-10 rightText">
-            <text class="text-light-blue" @click="transferMax">最大</text> |
+            <text class="text-light-blue" @click="transferMax">{{ $t('withdrawal.max') }}</text> |
             <text class="text-black">{{transferToken?.text}}</text>
           </text>
         </div>
       </div>
       <div class="mt-25 flex justify-between items-center">
-        <p class="text-gray fs-16">可用金额</p>
+        <p class="text-gray fs-16">{{ $t('transfer.availableAmount') }}</p>
         <p class="text-black fs-16">{{tokenBalance}} {{transferToken?.text}}</p>
       </div>
     </div>
@@ -147,21 +147,24 @@
       <van-button
         class="confirmBtn w-100 fw-b fs-20"
         type="primary" @click="transfer"
-      >confirm</van-button>
+      >{{ $t('common.confirm') }}</van-button>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref ,onMounted} from 'vue';
+import { ref, onMounted } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue'
-import { getTrasferCoins, getBalance,postTransfer} from '@/api/asset'
+import { getTrasferCoins, getBalance, postTransfer } from '@/api/asset'
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 const amount = ref(''); //转账金额
 const fromAccount = ref<AccountType>(
-	{ text: '钱包', value: 'WALLET' }
+	{ text: t('transfer.accounts.wallet'), value: 'WALLET' }
 ) //转出账户
 const toAccount = ref<AccountType>(
-{ text: '现货账户', value: 'SPOT' }
+{ text: t('transfer.accounts.spotAccount'), value: 'SPOT' }
 ) //转入账户
 const transferToken = ref<TokenType>() //交易币种
 const transferData = ref<any[]>([]);
@@ -181,18 +184,18 @@ type TokenType = {
 }
 
 const actionsAccountType = [
-  { text: '钱包', value: 'WALLET' },
-  { text: '现货账户', value: 'SPOT' },
-  { text: '合约账户', value: 'FUTURES' },
-  { text: '贵金属账户', value: 'METALS' },
+  { text: t('transfer.accounts.wallet'), value: 'WALLET' },
+  { text: t('transfer.accounts.spotAccount'), value: 'SPOT' },
+  { text: t('transfer.accounts.futuresAccount'), value: 'FUTURES' },
+  { text: t('transfer.accounts.preciousMetalsAccount'), value: 'METALS' },
 ]
 
 //选择转出账户
 const onSelectFromAccountType = (action: any) => {
 		if(action.value === 'FUTURES' && transferToken.value?.text !== 'USDT'){
-			return uni.showToast({title: '合约账户只能划转USDT', icon: 'none'})
+			return uni.showToast({title: t('transfer.futuresOnlyUSDT'), icon: 'none'})
 		}else if(action.value === 'METALS' && transferToken.value?.text !== 'USD'){
-			return uni.showToast({title: '合约账户只能划转USD', icon: 'none'})
+			return uni.showToast({title: t('transfer.metalsOnlyUSD'), icon: 'none'})
 		}
 		toAccountType.value = actionsAccountType.filter((item: any)=>{return item.value!==action.value})	
 		fromAccount.value = action
@@ -202,9 +205,9 @@ const onSelectFromAccountType = (action: any) => {
 //选择转入账户
 const onSelectToAccountType = (action: any) => {
 		if(action.value === 'FUTURES' && transferToken.value?.text !== 'USDT'){
-			return uni.showToast({title: '合约账户只能划转USDT', icon: 'none'})
+			return uni.showToast({title: t('transfer.futuresOnlyUSDT'), icon: 'none'})
 		}else if(action.value === 'METALS' && transferToken.value?.text !== 'USD'){
-			return uni.showToast({title: '合约账户只能划转USD', icon: 'none'})
+			return uni.showToast({title: t('transfer.metalsOnlyUSD'), icon: 'none'})
 		}
 		toAccount.value = action
 }
@@ -212,9 +215,9 @@ const onSelectToAccountType = (action: any) => {
 //选择币种信息
 const onSelectTransferToken = (action: any) => {
 		if(fromAccount.value?.text === 'FUTURES' && action.text !== 'USDT'){
-			return uni.showToast({title: '合约账户只能划转USDT', icon: 'none'})
+			return uni.showToast({title: t('transfer.futuresOnlyUSDT'), icon: 'none'})
 		}else if(fromAccount.value?.text === 'METALS' && action.text !== 'USD'){
-			return uni.showToast({title: '合约账户只能划转USD', icon: 'none'})
+			return uni.showToast({title: t('transfer.metalsOnlyUSD'), icon: 'none'})
 		}
 		transferToken.value = action
 		balance()
@@ -264,13 +267,13 @@ const exchange = () => {
 //提交划转
 const transfer =async() =>{
 	if(fromAccount.value?.value === toAccount.value?.value){
-		return uni.showToast({title: '转出账户和转入账户不能相同', icon: 'none'})
+		return uni.showToast({title: t('transfer.sameAccountError'), icon: 'none'})
 	}else if((fromAccount.value?.value === 'FUTURES'||toAccount.value?.value === 'FUTURES') && transferToken.value?.text !== 'USDT'){
-		return uni.showToast({title: '合约账户只能划转USDT', icon: 'none'})
+		return uni.showToast({title: t('transfer.futuresOnlyUSDT'), icon: 'none'})
 	}else if((fromAccount.value?.value === 'METALS' || toAccount.value?.value === 'METALS') && transferToken.value?.text !== 'USD'){
-		return uni.showToast({title: '合约账户只能划转USD', icon: 'none'})
+		return uni.showToast({title: t('transfer.metalsOnlyUSD'), icon: 'none'})
 	}else if(tokenBalance.value<amount.value){
-		return uni.showToast({title: '可用余额不足，请不要输入大于可用余额的金额', icon: 'none'})
+		return uni.showToast({title: t('transfer.insufficientBalance'), icon: 'none'})
 	}
 	const params = {
 	  fromAccount: fromAccount.value?.value,
@@ -280,7 +283,7 @@ const transfer =async() =>{
 	}
 	const data = await postTransfer(params)
 	if(!data || !data.errMsg){
-		uni.showToast({title: '划转成功', icon: 'success'})
+		uni.showToast({title: t('transfer.transferSuccess'), icon: 'success'})
 		balance()//重新获取余额信息
 	}
 }

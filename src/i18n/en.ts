@@ -1,13 +1,402 @@
-// module.exports = {
-//   login:{
-	  
-//   },
-//   showIndex: {
-//     hello: 'hello world'
-//   }
-// }
 export default {
-  homeIndex: {
-    title: "hello world",
-  }
+	navBar: {
+		home: 'Home',
+		quotes: 'Quotes',
+		trade: 'Spot',
+		contract: 'Contract',
+		myAssets: 'Assets',
+		metals: 'Precious Metals',
+		assetDetail: 'Asset Details',
+		assetRecord: 'Asset Records',
+		generalSettings: 'General Settings',
+		securitySettings: 'Security Settings',
+		messageList:'Message list'
+	},
+	common: {
+		confirm: 'Confirm',
+		cancel: 'Cancel',
+		register: 'Register',
+		login: 'Login',
+		logout: 'Logout',
+		account: 'Account',
+		phone: 'Phone Number',
+		email: 'Email',
+		password: 'Password',
+		vCode: 'Verification Code',
+		iCode: 'Invitation Code',
+		goToRegister: 'Go to Register',
+		privacypolicy: 'Privacy Policy',
+		hasAccount: 'Already have an account?',
+		goLogin: 'Go to Login',
+		fundPassword: 'Fund Password',
+		remember: 'Remember Password',
+		forgetPassword: 'Forgot Password',
+		confirmPassword: 'Confirm Password',
+		getVCode: 'Get Code',
+		tryAgain: 'Try again in seconds',
+		noData: 'No data',
+		succeeded: 'Succeeded',
+		enterDepositCurrency: 'Please enter the deposit currency you want to search for',
+		search: 'Search',
+		customerService: 'Customer Service',
+		safeLogout: 'Safe Logout',
+		unloginUser: 'Unlogged User'
+	},
+	 securitySettings: {
+	    accountActivity: 'Account Activity',
+	    lastLoginTime: 'Last login time: ',
+	    securityLevel: 'Security Level',
+	    low: 'Low',
+	    medium: 'Medium',
+	    high: 'High',
+	    accountSecurityLevel: 'Account security level',
+	    enableSecurityVerification: 'Low, please enable at least',
+	    itemSecurity: 'security verification item.',
+	    phoneSecurityVerification: 'Phone security verification',
+	    changeLoginPassword: 'Change Login Password',
+	    notSet: 'Not set'
+	  },
+	generalSettings: {
+		avatar: 'Avatar',
+		nickname: 'Nickname',
+		uid: 'UID',
+		notUploaded: 'Not uploaded',
+		notLoggedIn: 'Not logged in'
+	},
+	inviteFriends: {
+		getReward: 'Get $10 in Bitcoin',
+		inviteDescription: 'You\'ll both get $10 in free Bitcoin when your friend buys or sells $100 of crypto'
+	  },
+	operation: {
+		buy: 'Buy',
+		sell: 'Sell',
+		close: 'Close',
+	},
+	noun: {
+		spotGoods: 'Spot',
+		futureGoods: 'Contract',
+		metalsGoods: 'Precious Metals',
+		recharge: 'Deposit',
+		transfer: 'Transfer',
+		withdraw: 'Withdraw',
+		invite: 'Invite Friends',
+		transactionPair: 'Trading Pair',
+		tradingVolume: 'Trading Volume',
+		hourChange: '24H Volume',
+		lastPrice: 'Latest Price',
+		priceLimitOrder: 'Limit Order',
+		marketOrder: 'Market Order',
+		price: 'Price',
+		quantity: 'Quantity',
+		cost: 'Cost',
+		orderAmount: 'Order Amount',
+		buyUpTo: 'Buy Up To',
+		orderValue: 'Order Value',
+		takeProfitAndStopLoss: 'Take Profit & Stop Loss',
+		takeProfit: 'Take Profit',
+		stopLoss: 'Stop Loss',
+		doMore: 'Long',
+		doLess: 'Short',
+		leverage: 'Leverage',
+		currency: 'Currency',
+		trendChart: 'Trend Chart',
+		trade: 'Trade',
+		time: 'Time',
+		direction: 'Direction',
+		depositAccount: 'Deposit Account',
+		chainType: 'Chain Type',
+		transferId: 'Transfer ID',
+		transactionHash: 'Transaction Hash',
+		copy: 'Copy'
+	},
+	tips: {
+		success: 'Operation successful',
+		error: 'Operation failed',
+		warning: 'Operation warning',
+		noData: 'No data',
+		noMoreData: 'No more data',
+		loading: 'Loading...',
+		enterAccount: 'Please enter account',
+		enterPassword: 'Please enter password',
+		enterVCode: 'Please enter verification code',
+		enterPhone: 'Please enter phone number',
+		enterEmail: 'Please enter email',
+		enterFundPassword: 'Please enter fund password',
+		enterICode: 'Please enter invitation code',
+		enterPrice: 'Please enter price',
+		enterQuantity: 'Please enter quantity',
+		enterOrderAmount: 'Please enter order amount',
+		enterOrderValue: 'Please enter order value',
+		vCodeHasSent: 'Verification code sent, please check',
+		enter: 'Please enter',
+		bindSuccess: 'Binding successful',
+		emailFormatIsIncorrect: 'Incorrect email format',
+		bindPhoneOrEmail: 'Please bind phone number or email first',
+		pleaseImproveTheInfo: 'Please complete information',
+		modifySuccess: 'Modification successful, please login again',
+		registerSuccess: 'Registration successful',
+		copySuccess: 'Copy successful',
+		refreshRechargeRecord: 'Refresh deposit records'
+	},
+	navigationBarTitle: {
+		bindPhone: 'Bind Phone',
+		bindEmail: 'Bind Email',
+		bindFundPassword: 'Set Fund Password',
+		recharge: 'Deposit',
+		withdraw: 'Withdraw',
+		transfer: 'Transfer',
+		assetDetail: 'Asset Details',
+		assetRecord: 'Asset Records',
+		editPassword: 'Change Password',
+		editUserInfo: 'Modify user'
+	},
+	formFields: {
+		network: 'Network',
+		selectTheLinkType: 'Please select chain type',
+		walletAddress: 'Wallet Address',
+		copyAddress: 'Copy Address',
+	},
+	homeIndex: {
+		login: {
+			signBy: 'XAUSWAP',
+			emailOrPhone: 'Email/Phone',
+			registerIn: 'Register XAUSWAP',
+			resetPassword: 'Reset Password',
+			verifyAccount: 'Verify Account',
+		},
+		totalAssets: 'Total Assets Equivalent',
+		registerToUnlock: 'Register to unlock up to',
+		award: 'Reward',
+		loginOrRegister: 'Login/Register',
+		viewMore: 'View More',
+		singleDay: 'Daily P&L'
+	},
+	module: {
+		assetsModule: {
+			hideZeroBalances: 'Hide Zero Balances',
+		},
+		buyAndSellModule: {
+			available: 'Available',
+		},
+		assetModule: {
+			deposit: 'Deposit',
+			withdraw: 'Withdraw',
+			transfer: 'Transfer'
+		}
+	},
+	userInfo: {
+		ordinaryUsers: 'Regular User',
+		IdNotCompleted: 'ID Verification Not Completed',
+		IdentityDuthentication: 'ID Verification in Progress',
+		IdentityDuthenticationSuccess: 'ID Verified',
+		completeIDforTransactions: 'Complete ID verification to deposit and trade',
+		goCertification: 'Verify',
+		certification: 'Verifying',
+		accountInfo: 'Account Information',
+		identityAuthentication: 'Identity Verification',
+		notCertifiedYet: 'Not Verified Yet',
+		authentication: 'Verifying',
+		authenticationSuccess: 'Verified',
+		securitySettings: 'Security Settings',
+		identityTypes: {
+			idCard: 'ID Card',
+			passport: 'Passport',
+			drivingLicense: 'Driving License'
+		},
+		verificationSuccess: 'Submitted for certification',
+		username: 'Username',
+		avatar: 'Please take/upload your avatar',
+		idcard: 'Front photo of ID card'
+	},
+	identityAuth: {
+	    labels: {
+	      familyName: 'Family Name',
+	      lastName: 'Last Name',
+	      cardNumber: 'Card Number',
+	      identityType: 'Identity Type'
+	    },
+	    placeholders: {
+	      familyName: 'Please enter the family name',
+	      lastName: 'Please enter the first name',
+	      cardNumber: 'Please enter the card number'
+	    },
+	    upload: {
+	      title: 'Please take/upload personal ID card',
+	      hint: 'Please ensure that the ID border is complete, the font is clear, and the brightness is uniform',
+	      frontPhoto: 'Front photo of ID card',
+	      backPhoto: 'Reverse photo of ID card',
+	      uploadButton: 'Upload',
+	      securityNote: 'BYBIT will encrypt information to ensure real-time information security'
+	    }
+	  },
+	contract: {
+		buyAndSellContract: {
+			popup: {
+				preferences: 'Order Preferences',
+				byQuantity: 'Order by Quantity',
+				byQuantityTip: 'Please fill in contract quantity, unit is',
+				byValue: 'Order by Value',
+				byValueTip: 'Please fill in order value, you can adjust leverage to modify required margin'
+			}
+		},
+		orderBook: 'Order Book',
+		transactions: 'Transactions',
+		position: 'Position',
+		orderPrice: 'Order Price',
+		orderQuantity: 'Order Quantity',
+		orderCost: 'Order Cost',
+		value: 'Value',
+		positionLeverage: 'Position Leverage',
+		fullPosition: 'Full Position ',
+		takeProfitPrice: 'Take Profit Price',
+		stopLossPrice: 'Stop Loss Price',
+		noConfirmationPopup: 'Don\'t show confirmation popup again',
+		insufficientMargin: 'Insufficient margin, please modify trading amount',
+		order: 'Orders',
+	},
+	assetRecord: {
+		depositAddress: 'Deposit Address',
+		withdrawalAddress: 'Withdrawal Address',
+		blockchain: 'Blockchain',
+		fee: 'Fee',
+		transactionHash: 'Transaction Hash',
+		fromAccount: 'From Account',
+		toAccount: 'To Account',
+		statusPending: 'Pending',
+		statusApproved: 'Approved',
+		statusRejected: 'Rejected',
+		statusCompleted: 'Completed',
+		statusFailed: 'Failed',
+		statusUnknown: 'Unknown status'
+	},
+	trading: {
+		enterValidPrice: 'Please enter a valid price',
+		enterValidQuantity: 'Please enter a valid quantity',
+		tradingAmountExceedsMax: 'Trading amount exceeds maximum allowed',
+		orderSuccess: 'Order successful'
+	},
+	withdrawal: {
+		address: 'Address',
+		enterOrPasteAddress: 'Enter or long press to paste withdrawal address',
+		amount: 'Amount',
+		minimumWithdrawalAmount: 'Minimum withdrawal amount: ',
+		max: 'Max',
+		fundAccount: 'Fund Account',
+		tips: 'Tips',
+		dailyRemainingQuota: 'Daily Remaining Quota',
+		monthlyRemainingQuota: 'Monthly Remaining Quota',
+		contractAddress: 'Contract Address',
+		endsWith20000: 'Ends with 20000',
+		withdrawalFee: 'Withdrawal Fee',
+		amountToReceive: 'Amount to Receive',
+		selectCurrencyFirst: 'Please select a currency first',
+		withdrawalSubmitted: 'Withdrawal request submitted',
+		chainTypeMatchWarning: 'Please ensure that the chain type selected during deposit matches the chain type selected during withdrawal.',
+		contractAddressWarning: 'Contract address is different from withdrawal address. Please do not withdraw to this address to avoid asset loss. Contract address is the unique identifier of a token on the blockchain, which can help you confirm whether the token you are about to withdraw matches the token you have selected.'
+	},
+	transactionOrder: {
+	    allOrder: 'All Orders',
+	    tradingMethod: 'Trading Method',
+	    orderPrice: 'Order Price',
+	    volumeVsOrderQuantity: 'Volume/Order Quantity',
+	    entryPrice: 'Entry Price',
+	    liquidationPrice: 'Liquidation Price',
+	    status: 'Status',
+	    statuses: {
+	      inOrder: 'In Order',
+	      inPosition: 'In Position', 
+	      closed: 'Closed',
+	      cancelled: 'Cancelled',
+	      liquidated: 'Liquidated'
+	    },
+	    spotStatuses: {
+	      entrusting: 'Entrusting',
+	      partialMatching: 'Partial Matching', 
+	      completed: 'Completed',
+	      partialDealCancelled: 'Partial Deal Cancelled',
+	      cancelled: 'Cancelled'
+	    }
+	  },
+	  transfer: {
+	    title: 'Asset Transfer',
+	    from: 'From',
+	    to: 'To',
+	    enterTransferAmount: 'Enter Transfer Amount',
+	    availableAmount: 'Available Balance',
+	    sameAccountError: 'Source and destination accounts cannot be the same',
+	    futuresOnlyUSDT: 'Futures account only supports USDT',
+	    metalsOnlyUSD: 'Precious metals account only supports USD',
+	    insufficientBalance: 'Insufficient Balance',
+	    transferSuccess: 'Transfer Successful',
+	    accounts: {
+	      wallet: 'Wallet',
+	      spotAccount: 'Spot Account',
+	      futuresAccount: 'Futures Account',
+	      preciousMetalsAccount: 'Precious Metals Account'
+	    }
+	  },
+	verification: {
+		identityVerification: 'Identity Verification',
+		phoneVerificationCode: 'Phone Verification Code',
+		emailVerificationCode: 'Email Verification Code',
+		next: 'NEXT',
+		transactionPassword: 'Transaction Password'
+	},
+	position: {
+		fullPosition: 'Full Position',
+		unrealizedPnL: 'Unrealized P&L',
+		positionQuantity: 'Position Quantity',
+		entrustQuantity: 'Entrust Quantity',
+		entryPrice: 'Entry Price',
+		positionMargin: 'Position Margin',
+		setTakeProfitStopLoss: 'Set Take Profit/Stop Loss',
+		cancel: 'Cancel',
+		closePosition: 'Close Position',
+		enterTakeProfitStopLoss: 'Please enter take profit/stop loss price',
+		enterValidTakeProfit: 'Please enter a valid take profit price',
+		enterValidStopLoss: 'Please enter a valid stop loss price',
+		settingSuccess: 'Setting successful',
+		positionClosed: 'Position closed',
+		cancelSuccess: 'Cancellation successful',
+	},
+	priceFluctuations: {
+		price: 'Price',
+	},
+	spotOrder: {
+		completedVsEntrusted: 'Completed/Entrusted',
+		entrustedPrice: 'Entrusted Price',
+		creationTime: 'Creation Time',
+		cancel: 'Cancel',
+		cancelSuccess: 'Cancellation successful',
+	},
+	request: {
+		requestFailed: 'Request failed',
+		requestFailedTryAgain: 'Request failed, please try again later',
+		apiNotExist: 'API endpoint does not exist',
+		apiErrorRefresh: 'API error, please refresh and try again',
+		requestFailedRetry: 'Request failed, please try again',
+		loading:'Loading...'
+	},
+	chart: {
+		unsupported: 'The current environment does not support chart display',
+		timeframes: {
+			min1: '1min',
+			min5: '5min',
+			min15: '15min',
+			min30: '30min',
+			hour1: '1hour',
+			hour4: '4hour',
+			day1: '1day'
+		},
+		indicators: {
+			open: 'Open',
+			high: 'High',
+			low: 'Low',
+			close: 'Close',
+			change: 'Change%',
+			high24h: '24h High',
+			low24h: '24h Low',
+			volume24h: '24h Volume'
+		}
+	}
 }

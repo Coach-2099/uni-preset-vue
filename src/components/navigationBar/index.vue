@@ -21,7 +21,6 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-
 // 在组件script中添加
 defineSlots<{
   right?: (props: {}) => any  // 定义插槽类型
@@ -30,7 +29,7 @@ defineSlots<{
 const props = defineProps({
   title: {
     type: String,
-    default: '安全设置'
+    default: 'Security Settings'
   },
   // 自定义返回处理函数
   customHandler: {

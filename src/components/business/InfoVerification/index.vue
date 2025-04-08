@@ -9,9 +9,9 @@
   >
     <div class="contentTemp pt-15 px-25">
       <div v-if="showVerifyTemp">
-        <p class="fw-b fs-16">身份验证:</p>
+        <p class="fw-b fs-16">{{ $t('verification.identityVerification') }}:</p>
         <div class="inputBox mt-20">
-          <p class="mt-5 mb-5 fw-b fs-14">手机验证码:</p>
+          <p class="mt-5 mb-5 fw-b fs-14">{{ $t('verification.phoneVerificationCode') }}:</p>
           <div class="flex items-center">
             <div class="flex items-center inputTemp mr-10">
               <image
@@ -32,7 +32,7 @@
           </div>
         </div>
         <div class="inputBox mt-20">
-          <p class="mt-5 mb-5 fw-b fs-14">邮箱验证码:</p>
+          <p class="mt-5 mb-5 fw-b fs-14">{{ $t('verification.emailVerificationCode') }}:</p>
           <div class="flex items-center">
             <div class="flex items-center inputTemp mr-10">
               <image
@@ -53,11 +53,11 @@
           </div>
         </div>
         <div class="w-100 pt-25">
-          <van-button class="w-100" type="primary" @click="nextFun">NEXT</van-button>
+          <van-button class="w-100" type="primary" @click="nextFun">{{ $t('verification.next') }}</van-button>
         </div>
       </div>
       <div v-if="showTransactionPWD">
-        <p class="fw-b fs-16">交易密码</p>
+        <p class="fw-b fs-16">{{ $t('verification.transactionPassword') }}</p>
         <div class="flex outerBox mt-20">
           <input
             v-model="password"
@@ -76,7 +76,7 @@
           </text>
         </div>
         <div class="w-100 pt-25">
-          <van-button class="w-100" type="primary" @click="withdrawFun">提现</van-button>
+          <van-button class="w-100" type="primary" @click="withdrawFun">{{ $t('noun.withdraw') }}</van-button>
         </div>
       </div>
     </div>

@@ -15,15 +15,14 @@
           <text class="text-red fs-12">{{rose}}%</text>
         </div>
       </div>
-      <div class="toolsBtn" @click="showChartBtn">
+      <!-- <div class="toolsBtn" @click="showChartBtn">
         <image
           src="/static/images/tools.png"
           mode="scaleToFill"
         />
-      </div>
+      </div> -->
     </div>
     <div v-if="showChart" class="lineChartBox mt-25">
-      <!-- 折线图1 -->
     </div>
     <div
       class="mt-15 buyAndSellBox flex justify-between items-stretch"
@@ -84,6 +83,32 @@ const props = defineProps({
 })
 
 
+const loadInfo=(symbol:string)=>{
+	nextTick(() => {
+		socketService.value.subscribe('ticker',symbol);
+		socketService.value.on(`${symbol}-ticker`, (data: any) => {
+			lastPrice.value = data.close
+			rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
+		})
+		priceFluctuationsRef.value?.loadData({
+		  klineType: props.type,
+		  symbol: symbol
+		})
+		if(props.type==='SPOT'){
+			buySellRef.value?.loadData({
+			  symbol: symbol
+			})
+		}else{
+			buyAndSellContractRef.value?.loadData({
+			  symbol: symbol
+			})
+		}
+		if(lastPrice.value === 0){
+			getLastPrice(symbol)
+		}
+	})
+}
+
 watch(
   () => controlStore.getQuotesData(props.type)?.symbol,
   (newVal, oldVal) => {
@@ -96,36 +121,8 @@ watch(
 );
 
 onShow(() => {
-	nextTick(() => {
 		loadInfo(props.symbol)
-	})
 })
-
-const loadInfo=(symbol:string)=>{
-	console.log('load数据info')
-	socketService.value.subscribe('ticker',symbol);
-	socketService.value.on(`${symbol}-ticker`, (data: any) => {
-		lastPrice.value = data.close
-		rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
-	})
-	priceFluctuationsRef.value?.loadData({
-	  klineType: props.type,
-	  symbol: symbol
-	})
-	if(props.type==='SPOT'){
-		buySellRef.value?.loadData({
-		  symbol: symbol
-		})
-	}else{
-		buySellRef.value?.loadData({
-		  symbol: symbol
-		})
-	}
-	if(lastPrice.value === 0){
-		getLastPrice(symbol)
-	}
-}
-
 	
 const getLastPrice=async(symbol:string)=>{
 	const params ={

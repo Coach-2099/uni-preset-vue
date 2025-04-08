@@ -7,12 +7,12 @@
             class="switch-item fs-14" 
             :class="{ active: activeTab === 'left' }"
             @click="switchTab('left')"
-          >走势图</div>
+          >{{ $t('noun.trendChart') }}</div>
           <div 
             class="switch-item fs-14" 
             :class="{ active: activeTab === 'right' }"
             @click="switchTab('right')"
-          >交易</div>
+          >{{ $t('noun.trade') }}</div>
           <div 
             class="slider"
             :style="sliderStyle"
@@ -30,13 +30,13 @@
     </div>
     <div class="bottom bg-white mt-5 px-10">
       <van-tabs v-model:active="active" offset-top="74" @click-tab="onClickTab" shrink sticky>
-        <van-tab v-if="activeTab === 'left'" title="订单表">
+        <van-tab v-if="activeTab === 'left'" :title="$t('contract.orderBook')">
           <realTimeTransactions ref="realTimeTransactionsRef" type="METALS"></realTimeTransactions>
         </van-tab>
-        <van-tab v-if="activeTab === 'left'" title="成交">
+        <van-tab v-if="activeTab === 'left'" :title="$t('contract.transactions')">
           <transactionOrder  ref="transactionOrderRef" type="METALS"></transactionOrder>
         </van-tab>
-        <van-tab v-if="activeTab === 'right'" title="仓位">
+        <van-tab v-if="activeTab === 'right'" :title="$t('contract.position')">
           <positionOrder accountType="METALS"></positionOrder>
         </van-tab>
 		<div v-if="activeTab === 'right'" class="orderIconBox pos-absolute" @click="goOrder">
@@ -48,8 +48,8 @@
       </van-tabs>
     </div>
     <div v-if="activeTab === 'left'" class="btnBox pos-fixed w-100 flex">
-      <van-button class="buyBtn flex-1" type="success">LONG</van-button>
-      <van-button class="sellBtn flex-1" type="danger">SHORT</van-button>
+      <van-button class="buyBtn flex-1" type="success">{{$t('noun.doMore')}}</van-button>
+      <van-button class="sellBtn flex-1" type="danger">{{$t('noun.doLess')}}</van-button>
     </div>
     <CustomNavBar></CustomNavBar>
   </div>
@@ -125,7 +125,6 @@ const goOrder = () => {
 }
 
 onUnmounted(() => {
-	console.log('移除ticker监听')
 	socketService.value.unsubscribe('ticker',symbol.value);
 	socketService.value.unsubscribe('depth',symbol.value);
 	socketService.value.unsubscribe('kline',symbol.value);
@@ -133,7 +132,6 @@ onUnmounted(() => {
 })
 
 const onClickTab = (e: any) => {
-  console.log('点击了标签页', e);
   nextTick(() => {
     let currentRef : any
     switch(active.value) {

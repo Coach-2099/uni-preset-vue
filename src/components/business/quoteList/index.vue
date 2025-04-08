@@ -21,7 +21,7 @@
                 class="sortTemp flex justify-between items-center"
                 @click="toggleSort('symbol')"
               >
-                <text>交易对</text>
+                <text>{{$t('noun.transactionPair')}}</text>
                 <image
                   class="sortImg"
                   :src="sortIcon('symbol')"

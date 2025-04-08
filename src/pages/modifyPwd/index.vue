@@ -1,10 +1,10 @@
 <template>
   <div class="modifyPwd-index">
-    <navigationBar title="修改密码"></navigationBar>
+    <navigationBar :title="$t('navigationBarTitle.editPassword')"></navigationBar>
     <div class="inputTemp mt-25 px-20">
       <div class="mt-20">
         <div class="flex justify-between items-center">
-          <p class="fs-14 text-black">账号</p>
+          <p class="fs-14 text-black">{{$t('common.account')}}</p>
         </div>
         <div class="baseInput mt-5 flex justify-between items-center">
           <input
@@ -17,7 +17,7 @@
       </div>
       <div class="mt-15">
         <div class="flex justify-between items-center">
-          <p class="fs-14 text-black">验证码</p>
+          <p class="fs-14 text-black">{{$t('common.vCode')}}</p>
         </div>
         <div class="baseInput mt-5 flex justify-between items-center">
           <input
@@ -34,7 +34,7 @@
       </div>
       <div class="mt-15">
         <div class="flex justify-between items-center">
-          <p class="fs-14 text-black">密码</p>
+          <p class="fs-14 text-black">{{$t('common.password')}}</p>
         </div>
         <div class="baseInput mt-5 flex justify-between items-center">
           <input

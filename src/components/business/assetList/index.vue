@@ -15,79 +15,79 @@
         >
 		<div v-if="type==='Deposit'" class="content">
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>币种</p>
+		    <p>{{ $t('noun.currency') }}</p>
 		    <p>{{ item.symbol }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>数量</p>
+		    <p>{{ $t('noun.quantity') }}</p>
 		    <p>{{ item.rechargeAmount }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>充值地址</p>
+		    <p>{{ $t('assetRecord.depositAddress') }}</p>
 		    <p>{{ item.userAddress }}</p>
 		  </div>
 		  <div v-if="item.protocolType" class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>所属公链</p>
+		    <p>{{ $t('assetRecord.blockchain') }}</p>
 		    <p>{{ item.protocolType }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>交易Hash</p>
+		    <p>{{ $t('assetRecord.transactionHash') }}</p>
 		    <p>{{ item.blockOrderId }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>时间</p>
+		    <p>{{ $t('noun.time') }}</p>
 		    <p>{{ formatISODate(item.createTime) }}</p>
 		  </div>
 		</div>
 		<div v-if="type==='Withdraw'" class="content">
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>币种</p>
+		    <p>{{ $t('noun.currency') }}</p>
 		    <p>{{ item.symbol }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>数量</p>
+		    <p>{{ $t('noun.quantity') }}</p>
 		    <p>{{ item.tradeAmount }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>提币地址</p>
+		    <p>{{ $t('assetRecord.withdrawalAddress') }}</p>
 		    <p>{{ item.userAddress }}</p>
 		  </div>
 		  <div v-if="item.protocolType" class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>所属公链</p>
+		    <p>{{ $t('assetRecord.blockchain') }}</p>
 		    <p>{{ item.protocolType }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>手续费</p>
+		    <p>{{ $t('assetRecord.fee') }}</p>
 		    <p>{{ item.chargeAmount }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>交易Hash</p>
+		    <p>{{ $t('assetRecord.transactionHash') }}</p>
 		    <p>{{ item.transactionId }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>时间</p>
+		    <p>{{ $t('noun.time') }}</p>
 		    <p>{{ formatISODate(item.createTime) }}</p>
 		  </div>
 		</div>
 		<div v-if="type==='Transfer'" class="content">
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>转出账户</p>
+		    <p>{{ $t('assetRecord.fromAccount') }}</p>
 		    <p>{{ item.fromAccount }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>转入账户</p>
+		    <p>{{ $t('assetRecord.toAccount') }}</p>
 		    <p>{{ item.toAccount }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>币种</p>
+		    <p>{{ $t('noun.currency') }}</p>
 		    <p>{{ item.token }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>数量</p>
+		    <p>{{ $t('noun.quantity') }}</p>
 		    <p>{{ item.transferAmount }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
-		    <p>时间</p>
+		    <p>{{ $t('noun.time') }}</p>
 		    <p>{{ formatISODate(item.createTime) }}</p>
 		  </div>
 		</div>
@@ -107,6 +107,9 @@ import basePullRefresh from '@/components/basePullRefresh/index.vue'
 import { formatISODate } from '@/utils/util'
 import { onShow } from '@dcloudio/uni-app'
 import dataDefault from '@/components/dataDefault/index.vue'
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
   dataList: {
@@ -120,16 +123,16 @@ const props = defineProps({
 })
 
 const statusMap: { [key: number]: string } = {
-    0: '待审核',
-    1: '提币审核成功',
-    2: '提币审核驳回',
-    3: '提币到账成功',
-    4: '提币失败',
+    0: t('assetRecord.statusPending'),
+    1: t('assetRecord.statusApproved'),
+    2: t('assetRecord.statusRejected'),
+    3: t('assetRecord.statusCompleted'),
+    4: t('assetRecord.statusFailed'),
 }
 
 // 在现有代码中添加格式化方法
 const formatStatus = (status: number) => {
-  return statusMap[status] || '未知状态'
+  return statusMap[status] || t('assetRecord.statusUnknown')
 }
 
 const isLoading = ref(false)

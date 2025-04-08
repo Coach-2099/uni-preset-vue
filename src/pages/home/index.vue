@@ -5,7 +5,7 @@
         <div @click="goUser" class="flex items-center home_icon">
            <image src="/static/svg/home/user.svg" />
         </div>
-        <div class="fw-b fs-26 text-black ml-20">XAUSWAP</div>
+        <div class="fw-b fs-26 text-black ml-20"><!-- XAUSWAP --></div>
         <div class="flex justify-between">
           <div class="flex items-center home_right_icon mr-20" @click="goCustomerService">
             <image
@@ -34,9 +34,9 @@
     </div>
     <div v-else class="noLoginTemp bg-white py-25">
       <div class="noLoginBox  w-100 flex-col items-center">
-        <div class="fw-b fs-16 text-black">
+        <!-- <div class="fw-b fs-16 text-black">
           {{ $t('common.registerToUnlock') }}<text class="text-light-blue">$5050</text>{{ $t('common.award') }}
-        </div>
+        </div> -->
         <div class="mt-15">
           <van-button
             class="myBtn"
@@ -329,7 +329,6 @@ const socketService = computed(() => userStore.socketService);
 
   // 切换标签
   const onClickTab = (e: any) => {
-    console.log('点击了标签页', e);
     nextTick(() => {
 	  let currentRef : any
 	  switch(active.value){

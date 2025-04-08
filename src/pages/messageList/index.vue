@@ -1,6 +1,6 @@
 <template>
   <div class="messageList-index bg-white">
-    <navigationBar title="消息列表">
+    <navigationBar :title="$t('navBar.messageList')">
       <template #right>
         <div class="flex items-center home_right_icon mr-20" @click="goCustomerService">
           <image

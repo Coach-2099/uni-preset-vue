@@ -28,7 +28,7 @@
     </view>
     <view id="chartTemp">
       <view v-if="isH5" ref="chartContainer" class="chart"></view>
-      <view v-else class="unsupported">当前环境不支持图表展示</view>
+      <view v-else class="unsupported">{{$t('chart.unsupported')}}</view>
       <!-- 遮罩 -->
       <!-- <van-overlay :show="isLoading" teleport="#chartTemp" z-index="100" /> -->
     </view>
@@ -52,6 +52,7 @@ import {
   type LineSeriesOptions,
   type UTCTimestamp
 } from 'lightweight-charts'
+import { useI18n } from 'vue-i18n';
 
 interface CandleData {
   time: number | UTCTimestamp
@@ -87,6 +88,8 @@ const props = defineProps<{
   initialInterval?: number,
   hasMore?: boolean
 }>()
+
+const { t } = useI18n();
 
 const emit = defineEmits<{
   (e: 'interval-change', interval: number, socketVal: string): void
@@ -144,7 +147,7 @@ watch(() =>
 const timeIntervals = ref<TimeInterval[]>([
   { 
     value: 60,    
-    label: '1分',
+    label: t('chart.timeframes.min1'),
     socketVal: '1m',
     showHeader: true, 
     formatter: (t: UTCTimestamp) => {
@@ -154,7 +157,7 @@ const timeIntervals = ref<TimeInterval[]>([
   },
   { 
     value: 300,   
-    label: '5分',
+    label: t('chart.timeframes.min5'),
     socketVal: '5m',
     showHeader: true, 
     formatter: (t: UTCTimestamp) => {
@@ -164,7 +167,7 @@ const timeIntervals = ref<TimeInterval[]>([
   },
   { 
     value: 900,   // 新增15分钟配置
-    label: '15分',
+    label: t('chart.timeframes.min15'),
     socketVal: '15m',
     showHeader: true,
     formatter: (t: UTCTimestamp) => {
@@ -174,7 +177,7 @@ const timeIntervals = ref<TimeInterval[]>([
   },
   { 
     value: 1800,  // 新增30分钟配置
-    label: '30分',
+    label: t('chart.timeframes.min30'),
     socketVal: '30m',
     showHeader: true,
     formatter: (t: UTCTimestamp) => {
@@ -184,7 +187,7 @@ const timeIntervals = ref<TimeInterval[]>([
   },
   { 
     value: 3600,  
-    label: '1时', 
+    label: t('chart.timeframes.hour1'), 
     socketVal: '1h',
     showHeader: true, 
     formatter: (t: UTCTimestamp) => {
@@ -194,7 +197,7 @@ const timeIntervals = ref<TimeInterval[]>([
   },
   { 
     value: 14400, 
-    label: '4时',
+    label: t('chart.timeframes.hour4'),
     socketVal: '4h',
     showHeader: true, 
     formatter: (t: UTCTimestamp) => {
@@ -204,7 +207,7 @@ const timeIntervals = ref<TimeInterval[]>([
   },
   { 
     value: 86400, 
-    label: '1日',
+    label: t('chart.timeframes.day1'),
     socketVal: '1d',
     showHeader: true, 
     formatter: (t: UTCTimestamp) => {
@@ -454,21 +457,21 @@ const initChartStructure = async () => {
       </div>
       ${candleData ? `
         <div class="flex items-center justify-between text-gray">
-          <div>收:</div><div>${close}</div>
+          <div>${t('chart.indicators.close')}:</div><div>${close}</div>
         </div>
         <div class="flex items-center justify-between text-gray">
-          <div>开:</div><div>${open}</div>
+          <div>${t('chart.indicators.open')}:</div><div>${open}</div>
         </div>
         <div class="flex items-center justify-between text-gray">
-          <div>高:</div>
+          <div>${t('chart.indicators.high')}:</div>
           <div>${high}</div>
         </div>
         <div class="flex items-center justify-between text-gray">
-          <div>低:</div>
+          <div>${t('chart.indicators.low')}:</div>
           <div>${low}</div>
         </div>
         <div class="flex items-center justify-between text-gray">
-          <div>涨幅:</div>
+          <div>${t('chart.indicators.change')}:</div>
           <div>
             <text class="${Increase > 0 ? 'text-green' :'text-red'}">${Increase}%</text>
           </div>

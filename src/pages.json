@@ -78,13 +78,13 @@
 				"disableScroll": true
 			}
 		},
-		{
-			"path": "pages/welcomPage/index",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "欢迎页"
-			}
-		},
+		// {
+		// 	"path": "pages/welcomPage/index",
+		// 	"style": {
+		// 		"navigationStyle": "custom",
+		// 		"navigationBarTitleText": "欢迎页"
+		// 	}
+		// },
 		{
 			"path": "pages/login/index",
 			"style": {

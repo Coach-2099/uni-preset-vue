@@ -30,13 +30,13 @@
     </div>
     <div class="bottom pos-relative bg-white mt-5 px-10">
       <van-tabs v-model:active="active" offset-top="74" @click-tab="onClickTab" shrink sticky>
-        <van-tab v-if="activeTab === 'left'" title="订单表">
+        <van-tab v-if="activeTab === 'left'" :title="$t('contract.orderBook')">
           <realTimeTransactions ref="realTimeTransactionsRef" type="SPOT"></realTimeTransactions>
         </van-tab>
-        <van-tab v-if="activeTab === 'left'" title="成交">
+        <van-tab v-if="activeTab === 'left'" :title="$t('contract.transactions')">
           <transactionOrder ref="transactionOrderRef" type="SPOT"></transactionOrder>
         </van-tab>
-       <van-tab v-if="activeTab === 'right'" title="订单">
+       <van-tab v-if="activeTab === 'right'" :title="$t('contract.order')">
           <tradeOrder ref="tradeOrderRef"></tradeOrder>
         </van-tab>
       </van-tabs>

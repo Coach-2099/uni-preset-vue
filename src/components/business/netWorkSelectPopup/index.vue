@@ -14,7 +14,7 @@
           src="/static/images/exMarkGray.png"
           mode="scaleToFill"
         />
-        <p class="ml-10">请确保充值时所选的链类型与提币时所选的链类型一致</p>
+        <p class="ml-10">{{$t('withdrawal.chainTypeMatchWarning')}}</p>
       </div>
     </div>
     <div class="netWorkList flex-1" style="overflow-y: auto;">

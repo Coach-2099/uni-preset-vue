@@ -8,25 +8,25 @@
             <p class="fw-b fs-16 text-black">{{value.symbol}}</p>
           </div>
           <div class="core ml-15">
-            <text :class="value.direction ==='BUY'?'fs-12 text-light-green':'fs-12 text-red'">{{value.direction ==='BUY'?'买入':'卖出'}}</text>
+            <text :class="value.direction ==='BUY'?'fs-12 text-light-green':'fs-12 text-red'">{{ value.direction ==='BUY' ? $t('operation.buy') : $t('operation.sell') }}</text>
           </div>
         </div>
         <div class="rightBox">
-          <p class="fw-b fs-16 text-black text-right">{{value.dealWay==='LIMIT'?'限价':'市价'}}</p>
+          <p class="fw-b fs-16 text-black text-right">{{ value.dealWay==='LIMIT' ? $t('noun.priceLimitOrder') : $t('noun.marketOrder') }}</p>
         </div>
       </div>
       <div class="positionDetail mt-20">
         <div class="flex justify-between">
           <div class="detailBox w-20">
-            <p class="fs-12 text-gray">已成交/委托数量</p>
+            <p class="fs-12 text-gray">{{ $t('spotOrder.completedVsEntrusted') }}</p>
             <p class="fs-12 text-balck mt-5">{{value.completeNum}}/{{value.tradeNum}}</p>
           </div>
           <div class="detailBox w-20">
-            <p class="fs-12 text-gray">委托价格</p>
+            <p class="fs-12 text-gray">{{ $t('spotOrder.entrustedPrice') }}</p>
             <p class="fs-12 text-balck mt-5">{{value.tradePrice}}</p>
           </div>
           <div class="detailBox w-20">
-            <p class="fs-12 text-gray">创建时间</p>
+            <p class="fs-12 text-gray">{{ $t('spotOrder.creationTime') }}</p>
             <p class="fs-12 text-black mt-5">{{formatISODate(value.createTime)}}</p>
           </div>
           <!-- <div class="detailBox w-25">
@@ -39,7 +39,7 @@
             <text class="fs-12 text-gray">设置止盈止损</text>
           </van-button> -->
           <van-button class="myBtn flex-1" type="default" @click="cancel(value.orderNo)">
-            <text class="fs-12 text-gray">撤销</text>
+            <text class="fs-12 text-gray">{{ $t('spotOrder.cancel') }}</text>
           </van-button>
         </div>
       </div>
@@ -48,14 +48,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted ,computed,onUnmounted,nextTick} from 'vue';
+import { ref, onMounted, computed, onUnmounted, nextTick } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { cancelOrder, getOrderList } from '@/api/trade'
 import { onShow } from '@dcloudio/uni-app';
 import dataDefault from '@/components/dataDefault/index.vue';
 import { useControlStore } from '@/stores/control';
 import { formatISODate } from '@/utils/util';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const controlStore = useControlStore();
 
 const userStore = useUserStore();
@@ -76,7 +78,7 @@ const cancel =async(orderNo: string)=>{
 	}
 	const data = await cancelOrder(params)
 	if(!data || !data.errMsg){
-		uni.showToast({title: '已成功取消', icon: 'success'})
+		uni.showToast({title: t('spotOrder.cancelSuccess'), icon: 'success'})
 	}
 	controlStore.setCanceled(!controlStore.getCanceled)
 }
@@ -114,7 +116,7 @@ onMounted(() => {
 
 
 onUnmounted(() => {
-	console.log('移除user_id监听')
+	console.log(t('spotOrder.removeUserListener'))
 	socketService.value.unsubscribeUser(userStore.userInfo.userId);
 })
 </script>

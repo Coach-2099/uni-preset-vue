@@ -1,6 +1,6 @@
 <template>
   <div class="assets-index">
-    <div class="header w-100 text-center text-black fs-22 pt-15 pb-15">Assets</div>
+    <div class="header w-100 text-center text-black fs-22 pt-15 pb-15">{{$t('navBar.myAssets')}}</div>
     <div class="assetsInfo">
       <p class="fs-14 text-gray">{{ $t('homeIndex.totalAssets') }}</p>
       <p class="mt-5 flex items-baseline">

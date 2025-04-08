@@ -3,6 +3,9 @@ import { isFunction } from '@vue/shared'
 import type { HttpRequestOptions, RequestConfig, RequestOptions, UploadFileOption } from './type'
 import { RequestErrMsgEnum, RequestMethodsEnum } from '@/enums/requestEnums'
 import requestCancel from './cancel'
+import {i18n} from '@/i18n'
+
+const { t } = i18n.global // 获取国际化函数
 
 export default class HttpRequest {
     private readonly options: HttpRequestOptions
@@ -17,7 +20,7 @@ export default class HttpRequest {
         if (!retryCount || options.method?.toUpperCase() == RequestMethodsEnum.POST) {
             return Promise.reject()
         }
-        uni.showLoading({ title: '加载中...' })
+        uni.showLoading({ title: t('request.loading')})
         config.hasRetryCount = config.hasRetryCount ?? 0
         if (config.hasRetryCount >= retryCount) {
             return Promise.reject()

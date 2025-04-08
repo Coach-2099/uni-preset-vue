@@ -5,6 +5,9 @@ import { getToken } from '../auth'
 import { RequestCodeEnum, RequestMethodsEnum } from '@/enums/requestEnums'
 import { adaptationUrl } from '@/utils/util'
 import cache from '@/utils/cache'
+import {i18n} from '@/i18n' // 假设您的i18n配置在此处
+
+const { t } = i18n.global // 获取国际化函数
 
 const requestHooks: RequestHooks = {
     requestInterceptorsHook(options, config) {
@@ -45,7 +48,7 @@ const requestHooks: RequestHooks = {
                 }
                 if (data.code == RequestCodeEnum.BUSINESS_FAIL_CODE) {
                     if (data.msg) return uni.showToast({title: data.msg, icon: 'none'})
-                    return uni.showToast({title: '请求失败', icon: 'none'})
+                    return uni.showToast({title: t('request.requestFailed'), icon: 'none'})
                 }
             case RequestCodeEnum.REQUEST_424_ERROR:
                 uni.navigateTo({
@@ -55,13 +58,13 @@ const requestHooks: RequestHooks = {
             case RequestCodeEnum.REQUEST_CODE_ERROR:
             case RequestCodeEnum.REQUEST_401_ERROR:
                 if (data.msg) uni.showToast({ title: data.msg, icon: 'none' });
-                if (!data.msg) uni.showToast({ title: '请求失败，请稍后重试', icon: 'none' });
+                if (!data.msg) uni.showToast({ title: t('request.requestFailedTryAgain'), icon: 'none' });
                 return Promise.reject(data.msg)
             case RequestCodeEnum.REQUEST_404_ERROR:
-                uni.showToast({ title: '请求接口不存在', icon: 'none' });
+                uni.showToast({ title: t('request.apiNotExist'), icon: 'none' });
             case RequestCodeEnum.SYSTEM_ERROR:
                 if (data.msg) uni.showToast({ title: data.msg, icon: 'none' });
-                if (!data.msg) uni.showToast({ title: '接口异常，请刷新后重试', icon: 'none' });
+                if (!data.msg) uni.showToast({ title: t('request.apiErrorRefresh'), icon: 'none' });
                 return Promise.reject(response.data)
             default:
                 // return data
@@ -74,7 +77,7 @@ const requestHooks: RequestHooks = {
     async responseInterceptorsCatchHook(options, error) {
         if (options.method?.toUpperCase() == RequestMethodsEnum.POST) {
             uni.showToast({
-                title: '请求失败，请重试',
+                title: t('request.requestFailedRetry'),
                 icon: 'none'
             })
         }

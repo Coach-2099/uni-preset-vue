@@ -8,7 +8,7 @@
     :style="{ height: '90%', display: 'flex', flexDirection: 'column'}"
   >
     <div class="searchModule bg-white pt-15 pos-fixed w-100">
-      <van-search v-model="searchVal" placeholder="请输入要检索的充值币种" @update:model-value="onSearch" />
+      <van-search v-model="searchVal" :placeholder="$t('common.enterDepositCurrency')" @update:model-value="onSearch" />
     </div>
     <div class="currencyList" style="flex: 1; overflow-y: auto;">
       <div v-for="(item,index) in searchItems" :key=index class="currencyBox flex justify-start items-center px-20 py-5 mt-5 mb-10" @click="chooseToken(item)">

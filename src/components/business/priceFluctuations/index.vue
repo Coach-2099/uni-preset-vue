@@ -2,12 +2,12 @@
   <div class="priceFluctuations-temp" ref="contentRef">
     <div class="flex justify-between align-center">
       <div>
-        <p class="fs-12 text-gray">价格</p>
+        <p class="fs-12 text-gray">{{ $t('priceFluctuations.price') }}</p>
         <p class="fs-12 text-gray">({{basicToken}})</p>
       </div>
       <div class="flex justify-between align-center">
         <div class="mr-5">
-          <p class="fs-12 text-gray text-right">数量</p>
+          <p class="fs-12 text-gray text-right">{{ $t('noun.quantity') }}</p>
           <p class="fs-12 text-gray text-right">({{tradeToken}})</p>
         </div>
         <div class="downBtn">
@@ -80,7 +80,7 @@
       </div>
     </div>
 
-    <div class="depthTemp mt-5">
+    <!-- <div class="depthTemp mt-5">
       <div class="baseSelect px-10 w-100 flex justify-between items-center">
         <div class="leftText">
           <text class="fs-10 text-black">0.01</text>
@@ -92,18 +92,20 @@
           />
         </div>
       </div>
-    </div>
+    </div> -->
 
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch ,computed,onMounted, onUnmounted, onDeactivated} from 'vue';
+import { ref, watch, computed, onMounted, onUnmounted, onDeactivated } from 'vue';
 import { getDepth } from '@/api/quotes'
 import { useControlStore } from '@/stores/control'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/user';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const props = defineProps({
   lastPrice: {
     type: Number,
@@ -133,14 +135,13 @@ const basicToken = ref('') //基础币种
 
 const subSymbol = ref('') //当前订阅的交易对
 
-const MAX_DEPTH_LENGTH = 7 // 最大显示20条深度数据
+const MAX_DEPTH_LENGTH = 8 // 最大显示20条深度数据
 
 // 监控交易对变化
 watch(
   () => controlStore.getQuotesData(props.type)?.symbol,
   (newVal, oldVal) => {
     if(newVal){
-      console.log('监听交易对: ',newVal)
       socketService.value.unsubscribe('depth',oldVal); //取消原有订阅
     }
   }
@@ -159,7 +160,6 @@ onUnmounted(() => {})
 onDeactivated(() => {
   // 原代码中 controlStore.getQuotesData 是一个函数，需要传入参数调用后才能访问 symbol 属性
   // 修改为调用函数并传入 props.type 参数
-  console.log('组件销毁')
 
   const NowSymbol = controlStore.getQuotesData(props.type)?.symbol
   socketService.value.unsubscribe('depth',NowSymbol);
@@ -167,7 +167,6 @@ onDeactivated(() => {
 
 // 加载数据
 const loadData = async (params: any) => {
-  console.log('切换后load数据')
   const data = await getDepth(params)
   bidsList.value = data.bids
   asksList.value = data.asks

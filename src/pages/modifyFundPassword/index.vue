@@ -1,6 +1,6 @@
 <template>
   <div class="modifyFundPassword-index">
-    <navigationBar title="资金密码"></navigationBar>
+    <navigationBar :title="$t('common.fundPassword')"></navigationBar>
     <div class="inputTemp mt-25 px-20">
       <div class="mt-10">
         <div class="flex justify-between items-center">

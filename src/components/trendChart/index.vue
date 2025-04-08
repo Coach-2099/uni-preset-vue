@@ -22,15 +22,15 @@
         </div>
         <div class="fs-12 text-gray flex-1">
           <div class="flex items-center justify-between">
-            <div>24h最高</div>
+            <div>{{$t('chart.indicators.high24h')}}</div>
             <div>{{ HIGH24h }}</div>
           </div>
           <div class="flex items-center justify-between">
-            <div>24h最低</div>
+            <div>{{$t('chart.indicators.low24h')}}</div>
             <div>{{ LOW24h }}</div>
           </div>
           <div class="flex items-center justify-between">
-            <div>24h交易额</div>
+            <div>{{$t('chart.indicators.volume24h')}}</div>
             <div>{{ VOL24h }}</div>
           </div>
         </div>

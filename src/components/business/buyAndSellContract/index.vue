@@ -23,7 +23,7 @@
         <text class="fs-12 text-gray">{{ $t('module.buyAndSellModule.available') }}</text>
       </div>
       <div>
-        <text class="mr-5 fs-12 text-black">{{marginBalance}}</text>
+        <text class="mr-5 fs-12 text-black">{{marginBalance.toFixed(2)}}</text>
         <text class="fs-12 text-black">USDT</text>
       </div>
     </div>
@@ -289,34 +289,34 @@
       :style="{ height: '40%' }"
     >
       <div class="px-20 pos-relative">
-        <p class="mt-20">{{orderTypeObj.value ==='MARKET'?'市价单':'限价单'}} {{direction === 'LONG'?'做多':'做空'}} {{symbol}}</p>
+        <p class="mt-20">{{ orderTypeObj.value ==='MARKET' ? $t('noun.marketOrder') : $t('noun.priceLimitOrder') }} {{ direction === 'LONG' ? $t('noun.doMore') : $t('noun.doLess') }} {{symbol}}</p>
         <div class="fs-12 text-gray mt-20">
           <div class="flex justify-between items-center">
-            <div class="">订单价格</div>
-            <div :class="direction === 'LONG'?'text-light-green':'fs-16 text-red'">{{orderTypeObj.value ==='MARKET'?'市价单':'限价单'}}</div>
+            <div class="">{{ $t('contract.orderPrice') }}</div>
+            <div :class="direction === 'LONG'?'text-light-green':'fs-16 text-red'">{{ orderTypeObj.value ==='MARKET' ? $t('noun.marketOrder') : $t('noun.priceLimitOrder') }}</div>
           </div>
           <div class="flex justify-between items-center mt-15">
-            <div>订单数量</div>
+            <div>{{ $t('contract.orderQuantity') }}</div>
             <div class="text-black">{{tradeNum}} {{tradeToken}}</div>
           </div>
           <div class="flex justify-between items-center mt-15">
-            <div>订单成本</div>
+            <div>{{ $t('contract.orderCost') }}</div>
             <div class="text-black">{{margin}}</div>
           </div>
           <div class="flex justify-between items-center mt-15">
-            <div>价值</div>
+            <div>{{ $t('contract.value') }}</div>
             <div class="text-black">{{tradeVal}} {{basicToken}}</div>
           </div>
           <div class="flex justify-between items-center mt-15">
-            <div>仓位杠杆</div>
-            <div class="text-black">全仓{{leverage.text}}</div>
+            <div>{{ $t('contract.positionLeverage') }}</div>
+            <div class="text-black">{{ $t('contract.fullPosition') }}{{leverage.text}}</div>
           </div>
 		  <div v-if="stopProfitVal>0" class="flex justify-between items-center mt-15">
-		    <div>止盈价</div>
+		    <div>{{ $t('contract.takeProfitPrice') }}</div>
 		    <div class="text-black">{{stopProfitVal}}</div>
 		  </div>
 		  <div v-if="stopLossVal>0"  class="flex justify-between items-center mt-15">
-		    <div>止损价</div>
+		    <div>{{ $t('contract.stopLossPrice') }}</div>
 		    <div class="text-black">{{stopLossVal}}</div>
 		  </div>
         </div>
@@ -329,7 +329,7 @@
               <text
                 class="fs-14"
                 :class="checkedNoPopupWindows ? 'text-black' : 'text-gray'"
-              >不再显示确认弹窗</text>
+              >{{ $t('contract.noConfirmationPopup') }}</text>
             </van-checkbox>
           </div>
           <div class="mt-10">
@@ -342,19 +342,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref ,onMounted,watch} from 'vue';
-import {getLeverages,futuresTrade,getSymbolInfo} from '@/api/trade'
+import { ref, onMounted, watch } from 'vue';
+import { getLeverages, futuresTrade, getSymbolInfo } from '@/api/trade'
 import { getSwapBalance } from '@/api/asset'
 import { storeToRefs } from 'pinia'
 import { roundDown } from '@/utils/util'
 // 图片
-import square  from '@/static/images/square.png'
+import square from '@/static/images/square.png'
 import checkSquare from '@/static/images/checkSquare.png'
 import searchIcon from '@/static/images/search.png'
+import { useI18n } from 'vue-i18n';
 
 import { useControlStore } from '@/stores/control'
 import { onShow } from '@dcloudio/uni-app';
 const controlStore = useControlStore();
+const { t } = useI18n();
 
 const props = defineProps({
   lastPrice:{ //最新价
@@ -407,8 +409,8 @@ const showPopover = ref(false);
 
 const showPopoverOrderType = ref(false)
 const actionsOrderType = [
-  { text: '市价单', value: 'MARKET' },
-  { text: '限价单', value: 'LIMIT' }
+  { text: t('noun.marketOrder'), value: 'MARKET' },
+  { text: t('noun.priceLimitOrder'), value: 'LIMIT' }
 ]
 
 // 类型定义
@@ -417,7 +419,7 @@ type OrderType = {
   value: string; // 订单类型值：LIMIT | MARKET
 }
 const orderTypeObj = ref<OrderType>({
-  text: '市价单',
+  text: t('noun.marketOrder'),
   value: 'MARKET'
 })
 
@@ -454,7 +456,6 @@ const loadSwapBalance = async () => {
 onMounted(() => {
 	loadLeverages()
 	// 进入页面请求获取配置的接口
-	loadSwapBalance()
 })
 
 onShow(()=>{
@@ -462,6 +463,7 @@ onShow(()=>{
 })
 
 const loadData =(params:any)=>{
+	console.log('params = ',params)
 	symbol.value = params.symbol
 	// 进入页面请求获取配置的接口
 	getBuyAndSellConfig()
@@ -502,11 +504,12 @@ const sliderChange =(val:number) =>{
 		currentPrice = props.lastPrice
 	}else{
 		if(!price.value){
-			return uni.showToast({title: '请输入正确的交易价格', icon: 'none'})
+			return uni.showToast({title: t('trading.enterValidPrice'), icon: 'none'})
 		}else{
 			currentPrice = price.value
 		}
 	}
+	console.log('tradeSymbol.value.minTradeDigit =',tradeSymbol.value.minTradeDigit)
 	showPriceInput.value = true
 	let marginVal = roundDown(val/100 * marginBalance.value/currentPrice ,tradeSymbol.value.minTradeDigit) //滑动比例×usdt余额/最新价
 	tradeNum.value = roundDown(marginVal * leverage.value.value,tradeSymbol.value.minTradeDigit)
@@ -529,7 +532,7 @@ const calculateMargin = (val: number) =>{
 	}
 	margin.value = roundDown(currentPrice * val/leverage.value.value,tradeSymbol.value.tradePriceDigit) //计算所需保证金
 	if(marginBalance.value<margin.value){
-		return uni.showToast({title: '保证金不足，请修改交易量', icon: 'none'})
+		return uni.showToast({title: t('contract.insufficientMargin'), icon: 'none'})
 	}
 	tradeVal.value = roundDown(val * currentPrice,tradeSymbol.value.tradePriceDigit)
 }
@@ -568,9 +571,9 @@ const noPopupWindows =(checked: boolean) =>{
 
 const submitTrade = async () => {
 	if(orderTypeObj.value.value ==='LIMIT' && !price.value){
-		return uni.showToast({title: '请输入正确的交易价格', icon: 'none'})
+		return uni.showToast({title: t('trading.enterValidPrice'), icon: 'none'})
 	}else if(!tradeNum.value){
-		return uni.showToast({title: '请输入正确的交易数量', icon: 'none'})
+		return uni.showToast({title: t('trading.enterValidQuantity'), icon: 'none'})
 	}
 	const params = {
 	  symbol: symbol.value,
@@ -585,7 +588,7 @@ const submitTrade = async () => {
 	}
 	const data = await futuresTrade(params) //合约下单
 	if(!data || !data.errMsg){
-		uni.showToast({title: '下单成功', icon: 'success'})
+		uni.showToast({title: t('trading.orderSuccess'), icon: 'success'})
 	}
 	showBuyPopup.value = false 
 	loadSwapBalance() //下单成功重新读取可用保证金

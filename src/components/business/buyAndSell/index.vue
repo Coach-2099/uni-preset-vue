@@ -2,10 +2,10 @@
   <div class="buyAndSellMoudle-index flex-1">
     <div class="btnBox flex">
       <transition name="fade">
-        <div @click="checkTemp('buy')" class="flex-1 text-center fw-b" :class="{ 'checkBuyBtn text-white': checkActive == 'buy' }">Buy</div>
+        <div @click="checkTemp('buy')" class="flex-1 text-center fw-b" :class="{ 'checkBuyBtn text-white': checkActive == 'buy' }">{{ $t('operation.buy') }}</div>
       </transition>
       <transition name="fade">
-        <div @click="checkTemp('sell')" class="flex-1 text-center fw-b" :class="{ 'checkSellBtn text-white': checkActive == 'sell' }">Sell</div>
+        <div @click="checkTemp('sell')" class="flex-1 text-center fw-b" :class="{ 'checkSellBtn text-white': checkActive == 'sell' }">{{ $t('operation.sell') }}</div>
       </transition>
     </div>
     <div class="mt-10 flex justify-between align-center">
@@ -13,7 +13,7 @@
         <text class="fs-12 text-gray">{{ $t('module.buyAndSellModule.available') }}</text>
       </div>
       <div>
-        <text class="mr-5 fs-12 text-black">{{checkActive==='buy'?basicCoinBalance:tradeCoinBalance}}</text>
+        <text class="mr-5 fs-12 text-black">{{checkActive==='buy'?basicCoinBalance.toFixed(2):tradeCoinBalance}}</text>
         <text class="fs-12 text-black">{{checkActive==='buy'?basicToken:tradeToken}}</text>
       </div>
     </div>
@@ -153,26 +153,28 @@
           class="myBuyBtn fw-b fs-14 w-100"
           type="success"
 		   @click="submitTrade()"
-        >Buy</van-button>
+        >{{ $t('operation.buy') }}</van-button>
         <van-button
           v-if="checkActive == 'sell'"
           class="mySellBtn fw-b fs-14 w-100"
           type="danger"
 		   @click="submitTrade()"
-        >Sell</van-button>
+        >{{ $t('operation.sell') }}</van-button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref ,watch} from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { getSpotBalance } from '@/api/asset'
 import { roundDown } from '@/utils/util';
 import { getSymbolInfo, spotTrade } from '@/api/trade';
 import { useControlStore } from '@/stores/control';
 import { onShow } from '@dcloudio/uni-app';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const controlStore = useControlStore();
 const props = defineProps({
   lastPrice:{ //最新价
@@ -190,8 +192,8 @@ watch(
 const symbol =ref('BTC/USDT')
 const showPopoverOrderType = ref(false) //显示交易方式变量
 const actionsOrderType = [
-  { text: '市价单', value: 'MARKET' },
-  { text: '限价单', value: 'LIMIT' }
+  { text: t('noun.marketOrder'), value: 'MARKET' },
+  { text: t('noun.priceLimitOrder'), value: 'LIMIT' }
 ]
 // 类型定义
 type OrderType = {
@@ -199,7 +201,7 @@ type OrderType = {
   value: string; // 订单类型值：LIMIT | MARKET
 }
 const orderTypeObj = ref<OrderType>({
-  text: '市价单',
+  text: t('noun.marketOrder'),
   value: 'MARKET'
 })
 const tradeCoinBalance = ref(0) //可用交易币余额
@@ -238,7 +240,7 @@ const sliderChange =(val:number) =>{
 		}
 	}else{
 		if(!price.value){
-			return uni.showToast({title: '请输入正确的交易价格', icon: 'none'})
+			return uni.showToast({title: t('trading.enterValidPrice'), icon: 'none'})
 		}else{
 			if(currentBalance>0){
 				tradeNum.value = roundDown(val/100 * currentBalance/price.value,tradeSymbol.value.minTradeDigit)
@@ -253,7 +255,7 @@ const calculateMargin = (val: number) =>{
 	if(orderTypeObj.value.value ==='MARKET'){
 		currentPrice = props.lastPrice
 	}else if(!price.value){
-	   return uni.showToast({title: '请输入正确的交易价格', icon: 'none'})
+	   return uni.showToast({title: t('trading.enterValidPrice'), icon: 'none'})
 	}else{
 		currentPrice = price.value
 	}
@@ -264,7 +266,7 @@ const calculateMargin = (val: number) =>{
 		maxVal = tradeCoinBalance.value
 	}
 	if(val>maxVal){
-		return uni.showToast({title: '您输入的交易量大于最大可交易数量', icon: 'none'})
+		return uni.showToast({title: t('trading.tradingAmountExceedsMax'), icon: 'none'})
 	}else{
 		tradeVal.value = roundDown(val * currentPrice,2)
 	}
@@ -314,9 +316,9 @@ const clickPriceInpupt = () => {
 //下单
 const submitTrade = async () => {
 	if(orderTypeObj.value.value ==='LIMIT' && !price.value){
-		return uni.showToast({title: '请输入正确的交易价格', icon: 'none'})
+		return uni.showToast({title: t('trading.enterValidPrice'), icon: 'none'})
 	}else if(!tradeNum.value){
-		return uni.showToast({title: '请输入正确的交易数量', icon: 'none'})
+		return uni.showToast({title: t('trading.enterValidQuantity'), icon: 'none'})
 	}
 	const params = {
 	  symbol: symbol.value,
@@ -327,7 +329,7 @@ const submitTrade = async () => {
 	}
 	const data = await spotTrade(params) //合约下单
 	if(!data || !data.errMsg){
-		uni.showToast({title: '下单成功', icon: 'success'})
+		uni.showToast({title: t('trading.orderSuccess'), icon: 'success'})
 	}
 	loadSpotBalance() //下单成功重新读取可用余额
 	clearParams()

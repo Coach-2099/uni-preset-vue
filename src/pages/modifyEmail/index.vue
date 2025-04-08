@@ -1,6 +1,6 @@
 <template>
   <div class="modifyEmail-index">
-    <navigationBar title="绑定邮箱"></navigationBar>
+    <navigationBar :title="$t('navigationBarTitle.bindEmail')"></navigationBar>
     <div v-if="showEnterVcode" class="myEnterVcode">
       <van-password-input
         :value="vCode"
@@ -34,7 +34,7 @@
         </div>
         <div class="mt-10">
           <div class="flex justify-between items-center">
-            <p class="fs-14 text-black">验证码</p>
+            <p class="fs-14 text-black">{{'common.vCode'}}</p>
           </div>
           <div class="baseInput mt-5 flex justify-between items-center">
             <input

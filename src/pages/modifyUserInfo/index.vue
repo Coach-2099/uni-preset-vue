@@ -1,9 +1,9 @@
 <template>
   <div class="modifyUserInfo-index">
-    <navigationBar title="修改用户信息"></navigationBar>
+    <navigationBar :title="$t('navigationBarTitle.editUserInfo')"></navigationBar>
     <div class="container w-100">
       <div class="flex justify-between items-center mt-20">
-        <div class="label">UserName</div>
+        <div class="label">${{$t('userInfo.username')}}</div>
         <input
           v-model="UserName"
           class="base-input w-100"
@@ -12,7 +12,7 @@
         />
       </div>
       <div class="mt-20">
-        <p class="fs-16 text-black">Please take/upload your avatar.</p>
+        <p class="fs-16 text-black">${{$t('userInfo.avatar')}}</p>
         <div class="pos-relative mt-15">
             <van-uploader
               class="mr-15"
@@ -27,7 +27,7 @@
                   src="/static/svg/tools/upload.svg"
                   mode="scaleToFill"
                 />
-                <p class="mt-15 fs-12">Front photo of ID card</p>
+                <p class="mt-15 fs-12">{{$t('common.idcard')}}</p>
               </div>
             </van-uploader>
             <div v-if="fileAvatar" class="myPreview bg-white flex-col items-center pos-absolute">

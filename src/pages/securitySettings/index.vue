@@ -1,14 +1,14 @@
 <template>
   <div class="securitySettings-index">
-    <navigationBar title="安全设置"></navigationBar>
+    <navigationBar :title="$t('navBar.securitySettings')"></navigationBar>
     <div class="safetyLevel bg-white pl-20 pr-20 pb-20">
-      <p class="text-black fs-16">账户活动</p>
-      <p class="text-gray fs-12 pt-20">上次登录时间：{{ formatISODate(lastLoginTime) }}</p>
+      <p class="text-black fs-16">{{ $t('securitySettings.accountActivity') }}</p>
+      <p class="text-gray fs-12 pt-20">{{ $t('securitySettings.lastLoginTime') }}{{ formatISODate(lastLoginTime) }}</p>
       <!-- <p class="text-gray fs-12 pt-10">登录设备：ios</p> -->
-      <p class="text-balck fs-16 pt-25">安全级别 
-        <span v-if="userInfo.securityLevel == 1 || userInfo.securityLevel == 0" class="text-red">低</span>
-        <span v-if="userInfo.securityLevel == 2" class="text-orange">中</span>
-        <span v-if="userInfo.securityLevel == 3" class="text-green">高</span>
+      <p class="text-balck fs-16 pt-25">{{ $t('securitySettings.securityLevel') }} 
+        <span v-if="userInfo.securityLevel == 1 || userInfo.securityLevel == 0" class="text-red">{{ $t('securitySettings.low') }}</span>
+        <span v-if="userInfo.securityLevel == 2" class="text-orange">{{ $t('securitySettings.medium') }}</span>
+        <span v-if="userInfo.securityLevel == 3" class="text-green">{{ $t('securitySettings.high') }}</span>
       </p>
       <div>
         <van-progress v-if="userInfo.securityLevel == 1  || userInfo.securityLevel == 0" color="#ee0a24" :percentage="40" :show-pivot="false" />
@@ -17,10 +17,10 @@
       </div>
       <div class="unsafeLevelBox mt-15 fs-12 text-gray">
         <div>
-          账户安全等级
-          <text v-if="userInfo.securityLevel == 1 || userInfo.securityLevel == 0">低，请至少开启<span class="text-red">1</span>项安全验证。</text>
-          <text v-else-if="userInfo.securityLevel == 2">中</text>
-          <text v-else-if="userInfo.securityLevel == 3">高</text>
+          {{ $t('securitySettings.accountSecurityLevel') }}
+          <text v-if="userInfo.securityLevel == 1 || userInfo.securityLevel == 0">{{ $t('securitySettings.enableSecurityVerification') }}<span class="text-red">1</span>{{ $t('securitySettings.itemSecurity') }}</text>
+          <text v-else-if="userInfo.securityLevel == 2">{{ $t('securitySettings.medium') }}</text>
+          <text v-else-if="userInfo.securityLevel == 3">{{ $t('securitySettings.high') }}</text>
         </div>
         <div
          v-if="userInfo.securityLevel !== 3"
@@ -30,14 +30,14 @@
             src="/static/svg/tools/ex_mark.svg"
             mode="scaleToFill"
           />
-          手机安全验证
+          {{ $t('securitySettings.phoneSecurityVerification') }}
         </div>
       </div>
     </div>
     <div class="reviseInfo mt-5 pl-20 pr-20 bg-white">
       <div class="pt-20 flex justify-between" @click="goModifyPwd">
         <div class="">
-          <text class="text-black fs-16">修改登录密码</text>
+          <text class="text-black fs-16">{{ $t('securitySettings.changeLoginPassword') }}</text>
         </div>
         <div>
           <!-- <text class="fs-12 text-gray mr-5">尚未认证</text> -->
@@ -50,7 +50,7 @@
       </div>
       <div class="pt-25 flex justify-between" @click="gomodifyEmail">
         <div class="">
-          <text class="text-black fs-16">邮箱</text>
+          <text class="text-black fs-16">{{ $t('common.email') }}</text>
         </div>
         <div>
           <text class="fs-12 text-gray mr-5">{{ userInfo.email }}</text>
@@ -64,7 +64,7 @@
       </div>
       <div class="pt-25 flex justify-between" @click="gomodifyPhone">
         <div class="">
-          <text class="text-black fs-16">手机号</text>
+          <text class="text-black fs-16">{{ $t('common.phone') }}</text>
         </div>
         <div>
           <text class="fs-12 text-gray mr-5">{{ userInfo.phone }}</text>
@@ -78,10 +78,10 @@
       </div>
       <div class="pt-25 flex justify-between" @click="goModifyFundPassword">
         <div class="">
-          <text class="text-black fs-16">资金密码</text>
+          <text class="text-black fs-16">{{ $t('common.fundPassword') }}</text>
         </div>
         <div>
-          <text v-if="userInfo.hasTradePwd == 0" class="fs-12 text-gray mr-5">未设置</text>
+          <text v-if="userInfo.hasTradePwd == 0" class="fs-12 text-gray mr-5">{{ $t('securitySettings.notSet') }}</text>
           <image
             class="rightIcon"
             src="/static/svg/tools/right.svg"
@@ -98,7 +98,9 @@ import { ref, onMounted, computed } from 'vue'
 import navigationBar from '@/components/navigationBar/index.vue'
 import { useUserStore } from '@/stores/user';
 import { formatISODate } from '@/utils/util'
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const userStore = useUserStore();
 const lastLoginTime = ref('');
 const DEFAULT_USER_INFO = {

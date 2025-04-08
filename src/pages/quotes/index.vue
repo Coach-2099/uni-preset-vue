@@ -88,9 +88,6 @@ onUnmounted(() => {
 });
 
 const onClickTab = (name: any) => {
-  console.log('点击了标签页', name);
-  console.log('quoteListRefs.value', spotQuoteListRefs.value)
-
   nextTick(() => {
     const currentRef = active.value === 0 ? spotQuoteListRefs : active.value === 1 ? futuresQuoteListRefs : metalsQuoteListRefs;
     console.log('currentRef', currentRef.value)

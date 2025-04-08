@@ -1,39 +1,39 @@
 <template>
   <div class="IdentityAuth-index">
-    <navigationBar title="身份认证"></navigationBar>
+    <navigationBar :title="$t('userInfo.identityAuthentication')"></navigationBar>
     <div class="container w-100">
       <div class="flex justify-between items-center mt-20">
-        <div class="label">Family Name</div>
+        <div class="label">{{ $t('identityAuth.labels.familyName') }}</div>
         <input
           v-model="firstName"
           class="base-input w-100"
-          placeholder="Please enter the family name."
+          :placeholder="$t('identityAuth.placeholders.familyName')"
           placeholder-class="input-placeholder"
           @input="inputfirstName"
         />
       </div>
       <div class="flex justify-between items-center mt-20">
-        <div class="label">Last Name</div>
+        <div class="label">{{ $t('identityAuth.labels.lastName') }}</div>
         <input
           v-model="lastName"
           class="base-input w-100"
-          placeholder="Please enter the first name."
+          :placeholder="$t('identityAuth.placeholders.lastName')"
           placeholder-class="input-placeholder"
           @input="inputlastName"
         />
       </div>
       <div class="flex justify-between items-center mt-20">
-        <div class="label">card Number</div>
+        <div class="label">{{ $t('identityAuth.labels.cardNumber') }}</div>
         <input
           v-model="idNuber"
           class="base-input w-100"
-          placeholder="Please enter the card number."
+          :placeholder="$t('identityAuth.placeholders.cardNumber')"
           placeholder-class="input-placeholder"
           @input="inputIdNumber"
         />
       </div>
       <div class="flex justify-between items-center mt-20">
-        <div class="label">Identity Type</div>
+        <div class="label">{{ $t('identityAuth.labels.identityType') }}</div>
         <div class="w-100 base-input">
           <picker
             @change="bindPickerChange"
@@ -46,10 +46,8 @@
       </div>
 
       <div class="uploadBox">
-        <p class="fs-16 text-black">Please take/upload xxx's personal ID card.</p>
-        <p class="fs-12 mt-10 text-gray">Please ensure that the ID border is complete, the font is clear, and the
-          brightness is uniform.
-        </p>
+        <p class="fs-16 text-black">{{ $t('identityAuth.upload.title') }}</p>
+        <p class="fs-12 mt-10 text-gray">{{ $t('identityAuth.upload.hint') }}</p>
         <div class="mt-15 flex justify-between">
           <div class="pos-relative">
             <van-uploader
@@ -65,7 +63,7 @@
                   src="/static/images/IDCardFront.png "
                   mode="scaleToFill"
                 />
-                <p class="mt-15 fs-12">Front photo of ID card</p>
+                <p class="mt-15 fs-12">{{ $t('identityAuth.upload.frontPhoto') }}</p>
               </div>
             </van-uploader>
             <div v-if="fileFront" class="myPreview bg-white flex-col items-center pos-absolute">
@@ -89,7 +87,7 @@
                   src="/static/images/IDCardBack.png"
                   mode="scaleToFill"
                 />
-                <p class="mt-15 fs-12 text-black">Reverse photo of ID card</p>
+                <p class="mt-15 fs-12 text-black">{{ $t('identityAuth.upload.backPhoto') }}</p>
               </div>
             </van-uploader>
             <div v-if="fileBack" class="myPreview bg-white flex-col items-center pos-absolute">
@@ -105,11 +103,10 @@
     </div>
     <div class="pos-fixed btnBox bg-white">
       <p class="fs-12 text-gray btnText">
-        BYBIT will encrypt information to ensure
-        real-time information security.
+        {{ $t('identityAuth.upload.securityNote') }}
       </p>
       <van-button class="uploadBtn w-100 mt-15" @click="uploadFun">
-        <text class="fs-20 text-white fw-b">Upload</text>
+        <text class="fs-20 text-white fw-b">{{ $t('identityAuth.upload.uploadButton') }}</text>
       </van-button>
     </div>
   </div>
@@ -120,7 +117,8 @@ import { ref } from 'vue'
 import navigationBar from '@/components/navigationBar/index.vue'
 import { uploadImage } from '@/api/app'
 import { userKyc } from '@/api/account'
-
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const firstName = ref('')
 const lastName = ref('')
 const idNuber = ref('')
@@ -134,7 +132,10 @@ const fileBackSrc = ref('')
 const fileListFront = ref([])
 const fileListBack = ref([])
 
-const typeArray = ref([{text: '身份证', value: 'IDCARD'}, {text: '护照', value: 'PASSPORT'}, {text: '驾照', value: 'DRVING_LICENSE'}])
+const typeArray = ref([
+	{text: t('userInfo.identityTypes.idCard'), value: 'IDCARD'}, 
+  {text: t('userInfo.identityTypes.passport'), value: 'PASSPORT'}, 
+  {text: t('userInfo.identityTypes.drivingLicense'), value: 'DRVING_LICENSE'}])
 const checkType = ref(0)
 
 const inputfirstName = () => {
@@ -178,7 +179,7 @@ const uploadFun = async () => {
     fmImg: fileBackSrc.value
   }
   await userKyc(params)
-  uni.showToast({ title: '认证成功', icon: 'none' })
+  uni.showToast({ title: t('userInfo.verificationSuccess'), icon: 'none' })
   uni.redirectTo({
     url: '/pages/userInfo/index'
   })

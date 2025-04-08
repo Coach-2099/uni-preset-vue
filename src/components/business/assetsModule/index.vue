@@ -115,9 +115,9 @@ watch(
 )
 
 const goDetail = () => {
-  uni.navigateTo({
-    url: '/pages/currencyDetails/index'
-  })
+  // uni.navigateTo({
+  //   url: '/pages/currencyDetails/index'
+  // })
 
 }
 

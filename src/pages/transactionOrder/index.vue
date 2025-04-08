@@ -1,6 +1,6 @@
 <template>
   <div class="transactionOrder-index">
-    <navigationBar title="All Order"></navigationBar>
+    <navigationBar :title="$t('transactionOrder.allOrder')"></navigationBar>
     <div class="">
       <van-tabs
         v-model:active="active"
@@ -37,41 +37,41 @@
               </div>
               <div class="content" v-if="active ===0">
 				  <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-				    <p>交易方式</p>
+				    <p>{{ $t('transactionOrder.tradingMethod') }}</p>
 				    <p>{{ item.dealWay }}</p>
 				  </div>
                 <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-                  <p>订单价格</p>
+                  <p>{{ $t('transactionOrder.orderPrice') }}</p>
                   <p>{{ item.tradePrice }}</p>
                 </div>
                 <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-                  <p>成交量/订单数量</p>
+                  <p>{{ $t('transactionOrder.volumeVsOrderQuantity') }}</p>
                   <p>{{item.completeNum}}/{{ item.tradeNum }}</p>
                 </div>
                 <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-                  <p>状态</p>
+                  <p>{{ $t('transactionOrder.status') }}</p>
                   <p>{{ spotStatus(item.status) }}</p>
                 </div>
               </div>
 			  <div class="content" v-else>
 				<div class="mt-15 fs-12 text-gray flex justify-between items-center">
-				  <p>交易方式</p>
+				  <p>{{ $t('transactionOrder.tradingMethod') }}</p>
 				  <p>{{ item.tradeType }}</p>
 				</div>
 			    <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-			      <p>入场价格</p>
+			      <p>{{ $t('transactionOrder.entryPrice') }}</p>
 			      <p>{{ item.entryPrice }}</p>
 			    </div>
 			    <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-			      <p>清算价格</p>
+			      <p>{{ $t('transactionOrder.liquidationPrice') }}</p>
 			      <p>{{ item.liquidationPrice }}</p>
 			    </div>
 			    <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-			      <p>数量</p>
+			      <p>{{ $t('noun.quantity') }}</p>
 			      <p>{{ item.quantity }}</p>
 			    </div>
 			    <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-			      <p>状态</p>
+			      <p>{{ $t('transactionOrder.status') }}</p>
 			      <p>{{ formatStatus(item.status) }}</p>
 			    </div>
 			  </div>
@@ -87,26 +87,28 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref ,watch} from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue';
 import { getOrderList, getFuturesOrderList } from '@/api/trade';
 import dataDefault from '@/components/dataDefault/index.vue'
 import { onLoad } from '@dcloudio/uni-app';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const active = ref(0)
 const status = ref('') //查询状态
 const accountType = ref('FUTURES')
 const activeList = ref([
   {
-    title: '现货',
+    title: t('noun.spotGoods'),
     value: 'SPOT'
   },
   {
-    title: '合约',
+    title: t('noun.futureGoods'),
     value:'FUTURES'
   },
   {
-    title: '贵金属',
+    title: t('noun.metalsGoods'),
     value:'METALS'
   }
 ])
@@ -165,7 +167,7 @@ const copyText = (val:string) => {
     data: val,
     success: () => {
       uni.showToast({
-        title: '复制成功',
+        title: t('tips.copySuccess'),
         icon: 'none'
       })
     }
@@ -180,19 +182,19 @@ const onClickTab = (e: any) => {
 }
 
 const statusMap = {
-    'OPEN': '委托中',
-    'POSITIONING': '持仓中', 
-    'CLOSED': '已平仓',
-    'CANCELLED': '已撤单',
-    'LIQUIDATED': '已爆仓'
+    'OPEN': t('transactionOrder.statuses.inOrder'),
+    'POSITIONING': t('transactionOrder.statuses.inPosition'), 
+    'CLOSED': t('transactionOrder.statuses.closed'),
+    'CANCELLED': t('transactionOrder.statuses.cancelled'),
+    'LIQUIDATED': t('transactionOrder.statuses.liquidated')
 }
 
 const spotStatusMap = {
-    'ENTRUSTMENT': '委托中',
-    'MATCHING': '部分撮合', 
-    'COMPLETED': '已完成',
-    'PART_REVOKED': '部分成交部分撤销',
-    'REVOKED': '已撤销'
+    'ENTRUSTMENT': t('transactionOrder.spotStatuses.entrusting'),
+    'MATCHING': t('transactionOrder.spotStatuses.partialMatching'), 
+    'COMPLETED': t('transactionOrder.spotStatuses.completed'),
+    'PART_REVOKED': t('transactionOrder.spotStatuses.partialDealCancelled'),
+    'REVOKED': t('transactionOrder.spotStatuses.cancelled')
 }
 const formatStatus = (status: string) => {
   return statusMap[status] || status

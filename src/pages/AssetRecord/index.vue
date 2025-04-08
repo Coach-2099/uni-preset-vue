@@ -1,6 +1,6 @@
 <template>
   <div class="AssetRecord-index">
-    <navigationBar title="资产记录"></navigationBar>
+    <navigationBar :title="$t('navBar.assetRecord')"></navigationBar>
     <div class="mt-20 pl-5 pr-10">
       <van-tabs
         title-active-color="#333333"
@@ -10,15 +10,15 @@
         shrink
       >
         <!-- 充值 -->
-        <van-tab title="Deposit">
+        <van-tab :title="$t('module.assetModule.deposit')">
           <assetList :data-list="dataList" type="Deposit" @refresh="refreshFun"></assetList>
         </van-tab>
         <!-- 提现 -->
-        <van-tab title="Withdraw">
+        <van-tab :title="$t('module.assetModule.withdraw')">
           <assetList :data-list="dataList" type="Withdraw" @refresh="refreshFun"></assetList>
         </van-tab>
         <!-- 转账 -->
-        <van-tab title="Transfer">
+        <van-tab :title="$t('module.assetModule.transfer')">
           <assetList :data-list="dataList" type="Transfer" @refresh="refreshFun"></assetList>
         </van-tab>
       </van-tabs>
@@ -32,7 +32,9 @@ import navigationBar from '@/components/navigationBar/index.vue'
 import assetList from '@/components/business/assetList/index.vue'
 import { getRechargeList, getWithdrawList, getTrasferList } from '@/api/asset'
 import { onLoad } from '@dcloudio/uni-app';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const active = ref(0);
 const dataList = ref([]);
 const pages = ref({
@@ -41,7 +43,6 @@ const pages = ref({
 })
 
 const refreshFun = () => {
-  console.log('刷新充值记录')
   loadData()
 }
 

@@ -16,7 +16,7 @@
         @search="onClickButton"
       >
         <template #action>
-          <div class="text-black fs-14" @click="onClickButton">搜索</div>
+          <div class="text-black fs-14" @click="onClickButton">{{$t('common.search')}}</div>
         </template>
       </van-search>
     </div>

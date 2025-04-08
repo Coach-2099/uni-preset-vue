@@ -6,29 +6,29 @@
         <div class="leftBox flex justify-between">
           <div class="">
             <p class="fw-b fs-16 text-black">{{value.symbol}}</p>
-            <p class="fs-12 text-black mt-5">全仓{{value.leverage}}X</p>
+            <p class="fs-12 text-black mt-5">{{ $t('position.fullPosition') }}{{value.leverage}}X</p>
           </div>
           <div class="core ml-15">
-            <text :class="value.direction ==='LONG'?'fs-12 text-light-green':'fs-12 text-red'">{{value.direction ==='LONG'?'做多':'做空'}}</text>
+            <text :class="value.direction ==='LONG'?'fs-12 text-light-green':'fs-12 text-red'">{{ value.direction ==='LONG' ? $t('noun.doMore') : $t('noun.doLess') }}</text>
           </div>
         </div>
         <div class="rightBox" v-if="value.status==='POSITIONING'">
-          <p class="fs-12 text-gray text-right">未结盈亏</p>
+          <p class="fs-12 text-gray text-right">{{ $t('position.unrealizedPnL') }}</p>
           <p :class="value.unrealizedProfit>0?'fw-b fs-16 text-green mt-5':'fw-b fs-16 text-red mt-5'">{{value.unrealizedProfit}}({{value.unrealizedProfitScale}}%)</p>
         </div>
       </div>
       <div class="positionDetail mt-20">
         <div class="flex justify-between">
           <div class="detailBox w-20">
-            <p class="fs-12 text-gray">{{value.status==='POSITIONING'?'持仓数量':'委托数量'}}</p>
+            <p class="fs-12 text-gray">{{ value.status==='POSITIONING' ? $t('position.positionQuantity') : $t('position.entrustQuantity') }}</p>
             <p class="fs-12 text-balck mt-5">{{value.quantity}}</p>
           </div>
           <div class="detailBox w-20">
-            <p class="fs-12 text-gray">入场价格</p>
+            <p class="fs-12 text-gray">{{ $t('position.entryPrice') }}</p>
             <p class="fs-12 text-balck mt-5">{{value.entryPrice}}</p>
           </div>
           <div class="detailBox w-20">
-            <p class="fs-12 text-gray">持仓保证金</p>
+            <p class="fs-12 text-gray">{{ $t('position.positionMargin') }}</p>
             <p class="fs-12 text-black mt-5">{{value.margin.toFixed(2)}}</p>
           </div>
           <!-- <div class="detailBox w-25">
@@ -38,16 +38,16 @@
         </div>
         <div class="btnBox flex justify-between mt-15">
           <van-button class="myBtn flex-1" type="default" @click="settingProfitAndLoss(value.orderNo)">
-            <text class="fs-12 text-gray">设置止盈止损</text>
+            <text class="fs-12 text-gray">{{ $t('position.setTakeProfitStopLoss') }}</text>
           </van-button>
           <!-- <van-button class="myBtn flex-1" type="default">
             <text class="fs-12 text-gray">追踪出场</text>
           </van-button> -->
 		  <van-button v-if="value.status==='OPEN'" class="myBtn flex-1" type="default" @click="cancel(value.orderNo)">
-		    <text class="fs-12 text-gray">撤销</text>
+		    <text class="fs-12 text-gray">{{ $t('position.cancel') }}</text>
 		  </van-button>
           <van-button v-else class="myBtn flex-1" type="default" @click="close(value.orderNo,value.quantity)">
-            <text class="fs-12 text-gray">平仓</text>
+            <text class="fs-12 text-gray">{{ $t('position.closePosition') }}</text>
           </van-button>
         </div>
       </div>
@@ -56,7 +56,7 @@
     <!-- 设置止盈止损 -->
     <van-dialog
       v-model:show="showDialog"
-      title="设置止盈止损"
+      :title="$t('position.setTakeProfitStopLoss')"
       show-cancel-button
       @confirm="myConfirm"
       @cancel="myCancel"
@@ -94,14 +94,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted ,computed,onUnmounted,nextTick} from 'vue';
+import { ref, onMounted, computed, onUnmounted, nextTick } from 'vue';
 import { useUserStore } from '@/stores/user';
-import { closeOrder,getFuturesOrderList,cancelFuturesOrder,setProfitOrLoss} from '@/api/trade'
+import { closeOrder, getFuturesOrderList, cancelFuturesOrder, setProfitOrLoss } from '@/api/trade'
 import { roundDown } from '@/utils/util'
 import { onShow } from '@dcloudio/uni-app';
 import dataDefault from '@/components/dataDefault/index.vue';
 import { useControlStore } from '@/stores/control';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const props = defineProps({
   accountType:{
 	  type:String,
@@ -112,9 +114,7 @@ const props = defineProps({
 const controlStore = useControlStore();
 const userStore = useUserStore();
 const socketService = computed(() => userStore.socketService);
-const unrealizedProfit = computed(() =>{
-	return 
-})
+
 const ordersMap = ref(new Map())
 const size = ref(10)
 const current = ref(1)
@@ -131,11 +131,11 @@ const settingProfitAndLoss = (orderId:string) => {
 
 const myConfirm= () => {
 	if(!stopProfit.value && !stopLess.value){
-		return uni.showToast({title: '请输入止盈止损价格', icon: 'none'})
+		return uni.showToast({title: t('position.enterTakeProfitStopLoss'), icon: 'none'})
 	}else if(stopProfit.value<0){
-		return uni.showToast({title: '请输入正确的止盈止损价格', icon: 'none'})
+		return uni.showToast({title: t('position.enterValidTakeProfit'), icon: 'none'})
 	}else if(stopLess.value<0 || stopLess.value){
-		return uni.showToast({title: '请输入正确的止损止损价格', icon: 'none'})
+		return uni.showToast({title: t('position.enterValidStopLoss'), icon: 'none'})
 	}
 	const params ={
 		stopProfit:stopProfit.value,
@@ -143,7 +143,7 @@ const myConfirm= () => {
 		orderNo:orderNo.value
 	}
 	setProfitOrLoss(params).then((res:any)=>{
-		uni.showToast({title: '设置成功', icon: 'success'})
+		uni.showToast({title: t('position.settingSuccess'), icon: 'success'})
 	})
 }
 
@@ -161,7 +161,7 @@ const close =async(orderNo: string,quantity: number)=>{
 	}
 	const data = await closeOrder(params)
 	if(!data || !data.errMsg){
-		uni.showToast({title: '已平仓', icon: 'success'})
+		uni.showToast({title: t('position.positionClosed'), icon: 'success'})
 	}
 	controlStore.setCanceled(!controlStore.getCanceled)
 }
@@ -173,7 +173,7 @@ const cancel =async(orderNo: string)=>{
 	}
 	const data = await cancelFuturesOrder(params)
 	if(!data || !data.errMsg){
-		uni.showToast({title: '已成功取消', icon: 'success'})
+		uni.showToast({title: t('position.cancelSuccess'), icon: 'success'})
 	}
 	controlStore.setCanceled(!controlStore.getCanceled)
 }
@@ -239,7 +239,7 @@ onMounted(() => {
   })
 })
 onUnmounted(() => {
-	console.log('移除user_id监听')
+	console.log(t('position.removeUserListener'))
 	socketService.value.unsubscribe('ticker');
 	socketService.value.unsubscribeUser(userStore.userInfo.userId);
 })

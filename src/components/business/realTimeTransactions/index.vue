@@ -69,13 +69,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ref,computed,watch, onMounted} from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { getDepth } from '@/api/quotes'
 import { useUserStore } from '@/stores/user';
 import { useControlStore } from '@/stores/control';
 import dataDefault from '@/components/dataDefault/index.vue';
 import { onShow } from '@dcloudio/uni-app';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const props = defineProps({
   type:{
 	  type:String,

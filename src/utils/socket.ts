@@ -46,6 +46,10 @@ class SocketService {
       console.log('WebSocket连接成功');
       // this.isConnected.value = true;
       this.startHeartbeat();
+	  if(this.retryCount>0){
+		  location.reload() //为了防止页面断开时已订阅内容数据无法重新监听，强制刷新
+		  this.retryCount = 0
+	  }
       // 重连时恢复订阅, 已刷新当前页，重新恢复订阅无效，因数据无法被监听处理
       // this.restoreSubscriptions();
     };
@@ -262,7 +266,7 @@ class SocketService {
     this.disconnect();
     setTimeout(() => {
       this.connect()
-      location.reload() //为了防止页面断开时已订阅内容数据无法重新监听，强制刷新
+	  this.retryCount++;
     }
 	, 3000); // 3秒后尝试重连
   }

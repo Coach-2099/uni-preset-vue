@@ -1,6 +1,6 @@
 <template>
   <div class="InviteFriends-index">
-    <navigationBar title="邀请好友"></navigationBar>
+    <navigationBar :title="$t('navBar.inviteFriends')"></navigationBar>
     <div class="content">
       <div class="bannerBox">
         <van-swipe class="my-swipe bg-light-gray text-cneter" :autoplay="3000" >
@@ -10,15 +10,14 @@
         </van-swipe>
       </div>
       <div class="mt-25">
-        <p class="text-center fs-24 text-black">Get $10 in Bitcoin</p>
+        <p class="text-center fs-24 text-black">{{ $t('inviteFriends.getReward') }}</p>
         <p class="text-center fs-16 text-gray">
-          You'll both get $10 in free Bitcoin when
-          your friend buys or sells $100 of crypto
+          {{ $t('inviteFriends.inviteDescription') }}
         </p>
       </div>
       <div class="copyTemp flex justify-between items-center">
         <p class="inviteStr w-75 fs-16 text-gray">{{ inviteUrl }}</p>
-        <van-button class="copyBtn ml-10" type="primary" @click="copyText(inviteUrl)">Copy</van-button>
+        <van-button class="copyBtn ml-10" type="primary" @click="copyText(inviteUrl)">{{ $t('common.copy') }}</van-button>
       </div>
       <div class="qrCodeTemp">
         <qrcode-vue :value="inviteUrl" size="130" />
@@ -33,6 +32,9 @@ import navigationBar from '@/components/navigationBar/index.vue'
 import { useUserStore } from '@/stores/user';
 import { getBanner } from '@/api/common';
 import QrcodeVue from 'qrcode.vue'
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 const userStore = useUserStore();
 const inviteUrl = ref(window.location.protocol+'//'+document.domain+'/#/pages/register/index?inviteCode='+userStore.userInfo.inviteCode);
 const copyText = () => {
@@ -40,7 +42,7 @@ const copyText = () => {
     data: inviteUrl.value,
     success: () => {
       uni.showToast({
-        title: '复制成功',
+        title: t('tips.copySuccess'),
         icon: 'none'
       })
     }

@@ -1,6 +1,6 @@
 <template>
   <div class="withdrawal-index">
-    <navigationBar title="提现">
+    <navigationBar :title="$t('noun.withdraw')">
       <template #right>
         <div class="headerRightIcon" @click="goAssetRecord">
           <image
@@ -13,7 +13,7 @@
     </navigationBar>
     <div class="inputBox pt-10 pb-25 bg-white">
       <div class="mb-20">
-        <p class="fs-16 text-black">币种</p>
+        <p class="fs-16 text-black">{{ $t('noun.currency') }}</p>
         <div @click="checkBit" class="baseSelect w-100 mt-10 pl-15 pr-25 flex justify-between items-cneter">
           <div class="leftBox flex items-center">
             <image
@@ -35,13 +35,13 @@
       </div>
 
       <div v-if="protocolType" class="mt-20">
-        <p class="fs-16 text-black">所属网络</p>
+        <p class="fs-16 text-black">{{ $t('formFields.network') }}</p>
         <div @click="openNetworkPopup" class="baseSelect w-100 mt-10 pl-15 pr-25 flex justify-between items-cneter">
           <div class="leftBox flex items-center">
             <p
               class="fs-14"
               :class="protocolType ? 'text-black' : 'text-gray'">
-              {{ protocolType || '请选择链类型'}}
+              {{ protocolType || $t('formFields.selectTheLinkType') }}
             </p>
           </div>
           <div class="rightBox flex items-center">
@@ -56,7 +56,7 @@
 
       <div class="mt-25">
         <div class="flex justify-between items-center">
-          <p class="fs-16 text-black">地址</p>
+          <p class="fs-16 text-black">{{ $t('withdrawal.address') }}</p>
           <!-- <div class="flex items-center">
             <p class="fs-16 text-black mr-10">地址簿</p>
             <div class="rightIcon"></div>
@@ -66,7 +66,7 @@
           <input
             v-model="address"
             class="myInput px-10 py-10 w-100"
-            placeholder="请输入或长按粘贴提币地址"
+            :placeholder="$t('withdrawal.enterOrPasteAddress')"
             placeholder-class="input-placeholder"
 			@blur="checkAddressRight"
           />
@@ -75,7 +75,7 @@
 
       <div class="mt-25">
         <div class="flex justify-between items-center">
-          <p class="fs-16 text-black">金额</p>
+          <p class="fs-16 text-black">{{ $t('withdrawal.amount') }}</p>
           <!-- <div class="flex items-end">
             <p class="fs-16 text-black mr-5">0</p>
             <div class="rightImg">
@@ -90,33 +90,33 @@
           <input
             v-model="amount"
             class="myInput flex-1 px-10 py-10 w-100"
-            :placeholder="`最低提币金额：${limitWithdraw}`"
+            :placeholder="$t('withdrawal.minimumWithdrawalAmount') + limitWithdraw"
             placeholder-class="input-placeholder"
             @input="calculateFee"
           />
-          <text @click="maxVal" class="fs-16 px-10 rightText">最大</text>
+          <text @click="maxVal" class="fs-16 px-10 rightText">{{ $t('withdrawal.max') }}</text>
         </div>
       </div>
 
       <div class="flex justify-between items-center mt-25">
-        <p class="text-gray fs-16">资金账户：</p>
+        <p class="text-gray fs-16">{{ $t('withdrawal.fundAccount') }}：</p>
         <p class="text-black fs-16">{{tokenBalance}}</p>
       </div>
     </div>
     <div class="detailInfo mt-5 pt-20 bg-white">
-      <p class="fs-14 text-gray">提示：</p>
+      <p class="fs-14 text-gray">{{ $t('withdrawal.tips') }}：</p>
       <div class="mt-10 flex justify-between items-center">
-        <p class="fs-16 text-gray">日剩余额度</p>
+        <p class="fs-16 text-gray">{{ $t('withdrawal.dailyRemainingQuota') }}</p>
         <p class="fs-16 text-black">20,000/20,000 USDT</p>
       </div>
       <div class="mt-10 flex justify-between items-center">
-        <p class="fs-16 text-gray">月剩余额度</p>
+        <p class="fs-16 text-gray">{{ $t('withdrawal.monthlyRemainingQuota') }}</p>
         <P class="fs-16 text-black">20,000/20,000 USDT</P>
       </div>
       <div @click="openContractAddress" class="mt-10 flex justify-between items-center">
-        <p class="fs-16 text-gray">合约地址：</p>
+        <p class="fs-16 text-gray">{{ $t('withdrawal.contractAddress') }}：</p>
         <div class="flex justify-between items-center">
-          <p class="fs-16 text-black mr-5">以20000结尾</p>
+          <p class="fs-16 text-black mr-5">{{ $t('withdrawal.endsWith20000') }}</p>
           <div class="downIconLine"></div>
         </div>
       </div>
@@ -124,12 +124,12 @@
 
     <div class="btnGroup bg-white w-100">
       <div class="flex justify-between items-center">
-        <p class="fs-14 text-gray">提币手续费</p>
+        <p class="fs-14 text-gray">{{ $t('withdrawal.withdrawalFee') }}</p>
         <p class="fs-14 text-gray">{{ processingFee || 0 }} {{ symbol }} </p>
       </div>
       <div class="flex justify-between items-center mt-5">
         <div>
-          <p class="fs-16 text-gray">到账金额</p>
+          <p class="fs-16 text-gray">{{ $t('withdrawal.amountToReceive') }}</p>
           <p class="fs-14 fw-b text-black">{{ amountOfReceipt }} {{ symbol }}</p>
         </div>
         <div>
@@ -137,7 +137,7 @@
             class="withdrawBtn fw-b"
             type="primary"
             @click="goWithdraw"
-          >Withdraw</van-button>
+          >{{ $t('noun.withdraw') }}</van-button>
         </div>
       </div>
     </div>
@@ -156,12 +156,14 @@ import currencySelectPopup from '@/components/business/currencySelectPopup/index
 import networkSelectPopup from '@/components/business/netWorkSelectPopup/index.vue'
 import contractAddress from '@/components/business/contractAddress/index.vue';
 import infoVerification from '@/components/business/InfoVerification/index.vue'
-import { getBalance, getWithdrawCoins, withdraw ,checkAddress, getTokenFee} from '@/api/asset';
+import { getBalance, getWithdrawCoins, withdraw, checkAddress, getTokenFee} from '@/api/asset';
 import { useUserStore } from '@/stores/user';
 import { showConfirmDialog } from 'vant';
 import { onShow } from '@dcloudio/uni-app';
 import { roundDown } from '@/utils/util';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const tokenBalance = ref(0); //所选钱包余额
 const address = ref(''); // 钱包地址
 const currentSelectRef:any = ref(null)
@@ -211,7 +213,7 @@ const getUser = async () => {
   if(!userInfo.value.phone) {
     showConfirmDialog({
       showCancelButton: false,
-      message:'请先前往绑定手机号',
+      message: t('tips.bindPhoneOrEmail'),
     }).then(() => {
       uni.navigateTo({
         url: '/pages/modifyPhone/index'
@@ -220,7 +222,7 @@ const getUser = async () => {
   } else if (!userInfo.value.email) {
     showConfirmDialog({
       showCancelButton: false,
-      message:'请先前往绑定邮箱',
+      message: t('tips.bindPhoneOrEmail'),
     }).then(() => {
       uni.navigateTo({
         url: '/pages/modifyEmail/index'
@@ -229,7 +231,7 @@ const getUser = async () => {
   }else if(userInfo.value.isValid == 0){
 	  showConfirmDialog({
 	    showCancelButton: false,
-	    message:'请先进行实名认证',
+	    message: t('userInfo.completeIDforTransactions'),
 	  }).then(() => {
 	    uni.navigateTo({
 	      url: '/pages/IdentityAuth/index'
@@ -287,7 +289,7 @@ const balance =async (token:string) => {
 //检测地址的正确性
 const checkAddressRight = async() => {
   if(!symbol.value){
-	  return uni.showToast({title: '请先选择提币币种', icon: 'none'})
+	  return uni.showToast({title: t('withdrawal.selectCurrencyFirst'), icon: 'none'})
   }
   const params ={
 	  coin:symbol.value,
@@ -351,7 +353,7 @@ const isWithdraw = async (Object: any) => {
   }
   const data = await withdraw(params)
  if(!data || !data.errMsg){
-  	uni.showToast({title: '提币申请已提交', icon: 'success'})
+  	uni.showToast({title: t('withdrawal.withdrawalSubmitted'), icon: 'success'})
 	balance(symbol.value) //查询余额
   }
 }
