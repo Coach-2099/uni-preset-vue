@@ -29,7 +29,10 @@
             src="/static/images/ProfitAndLoss.png"
             mode="scaleToFill"
           />
-          <text class="text-gray fs-14">{{ $t('homeIndex.singleDay') }} {{plAmount}}({{pl}}%)</text>
+          <text class="text-gray fs-14">
+            {{ $t('homeIndex.singleDay') }} 
+            <span :class="plAmount > 0 ? 'text-light-green' : 'text-red'">{{plAmount}}({{pl}}%)</span>
+          </text>
         </p>
       </div>
     </div>

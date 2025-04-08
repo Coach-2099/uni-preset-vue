@@ -29,15 +29,15 @@
         </div>
       </div>
       <div class="sellAndBuyTip text-gray fs-14 mt-5 flex justify-between">
-        <div class="fs-14 text-gray">买入</div>
+        <div class="fs-14 text-gray">{{ $t('operation.buy') }}</div>
         <div class="fs-14 text-gray"></div>
-        <div class="fs-14">卖出<!-- 0.1 --></div>
+        <div class="fs-14">{{ $t('operation.sell') }}<!-- 0.1 --></div>
       </div>
       <div>
         <div class="contentTip text-gray fs-14 flex justify-between mt-20">
-          <div class="fs-12">数量({{tradeToken}})</div>
-          <div class="fs-12">价格({{basicToken}})</div>
-          <div class="fs-12">数量({{tradeToken}})</div>
+          <div class="fs-12">{{ $t('noun.quantity') }} ({{tradeToken}})</div>
+          <div class="fs-12">{{ $t('noun.price') }}({{basicToken}})</div>
+          <div class="fs-12">{{ $t('noun.quantity') }} ({{tradeToken}})</div>
         </div>
         <div class="contentBuySell w-100 flex justify-between mt-15">
           <div class="tempBox w-100">

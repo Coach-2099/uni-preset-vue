@@ -7,12 +7,12 @@
             class="switch-item fs-14" 
             :class="{ active: activeTab === 'left' }"
             @click="switchTab('left')"
-          >走势图</div>
+          >{{ $t('noun.trendChart') }}</div>
           <div 
             class="switch-item fs-14" 
             :class="{ active: activeTab === 'right' }"
             @click="switchTab('right')"
-          >交易</div>
+          >{{ $t('noun.trade') }}</div>
           <div 
             class="slider"
             :style="sliderStyle"
@@ -48,8 +48,8 @@
       </div>
     </div>
     <div v-if="activeTab === 'left'" class="btnBox pos-fixed w-100 flex">
-      <van-button class="buyBtn flex-1" type="success">Buy</van-button>
-      <van-button class="sellBtn flex-1" type="danger">Sell</van-button>
+      <van-button class="buyBtn flex-1" type="success">{{ $t('operation.buy') }}</van-button>
+      <van-button class="sellBtn flex-1" type="danger">{{ $t('operation.sell') }}</van-button>
     </div>
     <CustomNavBar></CustomNavBar>
   </div>
