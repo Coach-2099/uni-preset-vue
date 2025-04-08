@@ -247,6 +247,13 @@
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "modifyPhone"
 			}
+		},
+		{
+			"path": "pages/languageSetting/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "languageSetting"
+			}
 		}
 	],
 	"globalStyle": {

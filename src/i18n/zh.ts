@@ -43,6 +43,10 @@ export default {
 		safeLogout: '安全登出',
 		unloginUser: '未登录用户'
 	},
+	language: {
+		chinese: '中文',
+		english: 'English'
+	},
 	securitySettings: {
 	    accountActivity: '账户活动',
 	    lastLoginTime: '上次登录时间：',
@@ -149,7 +153,8 @@ export default {
 		assetDetail: '资产详情',
 		assetRecord: '资产记录',
 		editPassword: '修改密码',
-		editUserInfo: '修改用户信息'
+		editUserInfo: '修改用户信息',
+		settingLanguage: '设置语言'
 	},
 	formFields: {
 		network: '所属网络',
@@ -199,6 +204,7 @@ export default {
 		authentication: '认证中',
 		authenticationSuccess: '已认证',
 		securitySettings: '安全设置',
+		langaugeSettings: '语言设置',
 		identityTypes: {
 			idCard: '身份证',
 			passport: '护照',

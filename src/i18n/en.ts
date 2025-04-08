@@ -42,6 +42,10 @@ export default {
 		safeLogout: 'Safe Logout',
 		unloginUser: 'Unlogged User'
 	},
+	language: {
+		chinese: '中文',
+		english: 'English'
+	},
 	 securitySettings: {
 	    accountActivity: 'Account Activity',
 	    lastLoginTime: 'Last login time: ',
@@ -148,7 +152,8 @@ export default {
 		assetDetail: 'Asset Details',
 		assetRecord: 'Asset Records',
 		editPassword: 'Change Password',
-		editUserInfo: 'Modify user'
+		editUserInfo: 'Modify user',
+		settingLanguage: 'Set language'
 	},
 	formFields: {
 		network: 'Network',
@@ -198,6 +203,7 @@ export default {
 		authentication: 'Verifying',
 		authenticationSuccess: 'Verified',
 		securitySettings: 'Security Settings',
+		langaugeSettings: 'Language settings',
 		identityTypes: {
 			idCard: 'ID Card',
 			passport: 'Passport',

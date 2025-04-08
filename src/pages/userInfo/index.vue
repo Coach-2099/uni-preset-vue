@@ -124,6 +124,23 @@
             </div>
           </div>
           
+          <div class="pt-25 flex justify-between" @click="goLanguage">
+            <div class="flex items-center">
+              <image
+                class="leftIcon mr-10"
+                src="/static/svg/home/c_service.svg"
+                mode="scaleToFill"
+              />
+              <text class="text-black fs-16">{{ $t('userInfo.langaugeSettings') }}</text>
+            </div>
+            <div>
+              <image
+                class="rightIcon"
+                src="/static/svg/tools/right.svg"
+                mode="scaleToFill"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -193,6 +210,12 @@ const goIdentityAuth = () => {
 
 const goCustomerService = () => {
   console.log('前往客服中心')
+}
+
+const goLanguage = () => {
+  uni.navigateTo({
+    url: '/pages/languageSetting/index',
+  });
 }
 
 // 登出
