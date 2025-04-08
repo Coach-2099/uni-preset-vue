@@ -102,7 +102,7 @@
       </div>
     </div>
     <div class="pos-fixed btnBox bg-white">
-      <p class="fs-12 text-gray btnText">
+      <p class="fs-12 text-gray btnText w-100 text-center">
         {{ $t('identityAuth.upload.securityNote') }}
       </p>
       <van-button class="uploadBtn w-100 mt-15" @click="uploadFun">
@@ -212,9 +212,11 @@ const uploadFun = async () => {
     .upuloadTemp {
       border: 1px dashed #237eff;
       background: #f6f7fb;
-      padding: 2.2rem 1.19rem;
+      height: 9.22rem;
+      width: 9.77rem;
+      padding-top: 2.4rem;
       image {
-        width: 3.49rem;
+        width: 7.49rem;
         height: 2.82rem;
       }
     }
@@ -235,8 +237,9 @@ const uploadFun = async () => {
     bottom: 0px;
     padding: 0 16px;
     padding-bottom: 40px;
+    width: 100%;
     .btnText {
-      padding: 0 20% 18px 20%;
+      padding: 0 10% 18px 10%;
     }
     .uploadBtn {
       background: #1777ff;

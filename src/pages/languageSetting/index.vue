@@ -54,11 +54,10 @@ const confirm = () => {
   };
   const selectedLang = langMap[checkRadio.value];
   
-  // 设置全局语言
+  // 设置全局语言并存储到本地（已实现）
   locale.value = selectedLang;
-  // 存储到本地
-  uni.setStorageSync('language', selectedLang);
-  
+  uni.setStorageSync('language', selectedLang); // 这行代码已正确保存到本地
+
   // 重启应用使语言设置全局生效
   uni.reLaunch({
     url: '/pages/home/index'

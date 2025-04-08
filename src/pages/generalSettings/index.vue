@@ -37,6 +37,7 @@
             class="rightIcon"
             src="/static/svg/tools/copy.svg"
             mode="scaleToFill"
+            @click="copyText(userInfo.uid)"
           />
         </div>
       </div>
@@ -75,6 +76,18 @@ const getUser = async () => {
 
 const goModifyUserInfo = () => {
   uni.navigateTo({ url: '/pages/modifyUserInfo/index' })
+}
+
+const copyText = (text: string) => {
+  uni.setClipboardData({
+    data: text,
+    success: () => {
+      uni.showToast({
+        title: t('tips.copySuccess'),
+        icon: 'none'
+      })
+    }
+  })
 }
 
 </script>

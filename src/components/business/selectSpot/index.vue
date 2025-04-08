@@ -10,7 +10,7 @@
       <div class="mt-10 ml-15 mr-15 flex justify-between">
         <div class="flex-1 flex text-gray fs-12">
           <div class="flex justify-between items-center">
-            <text>交易对</text>
+            <text>{{ $t('noun.transactionPair') }}</text>
             <image
               class="sortImg"
               src="/static/images/sort.png" 
@@ -19,7 +19,7 @@
           </div>
           <text class="divLine">/</text>
           <div class="flex justify-between items-center">
-            <text>交易量</text>
+            <text>{{ $t('noun.tradingVolume') }}</text>
             <image
               class="sortImg"
               src="/static/images/sort.png"
@@ -29,7 +29,7 @@
         </div>
         <div class="flex-1 flex justify-end text-gray fs-12">
           <div class="flex-1 flex justify-between items-center text-right mr-20 ">
-            <text>Last Price</text>
+            <text>{{ $t('noun.lastPrice') }}</text>
             <image
               class="sortImg"
               src="/static/images/sort.png"
@@ -37,7 +37,7 @@
             />
           </div>
           <div class="flex-1 flex justify-between items-center text-right">
-            <text>24H Change</text> 
+            <text>{{ $t('noun.hourChange') }}</text> 
             <!-- <image
               class="sortImg"
               src="/static/images/sort.png"

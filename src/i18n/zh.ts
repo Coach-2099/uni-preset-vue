@@ -41,26 +41,27 @@ export default {
 		search: '搜索',
 		customerService: '客服中心',
 		safeLogout: '安全登出',
-		unloginUser: '未登录用户'
+		unloginUser: '未登录用户',
+		loginOut: '安全登出'
 	},
 	language: {
 		chinese: '中文',
 		english: 'English'
 	},
 	securitySettings: {
-	    accountActivity: '账户活动',
-	    lastLoginTime: '上次登录时间：',
-	    securityLevel: '安全级别',
-	    low: '低',
-	    medium: '中',
-	    high: '高',
-	    accountSecurityLevel: '账户安全等级',
-	    enableSecurityVerification: '低，请至少开启',
-	    itemSecurity: '项安全验证。',
-	    phoneSecurityVerification: '手机安全验证',
-	    changeLoginPassword: '修改登录密码',
-	    notSet: '未设置'
-	  },
+		accountActivity: '账户活动',
+		lastLoginTime: '上次登录时间：',
+		securityLevel: '安全级别',
+		low: '低',
+		medium: '中',
+		high: '高',
+		accountSecurityLevel: '账户安全等级',
+		enableSecurityVerification: '低，请至少开启',
+		itemSecurity: '项安全验证。',
+		phoneSecurityVerification: '手机安全验证',
+		changeLoginPassword: '修改登录密码',
+		notSet: '未设置'
+	},
 	generalSettings: {
 		avatar: '头像',
 		nickname: '昵称',
@@ -204,6 +205,7 @@ export default {
 		authentication: '认证中',
 		authenticationSuccess: '已认证',
 		securitySettings: '安全设置',
+		customerServiceCenter: '客服中心',
 		langaugeSettings: '语言设置',
 		identityTypes: {
 			idCard: '身份证',
@@ -216,26 +218,26 @@ export default {
 		idcard: '请上传您的证件信息'
 	},
 	identityAuth: {
-	    labels: {
-	      familyName: '姓氏',
-	      lastName: '名字',
-	      cardNumber: '证件号码',
-	      identityType: '证件类型'
-	    },
-	    placeholders: {
-	      familyName: '请输入姓氏',
-	      lastName: '请输入名字',
-	      cardNumber: '请输入证件号码'
-	    },
-	    upload: {
-	      title: '请上传个人身份证',
-	      hint: '请确保证件边框完整，字体清晰，亮度均匀',
-	      frontPhoto: '身份证正面照',
-	      backPhoto: '身份证反面照',
-	      uploadButton: '上传',
-	      securityNote: '本平台将加密信息以确保实时信息安全'
-	    }
-	  },
+		labels: {
+			familyName: '姓氏',
+			lastName: '名字',
+			cardNumber: '证件号码',
+			identityType: '证件类型'
+		},
+		placeholders: {
+			familyName: '请输入姓氏',
+			lastName: '请输入名字',
+			cardNumber: '请输入证件号码'
+		},
+		upload: {
+			title: '请上传个人身份证',
+			hint: '请确保证件边框完整，字体清晰，亮度均匀',
+			frontPhoto: '身份证正面照',
+			backPhoto: '身份证反面照',
+			uploadButton: '上传',
+			securityNote: '本平台将加密信息以确保实时信息安全'
+		}
+	},
 	contract: {
 		buyAndSellContract: {
 			popup: {

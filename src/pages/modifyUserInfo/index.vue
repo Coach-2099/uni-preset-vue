@@ -13,7 +13,7 @@
       </div>
       <div class="mt-20">
         <p class="fs-16 text-black">{{$t('userInfo.avatar')}}</p>
-        <div class="pos-relative mt-15">
+        <div class="pos-relative text-center mt-15">
             <van-uploader
               class="mr-15"
               v-model="fileListAvatar"

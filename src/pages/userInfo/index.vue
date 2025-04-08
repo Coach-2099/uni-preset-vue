@@ -113,7 +113,7 @@
                 src="/static/svg/home/c_service.svg"
                 mode="scaleToFill"
               />
-              <text class="text-black fs-16">客服中心</text>
+              <text class="text-black fs-16">{{ $t('userInfo.customerServiceCenter') }}</text>
             </div>
             <div>
               <image
@@ -128,7 +128,7 @@
             <div class="flex items-center">
               <image
                 class="leftIcon mr-10"
-                src="/static/svg/home/c_service.svg"
+                src="/static/images/language.png"
                 mode="scaleToFill"
               />
               <text class="text-black fs-16">{{ $t('userInfo.langaugeSettings') }}</text>
@@ -145,7 +145,7 @@
       </div>
     </div>
     <div class="loginOutBtn pos-fixed bg-white pt-20 w-100 px-20">
-      <van-button class="w-100" type="primary" @click="loginOut">安全登出</van-button>
+      <van-button class="w-100" type="primary" @click="loginOut">{{ $t('common.loginOut') }}</van-button>
     </div>
   </div>
 </template>
