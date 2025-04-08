@@ -51,7 +51,7 @@
             v-if="showPriceInput"
             :focus="showPriceInput"
             v-model="price"
-			@input="calculateMargin(tradeNum)"
+			      @input="calculateMargin(tradeNum)"
             class="myInput flex-1 w-100"
             :placeholder="$t('tips.enterPrice')"
             placeholder-class="input-placeholder"
@@ -80,8 +80,14 @@
         </div>
         <text class="fs-14 px-10 text-gray">{{tradeToken}}</text>
       </div>
-      <div class="baseSlider mt-15 px-5">
-        <van-slider class="mySlider" bar-height="5" v-model="value" :step="5" @update:model-value="sliderChange">
+      <div class="baseSlider mt-15 px-15">
+        <van-slider
+          class="mySlider"
+          bar-height="5"
+          v-model="value"
+          :step="5"
+          @update:model-value="sliderChange"
+        >
           <template #button>
             <div class="custom-button">
               <image
@@ -411,7 +417,7 @@ const clearParams= ()=>{
         transform: translateY(-60%);
         display: flex;
         justify-content: space-between;
-        padding: 0 -1px; // 根据实际情况调整
+        padding: 0 10px; // 根据实际情况调整
         image {
           width: 14px;
           height: 14px;

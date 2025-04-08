@@ -14,7 +14,7 @@ export default {
     trade: '现货',
     contract: '合约',
     myAssets: '资产',
-	metals:'贵金属'
+	  metals:'贵金属'
   },
   common: {
     confirm: '确 认',
@@ -71,6 +71,11 @@ export default {
     doMore: '做多',
     doLess: '做空',
     leverage: '杠杆',
+    currency: '币种',
+    trendChart: '走势图',
+    trade: '交易',
+    time: '时间',
+    direction: '方向',
   },
   tips: {
     success: '操作成功',
@@ -97,12 +102,22 @@ export default {
     bindPhoneOrEmail: '请先绑定手机号或邮箱',
     pleaseImproveTheInfo: '请完善信息',
     modifySuccess: '修改成功,请重新登录',
-	registerSuccess: '注册成功',
+	  registerSuccess: '注册成功',
+    copySuccess: '复制成功'
   },
   navigationBarTitle: {
     bindPhone: '绑定手机',
     bindEmail: '绑定邮箱',
     bindFundPassword: '设置资金密码',
+    recharge: '充值',
+    withdraw: '提现',
+    transfer: '转账',
+  },
+  formFields: {
+    network: '所属网络',
+    selectTheLinkType: '请选择链类型',
+    walletAddress: '钱包地址',
+    copyAddress: '复制地址',
   },
   homeIndex: {
     login: {
@@ -141,7 +156,6 @@ export default {
     authentication: '认证中',
     authenticationSuccess: '已认证',
     securitySettings: '安全设置'
-
   },
   contract: {
     buyAndSellContract: {

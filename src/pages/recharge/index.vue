@@ -1,6 +1,6 @@
 <template>
   <div class="recharge-index">
-    <navigationBar title="充值">
+    <navigationBar :title="$t('navigationBarTitle.recharge')">
       <template #right>
         <div class="headerRightIcon" @click="goAssetRecord">
           <image
@@ -17,7 +17,7 @@
 	  </div>
     </div>
     <div class="mt-10 px-15">
-      <p class="fs-14 text-black">币种</p>
+      <p class="fs-14 text-black">{{  $t('noun.currency')  }}</p>
       <div
         class="baseSelect w-100 mt-5 pl-15 pr-25 flex justify-between items-cneter"
         @click="openPopup"
@@ -41,13 +41,13 @@
       </div>
     </div>
     <div class="mt-10 px-15" v-show="networkShow">
-      <p class="fs-14 text-black">所属网络</p>
+      <p class="fs-14 text-black">{{ $t('formFields.network') }}</p>
       <div
         class="baseSelect w-100 mt-5 pl-15 pr-25 flex justify-between items-cneter"
         @click="openNetworkPopup"
       >
         <div class="leftBox flex items-center">
-          <p v-if="false" class="fs-14 text-gray">请选择链类型</p>
+          <p v-if="false" class="fs-14 text-gray">{{ $t('formFields.selectTheLinkType') }}</p>
           <p v-else class="fs-14 fw-b ml-5 mr-5 text-black">{{protocolType}}</p>
         </div>
         <div class="rightBox flex items-center">
@@ -62,7 +62,7 @@
 
     <div class="Wallet mx-20 px-15 py-20">
       <div class="flex justify-start items-baseline">
-        <p class="fs-14 text-gray mr-10">Wallet Address</p>
+        <p class="fs-14 text-gray mr-10">{{ $t('formFields.walletAddress') }}</p>
         <div class="rightIcon"></div>
       </div>
       <div class="copyInfo flex justify-between items-center mt-10">
@@ -108,7 +108,7 @@
     </div>
 
     <div class="copyBtnBox w-100 flex items-center justify-center px-20">
-      <van-button @click="copy" class="copyBtn w-100" type="primary">Copy Address</van-button>
+      <van-button @click="copy" class="copyBtn w-100" type="primary">{{ $t('formFields.copyAddress') }}</van-button>
     </div>
     <currencySelectPopup
       @chooseToken="chooseToken"
@@ -129,6 +129,8 @@ import navigationBar from '@/components/navigationBar/index.vue';
 import currencySelectPopup from '@/components/business/currencySelectPopup/index.vue';
 import networkSelectPopup from '@/components/business/netWorkSelectPopup/index.vue'
 import QrcodeVue from 'qrcode.vue'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const address = ref('') //地址
 const rechargeDesc = ref('') //币种描述
@@ -200,7 +202,7 @@ const copy = () => {
     data: address.value,
     success: function() {
       uni.showToast({
-        title: '复制成功',
+        title: t('tips.copySuccess'),
         icon: 'none'
       })
     }

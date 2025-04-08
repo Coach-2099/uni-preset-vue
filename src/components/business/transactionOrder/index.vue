@@ -2,12 +2,12 @@
   <div class="transactionOrder-temp mt-20">
     <div class="orderTitle flex justify-between px-15">
       <div class="titleBox flex-1 flex justify-stretch">
-        <div class="titleName half-width fs-12 text-gray">时间</div>
-        <div class="titleName half-width fs-12 text-gray">方向</div>
+        <div class="titleName half-width fs-12 text-gray">{{ $t('noun.time') }}</div>
+        <div class="titleName half-width fs-12 text-gray">{{ $t('noun.direction') }}</div>
       </div>
       <div class="titleBox flex-1 flex justify-between">
-        <div class="titleName half-width fs-12 text-gray">价格</div>
-        <div class="titleName half-width fs-12 text-gray text-right">数量</div>
+        <div class="titleName half-width fs-12 text-gray">{{ $t('noun.price') }}</div>
+        <div class="titleName half-width fs-12 text-gray text-right">{{ $t('noun.quantity') }}}</div>
       </div>
     </div>
     <div class="contentBox mt-20">
