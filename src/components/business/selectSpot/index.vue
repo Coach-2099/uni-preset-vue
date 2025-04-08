@@ -63,7 +63,12 @@
           </div>
           <div class="flex-1 flex justify-end items-center">
             <div class="flex-1 text-right items-center mr-20">{{ item.close }}</div>
-            <van-button class="flex-1 text-right rises_falls_btn" style="width: 22.4vw;" type="success" size="small">
+            <van-button
+              class="flex-1 text-right rises_falls_btn"
+              style="width: 22.4vw;"
+              :type=" item.rose > 0 ? 'success' : 'danger'"
+              size="small"
+            >
               <text class="fs-14 text-white">{{ formatChange(item.rose) }}</text>
             </van-button>
           </div>

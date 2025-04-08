@@ -41,7 +41,12 @@
                     </div>
                   </template>
                 </van-button>
-                <van-popup v-model:show="showPicker" destroy-on-close position="bottom">
+                <baseCountryPicker
+                  v-model:modelValue="showPicker"
+                  :selected-value="pickVal"
+                  @confirm="handleCountryConfirm"
+                ></baseCountryPicker>
+                <!-- <van-popup v-model:show="showPicker" destroy-on-close position="bottom">
                   <van-picker
                     :columns="countryCodeArray"
                     :model-value="pickVal"
@@ -53,7 +58,7 @@
                       {{ option.text }}
                     </template>
                   </van-picker>
-                </van-popup>
+                </van-popup> -->
               </div>
             </div>
             <div class="baseInput w-100 flex justify-between items-center">
@@ -96,6 +101,7 @@
 
 <script lang="ts" setup>
 import { ref, watch ,onMounted} from 'vue';
+import baseCountryPicker from '@/components/baseCountryPicker/index.vue';
 import navigationBar from '@/components/navigationBar/index.vue';
 import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
 import { useUserStore } from '@/stores/user';
@@ -154,6 +160,12 @@ const getCode = async (username:string,needCountDown:boolean) => {
     title: t('tips.vCodeHasSent'),
     icon: 'none'
   })
+}
+
+const handleCountryConfirm = (selectedOption: any, selectedValues: any) => {
+  countryCode.value = selectedOption[0].value; // 显式转换为字符串
+  checkCountry.value = selectedOption[0];
+  pickVal.value = selectedValues
 }
 
 const verifyVcode = (val:string) => {

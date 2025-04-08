@@ -54,7 +54,12 @@
                     </div>
                   </template>
                 </van-button>
-                <van-popup v-model:show="showPicker" destroy-on-close position="bottom">
+                <baseCountryPicker
+                  v-model:modelValue="showPicker"
+                  :selected-value="pickVal"
+                  @confirm="handleCountryConfirm"
+                ></baseCountryPicker>
+                <!-- <van-popup v-model:show="showPicker" destroy-on-close position="bottom">
                   <van-picker
                     :columns="countryCodeArray"
                     :model-value="pickVal"
@@ -66,7 +71,7 @@
                       {{ option.text }}
                     </template>
                   </van-picker>
-                </van-popup>
+                </van-popup> -->
               </div>
               <input
                 v-model="userName"
@@ -173,6 +178,7 @@ import { ref, onMounted } from 'vue'
 import { chkAccount, sendmsg, register } from '@/api/account'
 import { getUrlParams, isEmail } from '@/utils/util'
 import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
+import baseCountryPicker from '@/components/baseCountryPicker/index.vue';
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
@@ -292,16 +298,22 @@ interface PickerConfirmEvent {
   selectedOptions: { value: number; text: string }[];
 }
 
-const onConfirm = ({ selectedValues, selectedOptions }: PickerConfirmEvent) => {
-  console.log('selectedValues', selectedValues);
-  console.log('selectedOptions', selectedOptions[0]);
-  countryCode.value = selectedOptions[0].value;
-  checkCountry.value = selectedOptions[0];
-  console.log('checkCountry:', checkCountry.value)
-  // 修复类型错误，将 pickVal 的类型定义为 number[]
-  pickVal.value = selectedValues;
-  showPicker.value = false;
+const handleCountryConfirm = (selectedOption: any, selectedValues: any) => {
+  countryCode.value = selectedOption[0].value; // 显式转换为字符串
+  checkCountry.value = selectedOption[0];
+  pickVal.value = selectedValues
 }
+
+// const onConfirm = ({ selectedValues, selectedOptions }: PickerConfirmEvent) => {
+//   console.log('selectedValues', selectedValues);
+//   console.log('selectedOptions', selectedOptions[0]);
+//   countryCode.value = selectedOptions[0].value;
+//   checkCountry.value = selectedOptions[0];
+//   console.log('checkCountry:', checkCountry.value)
+//   // 修复类型错误，将 pickVal 的类型定义为 number[]
+//   pickVal.value = selectedValues;
+//   showPicker.value = false;
+// }
 
 const signUp = async () => {
   const params = {
@@ -309,8 +321,6 @@ const signUp = async () => {
     password: password.value,
     countryName: '',
     countryCode: isEmail(userName.value)?'':countryCode.value,
-    // countryName: checkCountry.value.name,
-    // countryCode: checkCountry.value.value,
     code: vCode.value,
     inviteCode: InvitationCode.value
   }
