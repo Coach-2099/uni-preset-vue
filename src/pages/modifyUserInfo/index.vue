@@ -3,16 +3,16 @@
     <navigationBar :title="$t('navigationBarTitle.editUserInfo')"></navigationBar>
     <div class="container w-100">
       <div class="flex justify-between items-center mt-20">
-        <div class="label">${{$t('userInfo.username')}}</div>
+        <div class="label">{{$t('userInfo.username')}}</div>
         <input
           v-model="UserName"
           class="base-input w-100"
-          placeholder="Please enter the family name."
+          :placeholder="$t('identityAuth.placeholders.familyName')"
           placeholder-class="input-placeholder"
         />
       </div>
       <div class="mt-20">
-        <p class="fs-16 text-black">${{$t('userInfo.avatar')}}</p>
+        <p class="fs-16 text-black">{{$t('userInfo.avatar')}}</p>
         <div class="pos-relative mt-15">
             <van-uploader
               class="mr-15"
@@ -27,7 +27,7 @@
                   src="/static/svg/tools/upload.svg"
                   mode="scaleToFill"
                 />
-                <p class="mt-15 fs-12">{{$t('common.idcard')}}</p>
+                <p class="mt-15 fs-12">{{$t('userInfo.idcard')}}</p>
               </div>
             </van-uploader>
             <div v-if="fileAvatar" class="myPreview bg-white flex-col items-center pos-absolute">
