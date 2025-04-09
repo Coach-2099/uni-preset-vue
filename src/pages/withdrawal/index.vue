@@ -207,7 +207,7 @@ const getUser = async () => {
     phone: userStore.userInfo.phone,
     email: userStore.userInfo.email,
     avatar: userStore.userInfo.avatar,
-	isValid: userStore.userInfo.isValid
+	  isValid: userStore.userInfo.isValid
   }
 
   if(!userInfo.value.phone) {
@@ -228,7 +228,7 @@ const getUser = async () => {
         url: '/pages/modifyEmail/index'
       })
     })
-  }else if(userInfo.value.isValid == 0){
+  }else if(userInfo.value.isValid == 0) {
 	  showConfirmDialog({
 	    showCancelButton: false,
 	    message: t('userInfo.completeIDforTransactions'),
@@ -239,7 +239,14 @@ const getUser = async () => {
 	  })
   } else if (userInfo.value.isValid == 1) {
     // 认证中页面跳转
-    
+    showConfirmDialog({
+	    showCancelButton: false,
+	    message: t('userInfo.IdentityAuthentication'),
+	  }).then(() => {
+	    uni.navigateTo({
+	      url: '/pages/certification/index'
+	    })
+	  })
   } else {
     // 手机号和邮箱都绑定了再进行选择
     currentSelectRef.value?.showFLoatingPanel('withdraw')

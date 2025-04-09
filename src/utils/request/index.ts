@@ -35,6 +35,9 @@ const requestHooks: RequestHooks = {
             options.header['TENANT-ID'] = cache.getTenant()
         }
 
+        const lang = uni.getStorageSync('language')
+        options.header['locale'] = lang || 'en'
+
         return options
     },
     async responseInterceptorsHook(response) {

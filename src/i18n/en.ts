@@ -152,7 +152,7 @@ export default {
 		transfer: 'Transfer',
 		assetDetail: 'Asset Details',
 		assetRecord: 'Asset Records',
-		editPassword: 'Change Password',
+		editPassword: 'Chg. Pwd',
 		editUserInfo: 'Modify user',
 		settingLanguage: 'Language'
 	},
@@ -196,6 +196,7 @@ export default {
 		IdentityDuthentication: 'ID Ver. Pending',
 		IdentityDuthenticationSuccess: 'KYC Verified',
 		completeIDforTransactions: 'Complete KYC',
+		IdentityAuthentication: 'In the authentication, go to view information',
 		goCertification: 'Verify',
 		certification: 'Verifying',
 		accountInfo: 'Account Information',
@@ -220,6 +221,7 @@ export default {
 	    labels: {
 	      familyName: 'Family Name',
 	      lastName: 'Last Name',
+				name: 'name',
 	      cardNumber: 'Card Number',
 	      identityType: 'Identity Type'
 	    },

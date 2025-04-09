@@ -254,6 +254,13 @@
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "languageSetting"
 			}
+		},
+		{
+			"path": "pages/certification/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "certification"
+			}
 		}
 	],
 	"globalStyle": {

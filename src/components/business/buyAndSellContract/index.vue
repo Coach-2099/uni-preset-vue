@@ -134,9 +134,15 @@
           </div>
         </div>
       </div>
-	  <!--滑动可交易量 -->
-      <div class="baseSlider mt-15 px-5">
-        <van-slider class="mySlider" bar-height="5" v-model="value" @update:model-value="sliderChange" :step="5">
+	    <!--滑动可交易量 -->
+      <div class="baseSlider mt-15 px-15">
+        <van-slider
+          class="mySlider"
+          bar-height="5"
+          v-model="value"
+          @update:model-value="sliderChange"
+          :step="5"
+        >
           <template #button>
             <div class="custom-button">
               <image
@@ -687,7 +693,7 @@ defineExpose({
         transform: translateY(-60%);
         display: flex;
         justify-content: space-between;
-        padding: 0 -1px; // 根据实际情况调整
+        padding: 0 10px; // 根据实际情况调整
         image {
           width: 14px;
           height: 14px;

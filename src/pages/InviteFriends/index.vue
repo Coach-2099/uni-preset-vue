@@ -17,7 +17,7 @@
       </div>
       <div class="copyTemp flex justify-between items-center">
         <p class="inviteStr w-75 fs-16 text-gray">{{ inviteUrl }}</p>
-        <van-button class="copyBtn ml-10" type="primary" @click="copyText(inviteUrl)">{{ $t('common.copy') }}</van-button>
+        <van-button class="copyBtn ml-10" type="primary" @click="copyText(inviteUrl)">{{ $t('noun.copy') }}</van-button>
       </div>
       <div class="qrCodeTemp">
         <qrcode-vue :value="inviteUrl" size="130" />

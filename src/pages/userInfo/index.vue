@@ -25,8 +25,9 @@
             round 
             width="52px" 
             height="52px" 
-            src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" 
-          />
+            :src="userInfo.avatar"
+          >
+          </van-image>
         </div>
         <div class="ml-10">
           <p class="fs-20 fw-b text-balck">{{ userInfo.username }}</p>

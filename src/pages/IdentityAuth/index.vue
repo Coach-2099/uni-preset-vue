@@ -216,8 +216,8 @@ const uploadFun = async () => {
       width: 9.77rem;
       padding-top: 2.4rem;
       image {
-        width: 7.49rem;
-        height: 2.82rem;
+        width: 5.49rem;
+        height: 3.82rem;
       }
     }
     .myPreview {

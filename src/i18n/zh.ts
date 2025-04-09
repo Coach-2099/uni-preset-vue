@@ -197,6 +197,7 @@ export default {
 		IdentityDuthentication: '身份认证中',
 		IdentityDuthenticationSuccess: '身份已认证',
 		completeIDforTransactions: '完成身份认证以进行充值和交易',
+		IdentityAuthentication: '身份认证中，前往查看信息',
 		goCertification: '认证',
 		certification: '认证中',
 		accountInfo: '账户信息',
@@ -221,6 +222,7 @@ export default {
 		labels: {
 			familyName: '姓氏',
 			lastName: '名字',
+			name: '姓名',
 			cardNumber: '证件号码',
 			identityType: '证件类型'
 		},
@@ -284,7 +286,7 @@ export default {
 		tradingAmountExceedsMax: '您输入的交易量大于最大可交易数量',
 		orderSuccess: '下单成功'
 	},
-	ransactionOrder: {
+	transactionOrder: {
 	    allOrder: '全部订单',
 	    tradingMethod: '交易方式',
 	    orderPrice: '委托价格',
