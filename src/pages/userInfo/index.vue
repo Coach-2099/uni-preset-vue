@@ -27,13 +27,19 @@
             height="52px" 
             :src="userInfo.avatar"
           >
+            <template #error>
+              <van-image
+                src="/static/images/logo.png"
+                mode="scaleToFill"
+              />
+            </template>
           </van-image>
         </div>
         <div class="ml-10">
-          <p class="fs-20 fw-b text-balck">{{ userInfo.username }}</p>
-          <div class="fs-12 flex mt-10 text-gray">
+          <p class="fs-20 fw-b text-balck">{{ userInfo.nickname || userInfo.username }}</p>
+          <div class="fs-12 flex mt-5 text-gray">
             <text>UID:{{ userInfo.uid }}</text>
-            <div class="ml-5"><van-image src="/static/svg/tools/copy.svg" /></div>
+            <div @click="copy" class="ml-5"><van-image src="/static/svg/tools/copy.svg" /></div>
           </div>
         </div>
       </div>
@@ -84,6 +90,7 @@
               <text v-if="userInfo.isValid == 1" class="fs-12 text-gray mr-5">{{ $t('userInfo.authentication') }}</text>
               <text v-if="userInfo.isValid == 2" class="fs-12 text-gray mr-5">{{ $t('userInfo.authenticationSuccess') }}</text>
               <image
+                v-if="userInfo.isValid !== 2"
                 class="rightIcon"
                 src="/static/svg/tools/right.svg"
                 mode="scaleToFill"
@@ -155,10 +162,16 @@
 import navigationBar from '@/components/navigationBar/index.vue'
 import { ref, onMounted, onUnmounted, createApp } from 'vue';
 import { useUserStore } from '@/stores/user';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+
 const DEFAULT_USER_INFO = {
   username: '未登录用户',
   uid: '--',
-  isValid: 0
+  isValid: 0, // 0:未认证 1:认证中 2:认证成功
+  avatar: '@/static/svg/home/user.svg',
+  nickname: '未登录用户',
 }
 
 const userStore = useUserStore();
@@ -175,7 +188,9 @@ const getUser = async () => {
   await userStore.getUser()
   userInfo.value = {
     username: userStore.userInfo.username || DEFAULT_USER_INFO.username,
+    nickname: userStore.userInfo.nickname || DEFAULT_USER_INFO.nickname,
     uid: userStore.userInfo.uid || DEFAULT_USER_INFO.uid,
+    avatar: userStore.userInfo.avatar || DEFAULT_USER_INFO.avatar,
     isValid: userStore.userInfo.isValid || DEFAULT_USER_INFO.isValid
   }
 }
@@ -203,10 +218,30 @@ const gosecuritySetting = () => {
   });
 };
 
-const goIdentityAuth = () => {
-  uni.navigateTo({
-    url: '/pages/IdentityAuth/index',
+const copy = () => {
+  uni.setClipboardData({
+    data: userInfo.value.uid,
+    success: () => {
+      uni.showToast({
+        title: t('tips.copySuccess'),
+        icon: 'success',
+        duration: 3000,
+      });
+    },
   });
+}
+
+// 前往身份认证
+const goIdentityAuth = () => {
+  if (userInfo.value.isValid == 1) {
+    uni.navigateTo({
+      url: '/pages/certification/index'
+    })
+  } else if (userInfo.value.isValid !== 2) {
+    uni.navigateTo({
+      url: '/pages/IdentityAuth/index',
+    });
+  }
 };
 
 const goCustomerService = () => {

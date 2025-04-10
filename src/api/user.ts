@@ -13,3 +13,8 @@ export function setTradepwd(data: any) {
 export function bindPhoneOrEmail(data: any) {
   return request.post({ url: '/admin/user/bindPhoneOrEmail', data })
 }
+
+// 修改用户昵称or上传头像
+export function editUserInfo(data: any) {
+  return request.post({ url: '/admin/user/editUserInfo', data })
+}

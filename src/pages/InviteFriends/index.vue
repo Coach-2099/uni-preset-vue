@@ -43,7 +43,8 @@ const copyText = () => {
     success: () => {
       uni.showToast({
         title: t('tips.copySuccess'),
-        icon: 'none'
+        icon: 'success',
+        duration: 3000
       })
     }
   })
