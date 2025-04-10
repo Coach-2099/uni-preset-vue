@@ -31,7 +31,7 @@
           />
           <text class="text-gray fs-14">
             {{ $t('homeIndex.singleDay') }} 
-            <text :class="plAmount > 0 ? 'text-light-green' : plAmount < 0 ? 'text-red' : ''">{{plAmount}}({{pl}}%)</text>
+            <text :class="plAmount > 0 ? 'text-light-green' : plAmount < 0 ? 'text-red' : ''">{{plAmount}}({{pl>0?'+'+pl:pl}}%)</text>
           </text>
         </p>
       </div>
