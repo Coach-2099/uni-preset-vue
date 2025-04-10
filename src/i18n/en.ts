@@ -5,7 +5,7 @@ export default {
 		trade: 'Spot',
 		contract: 'Contract',
 		myAssets: 'Assets',
-		metals: 'Precious Metals',
+		metals: 'Metals',
 		assetDetail: 'Asset Details',
 		assetRecord: 'Asset Records',
 		generalSettings: 'General Settings',
@@ -56,7 +56,7 @@ export default {
 	    high: 'High',
 	    accountSecurityLevel: 'Sec Level',
 	    enableSecurityVerification: 'Enable 2FA',
-	    itemSecurity: 'security verification item.',
+	    itemSecurity: 'Security verification item.',
 	    phoneSecurityVerification: 'SMS Auth',
 	    changeLoginPassword: 'Change Login Password',
 	    notSet: 'Not set'
@@ -80,7 +80,7 @@ export default {
 	noun: {
 		spotGoods: 'Spot',
 		futureGoods: 'Contract',
-		metalsGoods: 'Precious Metals',
+		metalsGoods: 'Metals',
 		recharge: 'Deposit',
 		transfer: 'Transfer',
 		withdraw: 'Withdraw',
@@ -88,15 +88,15 @@ export default {
 		transactionPair: 'Trading Pair',
 		tradingVolume: 'Vol',
 		hourChange: '24H Volume',
-		lastPrice: 'Latest Price',
-		priceLimitOrder: 'Limit Order',
-		marketOrder: 'Market Order',
+		lastPrice: 'Price',
+		priceLimitOrder: 'Limit',
+		marketOrder: 'Market',
 		price: 'Price',
 		quantity: 'Quantity',
 		cost: 'Cost',
-		orderAmount: 'Order Amount',
+		orderAmount: 'Amount',
 		buyUpTo: 'Buy Up To',
-		orderValue: 'Order Value',
+		orderValue: 'Value',
 		takeProfitAndStopLoss: 'TP/SL',
 		takeProfit: 'Take Profit',
 		stopLoss: 'Stop Loss',
@@ -221,7 +221,7 @@ export default {
 	    labels: {
 	      familyName: 'Family Name',
 	      lastName: 'Last Name',
-				name: 'name',
+		name: 'Name', 
 	      cardNumber: 'Card Number',
 	      identityType: 'Identity Type'
 	    },
@@ -236,7 +236,7 @@ export default {
 	      frontPhoto: 'Front photo of ID card',
 	      backPhoto: 'Reverse photo of ID card',
 	      uploadButton: 'Upload',
-	      securityNote: 'BYBIT will encrypt information to ensure real-time information security'
+	      securityNote: 'Xauswap will encrypt information to ensure real-time information security'
 	    }
 	  },
 	contract: {
@@ -250,8 +250,8 @@ export default {
 			}
 		},
 		orderBook: 'Order Book',
-		transactions: 'Transactions',
-		position: 'Position',
+		transactions: 'Trades',
+		position: 'Positions',
 		orderPrice: 'Order Price',
 		orderQuantity: 'Order Quantity',
 		orderCost: 'Order Cost',
@@ -335,14 +335,14 @@ export default {
 	    availableAmount: 'Available Balance',
 	    sameAccountError: 'Source and destination accounts cannot be the same',
 	    futuresOnlyUSDT: 'Futures account only supports USDT',
-	    metalsOnlyUSD: 'Precious metals account only supports USD',
+	    metalsOnlyUSD: 'Metals account only supports USD',
 	    insufficientBalance: 'Insufficient Balance',
 	    transferSuccess: 'Transfer Successful',
 	    accounts: {
 	      wallet: 'Wallet',
 	      spotAccount: 'Spot Account',
 	      futuresAccount: 'Futures Account',
-	      preciousMetalsAccount: 'Precious Metals Account'
+	      preciousMetalsAccount: 'Metals Account'
 	    }
 	  },
 	verification: {
