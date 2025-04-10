@@ -196,14 +196,14 @@ const chooseProtocolType =(protocol: string) =>{
 }
 
 
-
 const copy = () => {
   uni.setClipboardData({
     data: address.value,
     success: function() {
       uni.showToast({
         title: t('tips.copySuccess'),
-        icon: 'none'
+        icon: 'success',
+        duration: 3000
       })
     }
   })

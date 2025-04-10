@@ -95,7 +95,6 @@
       <van-tabs
         v-model:active="active" 
         shrink
-        class="mt-20"
         title-active-color="#333333"
         title-inactive-color="#B0B0B0"
         @click-tab="onClickTab"

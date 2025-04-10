@@ -155,7 +155,8 @@ export default {
 		assetRecord: '资产记录',
 		editPassword: '修改密码',
 		editUserInfo: '修改用户信息',
-		settingLanguage: '设置语言'
+		settingLanguage: '设置语言',
+		certification: '认证中'
 	},
 	formFields: {
 		network: '所属网络',

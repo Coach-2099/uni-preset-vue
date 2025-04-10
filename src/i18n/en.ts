@@ -154,7 +154,8 @@ export default {
 		assetRecord: 'Asset Records',
 		editPassword: 'Chg. Pwd',
 		editUserInfo: 'Modify user',
-		settingLanguage: 'Language'
+		settingLanguage: 'Language',
+		certification: 'Certification'
 	},
 	formFields: {
 		network: 'Network',

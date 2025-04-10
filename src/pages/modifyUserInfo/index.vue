@@ -3,9 +3,9 @@
     <navigationBar :title="$t('navigationBarTitle.editUserInfo')"></navigationBar>
     <div class="container w-100">
       <div class="flex justify-between items-center mt-20">
-        <div class="label">{{$t('userInfo.username')}}</div>
+        <div class="label">{{$t('generalSettings.nickname')}}</div>
         <input
-          v-model="UserName"
+          v-model="nickname"
           class="base-input w-100"
           :placeholder="$t('identityAuth.placeholders.familyName')"
           placeholder-class="input-placeholder"
@@ -30,18 +30,18 @@
                 <p class="mt-15 fs-12">{{$t('userInfo.idcard')}}</p>
               </div>
             </van-uploader>
-            <div v-if="fileAvatar" class="myPreview bg-white flex-col items-center pos-absolute">
+            <!-- <div v-if="fileAvatar" class="myPreview bg-white flex-col items-center pos-absolute">
               <image
                 class="myPreviewImg"
                 :src="fileAvatar"
                 mode="scaleToFill"
               />
-            </div>
+            </div> -->
           </div>
       </div>
     </div>
     <div class="pos-fixed btnBox w-100 bg-white">
-      <van-button class="uploadBtn w-100 mt-15" @click="uploadFun">
+      <van-button class="uploadBtn w-100 mt-15" @click="confirmFun">
         <text class="fs-16 text-white fw-b">{{ $t('common.confirm') }}</text>
       </van-button>
     </div>
@@ -52,21 +52,43 @@
 import { ref } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue';
 import { uploadImage } from '@/api/app';
+import { editUserInfo } from '@/api/user';
+import { useUserStore } from '@/stores/user';
+import { onShow } from '@dcloudio/uni-app';
 
-const UserName = ref('');
+const nickname = ref('');
 
-const fileListAvatar = ref([])
+const fileListAvatar:any = ref([])
 const fileAvatar = ref('');
 const fileAvatarSrc = ref('');
+const userStore = useUserStore();
+
+onShow(() => {
+  nickname.value = userStore.userInfo?.nickname || '';
+  fileAvatarSrc.value = userStore.userInfo?.avatar;
+  fileListAvatar.value = [
+    { url: userStore.userInfo?.avatar }
+  ]
+})
 
 const afterReadFront = async (file: any) => {
+  console.log('file', file)
   const data = await uploadImage(file.content)
   fileAvatar.value = file.url;
   fileAvatarSrc.value = data?.url;
 }
 
-const uploadFun = () => {
-  console.log('fileAvatarSrc', fileAvatarSrc.value)
+const confirmFun = async () => {
+  const params = {
+    nickName: nickname.value,
+    avatar: fileAvatarSrc.value,
+  }
+  await editUserInfo(params)
+  uni.showToast({
+    title: '修改成功',
+    icon: 'none',
+    duration: 3000,
+  })
 }
 
 </script>

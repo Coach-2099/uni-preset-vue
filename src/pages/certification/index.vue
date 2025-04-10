@@ -1,6 +1,6 @@
 <template>
   <div class="certification-index bg-light ">
-    <navigationBar :title="'认证中'"></navigationBar>
+    <navigationBar :title="$t('navigationBarTitle.certification')"></navigationBar>
     <div class="mt-10">
       <van-cell-group inset>
         <van-cell :title="$t('userInfo.username')" :value="userInfo.username" />
@@ -43,7 +43,7 @@ const userInfo = userStore.userInfo;
 const documentTypeMap:any = {
   IDCARD: '身份证',
   PASSPORT: '护照',
-  DRVING_LICENSE: '驾照' 
+  DRVING_LICENSE: '驾照'
 }
 
 onLoad(() => {

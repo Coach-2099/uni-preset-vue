@@ -11,8 +11,10 @@
           </div>
           <div>{{ symbol }}</div>
         </div>
-        <div class="increaseAndDecreaseBox px-5">
-          <text class="text-red fs-12">{{rose}}%</text>
+        <div class="increaseAndDecreaseBox px-5 fs-12">
+          <text v-if="rose > 0" class="text-light-green">{{rose}}%</text>
+          <text v-else-if="rose < 0" class="text-light-green">{{rose}}%</text>
+          <text v-else class="text-black">{{ rose }}%</text>
         </div>
       </div>
       <!-- <div class="toolsBtn" @click="showChartBtn">
