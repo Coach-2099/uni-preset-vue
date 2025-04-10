@@ -8,7 +8,7 @@
             mode="scaleToFill"
           />
         </div>
-        <div class="fw-b fs-22 text-black pos-absolute headerTitle">
+        <div class="fw-b fs-20 text-black pos-absolute headerTitle">
           {{ title }}
         </div>
         <div class="rightTemp flex justify-between">

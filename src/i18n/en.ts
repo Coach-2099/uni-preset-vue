@@ -152,7 +152,7 @@ export default {
 		transfer: 'Transfer',
 		assetDetail: 'Asset Details',
 		assetRecord: 'Asset Records',
-		editPassword: 'Chg. Pwd',
+		editPassword: 'Change Password',
 		editUserInfo: 'Modify user',
 		settingLanguage: 'Language',
 		certification: 'Certification'
@@ -193,15 +193,15 @@ export default {
 	},
 	userInfo: {
 		ordinaryUsers: 'Regular User',
-		IdNotCompleted: 'ID Ver. Incomplete',
-		IdentityDuthentication: 'ID Ver. Pending',
+		IdNotCompleted: 'ID Verification Not Completed',
+		IdentityDuthentication: 'ID Verification in Progress',
 		IdentityDuthenticationSuccess: 'KYC Verified',
 		completeIDforTransactions: 'Complete KYC',
 		IdentityAuthentication: 'In the authentication, go to view information',
 		goCertification: 'Verify',
 		certification: 'Verifying',
 		accountInfo: 'Account Information',
-		identityAuthentication: 'ID Ver',
+		identityAuthentication: 'Identity Verification',
 		notCertifiedYet: 'Not Verified Yet',
 		authentication: 'Verifying',
 		authenticationSuccess: 'Verified',
@@ -222,7 +222,7 @@ export default {
 	    labels: {
 	      familyName: 'Family Name',
 	      lastName: 'Last Name',
-		name: 'Name', 
+		name: 'Name',
 	      cardNumber: 'Card Number',
 	      identityType: 'Identity Type'
 	    },

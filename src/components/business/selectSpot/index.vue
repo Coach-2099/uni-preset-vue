@@ -28,7 +28,7 @@
           </div>
         </div>
         <div class="flex-1 flex justify-end text-gray fs-12">
-          <div class="flex-1 flex justify-between items-center text-right mr-20 ">
+          <div class="flex-1 flex justify-end items-center text-right mr-20 ">
             <text>{{ $t('noun.lastPrice') }}</text>
             <image
               class="sortImg"
@@ -69,7 +69,7 @@
               :type=" item.rose > 0 ? 'success' : 'danger'"
               size="small"
             >
-              <text class="fs-14 text-white">{{ formatChange(item.rose) }}</text>
+              <text class="fs-14 text-white">{{ formartRose(item.rose) }}</text>
             </van-button>
           </div>
         </div>
@@ -84,6 +84,7 @@ import { getSymbolsLastPrice } from '@/api/quotes';
 import { getTicker } from '@/api/quotes';
 import { useControlStore } from '@/stores/control';
 import { useUserStore } from '@/stores/user';
+import { formartRose } from '@/utils/util'
 const userStore = useUserStore();
 const props = defineProps({
   type: {
@@ -196,14 +197,6 @@ const formatVolume = (volume:any) => {
     return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k' // 千单位
   }
   return num.toString() // 小于 1000 
-}
-
-const formatChange = (change:any) => {
-  const num = Number(change)
-  if (isNaN(num)) return '0.00%'
-  
-  // 添加正负号并格式化为百分比
-  return `${num > 0 ? '+' : ''}${num}%`
 }
 
 defineExpose({

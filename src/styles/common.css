@@ -273,11 +273,13 @@ body {
 .bg-blue { background-color: #2752e7; }
 .bg-green { background-color: #008000; }
 .bg-red { background-color: #FF0000; }
+.bg-pink { background-color: #FFD3D9; }
 .bg-yellow { background-color: #FFFF00; }
 .bg-primary { background-color: #1777FF; }
 .bg-secondary { background-color: #333333; }
 .bg-tertiary { background-color: #F8F8F8; }
 .bg-success { background-color: #4CAF50; }
+.bg-light-success { background-color: #D4EDDA;  }
 .bg-danger { background-color: #F44336; }
 .bg-warning { background-color: #FFC107; }
 .bg-info { background-color: #2196F3; }

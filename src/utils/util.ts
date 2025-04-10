@@ -254,3 +254,11 @@ export function isEmail(value:string) {
 	}
 	return true
 }
+
+export function formartRose(value: any) {
+  const num = Number(value)
+  if (isNaN(num)) return '0.00%'
+
+  // 添加正负号并格式化为百分比
+  return `${num > 0 ? '+' : ''}${num}%`
+}

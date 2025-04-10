@@ -31,7 +31,7 @@
           />
           <text class="text-gray fs-14">
             {{ $t('homeIndex.singleDay') }} 
-            <text :class="plAmount > 0 ? 'text-light-green' : plAmount < 0 ? 'text-red' : ''">{{plAmount}}({{pl>0?'+'+pl:pl}}%)</text>
+            <text :class="plAmount > 0 ? 'text-light-green' : plAmount < 0 ? 'text-red' : ''">{{plAmount}}({{ formartRose(pl) }}%)</text>
           </text>
         </p>
       </div>
@@ -98,6 +98,7 @@ import assetsModule from '@/components/business/assetsModule/index.vue'
 import { getAsset } from '@/api/asset';
 import { roundDown } from '@/utils/util';
 import { onShow } from '@dcloudio/uni-app';
+import { formartRose } from '@/utils/util'
 
 const active = ref(0);
 const balance = ref(0) //账户总余额

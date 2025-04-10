@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <!-- 设置禁止缩放以及比例 -->
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,viewport-fit=cover">    <!-- 设置标题 -->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,viewport-fit=cover">
     <meta name="apple-mobile-web-app-title" content="XAUSWAP">
     <!-- 设置icon -->
     <link rel="icon" sizes="16" href="/src/static/svg/logo.svg" type="image/x-icon">
@@ -21,9 +21,13 @@
         '<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' +
         (coverSupport ? ', viewport-fit=cover' : '') + '" />')
     </script>
-    <title></title>
-    <!--preload-links-->
-    <!--app-context-->
+    <script type="text/javascript"> 
+        addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); 
+        function hideURLbar(){ 
+          window.scrollTo(0,1); 
+        }
+    </script>
+    <title> </title>
     <!-- 添加触摸事件阻止 -->
     <style>
       html {
@@ -41,6 +45,7 @@
       // 阻止手势缩放
       document.addEventListener('gesturestart', e => e.preventDefault());
     </script>
+
   </head>
   <body>
     <div id="app"><!--app-html--></div>
