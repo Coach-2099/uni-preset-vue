@@ -11,8 +11,11 @@
           </div>
           <div>{{ symbolInfo }}</div>
         </div>
-        <div class="increaseAndDecreaseBox px-5">
-          <text class="text-red fs-12">{{rose}}%</text>
+        <div v-if="rose > 0" class="increaseAndDecreaseBox flex items-center bg-light-success px-5 fs-12">
+          <text class="text-light-green">{{ formartRose(rose) }}</text>
+        </div>
+        <div v-if="rose < 0" class="increaseAndDecreaseBox flex items-center bg-pink px-5 fs-12">
+          <text class="text-light-green">{{ formartRose(rose) }}</text>
         </div>
       </div>
       <div class="flex items-center justify-between pt-10">
@@ -61,6 +64,7 @@ import { getKlineHistory,getTicker } from '@/api/quotes';
 import { useControlStore } from '@/stores/control';
 import { useUserStore } from '@/stores/user';
 import floatingPanelProps from '@/components/business/floatingPanelSpot/index.vue';
+import { formartRose } from '@/utils/util';
 import type {  UTCTimestamp } from 'lightweight-charts';
 
 const props = defineProps({
@@ -377,7 +381,6 @@ onUnmounted(() => {
         }
       }
       .increaseAndDecreaseBox {
-        background: #FFD3D9;
         border-radius: 3px 3px 3px 3px;
       }
     }

@@ -90,7 +90,7 @@
                   style="width: 22.4vw;" 
                   size="small"
                 >
-                  <text class="fs-14 text-white">{{ formatChange(v.rose) }}</text>
+                  <text class="fs-14 text-white">{{ formartRose(v.rose) }}</text>
                 </van-button>
               </div>
             </div>
@@ -171,7 +171,7 @@
                 style="width: 22.4vw;" 
                 size="small"
               >
-                <text class="fs-14 text-white">{{ formatChange(v.rose) }}</text>
+                <text class="fs-14 text-white">{{ formartRose(v.rose) }}</text>
               </van-button>
             </div>
           </div>
@@ -188,7 +188,7 @@ import basePullRefresh from '@/components/basePullRefresh/index.vue';
 import { getSymbolsLastPrice } from '@/api/quotes'
 
 import { useControlStore } from '@/stores/control';
-import { roundDown } from '@/utils/util';
+import { roundDown, formartRose } from '@/utils/util';
 
 // stores
 const controlStore = useControlStore();
@@ -326,13 +326,6 @@ const formatVolume = (volume:any) => {
   return num.toString() // 小于 1000 
 }
 
-const formatChange = (change:any) => {
-  const num = Number(change)
-  if (isNaN(num)) return '0.00%'
-  
-  // 添加正负号并格式化为百分比
-  return `${num > 0 ? '+' : ''}${num}%`
-}
 
 defineExpose({
   loadData,

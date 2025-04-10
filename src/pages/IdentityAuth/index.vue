@@ -58,12 +58,12 @@
               preview-size="9rem"
               :after-read="afterReadFront"
             >
-              <div class="upuloadTemp flex-col items-center">
-                <image
+              <div class="upuloadTemp frontTemp flex-col items-center">
+                <!-- <image
                   src="/static/images/IDCardFront.png "
                   mode="scaleToFill"
                 />
-                <p class="mt-15 fs-12">{{ $t('identityAuth.upload.frontPhoto') }}</p>
+                <p class="mt-15 fs-12">{{ $t('identityAuth.upload.frontPhoto') }}</p> -->
               </div>
             </van-uploader>
             <div v-if="fileFront" class="myPreview bg-white flex-col items-center pos-absolute">
@@ -82,12 +82,12 @@
               preview-size="9rem"
               :after-read="afterReadBack"
             >
-              <div class="upuloadTemp flex-col items-center">
-                <image
+              <div class="upuloadTemp backTemp flex-col items-center">
+                <!-- <image
                   src="/static/images/IDCardBack.png"
                   mode="scaleToFill"
                 />
-                <p class="mt-15 fs-12 text-black">{{ $t('identityAuth.upload.backPhoto') }}</p>
+                <p class="mt-15 fs-12 text-black">{{ $t('identityAuth.upload.backPhoto') }}</p> -->
               </div>
             </van-uploader>
             <div v-if="fileBack" class="myPreview bg-white flex-col items-center pos-absolute">
@@ -215,10 +215,18 @@ const uploadFun = async () => {
       height: 9.22rem;
       width: 9.77rem;
       padding-top: 2.4rem;
-      image {
-        width: 5.49rem;
-        height: 3.82rem;
-      }
+    }
+    .frontTemp {
+      background-image: url('/static/images/IDCardFront.png');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 120%;
+    }
+    .backTemp {
+      background-image: url('/static/images/IDCardBack.png');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100% 98%;
     }
     .myPreview {
       height: 9.22rem;

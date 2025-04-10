@@ -11,10 +11,11 @@
           </div>
           <div>{{ symbol }}</div>
         </div>
-        <div class="increaseAndDecreaseBox px-5 fs-12">
-          <text v-if="rose > 0" class="text-light-green">{{rose}}%</text>
-          <text v-else-if="rose < 0" class="text-light-green">{{rose}}%</text>
-          <text v-else class="text-black">{{ rose }}%</text>
+        <div v-if="rose > 0" class="increaseAndDecreaseBox flex items-center bg-light-success px-5 fs-12">
+          <text class="text-light-green">{{ formartRose(rose) }}</text>
+        </div>
+        <div v-if="rose < 0" class="increaseAndDecreaseBox flex items-center bg-pink px-5 fs-12">
+          <text class="text-light-green">{{ formartRose(rose) }}</text>
         </div>
       </div>
       <!-- <div class="toolsBtn" @click="showChartBtn">
@@ -56,6 +57,7 @@ import { useUserStore } from '@/stores/user';
 import { getTicker } from '@/api/quotes';
 import { onLoad, onShow } from '@dcloudio/uni-app';
 
+import { formartRose } from '@/utils/util';
 // stores
 const controlStore = useControlStore();
 const userStore = useUserStore();
@@ -123,7 +125,7 @@ watch(
 );
 
 onShow(() => {
-		loadInfo(props.symbol)
+  loadInfo(props.symbol)
 })
 	
 const getLastPrice=async(symbol:string)=>{
@@ -172,7 +174,6 @@ const showChartBtn = () => {
     margin-top: 75px;
   }
   .increaseAndDecreaseBox {
-    background: #FFD3D9;
     border-radius: 3px 3px 3px 3px;
   }
   .buyAndSellBox {
