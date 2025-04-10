@@ -19,6 +19,9 @@ class SocketService {
   private subscriptions = new Set<string>(); // 存储已订阅主题
   private userSubscriptions = new Set<string>(); // 存储用户主题订阅
 
+  // 断开连接时的处理函数
+  private disconnectHandlers: Function[] = [];
+
   /**
    * 构造函数
    * @param url - WebSocket服务器地址
@@ -32,6 +35,57 @@ class SocketService {
     this.heartbeatTimeout = options.heartbeatTimeout || 5000;
     this.maxRetry = options.maxRetry || 3;
   }
+
+
+  // 增加多端事件监听
+  private handleReconnectEvents() {
+    // 通用网络状态监听
+    uni.onNetworkStatusChange((res) => {
+      if (res.isConnected && !this.isConnected.value) {
+        this.handleDisconnect();
+      }
+    });
+
+    // 区分平台处理
+    const platform = uni.getSystemInfoSync().platform;
+    
+    if (platform === 'h5') {
+      // H5端使用页面可见性API
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          this.handleDisconnect();
+        }
+      });
+    } else {
+      // APP端使用uni-app生命周期
+      let appShowCallback: Function;
+      
+      // 前台事件
+      appShowCallback = () => {
+        if (!this.isConnected.value) {
+          this.handleDisconnect();
+        }
+      };
+      uni.onAppShow(appShowCallback);
+
+      // 后台事件
+      uni.onAppHide(() => {
+        this.disconnect();
+      });
+
+      // 清理监听（示例代码需在disconnect中实现）
+      this.disconnectHandlers.push(() => {
+        uni.offAppShow(appShowCallback);
+      });
+    }
+
+    // 安卓锁屏处理（iOS通常不需要）
+    if (platform === 'android' && typeof plus !== 'undefined') {
+      plus.device.addEventListener('lock', () => this.disconnect());
+      plus.device.addEventListener('unlock', () => this.handleDisconnect());
+    }
+  }
+
 
   /**
    * 建立WebSocket连接
@@ -57,8 +111,8 @@ class SocketService {
     this.ws.onclose = (e) => {
       console.log('连接关闭', e.reason);
       // this.isConnected.value = false;
-      // 原代码中没有handleReconnection方法，推测此处应该调用handleDisconnect方法
-      this.handleDisconnect()
+      // this.handleDisconnect()
+      this.handleReconnectEvents();
     };
 
     this.ws.onerror = (error) => {
@@ -262,13 +316,29 @@ class SocketService {
    * 处理断开连接
    */
   private handleDisconnect() {
-    this.stopHeartbeat();
-    this.disconnect();
-    setTimeout(() => {
-      this.connect()
-	  this.retryCount++;
-    }
-	, 3000); // 3秒后尝试重连
+    // this.stopHeartbeat();
+    // this.disconnect();
+    // setTimeout(() => {
+    //   this.connect()
+    //   this.retryCount++;
+    // }, 3000); // 3秒后尝试重连
+    const retryDelay = this.calculateRetryDelay(); 
+  
+    this.retryTimer = setTimeout(() => {
+      if (this.retryCount < this.maxRetry) {
+        console.log(`第${this.retryCount + 1}次重连...`);
+        this.connect();
+        this.retryCount++;
+      }
+    }, retryDelay);
+  }
+
+  private calculateRetryDelay(): number {
+    // 根据平台采用不同策略
+    const isMobile = uni.getSystemInfoSync().platform !== 'h5';
+    return isMobile ? 
+      Math.min(3000 * Math.pow(2, this.retryCount), 30000) : // APP端指数退避
+      3000; // H5端固定间隔
   }
 
   /**
@@ -276,6 +346,10 @@ class SocketService {
    */
   disconnect() {
     console.log('主动断开连接');
+    // 清理所有事件监听
+    this.disconnectHandlers.forEach(handler => handler());
+    this.disconnectHandlers = [];
+
     this.stopHeartbeat();
     if (this.ws) {
       this.ws.close(1000, '正常关闭');

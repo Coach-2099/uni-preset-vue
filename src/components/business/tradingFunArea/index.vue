@@ -11,10 +11,10 @@
           </div>
           <div>{{ symbol }}</div>
         </div>
-        <div v-if="rose > 0" class="increaseAndDecreaseBox flex items-end bg-light-success px-5 fs-12">
+        <div v-if="rose > 0" class="increaseAndDecreaseBox flex items-center bg-light-success px-5 fs-12">
           <text class="text-light-green">{{ formartRose(rose) }}</text>
         </div>
-        <div v-if="rose < 0" class="increaseAndDecreaseBox flex items-end bg-pink px-5 fs-12">
+        <div v-if="rose < 0" class="increaseAndDecreaseBox flex items-center bg-pink px-5 fs-12">
           <text class="text-light-green">{{ formartRose(rose) }}</text>
         </div>
       </div>
