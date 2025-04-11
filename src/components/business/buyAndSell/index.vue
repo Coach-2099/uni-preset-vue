@@ -41,21 +41,23 @@
           </template>
         </van-popover>
       </div>
-      <div v-if="orderTypeObj?.value === 'LIMIT'" class="baseInput-Special w-100 mt-10 pl-15 py-10 flex justify-between items-center">
+      <div class="baseInput-Special w-100 mt-10 pl-15 py-10 flex justify-between items-center">
         <div>
           <div
-            @click="clickPriceInpupt"
+            @click="orderTypeObj?.value === 'LIMIT'?clickPriceInpupt:''"
             :class="showPriceInput ? 'fs-12 h-20' : 'fs-14'"
             class="text-gray price-label">{{ $t('noun.price') }}</div>
           <input
             v-if="showPriceInput"
             :focus="showPriceInput"
+			:disabled="orderTypeObj?.value === 'MARKET'"
             v-model="price"
 			      @input="calculateMargin(tradeNum)"
             class="myInput flex-1 w-100"
-            :placeholder="$t('tips.enterPrice')"
+            :placeholder="orderTypeObj?.value === 'MARKET'?$t('noun.marketOrder'):$t('tips.enterPrice')"
             placeholder-class="input-placeholder"
           />
+		  
         </div>
         <text class="fs-14 px-10 text-gray">USDT</text>
       </div>
@@ -223,6 +225,11 @@ const checkTemp = (type: string) => {
 //市价 限价选择
 const onSelectOrderType = (action: any) => {
   orderTypeObj.value = action
+  if(orderTypeObj.value.value === 'MARKET'){
+	  price.value = t('noun.marketOrder')
+  }else{
+	  price.value = props.lastPrice //limit时初始化当前价格
+  }
 }
 //滑动获取交易量
 const sliderChange =(val:number) =>{
@@ -296,7 +303,8 @@ const loadData =(params:any)=>{
 	tradeToken.value = tradeSymbol[0]
 	basicToken.value = tradeSymbol[1]
 	showPriceInput.value  =true
-	price.value = props.lastPrice //初始化当前价格
+	// price.value = props.lastPrice //初始化当前价格
+	price.value = t('noun.marketOrder')
 	loadSpotBalance() 
 }
 
@@ -310,7 +318,7 @@ const getBuyAndSellConfig = async () => {
 }
 
 const clickPriceInpupt = () => {
-  showPriceInput.value = !showPriceInput.value
+	showPriceInput.value = !showPriceInput.value
 }
 
 //下单

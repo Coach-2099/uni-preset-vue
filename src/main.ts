@@ -16,9 +16,9 @@ import { useUserStore } from '@/stores/user';
 
 // vconsole
 
-import Vconsole from 'vconsole'
-let vConsole = new Vconsole();
-export default vConsole
+// import Vconsole from 'vconsole'
+// let vConsole = new Vconsole();
+// export default vConsole
 
 
 export function createApp() {
