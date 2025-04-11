@@ -58,7 +58,6 @@
             :placeholder="orderTypeObj?.value === 'MARKET'?$t('noun.marketOrder'):$t('tips.enterPrice')"
             placeholder-class="input-placeholder"
           />
-		  
         </div>
         <text class="fs-14 px-10 text-gray">USDT</text>
       </div>
