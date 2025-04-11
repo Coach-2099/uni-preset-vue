@@ -41,15 +41,19 @@
           </template>
         </van-popover>
       </div>
-      <div v-if="orderTypeObj?.value === 'LIMIT'" class="baseInput-Special w-100 mt-10 pl-15 py-10 flex justify-between items-center">
+      <div
+        v-if="orderTypeObj?.value === 'LIMIT'"
+        class="baseInput-Special w-100 mt-10 pl-15 py-10 flex justify-between items-center"
+        @click="clickPriceInpupt"
+      >
         <div>
           <div
-            @click="clickPriceInpupt"
             :class="showPriceInput ? 'fs-12 h-20' : 'fs-14'"
             class="text-gray price-label">{{ $t('noun.price') }}</div>
+            <!-- :focus="showPriceInput" -->
           <input
             v-if="showPriceInput"
-            :focus="showPriceInput"
+            focus
             v-model="price"
 			      @input="calculateMargin(tradeNum)"
             class="myInput flex-1 w-100"
@@ -70,7 +74,7 @@
             class="text-gray price-label">{{ $t('noun.quantity') }}</div>
           <input
             v-if="showPriceInput"
-            :focus="showPriceInput"
+            focus
             v-model="tradeNum"
 			      @input="calculateMargin(tradeNum)"
             class="myInput flex-1 w-100"
@@ -128,7 +132,7 @@
             class="text-gray price-label">{{ $t('noun.orderAmount') }}</div>
           <input
             v-if="showPriceInput"
-            :focus="showPriceInput"
+            focus
 			      disabled="true"
             v-model="tradeVal"
             class="myInput flex-1 w-100"

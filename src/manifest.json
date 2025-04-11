@@ -1,6 +1,6 @@
 {
     "name" : "udax",
-    "appid" : "__UNI__9CF0FFE",
+    "appid" : "__UNI__177F601",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -41,7 +41,9 @@
                 ]
             },
             /* ios打包配置 */
-            "ios" : {},
+            "ios" : {
+                "dSYMs" : false
+            },
             /* SDK配置 */
             "sdkConfigs" : {}
         }
@@ -68,5 +70,10 @@
     "uniStatistics" : {
         "enable" : false
     },
-    "vueVersion" : "3"
+    "vueVersion" : "3",
+    "app-harmony" : {
+        "distribute" : {
+            "bundleName" : "test.UDAX.com"
+        }
+    }
 }
