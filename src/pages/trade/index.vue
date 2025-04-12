@@ -1,6 +1,7 @@
 <template>
-  <div class="trade-index pos-relative">
-    <div class="top bg-white">
+  <div class="trade-index">
+    <div style="height: var(--status-bar-height)"></div>
+    <div class="top bg-white pos-relative">
       <div class="switch-container-box bg-white pos-fixed w-100 flex justify-between">
         <div class="w-100 pos-relative switch-container flex justify-between">
           <div 
@@ -157,6 +158,7 @@ const onClickTab = (e: any) => {
 <style lang="scss" scoped>
 .trade-index {
   background: #F6F7FB;
+  height: 100%;
   .top {
     padding: 20rpx;
     .switch-container-box {

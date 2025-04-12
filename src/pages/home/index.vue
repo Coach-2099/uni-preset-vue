@@ -1,5 +1,6 @@
 <template>
   <div class="home-index">
+    <div style="height: var(--status-bar-height)"></div>
     <van-sticky>
       <div class="flex justify-between items-center pl-15 pr-15 headerTemp">
         <div @click="goUser" class="flex items-center home_icon">
@@ -186,9 +187,16 @@
   </div>
 </template>
 
+<!-- #ifdef APP-PLUS -->
+<script module="vconsole" lang="renderjs">
+   import VConsole from 'vconsole' // TODO
+   new VConsole() // 使用vconsole
+</script>
+<!-- #endif -->
+
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue';
-import { onLaunch, onShow } from "@dcloudio/uni-app";
+import { onLaunch, onShow, onLoad } from "@dcloudio/uni-app";
 import { useSocket } from '@/utils/socket';
 import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼峰命名
 import quoteList from '@/components/business/quoteList/index.vue'; // 使用大驼峰命名
@@ -223,8 +231,8 @@ const futuresQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const metalsQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const socketService = computed(() => userStore.socketService);
 
-  onLaunch(() => {
-    uni.hideTabBar();
+  onLoad(() => {
+    uni.hideTabBar()
   })
 
   // Connect to the socket server
@@ -237,14 +245,14 @@ const socketService = computed(() => userStore.socketService);
       onClickTab({name: 0})
     })
   });
-  
+
   onShow(()=>{
 	  if(userStore.userInfo.userId){
 	  	getBalance()
 	  }
 	  subTicker()
   })
-  
+
   const subTicker=()=>{
 	  nextTick(() => {
 	  // 订阅BTC/USDT的实时行情
@@ -289,7 +297,9 @@ const socketService = computed(() => userStore.socketService);
  const loadNoticeData = async () => {
    const data = await getNotice({pages: pages.value})
   //  noticeList.value = [{title: '这是公告1'}, {title: '这是公告2'}, {title: '这是公告3'}]
-   noticeList.value = data.records
+  if (data.records.length > 0) {
+    noticeList.value = data.records
+  }
  }
 
   const subscribeFun = () => {
@@ -435,6 +445,9 @@ const socketService = computed(() => userStore.socketService);
       overflow: hidden;
       position: relative;
       min-height: 20px;
+      &:empty {
+        display: none; /* 当内容为空时隐藏容器 */
+      }
       .marquee-content {
         display: flex;
         animation: marquee 10s linear infinite;  // 增加动画时长

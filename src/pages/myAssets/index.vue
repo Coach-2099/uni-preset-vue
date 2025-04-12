@@ -1,5 +1,6 @@
 <template>
   <div class="assets-index">
+    <div style="height: var(--status-bar-height)"></div>
     <div class="header w-100 text-center text-black fs-22 pt-15 pb-15">{{$t('navBar.myAssets')}}</div>
     <div class="assetsInfo">
       <p class="fs-14 text-gray">{{ $t('homeIndex.totalAssets') }}</p>

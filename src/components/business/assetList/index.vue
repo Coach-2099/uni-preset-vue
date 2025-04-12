@@ -28,11 +28,11 @@
 		  </div>
 		  <div v-if="item.protocolType" class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
 		    <p>{{ $t('assetRecord.blockchain') }}</p>
-		    <p>{{ item.protocolType }}</p>
+		    <p class="w-75 text-wrap text-right">{{ item.protocolType }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
 		    <p>{{ $t('assetRecord.transactionHash') }}</p>
-		    <p>{{ item.blockOrderId }}</p>
+		    <p class="w-75 text-wrap text-right">{{ item.blockOrderId }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
 		    <p>{{ $t('noun.time') }}</p>
@@ -62,7 +62,7 @@
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
 		    <p>{{ $t('assetRecord.transactionHash') }}</p>
-		    <p>{{ item.transactionId }}</p>
+		    <p class="w-75 text-wrap text-right">{{ item.transactionId }}</p>
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
 		    <p>{{ $t('noun.time') }}</p>
@@ -167,7 +167,7 @@ const goAssetDetail = (item: any) => {
 .transactionOrder-index {
   .orderList {
     // height: 100%;
-    min-height: calc(100vh - 95px);
+    min-height: calc(100vh - 5px);
     background-color: #f6f8fc;
     .orderBox {
       box-shadow: 0px 0px 6px 1px rgba(0,8,242,0.08);

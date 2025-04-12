@@ -19,7 +19,7 @@ const viteConfig = defineConfig(({ mode }: ConfigEnv) => {
         运行模式: mode,
         目标地址: env.VITE_APP_BASE_URL,
         代理规则: {
-            '/admin': `-> ${env.VITE_APP_BASE_URL}`
+            '/api': `-> ${env.VITE_APP_BASE_URL}`
         }
     });
 

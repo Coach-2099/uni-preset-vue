@@ -1,6 +1,7 @@
 <template>
   <div class="contract-index pos-relative">
     <div class="top bg-white">
+      <div style="height: var(--status-bar-height)"></div>
       <div class="switch-container-box bg-white pos-fixed w-100 flex justify-between">
         <div class="w-100 pos-relative switch-container flex justify-between">
           <div 
@@ -158,6 +159,7 @@ const sliderStyle = computed(() => ({
 <style lang="scss">
 .contract-index {
   background: #F6F7FB;
+  height: 100%;
   .top {
     padding: 20rpx;
     .switch-container-box {

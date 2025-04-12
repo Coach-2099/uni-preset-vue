@@ -1,7 +1,7 @@
 <template>
   <div class="AssetRecord-index">
     <navigationBar :title="$t('navBar.assetRecord')"></navigationBar>
-    <div class="mt-20 pl-5 pr-10">
+    <div class="mt-20 pl-">
       <van-tabs
         title-active-color="#333333"
         title-inactive-color="#B0B0B0"
@@ -83,7 +83,7 @@ const loadData = async () => {
       break
   }
   const data = await loadFun(params)
-  dataList.value = data.records
+  dataList.value = [...data.records, ...data.records]
   console.log('dataList', dataList.value)
 }
 

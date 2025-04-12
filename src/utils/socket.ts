@@ -1,3 +1,4 @@
+/// <reference types="@dcloudio/types" />
 import { ref } from "vue";
 
 // 事件回调类型定义
@@ -46,46 +47,70 @@ class SocketService {
       }
     });
 
+    
+    // #ifdef H5
+    // H5端使用页面可见性API
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        this.handleDisconnect();
+      }
+    });
+    // #endif
+
+
+    // #ifdef APP-PLUS
+    // APP端使用uni-app生命周期
+    let appShowCallback: Function;
+
+    // 前台事件
+    appShowCallback = () => {
+      if (!this.isConnected.value) {
+        this.handleDisconnect();
+      }
+    };
+    uni.onAppShow(appShowCallback);
+
+    // 后台事件
+    uni.onAppHide(() => {
+      this.disconnect();
+    });
+
+    // 清理监听
+    this.disconnectHandlers.push(() => {
+      uni.offAppShow(appShowCallback);
+    });
+    // #endif
+
+
+    // #ifdef APP-PLUS
     // 区分平台处理
     const platform = uni.getSystemInfoSync().platform;
-    
-    if (platform === 'h5') {
-      // H5端使用页面可见性API
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-          this.handleDisconnect();
-        }
-      });
-    } else {
-      // APP端使用uni-app生命周期
-      let appShowCallback: Function;
-      
-      // 前台事件
-      appShowCallback = () => {
-        if (!this.isConnected.value) {
-          this.handleDisconnect();
-        }
-      };
-      uni.onAppShow(appShowCallback);
-
-      // 后台事件
-      uni.onAppHide(() => {
-        this.disconnect();
-      });
-
-      // 清理监听（示例代码需在disconnect中实现）
-      this.disconnectHandlers.push(() => {
-        uni.offAppShow(appShowCallback);
-      });
-    }
-
     // 安卓锁屏处理（iOS通常不需要）
     if (platform === 'android' && typeof plus !== 'undefined') {
-      plus.device.addEventListener('lock', () => this.disconnect());
-      plus.device.addEventListener('unlock', () => this.handleDisconnect());
+      plus.globalEvent.addEventListener('lock', () => this.disconnect());
+      plus.globalEvent.addEventListener('unlock', () => this.handleDisconnect());
     }
+    // #endif
   }
 
+  // 多端websocket 初始化方式
+  private createWebSocket() {
+    // #ifdef H5
+    this.ws = new WebSocket(this.url);
+    console.log('H5 WebSocket 初始化完成');
+    // #endif
+  
+    // #ifdef APP-PLUS
+    this.ws = uni.connectSocket({
+      url: this.url,
+      complete: (v) => {
+				console.log("正准备建立websocket中...", v);
+				// 返回实例
+			},
+    });
+    console.log('APP WebSocket 初始化完成');
+    // #endif
+  }
 
   /**
    * 建立WebSocket连接
@@ -93,46 +118,80 @@ class SocketService {
   connect() {
     console.log('链接地址：', this.url);
 
-    this.ws = new WebSocket(this.url);
+    // this.ws = new WebSocket(this.url);
+    this.createWebSocket();
 
+    // #ifdef H5
     // 基础事件监听
-    this.ws.onopen = () => {
-      console.log('WebSocket连接成功');
+    this.ws!.onopen = () => {
       // this.isConnected.value = true;
       this.startHeartbeat();
-	  if(this.retryCount>0){
-		  location.reload() //为了防止页面断开时已订阅内容数据无法重新监听，强制刷新
-		  this.retryCount = 0
-	  }
+      if(this.retryCount>0){
+        location.reload() //为了防止页面断开时已订阅内容数据无法重新监听，强制刷新
+        this.retryCount = 0
+      }
       // 重连时恢复订阅, 已刷新当前页，重新恢复订阅无效，因数据无法被监听处理
       // this.restoreSubscriptions();
     };
 
-    this.ws.onclose = (e) => {
-      console.log('连接关闭', e.reason);
-      // this.isConnected.value = false;
-      // this.handleDisconnect()
-      this.handleReconnectEvents();
-    };
-
-    this.ws.onerror = (error) => {
-      console.error('WebSocket错误:', error);
-    };
-
-    this.ws.onmessage = (event) => {
+    this.ws!.onmessage = (event) => {
       this.handleMessage(event.data);
     };
+    // #endif
+
+    // #ifdef APP-PLUS
+    // 使用uni-app事件监听
+      uni.onSocketOpen(() => this.handleOpen());
+      uni.onSocketMessage((e: any) => {
+        console.log('收到消息：', e.data);
+        this.handleMessage(e.data)
+      });
+    // #endif
+
+    // 公共错误和关闭处理
+    uni.onSocketError((err) => {
+      console.error('连接错误详情:', {
+        errCode: err.errCode,
+        errMsg: err.errMsg,
+        url: this.url,
+        platform: uni.getSystemInfoSync().platform
+      });
+      // this.handleReconnectEvents(); // 处理重连事件
+      this.handleDisconnect(); 
+    });
+    uni.onSocketClose((e) => {
+      console.log('连接关闭', e);
+      this.handleDisconnect();
+    });
   }
+
+  private handleOpen() {
+    this.startHeartbeat();
+    
+    // #ifdef H5
+    if(this.retryCount > 0) {
+      location.reload(); // H5端强制刷新恢复订阅
+      this.retryCount = 0;
+    }
+    // #endif
+  
+    // APP端不需要强制刷新，直接恢复订阅
+    // #ifdef APP-PLUS
+    // this.restoreSubscriptions();
+
+    // #endif
+  }
+  
 
   // 消息处理核心方法
   private handleMessage(data: string) {
     if (data === 'ok') return; // 过滤服务端确认消息
-	// 心跳响应处理
-	else if(data === 'pong'){
-		this.clearHeartbeatTimeout();
-		this.retryCount = 0;
-		return;
-	}
+    // 心跳响应处理
+    else if(data === 'pong'){
+      this.clearHeartbeatTimeout();
+      this.retryCount = 0;
+      return;
+    }
     try {
       const { event, payload,type } = JSON.parse(data);
       const handler = this.eventHandlers.get(event);
@@ -223,11 +282,19 @@ class SocketService {
    * @param data - 发送数据
    */
   emit<T = any>(event: string, data?: T) {
-    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-      console.warn("WebSocket未连接");
-      return;
+    // #ifdef H5
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify({ event, data }));
     }
-    this.ws.send(JSON.stringify({ event, data }));
+    // #endif
+
+    // #ifdef APP-PLUS
+    if (this.ws && (this.ws as UniApp.SocketTask).readyState === 0) {
+      uni.sendSocketMessage({
+        data: JSON.stringify({ event, data })
+      });
+    }
+    // #endif
   }
 
 
@@ -265,11 +332,19 @@ class SocketService {
    * 发送心跳包
    */
   private sendHeartbeat() {
+    // #ifdef H5
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-        this.ws.send(JSON.stringify({ event: "ping", data: Date.now() })); // 发送当前时间戳
-      }
+      this.ws.send(JSON.stringify({ event: "ping", data: Date.now() }));
     }
+    // #endif
+
+    // #ifdef APP-PLUS
+    if (this.ws && (this.ws as unknown as UniApp.SocketTask).readyState === 0) {
+      uni.sendSocketMessage({
+        data: JSON.stringify({ event: "ping", data: Date.now() })
+      });
+    }
+    // #endif
   }
 
   /**
@@ -323,7 +398,6 @@ class SocketService {
     //   this.retryCount++;
     // }, 3000); // 3秒后尝试重连
     const retryDelay = this.calculateRetryDelay(); 
-  
     this.retryTimer = setTimeout(() => {
       if (this.retryCount < this.maxRetry) {
         console.log(`第${this.retryCount + 1}次重连...`);

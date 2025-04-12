@@ -29,8 +29,6 @@
     <view id="chartTemp">
       <view v-if="isH5" ref="chartContainer" class="chart"></view>
       <view v-else class="unsupported">{{$t('chart.unsupported')}}</view>
-      <!-- 遮罩 -->
-      <!-- <van-overlay :show="isLoading" teleport="#chartTemp" z-index="100" /> -->
     </view>
   </view>
 </template>

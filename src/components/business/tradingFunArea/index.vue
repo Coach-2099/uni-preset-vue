@@ -15,7 +15,7 @@
           <text class="text-light-green">{{ formartRose(rose) }}</text>
         </div>
         <div v-if="rose < 0" class="increaseAndDecreaseBox flex items-center bg-pink px-5 fs-12">
-          <text class="text-light-green">{{ formartRose(rose) }}</text>
+          <text class="text-red">{{ formartRose(rose) }}</text>
         </div>
       </div>
       <!-- <div class="toolsBtn" @click="showChartBtn">

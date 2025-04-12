@@ -17,6 +17,7 @@ const requestHooks: RequestHooks = {
         if (baseUrl) {
             options.url = `${baseUrl}${options.url}`
         }
+        console.log('baseUrl', baseUrl)
         const token = getToken()
 
         // 添加token
@@ -92,7 +93,13 @@ const defaultOptions: HttpRequestOptions = {
     requestOptions: {
         timeout: 10 * 1000
     },
-    baseUrl: import.meta.env.VITE_IS_H5 === 'true' ? '/api' : `${import.meta.env.VITE_APP_BASE_URL}`,
+    // baseUrl: import.meta.env.VITE_IS_H5 === 'true' ? '/api' : `${import.meta.env.VITE_APP_BASE_URL}`,
+    // #ifdef H5
+    baseUrl: '/api', // H5使用代理路径
+    // #endif
+    // #ifndef H5
+    baseUrl: `${import.meta.env.VITE_APP_BASE_URL}`, // APP直接使用完整地址
+    // #endif
     //是否返回默认的响应
     isReturnDefaultResponse: false,
     // 需要对返回数据进行处理
