@@ -27,7 +27,7 @@
                   src="/static/svg/tools/upload.svg"
                   mode="scaleToFill"
                 />
-                <p class="mt-15 fs-12">{{$t('userInfo.idcard')}}</p>
+                <p class="mt-15 fs-12">{{$t('userInfo.avatar')}}</p>
               </div>
             </van-uploader>
             <!-- <div v-if="fileAvatar" class="myPreview bg-white flex-col items-center pos-absolute">
