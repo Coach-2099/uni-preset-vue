@@ -41,7 +41,7 @@ export default {
 		customerService: 'Customer Service',
 		safeLogout: 'Safe Logout',
 		unloginUser: 'Unlogged User',
-		loginOut: 'Log out safely'
+		loginOut: 'Log out'
 	},
 	language: {
 		chinese: '中文',
@@ -192,12 +192,12 @@ export default {
 		}
 	},
 	userInfo: {
-		ordinaryUsers: 'Regular User',
-		IdNotCompleted: 'ID Verification Not Completed',
-		IdentityDuthentication: 'ID Verification in Progress',
+		ordinaryUsers: 'Non-VIP',
+		IdNotCompleted: 'Unauthenticated',
+		IdentityDuthentication: 'Under review',
 		IdentityDuthenticationSuccess: 'KYC Verified',
 		completeIDforTransactions: 'Complete KYC',
-		IdentityAuthentication: 'In the authentication, go to view information',
+		IdentityAuthentication: 'Under review',
 		goCertification: 'Verify',
 		certification: 'Verifying',
 		accountInfo: 'Account Information',
@@ -215,7 +215,7 @@ export default {
 		},
 		verificationSuccess: 'Submitted for certification',
 		username: 'Username',
-		avatar: 'Please take/upload your avatar',
+		avatar: 'Please take/Upload your avatar',
 		idcard: 'Front photo of ID card'
 	},
 	identityAuth: {
@@ -232,12 +232,12 @@ export default {
 	      cardNumber: 'Please enter the card number'
 	    },
 	    upload: {
-	      title: 'Please take/upload personal ID card',
+	      title: 'Please take/Upload personal ID card',
 	      hint: 'Please ensure that the ID border is complete, the font is clear, and the brightness is uniform',
 	      frontPhoto: 'Front photo of ID card',
 	      backPhoto: 'Reverse photo of ID card',
 	      uploadButton: 'Upload',
-	      securityNote: 'Xauswap will encrypt information to ensure real-time information security'
+	      securityNote: 'XAUSWAP will encrypt information to ensure real-time information security'
 	    }
 	  },
 	contract: {
