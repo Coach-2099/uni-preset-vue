@@ -156,12 +156,13 @@ class SocketService {
         url: this.url,
         platform: uni.getSystemInfoSync().platform
       });
-      // this.handleReconnectEvents(); // 处理重连事件
-      this.handleDisconnect(); 
+      this.handleReconnectEvents(); // 处理重连事件
+      // this.handleDisconnect(); 
     });
     uni.onSocketClose((e) => {
       console.log('连接关闭', e);
-      this.handleDisconnect();
+      this.handleReconnectEvents();
+      // this.handleDisconnect();
     });
   }
 
