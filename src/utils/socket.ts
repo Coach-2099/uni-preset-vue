@@ -42,6 +42,12 @@ class SocketService {
 
   // 新增可见性变化回调方法
   private handleVisibilityChange(isVisible: boolean) {
+    // 在发送心跳包之前 先判断是否存在socket连接 或者 socket连接状态是否正常，正常才执行，不然就重新执行socket连接事件
+    if (!this.ws || this.ws.readyState === WebSocket.CLOSED || this.ws.readyState === WebSocket.CLOSED || this.ws.readyState === WebSocket.CLOSING) {
+      console.log('检测到连接已关闭，尝试重新连接');
+      this.connect();
+      return;
+    }
     console.log('应用可见状态变化:', isVisible);
     if (isVisible) {
       // 触发心跳检测连接状态
@@ -49,6 +55,30 @@ class SocketService {
     } else {
       // 暂停非必要网络活动
       this.stopHeartbeat();
+    }
+  }
+
+  // 页面获取焦点时处理
+  private handlePageFocus() {
+    this.handleVisibilityChange(true);
+  }
+
+  // 页面显示处理（适用于移动设备从后台恢复）
+  handlePageShow(event: any) {
+    // persisted属性为true表示页面是从bfcache中恢复的
+    //  || this.pageWasHidden
+    if (event.persisted) {
+      console.log('页面从缓存恢复，检查WebSocket状态');
+      this.handleVisibilityChange(true);
+      // this.pageWasHidden = false;
+    }
+  }
+
+  // 网络变化处理
+  handleNetworkChange() {
+    if (navigator.onLine) {
+      console.log('网络连接恢复，检查WebSocket状态');
+      this.handleVisibilityChange(true);
     }
   }
 
@@ -62,12 +92,19 @@ class SocketService {
       }
     });
 
-    
+
     // 统一可见性监听（新增以下代码）
     // #ifdef H5
+    // 处理页面可见性变化
     document.addEventListener('visibilitychange', () => {
       this.handleVisibilityChange(document.visibilityState === 'visible');
     });
+    // 处理页面重新获得焦点
+    window.addEventListener('focus', this.handlePageFocus.bind(this));
+    // 移动设备特有的事件
+    window.addEventListener('pageshow', this.handlePageShow.bind(this));
+    // 监听online事件，在网络恢复时尝试重连
+    window.addEventListener('online', this.handleNetworkChange.bind(this));
     // #endif
 
     // #ifdef APP-PLUS
@@ -202,7 +239,6 @@ class SocketService {
     }
     // #endif
   }
-  
 
   // 消息处理核心方法
   private handleMessage(data: string) {
@@ -231,7 +267,6 @@ class SocketService {
       this.subscribe(topic,'')
     })
   }
-
 
   /**
      * 通用订阅方法
@@ -272,7 +307,6 @@ class SocketService {
         this.subscriptions.add(topic);
       // }
     }
-  
     /**
      * 通用取消订阅方法
      * @param topicType - 主题类型 (ticker/depth)
@@ -291,7 +325,7 @@ class SocketService {
         this.subscriptions.delete(topic);
       }
     }
-  
+
     /**
      * 用户主题订阅
      * @param userId - 用户ID
@@ -303,7 +337,7 @@ class SocketService {
         this.userSubscriptions.add(userId);
       }
     }
-  
+
      /**
      * 用户主题取消订阅
      * @param userId - 用户ID
@@ -315,7 +349,6 @@ class SocketService {
         this.userSubscriptions.delete(userId);
       }
     }
-  
 
   /**
    * 发送消息
@@ -337,7 +370,6 @@ class SocketService {
     }
     // #endif
   }
-
 
   /**
    * 注册事件监听
