@@ -104,6 +104,7 @@
           <quoteList
             ref="spotQuoteListRefs"
             type="SPOT"
+            :maxItems="3"
             :needPullRefresh="false"
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
@@ -115,6 +116,7 @@
           <quoteList
             ref="futuresQuoteListRefs"
             type="FUTURES"
+            :maxItems="3"
             :needPullRefresh="false"
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
@@ -126,6 +128,7 @@
           <quoteList
             ref="metalsQuoteListRefs"
             type="METALS"
+            :maxItems="3"
             :needPullRefresh="false"
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">

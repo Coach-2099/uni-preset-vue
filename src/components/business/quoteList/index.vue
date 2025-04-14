@@ -151,7 +151,7 @@
           </div>
         </div>
         <!-- 行情列表 -->
-        <div v-for="[k, v] in symbolMap" :key="k">
+        <div v-for="[k, v] in displayedItems" :key="k">
           <div
             @click="goDetail(v)"
             class="mt-5 ml-15 mr-15 pb-5 flex ff-biance fw-b justify-between items-center"
@@ -210,7 +210,19 @@ const props = defineProps({
   needPullRefresh: {
     type: Boolean,
     default: true
+  },
+  // 新增最大显示条目参数
+  maxItems: {
+    type: Number,
+    default: 0 // 0表示不限制
   }
+});
+
+const displayedItems = computed(() => {
+  const items = Array.from(symbolMap);
+  return props.maxItems > 0 
+    ? items.slice(0, props.maxItems)
+    : items;
 });
 
 const handleRefresh = (finish: any) => {
@@ -228,7 +240,6 @@ onMounted(() => {
 const loadData = async () => {
   try {
     loadingData.value = true;
-    console.log('开始刷新', loadingData.value, new Date().getTime())
     const params = {
       klineType: props.type,
       // sortField: sortField.value,

@@ -35,11 +35,26 @@ class SocketService {
     this.heartbeatInterval = options.heartbeatInterval || 30000;
     this.heartbeatTimeout = options.heartbeatTimeout || 5000;
     this.maxRetry = options.maxRetry || 3;
+
+    console.log('初始化可见性监听');
+    this.handleReconnectEvents(); // 确保初始化时注册监听
   }
 
+  // 新增可见性变化回调方法
+  private handleVisibilityChange(isVisible: boolean) {
+    console.log('应用可见状态变化:', isVisible);
+    if (isVisible) {
+      // 触发心跳检测连接状态
+      this.sendHeartbeat();
+    } else {
+      // 暂停非必要网络活动
+      this.stopHeartbeat();
+    }
+  }
 
   // 增加多端事件监听
   private handleReconnectEvents() {
+    console.log('触发多端监听事件')
     // 通用网络状态监听
     uni.onNetworkStatusChange((res) => {
       if (res.isConnected && !this.isConnected.value) {
@@ -48,48 +63,26 @@ class SocketService {
     });
 
     
+    // 统一可见性监听（新增以下代码）
     // #ifdef H5
-    // H5端使用页面可见性API
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') {
-        this.handleDisconnect();
-      }
+      this.handleVisibilityChange(document.visibilityState === 'visible');
     });
     // #endif
 
-
     // #ifdef APP-PLUS
-    // APP端使用uni-app生命周期
-    let appShowCallback: Function;
-
-    // 前台事件
-    appShowCallback = () => {
-      if (!this.isConnected.value) {
-        this.handleDisconnect();
+    let visible = true;
+    uni.onAppShow(() => {
+      if (!visible) {
+        this.handleVisibilityChange(true);
+        visible = true;
       }
-    };
-    uni.onAppShow(appShowCallback);
-
-    // 后台事件
+    });
+    
     uni.onAppHide(() => {
-      this.disconnect();
+      this.handleVisibilityChange(false);
+      visible = false;
     });
-
-    // 清理监听
-    this.disconnectHandlers.push(() => {
-      uni.offAppShow(appShowCallback);
-    });
-    // #endif
-
-
-    // #ifdef APP-PLUS
-    // 区分平台处理
-    const platform = uni.getSystemInfoSync().platform;
-    // 安卓锁屏处理（iOS通常不需要）
-    if (platform === 'android' && typeof plus !== 'undefined') {
-      plus.globalEvent.addEventListener('lock', () => this.disconnect());
-      plus.globalEvent.addEventListener('unlock', () => this.handleDisconnect());
-    }
     // #endif
   }
 
@@ -99,16 +92,37 @@ class SocketService {
     this.ws = new WebSocket(this.url);
     console.log('H5 WebSocket 初始化完成');
     // #endif
-  
+
     // #ifdef APP-PLUS
     this.ws = uni.connectSocket({
       url: this.url,
-      complete: (v) => {
-				console.log("正准备建立websocket中...", v);
-				// 返回实例
-			},
+      header: {
+        'content-type': 'application/json'
+      },
+      protocols: ['protocol1'],
+      success: () => {
+        console.log('底层连接已初始化'); // 仅表示API调用成功
+      },
+      fail: (err) => {
+        console.error('连接初始化失败', err);
+      }
     });
-    console.log('APP WebSocket 初始化完成');
+    console.log('APP WebSocket 初始化完成', this.ws);
+
+    const socketTask = this.ws as UniApp.SocketTask;
+    socketTask.onOpen(() => {
+      console.log('WebSocket连接真正建立成功');
+      this.handleOpen();
+    });
+
+    socketTask.onError((err) => {
+      console.error('连接错误详细信息:', {
+        errCode: err.errCode,
+        errMsg: err.errMsg,
+        readyState: socketTask.readyState
+      });
+      this.handleDisconnect();
+    });
     // #endif
   }
 
@@ -141,15 +155,18 @@ class SocketService {
 
     // #ifdef APP-PLUS
     // 使用uni-app事件监听
-      uni.onSocketOpen(() => this.handleOpen());
+      uni.onSocketOpen(() => {
+        console.log('WebSocket连接真正建立成功 onSocketOpen !!');
+        this.handleOpen();
+      });
       uni.onSocketMessage((e: any) => {
-        console.log('收到消息：', e.data);
+        console.log('收到消息：!!!', e.data);
         this.handleMessage(e.data)
       });
     // #endif
 
     // 公共错误和关闭处理
-    uni.onSocketError((err) => {
+    uni.onError((err) => {
       console.error('连接错误详情:', {
         errCode: err.errCode,
         errMsg: err.errMsg,
@@ -179,7 +196,10 @@ class SocketService {
     // APP端不需要强制刷新，直接恢复订阅
     // #ifdef APP-PLUS
     // this.restoreSubscriptions();
-
+    if(this.retryCount > 0) {
+      location.reload(); // H5端强制刷新恢复订阅
+      this.retryCount = 0;
+    }
     // #endif
   }
   
@@ -219,6 +239,7 @@ class SocketService {
      * @param symbols - 交易对数组
      */
     subscribe(topicType: string, symbol: string) {
+      console.log('走这个方法', this.subscriptions)
       let topic  = ''
       if (!symbol || symbol.length === 0) {
         topic = `${topicType}`
@@ -226,11 +247,30 @@ class SocketService {
         // 组合式
         topic = `${symbol}-${topicType}`;
       }
-      if (!this.subscriptions.has(topic)) {
+      console.log('topic的判断方法', this.subscriptions.has(topic))
+      // if (!this.subscriptions.has(topic)) {
         // {"event":"subscribe","data":"ticker"}
-		    this.ws?.send(JSON.stringify({ event: 'subscribe', data: topic }));	
+		    // this.ws?.send(JSON.stringify({ event: 'subscribe', data: topic }));
+        const message = JSON.stringify({ event: 'subscribe', data: topic });
+        console.log('订阅消息', message);
+        console.log('查看 this.ws 的返回信息', this.ws)
+        // #ifdef H5
+        console.log('this.ws?.readyState', this.ws?.readyState)
+        console.log('WebSocket.OPEN', WebSocket.OPEN)
+        if (this.ws?.readyState === WebSocket.OPEN) {
+          console.log('H5 WebSocket 发送消息', message);
+          this.ws.send(message);
+        }
+        // #endif
+
+        // #ifdef APP-PLUS
+        if (this.ws?.readyState === 1) {
+          console.log('APP WebSocket 发送消息', message);
+          uni.sendSocketMessage({ data: message });
+        }
+        // #endif
         this.subscriptions.add(topic);
-      }
+      // }
     }
   
     /**
@@ -290,7 +330,7 @@ class SocketService {
     // #endif
 
     // #ifdef APP-PLUS
-    if (this.ws && (this.ws as UniApp.SocketTask).readyState === 0) {
+    if (this.ws && this.ws.readyState === 1) {
       uni.sendSocketMessage({
         data: JSON.stringify({ event, data })
       });
@@ -335,12 +375,13 @@ class SocketService {
   private sendHeartbeat() {
     // #ifdef H5
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      console.log('发送心跳包')
       this.ws.send(JSON.stringify({ event: "ping", data: Date.now() }));
     }
     // #endif
 
     // #ifdef APP-PLUS
-    if (this.ws && (this.ws as unknown as UniApp.SocketTask).readyState === 0) {
+    if (this.ws && this.ws.readyState === 0) {
       uni.sendSocketMessage({
         data: JSON.stringify({ event: "ping", data: Date.now() })
       });
@@ -421,6 +462,14 @@ class SocketService {
    */
   disconnect() {
     console.log('主动断开连接');
+    // #ifdef H5
+    // 清理监听
+    console.log('初始化可见性监听');
+    document.removeEventListener('visibilitychange', () => {
+      this.handleVisibilityChange(document.visibilityState === 'visible');
+    });
+    // #endif
+
     // 清理所有事件监听
     this.disconnectHandlers.forEach(handler => handler());
     this.disconnectHandlers = [];

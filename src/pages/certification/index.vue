@@ -1,6 +1,6 @@
 <template>
   <div class="certification-index bg-light ">
-    <navigationBar :title="$t('navigationBarTitle.certification')"></navigationBar>
+    <navigationBar :customHandler="goBack" :title="$t('navigationBarTitle.certification')"></navigationBar>
     <div class="mt-10">
       <van-cell-group inset>
         <van-cell :title="$t('userInfo.username')" :value="userInfo.username" />
@@ -58,6 +58,19 @@ const getUser = async () => {
     email: userStore.userInfo.email,
     avatar: userStore.userInfo.avatar,
 	  isValid: userStore.userInfo.isValid
+  }
+}
+
+const goBack = () => {  
+  // 从提现过来的则直接前往首页
+  const pages = getCurrentPages();
+  const prevPage = pages[pages.length - 2];
+  if (prevPage.route === '/pages/withdrawal/index') {
+    uni.switchTab({
+      url: '/pages/home/index',
+    });
+  } else {
+    uni.navigateBack();
   }
 }
 
