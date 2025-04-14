@@ -34,7 +34,7 @@ export function createApp() {
   // 页面加载时自动初始化WebSocket
   const userStore = useUserStore();
   userStore.initSocket();
-
+  console.log('加载socket')
   return {
     app,
   };
