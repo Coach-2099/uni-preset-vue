@@ -18,9 +18,9 @@ import { useUserStore } from '@/stores/user';
 // vconsole
 
 // #ifdef H5
-  import Vconsole from 'vconsole'
-  let vConsole = new Vconsole();
-  export default vConsole
+  // import Vconsole from 'vconsole'
+  // let vConsole = new Vconsole();
+  // export default vConsole
 // #endif
 
 export function createApp() {

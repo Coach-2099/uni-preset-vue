@@ -45,7 +45,11 @@ class SocketService {
     console.log('应用可见状态变化:', isVisible);
     if (isVisible) {
       // 触发心跳检测连接状态
-      this.sendHeartbeat();
+	  if (!this.isConnected.value) {
+	    this.handleDisconnect();
+	  }else{
+		this.sendHeartbeat();
+	  }
     } else {
       // 暂停非必要网络活动
       this.stopHeartbeat();
@@ -68,6 +72,13 @@ class SocketService {
     document.addEventListener('visibilitychange', () => {
       this.handleVisibilityChange(document.visibilityState === 'visible');
     });
+	// 添加网络状态监听
+	  window.addEventListener('online', () => {
+	    console.log('网络已连接，尝试重新连接WebSocket')
+	    if (!this.isConnected.value) {
+	      this.handleDisconnect();
+	    }
+	  })
     // #endif
 
     // #ifdef APP-PLUS
@@ -443,8 +454,8 @@ class SocketService {
     this.retryTimer = setTimeout(() => {
       if (this.retryCount < this.maxRetry) {
         console.log(`第${this.retryCount + 1}次重连...`);
+		 this.retryCount++;
         this.connect();
-        this.retryCount++;
       }
     }, retryDelay);
   }
