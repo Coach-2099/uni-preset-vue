@@ -34,7 +34,7 @@ export default {
 		forgetPassword: '忘记密码',
 		confirmPassword: '确认密码',
 		getVCode: '获取验证码',
-		tryAgain: '秒后重试',
+		tryAgain: '{second}秒后重试',
 		noData: '暂无数据',
 		succeeded: 'Succeeded',
 		enterDepositCurrency: '请输入要检索的充值币种',

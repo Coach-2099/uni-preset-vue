@@ -33,7 +33,7 @@ export default {
 		forgetPassword: 'Forgot Password',
 		confirmPassword: 'Confirm Password',
 		getVCode: 'Get Code',
-		tryAgain: 'Try again in seconds',
+		tryAgain: 'Retry after {second} seconds',
 		noData: 'No data',
 		succeeded: 'Succeeded',
 		enterDepositCurrency: 'Please enter the deposit currency you want to search for',

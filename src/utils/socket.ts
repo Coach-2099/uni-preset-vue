@@ -178,7 +178,7 @@ class SocketService {
     this.ws!.onopen = () => {
       // this.isConnected.value = true;
       this.startHeartbeat();
-      if(this.retryCount>0){
+      if(this.retryCount>0 && this.subscriptions.size>0){
         location.reload() //为了防止页面断开时已订阅内容数据无法重新监听，强制刷新
         this.retryCount = 0
       }
@@ -225,7 +225,7 @@ class SocketService {
     this.startHeartbeat();
     
     // #ifdef H5
-    if(this.retryCount > 0) {
+    if(this.retryCount > 0 && this.subscriptions.size>0) {
       location.reload(); // H5端强制刷新恢复订阅
       this.retryCount = 0;
     }
@@ -235,7 +235,7 @@ class SocketService {
     // #ifdef APP-PLUS
     // this.restoreSubscriptions();
     if(this.retryCount > 0) {
-      location.reload(); // H5端强制刷新恢复订阅
+      // location.reload(); // H5端强制刷新恢复订阅
       this.retryCount = 0;
     }
     // #endif

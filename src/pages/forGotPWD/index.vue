@@ -105,7 +105,7 @@ const userName = ref('');
 const vCode = ref('');
 const password = ref('');
 
-const showPassword = ref(false);
+const showPassword = ref(true);
 
 const showResetPassword = ref(false);
 
@@ -125,7 +125,17 @@ const resetPassword = async () => {
     password: password.value,
     code: vCode.value
   })
-  console.log('data: ', data)
+  if(!data || !data.errMsg){
+  	  uni.showToast({
+  		title: t('tips.modifySuccess'),
+  		icon: 'success'
+  	  })
+  	  setTimeout(() => {
+  		uni.navigateTo({
+  		    url: '/pages/login/index'
+  		})
+  	  }, 2000)
+  }
 }
 
 const changePassword = () => {
@@ -134,6 +144,7 @@ const changePassword = () => {
 }
 
 const getCode = async () => {
+  vcodeRef.value.startCountdown()
   const params = {
     userName: userName.value,
     countryCode: '',

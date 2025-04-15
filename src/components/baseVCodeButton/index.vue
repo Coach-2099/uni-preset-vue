@@ -29,7 +29,7 @@ let timer: ReturnType<typeof setInterval> | null = null
 
 const displayText = computed(() => {
   return isCounting.value 
-    ? `${currentCount.value}${t('common.tryAgain')}`
+    ? `${t('common.tryAgain',{'second':currentCount.value})}`
     : t('common.getVCode')
 })
 

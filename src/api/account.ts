@@ -28,22 +28,22 @@ export function accountLogin(data: Record<string, any>) {
 
 //注册
 export function register(data: Record<string, any>) {
-  return request.post({ url: "/admin/user/register", data });
+  return request.post({ url: "/admin/user/register", data },{withToken: false});
 }
 
 // 找回密码
 export function findpwd(data:any) {
-  return request.put({ url: "/admin/common/findpwd", data })
+  return request.put({ url: "/admin/common/findpwd", data },{withToken: false})
 }
 
 // 检查手机号-帐号-邮箱是否存在
 export function chkAccount(data?: any) {
-  return request.get({ url: "/admin/common/chkAccount", data});
+  return request.get({ url: "/admin/common/chkAccount", data},{withToken: false});
 }
 
 // 发送消息验证码
 export function sendmsg(data: Record<string, any>) {
-  return request.post({ url: "/admin/common/sendmsg", data });
+  return request.post({ url: "/admin/common/sendmsg", data },{withToken: false});
 }
 
 // 获取用户信息
