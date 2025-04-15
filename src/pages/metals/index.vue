@@ -30,7 +30,14 @@
       </div>
     </div>
     <div class="bottom bg-white mt-5 px-10">
-      <van-tabs v-model:active="active" offset-top="74" @click-tab="onClickTab" shrink sticky>
+      <van-tabs
+        v-model:active="active"
+        offset-top="74"
+        @click-tab="onClickTab"
+        ref="tabsRefs"
+        shrink
+        sticky
+      >
         <van-tab v-if="activeTab === 'left'" :title="$t('contract.orderBook')">
           <realTimeTransactions ref="realTimeTransactionsRef" type="METALS"></realTimeTransactions>
         </van-tab>
@@ -73,6 +80,7 @@ const controlStore = useControlStore();
 const userStore = useUserStore();
 const socketService = computed(() => userStore.socketService);
 
+const tabsRefs: any = ref(null);
 
 const active = ref(0)
 const activeTab = ref<'left' | 'right'>('left');
@@ -145,6 +153,7 @@ const onClickTab = (e: any) => {
 		default:
     }
     console.log('contract currentRef', currentRef.value)
+    tabsRefs.value.resize()
     currentRef.value?.loadData({klineType: 'METALS', symbol: symbol.value});
   })
 }

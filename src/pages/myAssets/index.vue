@@ -40,19 +40,39 @@
     <div class="pb-10 ribbonBox">
       <div class="flex justify-between items-center px-5 py-5 ribbon">
         <div class="contentBox flex-col items-center justify-center" @click="goRecharge">
-          <van-image class="MyVanImage" src="/static/svg/home/recharge.svg" />
+          <!-- <van-image class="MyVanImage" src="/static/svg/home/recharge.svg" /> -->
+          <image
+              src="~@/static/svg/home/recharge.svg"
+              mode="widthFix"
+              class="MyVanImage"
+            />
           <p class="mt-5 text-by-black fs-12 fw-b">{{ $t('noun.recharge') }}</p>
         </div>
         <div class="contentBox flex-col items-center justify-center" @click="goTransfer">
-          <van-image src="/static/svg/home/transfer.svg" />
+          <!-- <van-image src="/static/svg/home/transfer.svg" /> -->
+          <image
+            src="~@/static/svg/home/transfer.svg"
+            mode="widthFix"
+            class="MyVanImage"
+          />
           <p class="mt-5 text-by-black fs-12 fw-b">{{ $t('noun.transfer') }}</p>
         </div>
         <div class="contentBox flex-col items-center justify-center" @click="goWithdraw">
-          <van-image src="/static/svg/home/withdraw.svg" />
+          <!-- <van-image src="/static/svg/home/withdraw.svg" /> -->
+          <image
+            src="~@/static/svg/home/withdraw.svg"
+            mode="widthFix"
+            class="MyVanImage"
+          />
           <p class="mt-5 text-by-black fs-12 fw-b">{{ $t('noun.withdraw') }}</p>
         </div>
         <div class="contentBox flex-col items-center justify-center" @click="goInvite">
-          <van-image src="/static/svg/home/invite.svg" />
+          <!-- <van-image src="/static/svg/home/invite.svg" /> -->
+          <image
+            src="~@/static/svg/home/invite.svg"
+            mode="widthFix"
+            class="MyVanImage"
+          />
           <p class="mt-5 text-by-black fs-12 fw-b">{{ $t('noun.invite') }}</p>
         </div>
       </div>
@@ -204,15 +224,12 @@ const goInvite = () => {
         background: #FFFFFF;
         box-shadow: 0px 0px 6px 1px rgba(0,8,242,0.08);
         border-radius: 16px 16px 16px 16px;
-        ::deep(.MyVanImage) {
-          width: 50% !important; /* 图片宽度相对父容器 */
-          height: auto !important;
-
+        .MyVanImage {
+          // width: 50% !important; /* 图片宽度相对父容器 */
+          // height: auto !important;
+          width: 2rem;
+          height: 2rem;
         }
-        // .MyVanImage {
-        //   width: 50% !important; /* 图片宽度相对父容器 */
-        //   height: auto !important;
-        // }
       }
     }
   }

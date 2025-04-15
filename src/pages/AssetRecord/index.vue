@@ -6,6 +6,7 @@
         title-active-color="#333333"
         title-inactive-color="#B0B0B0"
         v-model:active="active"
+        ref="tabsRefs"
         @click-tab="tabclick"
         shrink
       >
@@ -41,6 +42,8 @@ const pages = ref({
   current:1,
   size:10
 })
+
+const tabsRefs: any = ref(null);
 
 const refreshFun = () => {
   loadData()
@@ -90,7 +93,8 @@ const loadData = async () => {
 
 
 const tabclick = (e:any) => {
- dataList.value =[]
+  dataList.value =[]
+  tabsRefs.value?.resize()
   loadData()
 }
 

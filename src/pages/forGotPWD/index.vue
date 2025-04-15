@@ -72,6 +72,10 @@
       </div>
     </div>
 
+    <div class="notes flex justify-end mt-10">
+      <div @click="goLogin" class="text-blue">{{ $t('common.goLogin') }}</div>
+    </div>
+
     <div class="w-100 mt-25">
       <van-button
         v-if="!showResetPassword"
@@ -138,6 +142,12 @@ const getCode = async () => {
   uni.showToast({
     title: t('tips.vCodeHasSent'),
     icon: 'none'
+  })
+}
+
+const goLogin = () => {
+  uni.navigateTo({
+    url: '/pages/login/index'
   })
 }
 

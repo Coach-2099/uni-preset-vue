@@ -24,6 +24,7 @@
       <van-tabs
         v-model:active="active"
         shrink
+        ref="tabsRefs"
         @click-tab="onClickTab"
       >
         <van-tab :title="$t('noun.spotGoods')">
@@ -71,6 +72,9 @@ const active = ref(0)
 const showBottom = ref(false)
 const jumpKlineType = ref('') // 跳转的类型，SPOT  FUTURE  METALS
 const socketService = computed(() => userStore.socketService);
+
+const tabsRefs:any = ref(null)
+
 /**
  * 显示浮窗
  * @param data 传递过来的类型，决定查询那种数据
@@ -154,6 +158,7 @@ const onClickTab = (e: any) => {
         kType = 'METALS'
         default:
 	  }
+    tabsRefs.value.resize();
     currentRef.value?.loadData(kType);
   })
 }

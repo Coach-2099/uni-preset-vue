@@ -65,7 +65,8 @@ const goBack = () => {
   // 从提现过来的则直接前往首页
   const pages = getCurrentPages();
   const prevPage = pages[pages.length - 2];
-  if (prevPage.route === '/pages/withdrawal/index') {
+  console.log('prevPage', prevPage)
+  if (prevPage.route === 'pages/withdrawal/index') {
     uni.switchTab({
       url: '/pages/home/index',
     });

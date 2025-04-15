@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="bottom bg-white mt-5 px-10">
-      <van-tabs v-model:active="active" offset-top="74" @click-tab="onClickTab" shrink sticky>
+      <van-tabs v-model:active="active" offset-top="74" @click-tab="onClickTab" ref="tabsRefs" shrink sticky>
         <van-tab v-if="activeTab === 'left'" :title="$t('contract.orderBook')">
           <realTimeTransactions ref="realTimeTransactionsRef" type="FUTURES"></realTimeTransactions>
         </van-tab>
@@ -81,6 +81,8 @@ const switchTab = (tab: 'left' | 'right') => {
 const realTimeTransactionsRef: any = ref(null)
 const transactionOrderRef: any = ref(null)
 const symbol = ref('BTC/USDT') //默认交易对
+
+const tabsRefs: any = ref(null);
 
 watch(
   () => controlStore.getQuotesData('FUTURES')?.symbol,
@@ -144,6 +146,7 @@ const onClickTab = (e: any) => {
 		default:
     }
     console.log('contract currentRef', currentRef.value)
+    tabsRefs.value.resize()
     currentRef.value?.loadData({klineType: 'FUTURES', symbol: symbol.value});
   })
 }

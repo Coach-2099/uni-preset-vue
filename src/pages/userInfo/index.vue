@@ -21,7 +21,7 @@
     <div class="userHeader">
       <div class="flex pl-20 pr-20 pt-10 bg-white items-center justify-start">
         <div class="headerImg">
-          <van-image
+          <!-- <van-image
             round 
             width="52px" 
             height="52px" 
@@ -33,13 +33,27 @@
                 mode="scaleToFill"
               />
             </template>
-          </van-image>
+          </van-image> -->
+          <image 
+            class="header-img"
+            :src="userInfo.avatar || '/static/images/logo.png'"
+            mode="aspectFill"
+            style="width: 52px; height: 52px; border-radius: 50%;"
+            @error="handleImageError"
+          />
         </div>
         <div class="ml-10">
           <p class="fs-20 fw-b text-balck">{{ userInfo.nickname || userInfo.username }}</p>
           <div class="fs-12 flex mt-5 text-gray">
             <text>UID:{{ userInfo.uid }}</text>
-            <div @click="copy" class="ml-5"><van-image src="/static/svg/tools/copy.svg" /></div>
+            <div @click="copy" class="ml-5">
+              <!-- <van-image src="/static/svg/tools/copy.svg" /> -->
+              <image
+                style="width: 10px; height: 10px;"
+                src="/static/svg/tools/copy.svg"
+                mode="scaleToFill"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -197,6 +211,10 @@ const getUser = async () => {
 
 const clickTab = (val: number) => {
   tabVal.value = val;
+}
+
+const handleImageError = () => {
+  userInfo.value.avatar = '/static/images/logo.png';
 }
 
 const goUser = () => {

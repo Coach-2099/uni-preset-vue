@@ -51,7 +51,12 @@
     </div>
     <div class="pl-20 pr-20 pt-5 pb-5 pt-25 walletInfo">
       <div class="flex items-center">
-        <van-image width="17.45" height="16" src="/static/svg/home/horn.svg" />
+        <!-- <van-image width="17.45" height="16" src="/static/svg/home/horn.svg" /> -->
+        <image 
+            src="~@/static/svg/home/horn.svg" 
+            mode="widthFix" 
+            style="width: 17.45px; height: 16px;"
+          />
         <div
           style="background: #F6F7FB;
           border-radius: 5px 5px 5px 5px;"
@@ -75,19 +80,39 @@
     <div class="pl-20 pr-20 pt-15 pb-10 bg-white">
       <div class="pl-20 pr-20 pt-15 pb-15 flex justify-between ribbon">
         <div class="flex-col items-center" @click="goRecharge">
-          <van-image width="28" hidden="30" src="/static/svg/home/recharge.svg" />
+          <!-- <van-image width="28" hidden="30" :src="rechargeSVG" /> -->
+          <image 
+            src="~@/static/svg/home/recharge.svg" 
+            mode="widthFix" 
+            style="width: 28px; height: 28px;"
+          />
           <p class="mt-5 text-by-black" style="font-size: 3.2vw;">{{ $t('noun.recharge') }}</p>
         </div>
         <div class="flex-col items-center" @click="goTransfer">
-          <van-image width="28" hidden="30" src="/static/svg/home/transfer.svg" />
+          <!-- <van-image width="28" hidden="30" src="/static/svg/home/transfer.svg" /> -->
+          <image 
+            src="~@/static/svg/home/transfer.svg" 
+            mode="widthFix" 
+            style="width: 28px; height: 28px;"
+          />
           <p class="mt-5 text-by-black" style="font-size: 3.2vw;">{{ $t('noun.transfer') }}</p>
         </div>
         <div class="flex-col items-center" @click="goWithdraw">
-          <van-image width="28" hidden="28" src="/static/svg/home/withdraw.svg" />
+          <!-- <van-image width="28" hidden="28" src="/static/svg/home/withdraw.svg" /> -->
+          <image 
+            src="~@/static/svg/home/withdraw.svg" 
+            mode="widthFix" 
+            style="width: 28px; height: 28px;"
+          />
           <p class="mt-5 text-by-black" style="font-size: 3.2vw;">{{ $t('noun.withdraw') }}</p>
         </div>
         <div class="flex-col items-center" @click="goInvite">
-          <van-image width="28" hidden="30" src="/static/svg/home/invite.svg" />
+          <!-- <van-image width="28" hidden="30" src="/static/svg/home/invite.svg" /> -->
+          <image 
+            src="~@/static/svg/home/invite.svg" 
+            mode="widthFix" 
+            style="width: 28px; height: 28px;"
+          />
           <p class="mt-5 text-by-black" style="font-size: 3.2vw;">{{ $t('noun.invite') }}</p>
         </div>
       </div>
@@ -96,6 +121,7 @@
       <van-tabs
         v-model:active="active" 
         shrink
+        ref="tabsTradeRefs"
         title-active-color="#333333"
         title-inactive-color="#B0B0B0"
         @click-tab="onClickTab"
@@ -109,7 +135,13 @@
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
             <p class="fs-12">{{ $t('homeIndex.viewMore') }}</p>
-            <van-image class="ml-5" width="8" height="10" src="/static/images/right.png" />
+            <!-- <van-image class="ml-5" width="8" height="10" src="/static/images/right.png" /> -->
+            <iamge
+              src="~@/static/images/right.png"
+              mode="widthFix"
+              class="ml-5"
+              style="width: 8px; height: 10px;"
+            />
           </div>
         </van-tab>
         <van-tab :title="$t('noun.futureGoods')">
@@ -121,7 +153,13 @@
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
             <p class="fs-12">{{ $t('homeIndex.viewMore') }}</p>
-            <van-image class="ml-5" width="9" height="7" src="/static/images/right.png" />
+            <!-- <van-image class="ml-5" width="9" height="7" src="/static/images/right.png" /> -->
+            <image
+              src="~@/static/images/right.png"
+              mode="widthFix"
+              class="ml-5"
+              style="width: 9px; height: 7px;"
+            />
           </div>
         </van-tab>
         <van-tab :title="$t('noun.metalsGoods')">
@@ -133,13 +171,19 @@
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
             <p class="fs-12">{{ $t('homeIndex.viewMore') }}</p>
-            <van-image class="ml-5" width="9" height="7" src="/static/images/right.png" />
+            <!-- <van-image class="ml-5" width="9" height="7" src="/static/images/right.png" /> -->
+            <iamge
+              src="~@/static/images/right.png"
+              mode="widthFix"
+              class="ml-5"
+              style="width: 9px; height: 7px;"
+            />
           </div>
         </van-tab>
       </van-tabs>
     </div>
     <div class="mt-5 pt-10 bg-white news">
-      <van-tabs v-model:active="tabType" shrink>
+      <van-tabs v-model:active="tabType" ref="tabsNewsRefs" @click-tab="clickNews" shrink>
         <van-tab title="探索">
           <div class="newsTemp mt-20 ml-15 mr-15 ">
             <div class="title flex justify-start items-center">
@@ -208,11 +252,16 @@ import { getAsset } from '@/api/asset';
 import { roundDown } from '@/utils/util';
 import { getNotice } from '@/api/common';
 
+// import rechargeSVG from '@/static/svg/home/recharge.svg'; // 导入SVG文件
+
 const userStore = useUserStore();
 
 const active = ref(0);
 const tabType = ref(0)
 const balance =ref(0) //当前账户总余额
+
+const tabsTradeRefs:any = ref(null)
+const tabsNewsRefs:any = ref(null)
 
 // 新增响应式数据存储
 const tickerData = ref<Record<string, any>>({});
@@ -355,10 +404,18 @@ const socketService = computed(() => userStore.socketService);
 	  		  default:
 	  }
       console.log('currentRef', currentRef.value)
+      tabsTradeRefs.value?.resize();
       currentRef.value?.clearData();
       currentRef.value?.loadData();
     })
   };
+
+  // 切换新闻标签
+  const clickNews = (e: any) => {
+    nextTick(() => {
+      tabsNewsRefs.value?.resize();
+    })
+  }
 
   const viewMore = () => {
     uni.switchTab({

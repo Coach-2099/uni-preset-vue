@@ -331,7 +331,7 @@ const signUp = async () => {
 	  		icon: 'success'
 	  })
 	  setTimeout(() => {
-	  		goLogin()
+      goLogin()
 	  }, 2000)
   }
 }
