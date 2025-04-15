@@ -198,7 +198,7 @@ const confirm = async () => {
 	  await userStore.getUser()
 	  setTimeout(() => {
 		uni.navigateBack()
-	  }, 1000)
+	  }, 2000)
   }
 }
 
