@@ -220,13 +220,13 @@ const uploadFun = async () => {
       background-image: url('/static/images/IDCardFront.png');
       background-repeat: no-repeat;
       background-position: center;
-      background-size: 120%;
+      background-size: 130% 103%;
     }
     .backTemp {
       background-image: url('/static/images/IDCardBack.png');
       background-repeat: no-repeat;
       background-position: center;
-      background-size: 100% 98%;
+      background-size: 130% 103%;
     }
     .myPreview {
       height: 9.22rem;

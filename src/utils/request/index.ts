@@ -1,5 +1,6 @@
 import HttpRequest from './http'
 import { merge } from 'lodash-es'
+import { TOKEN_KEY } from '@/enums/cacheEnums'
 import type { HttpRequestOptions, RequestHooks } from './type'
 import { getToken } from '../auth'
 import { RequestCodeEnum, RequestMethodsEnum } from '@/enums/requestEnums'
@@ -55,6 +56,9 @@ const requestHooks: RequestHooks = {
                     return uni.showToast({title: t('request.requestFailed'), icon: 'none'})
                 }
             case RequestCodeEnum.REQUEST_424_ERROR:
+                // 清除token
+                cache.remove(TOKEN_KEY)
+                cache.remove('USER_INFO_KEY') // 424 即token过期，清除用户信息缓存
                 uni.navigateTo({
                     url: '/pages/login/index'
                 })

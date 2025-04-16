@@ -1,6 +1,6 @@
 <template>
   <div class="userInfo-index">
-    <navigationBar title="">
+    <navigationBar :customHandler="goBack" title="">
       <template #right>
         <div class="flex justify-between">
           <div class="flex items-center home_right_icon mr-15" @click="goCustomerService">
@@ -261,6 +261,12 @@ const goIdentityAuth = () => {
     });
   }
 };
+
+const goBack = () => { 
+  uni.switchTab({
+    url: '/pages/home/index',
+  });
+}
 
 const goCustomerService = () => {
   console.log('前往客服中心')

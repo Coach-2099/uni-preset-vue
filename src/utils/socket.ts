@@ -223,14 +223,7 @@ class SocketService {
 
   private handleOpen() {
     this.startHeartbeat();
-    
-    // #ifdef H5
-    if(this.retryCount > 0 && this.subscriptions.size>0) {
-      location.reload(); // H5端强制刷新恢复订阅
-      this.retryCount = 0;
-    }
-    // #endif
-  
+
     // APP端不需要强制刷新，直接恢复订阅
     // #ifdef APP-PLUS
     // this.restoreSubscriptions();
