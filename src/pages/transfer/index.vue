@@ -21,6 +21,7 @@
               placement="bottom-start"
               :actions="actionsAccountType"
               @select="onSelectFromAccountType"
+              style="--van-popover-action-width: 138px"
             >
               <template #reference>
                 <div class="baseSelect w-100 py-5 flex justify-between items-center">
@@ -60,6 +61,7 @@
                 placement="bottom-start"
                 :actions="toAccountType"
                 @select="onSelectToAccountType"
+                style="--van-popover-action-width: 138px"
               >
                 <template #reference>
                   <div class="baseSelect w-100 py-5 flex justify-between items-center">
@@ -94,6 +96,7 @@
 			  placement="bottom-end"
 			  :actions="transferData"
 			  @select="onSelectTransferToken"
+        style="--van-popover-action-width: 138px"
 			>
 			  <template #reference>
 			    <div class="baseSelect w-100 py-5 flex justify-between items-center">
@@ -326,6 +329,7 @@ const goAssetRecord = () => {
   .inputBox {
     padding-left: 18px;
     padding-right: 18px;
+    padding-bottom: 100px;
     .baseSelect {
       background: #F6F7FB;
       border-radius: 8px 8px 8px 8px;

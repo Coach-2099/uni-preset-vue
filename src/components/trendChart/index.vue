@@ -40,6 +40,7 @@
       </div>
     </div>
     <!-- 这里是走势图！！ -->
+    <!-- #ifdef H5 -->
     <lightWeightChart 
       ref="chartRef"
       v-model:data="candleData"
@@ -50,6 +51,12 @@
       :hasMore="hasMore"
       @load-more-data="handleLoadMore"
     ></lightWeightChart>
+    <!-- #endif -->
+    
+    <!-- #ifdef APP-PLUS -->
+    <appplusKlinecharts ref="appplusKlinechartsRef"></appplusKlinecharts>
+    <!-- #endif -->
+
     <!-- <button @click="toggleTheme">切换主题</button> -->
     <floatingPanelProps ref="floatingPanelPropsRef"></floatingPanelProps>
   </div>
@@ -59,7 +66,7 @@
 import { onLoad, onShow } from '@dcloudio/uni-app';
 import { ref, defineComponent, onMounted, onUnmounted, nextTick, computed, watch } from 'vue';
 import lightWeightChart from '@/components/LightweightChart/index.vue';
-import type LightweightChartType from '@/components/LightweightChart/index.vue'
+import appplusKlinecharts from '@/components/appplusKlinecharts/index.vue'
 import { getKlineHistory,getTicker } from '@/api/quotes';
 import { useControlStore } from '@/stores/control';
 import { useUserStore } from '@/stores/user';
@@ -78,8 +85,8 @@ const props = defineProps({
 const controlStore = useControlStore();
 const userStore = useUserStore();
 const socketService = computed(() => userStore.socketService);
-// const chartRef = ref<InstanceType<typeof LightweightChartType>>()
 const chartRef: any = ref(null)
+const appplusKlinechartsRef: any = ref(null)
 const floatingPanelPropsRef: any = ref(null) //行情列表引用
 
 const theme = ref<'light' | 'dark'>('light')
