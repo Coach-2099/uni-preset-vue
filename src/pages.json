@@ -25,6 +25,22 @@
 	},
 	"pages": [
 		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "登录页面",
+				"backgroundColor": "#f7f8fa"
+			}
+		},
+		{
+			"path": "pages/register/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "注册页面",
+				"backgroundColor": "#f7f8fa"
+			}
+		},
+		{
 			"path": "pages/home/index",
 			"style": {
 				"navigationStyle": "custom",
@@ -76,29 +92,6 @@
 				"navigationBarTitleText": "我的资产",
 				"enablePullDownRefresh": false,
 				"disableScroll": true
-			}
-		},
-		// {
-		// 	"path": "pages/welcomPage/index",
-		// 	"style": {
-		// 		"navigationStyle": "custom",
-		// 		"navigationBarTitleText": "欢迎页"
-		// 	}
-		// },
-		{
-			"path": "pages/login/index",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "登录页面",
-				"backgroundColor": "#f7f8fa"
-			}
-		},
-		{
-			"path": "pages/register/index",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "注册页面",
-				"backgroundColor": "#f7f8fa"
 			}
 		},
 		{

@@ -243,7 +243,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue';
-import { onLaunch, onShow, onLoad } from "@dcloudio/uni-app";
+import { onLaunch, onShow, onLoad, onUnload } from "@dcloudio/uni-app";
 import { useSocket } from '@/utils/socket';
 import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼峰命名
 import quoteList from '@/components/business/quoteList/index.vue'; // 使用大驼峰命名
@@ -334,9 +334,17 @@ const socketService = computed(() => userStore.socketService);
 
   // Disconnect from the socket server when the component is unmounted
   onUnmounted(() => {
+    console.log('取消订阅 !!!!!!')
     // 取消所有订阅
     socketService.value.unsubscribe('ticker');
   });
+
+  onUnload(() => {
+    console.log('uniapp的取消订阅')
+    // 取消所有订阅
+    socketService.value.unsubscribe('ticker');
+  })
+
 
  const getBalance = async()=>{
 	 const params = {

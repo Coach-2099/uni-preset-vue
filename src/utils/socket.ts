@@ -1,4 +1,3 @@
-/// <reference types="@dcloudio/types" />
 import { ref } from "vue";
 
 // 事件回调类型定义
@@ -179,7 +178,7 @@ class SocketService {
       // this.isConnected.value = true;
       this.startHeartbeat();
       if(this.retryCount>0 && this.subscriptions.size>0){
-        location.reload() //为了防止页面断开时已订阅内容数据无法重新监听，强制刷新
+        // location.reload() //为了防止页面断开时已订阅内容数据无法重新监听，强制刷新
         this.retryCount = 0
       }
       // 重连时恢复订阅, 已刷新当前页，重新恢复订阅无效，因数据无法被监听处理
@@ -268,7 +267,6 @@ class SocketService {
      * @param symbols - 交易对数组
      */
     subscribe(topicType: string, symbol: string) {
-      console.log('走这个方法', this.subscriptions)
       let topic  = ''
       if (!symbol || symbol.length === 0) {
         topic = `${topicType}`
@@ -276,25 +274,18 @@ class SocketService {
         // 组合式
         topic = `${symbol}-${topicType}`;
       }
-      console.log('topic的判断方法', this.subscriptions.has(topic))
       // if (!this.subscriptions.has(topic)) {
         // {"event":"subscribe","data":"ticker"}
 		    // this.ws?.send(JSON.stringify({ event: 'subscribe', data: topic }));
         const message = JSON.stringify({ event: 'subscribe', data: topic });
-        console.log('订阅消息', message);
-        console.log('查看 this.ws 的返回信息', this.ws)
         // #ifdef H5
-        console.log('this.ws?.readyState', this.ws?.readyState)
-        console.log('WebSocket.OPEN', WebSocket.OPEN)
         if (this.ws?.readyState === WebSocket.OPEN) {
-          console.log('H5 WebSocket 发送消息', message);
           this.ws.send(message);
         }
         // #endif
 
         // #ifdef APP-PLUS
         if (this.ws?.readyState === 1) {
-          console.log('APP WebSocket 发送消息', message);
           uni.sendSocketMessage({ data: message });
         }
         // #endif
