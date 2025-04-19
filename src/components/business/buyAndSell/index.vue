@@ -220,6 +220,9 @@ const direction = ref('') //做多/做空
 const tradeSymbol = ref({}) //交易对参数
 const checkTemp = (type: string) => {
   checkActive.value = type;
+  value.value = 0
+  tradeNum.value = 0
+  tradeVal.value = 0
 }
 
 //市价 限价选择
@@ -234,27 +237,24 @@ const onSelectOrderType = (action: any) => {
 //滑动获取交易量
 const sliderChange =(val:number) =>{
 	showPriceInput.value = true
-	let currentBalance= 0
-	if(checkActive.value === 'buy'){
-		currentBalance = basicCoinBalance.value
-	}else{
-		currentBalance = tradeCoinBalance.value
-	}
+	let lastPrice = 0
 	if(orderTypeObj.value.value ==='MARKET'){
-		if(currentBalance>0){
-			tradeNum.value = roundDown(val/100 * currentBalance/props.lastPrice,tradeSymbol.value.minTradeDigit)
-			tradeVal.value = roundDown(tradeNum.value * props.lastPrice,2)
-		}
+		lastPrice = props.lastPrice
 	}else{
 		if(!price.value){
 			return uni.showToast({title: t('trading.enterValidPrice'), icon: 'none'})
 		}else{
-			if(currentBalance>0){
-				tradeNum.value = roundDown(val/100 * currentBalance/price.value,tradeSymbol.value.minTradeDigit)
-				tradeVal.value = roundDown(tradeNum.value * price.value,2)
-			}
+			lastPrice = price.value
 		}
 	}
+	console.log('tradeNum.value = ',tradeNum.value)
+	console.log('tradeVal.value = ',tradeVal.value)
+	if(checkActive.value === 'buy' && basicCoinBalance.value>0){
+			tradeNum.value = roundDown(val/100 * basicCoinBalance.value/lastPrice,tradeSymbol.value.minTradeDigit)
+	}else if(checkActive.value === 'sell' && tradeCoinBalance.value>0){
+		tradeNum.value = roundDown(val/100 * tradeCoinBalance.value,tradeSymbol.value.minTradeDigit)
+	}
+	tradeVal.value = roundDown(tradeNum.value * lastPrice,2)
 }
 const calculateMargin = (val: number) =>{
 	showPriceInput.value = true
@@ -331,7 +331,7 @@ const submitTrade = async () => {
 	const params = {
 	  symbol: symbol.value,
 	  tradeAmount: tradeNum.value,
-	  tradePrice: price.value,
+	  tradePrice: price.value===t('noun.marketOrder')?0:price.value,
 	  tradeType: orderTypeObj.value.value,
 	  direction: checkActive.value.toLocaleUpperCase(),
 	}

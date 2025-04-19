@@ -130,7 +130,7 @@
           <quoteList
             ref="spotQuoteListRefs"
             type="SPOT"
-            :maxItems="3"
+            :maxItems="5"
             :needPullRefresh="false"
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
@@ -148,7 +148,7 @@
           <quoteList
             ref="futuresQuoteListRefs"
             type="FUTURES"
-            :maxItems="3"
+            :maxItems="5"
             :needPullRefresh="false"
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
@@ -166,7 +166,7 @@
           <quoteList
             ref="metalsQuoteListRefs"
             type="METALS"
-            :maxItems="3"
+            :maxItems="5"
             :needPullRefresh="false"
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
@@ -544,7 +544,7 @@ const socketService = computed(() => userStore.socketService);
     // color: #fff;
   }
   .quotes {
-    padding-top: 29px;
+    padding-top: 5px;
     background: #fff;
     .rises_falls_btn {
       width: 84px;

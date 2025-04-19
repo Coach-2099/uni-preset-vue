@@ -160,7 +160,7 @@ const afterReadFront = async (file: any) => {
 const afterReadBack = async (file: any) => {
   const data = await uploadImage(file.content)
   fileBack.value = file.content
-  fileBackSrc.value = data?.content
+  fileBackSrc.value = data?.url
 }
 
 const bindPickerChange = (e:any) => {
@@ -178,11 +178,13 @@ const uploadFun = async () => {
     zmImg: fileFrontSrc.value,
     fmImg: fileBackSrc.value
   }
-  await userKyc(params)
-  uni.showToast({ title: t('userInfo.verificationSuccess'), icon: 'none' })
-  uni.redirectTo({
-    url: '/pages/userInfo/index'
-  })
+  const data = await userKyc(params)
+  if(!data || !data.errMsg){
+	  uni.showToast({ title: t('userInfo.verificationSuccess'), icon: 'none' })
+	  uni.redirectTo({
+		url: '/pages/userInfo/index'
+	  })
+  }
 }
 
 </script>

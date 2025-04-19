@@ -350,7 +350,7 @@ defineExpose({
 <style lang="scss" scoped>
 .quotesList-temp {
   height: 100%;
-  padding-bottom: 90px;
+  padding-bottom: 10px;
   .sortImg {
     width: 7px;
     height: 7px;

@@ -349,7 +349,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import { getLeverages, futuresTrade, getSymbolInfo } from '@/api/trade'
+import { getLeverages, futuresTrade, getSymbolInfo ,metalsTrade} from '@/api/trade'
 import { getSwapBalance } from '@/api/asset'
 import { storeToRefs } from 'pinia'
 import { roundDown } from '@/utils/util'
@@ -592,7 +592,12 @@ const submitTrade = async () => {
 	  stopLoss: stopLossVal.value,
 	  allIn:value.value===100?true:false //是否全部
 	}
-	const data = await futuresTrade(params) //合约下单
+	let data = null
+	if(props.type === 'FUTURES'){
+		data = await futuresTrade(params) //合约下单
+	}else{
+		data = await metalsTrade(params) //合约下单
+	}
 	if(!data || !data.errMsg){
 		uni.showToast({title: t('trading.orderSuccess'), icon: 'success'})
 	}

@@ -181,11 +181,11 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const DEFAULT_USER_INFO = {
-  username: '未登录用户',
+  username: t('common.unloginUser'),
   uid: '--',
   isValid: 0, // 0:未认证 1:认证中 2:认证成功
   avatar: '@/static/svg/home/user.svg',
-  nickname: '未登录用户',
+  nickname: '',
 }
 
 const userStore = useUserStore();
@@ -200,6 +200,7 @@ onMounted(() => {
 
 const getUser = async () => {
   await userStore.getUser()
+  console.log('userStore.userInfo ={}',userStore.userInfo)
   userInfo.value = {
     username: userStore.userInfo.username || DEFAULT_USER_INFO.username,
     nickname: userStore.userInfo.nickname || DEFAULT_USER_INFO.nickname,

@@ -42,7 +42,7 @@
         </div>
         <div class="text-right">
           <p class="fs-16 fw-b text-black">{{item.availableAmount}}</p>
-          <p class="fs-12 text-gray">≈{{item.availableAmount}} USD</p>
+          <p class="fs-12 text-gray">≈{{Number(item.availableAmount*(symbolMap.get(item.symbol)?symbolMap.get(item.symbol):1)).toFixed(2)}} USD</p>
         </div>
       </div>
 	  <div v-else
@@ -73,11 +73,12 @@
 </template>
 
 <script lang="ts" setup>
-import {   ref, watch } from 'vue'
+import {   ref, watch,reactive } from 'vue'
 import square  from '@/static/images/square.png'
 import checkSquare from '@/static/images/checkSquare.png'
 import searchIcon from '@/static/images/search.png'
 import { getAsset } from '@/api/asset';
+import { getSymbolsLastPrice } from '@/api/quotes'
 import { roundDown } from '@/utils/util';
 import { nextTick } from 'process';
 import { onLoad, onShow } from '@dcloudio/uni-app';
@@ -89,6 +90,8 @@ const searchValue = ref('')
 const activeIcon = ref(checkSquare)
 const inactiveIcon = ref(square)
 let searchItems =ref([])
+
+const symbolMap = reactive(new Map())
 
 const props = defineProps({
   type:{
@@ -113,6 +116,23 @@ watch(
 	}
   }
 )
+
+// 自主获取数据
+const loadData = async () => {
+  try {
+    const params = {
+      klineType: 'SPOT',
+    }
+    const data = await getSymbolsLastPrice(params)
+    data.forEach((item: any) => {
+		const tradeToken = item.symbol.split('/')[0]
+	    symbolMap.set(tradeToken,item.close)
+      // item.price = item.price.toFixed(2)
+    })
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
 
 const goDetail = () => {
   // uni.navigateTo({
@@ -143,6 +163,7 @@ onShow(()=>{
 	if(props.type === 'wallet'|| props.type === 'spot'){
 		searchItems.value = props.data
 	}
+	loadData()
 })
 
 </script>
