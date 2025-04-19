@@ -29,7 +29,9 @@
     <view id="chartTemp">
       <!-- <view v-if="isH5" ref="chartContainer" class="chart"></view> -->
       <!-- <view v-else class="unsupported">{{$t('chart.unsupported')}}</view> -->
+      <!-- #ifdef H5 -->
       <view ref="chartContainer" class="chart"></view>
+      <!-- #endif -->
     </view>
   </view>
 </template>

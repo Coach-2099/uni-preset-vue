@@ -166,7 +166,7 @@
         </div>
       </div>
     </div>
-    <div class="loginOutBtn pos-fixed bg-white pt-20 w-100 px-20">
+    <div class="loginOutBtn pos-fixed bg-white pt-10 w-100 px-20">
       <van-button class="w-100" type="primary" @click="loginOut">{{ $t('common.loginOut') }}</van-button>
     </div>
   </div>
@@ -351,6 +351,7 @@ const loginOut = () => {
   }
   .optionBox {
     // background: #F6F8FC;
+    padding-bottom: 120px;
     .leftIcon {
       width: 20px;
       height: 20px;
@@ -361,7 +362,7 @@ const loginOut = () => {
     }
   }
   .loginOutBtn {
-    bottom: 50px;
+    bottom: 30px;
     left: 0px;
     right: 0px;
   }
