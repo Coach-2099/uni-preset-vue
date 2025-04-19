@@ -27,8 +27,11 @@
       </div>
     </view>
     <view id="chartTemp">
-      <view v-if="isH5" ref="chartContainer" class="chart"></view>
-      <view v-else class="unsupported">{{$t('chart.unsupported')}}</view>
+      <!-- <view v-if="isH5" ref="chartContainer" class="chart"></view> -->
+      <!-- <view v-else class="unsupported">{{$t('chart.unsupported')}}</view> -->
+      <!-- #ifdef H5 -->
+      <view ref="chartContainer" class="chart"></view>
+      <!-- #endif -->
     </view>
   </view>
 </template>
@@ -125,6 +128,19 @@ const toolTip = ref<HTMLElement | null>(null)
 
 const volumeSeries = ref<ISeriesApi<'Histogram'> | null>(null) // 成交量系列响应式引用
 
+// 使用webview时的URL
+const webviewUrl = computed(() => {
+  const baseUrl = 'static/hybrid/html/chart.html'
+  const params = new URLSearchParams({
+    interval: selectedInterval.value.toString(),
+    theme: props.theme || 'light',
+    data: JSON.stringify(props.data),
+    emaConfigs: JSON.stringify(props.emaConfigs || defaultEMAConfigs)
+  })
+  return `${baseUrl}?${params}`
+})
+
+
 // 主题响应优化
 watch(() => 
   props.data, (newVal:any, oldVal:any) => {
@@ -140,6 +156,17 @@ watch(() =>
     immediate: true // 初始化时自动执行
   }
 )
+
+// 使用webview时，监听来自webview的消息
+const handleWebviewMessage = (e: any) => {
+  const { type, data } = e.detail
+  if (type === 'interval-change') {
+    emit('interval-change', data.interval, data.socketVal)
+  }
+  if (type === 'load-more') {
+    emit('load-more-data', data)
+  }
+}
 
 // 时间间隔配置
 const timeIntervals = ref<TimeInterval[]>([
@@ -777,6 +804,12 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
+// 使用webview时的样式
+.chart-webview {
+  width: 100vw;
+  height: 400px;
+}
+
 .chart-container {
   width: 100%;
   height: 450px;

@@ -179,6 +179,7 @@ import { chkAccount, sendmsg, register } from '@/api/account'
 import { getUrlParams, isEmail } from '@/utils/util'
 import baseVCodeButton from '@/components/baseVCodeButton/index.vue';
 import baseCountryPicker from '@/components/baseCountryPicker/index.vue';
+
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
@@ -226,6 +227,10 @@ onMounted(() => {
 // 获取验证码
 const getCode = async () => {
   if (!userName.value) return uni.showToast({ title: t('tips.enterAccount'), icon: 'none' })
+  if (active.value === 0) {
+    // 校验邮箱格式
+    if (isEmail(userName.value)) return uni.showToast({ title: t('tips.emailFormatIsIncorrect'), icon: 'none' })
+  }
   vcodeRef.value.startCountdown()
   const params = {
     sendMsgType: '', // 手机或者邮箱
@@ -316,6 +321,8 @@ const handleCountryConfirm = (selectedOption: any, selectedValues: any) => {
 // }
 
 const signUp = async () => {
+  if (!userName.value || !password.value || !vCode.value) return uni.showToast({ title: t('tips.pleaseImproveTheInfo'), icon: 'none' })
+  if (!InvitationCode.value) return uni.showToast({ title: t('tips.enterICode'), icon: 'none' })
   const params = {
     username: userName.value ,
     password: password.value,

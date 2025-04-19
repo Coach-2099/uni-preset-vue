@@ -24,6 +24,7 @@
           v-model:show="showPopoverOrderType"
           :actions="actionsOrderType"
           @select="onSelectOrderType"
+          style="--van-popover-action-width: 138px"
         >
           <template #reference>
             <div class="baseSelect w-100 py-5 flex justify-between items-center">

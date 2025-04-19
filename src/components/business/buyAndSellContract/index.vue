@@ -58,7 +58,7 @@
         <div>
           <div
             @click="clickPriceInpupt"
-            :class="showPriceInput ? 'fs-12 topTextTemp' : 'fs-14'"
+            :class="showPriceInput ? 'fs-12 topTextTemp' : 'fs-14 topHideTemp'"
             class="text-gray price-label"
           >
             <text>{{ $t('noun.price') }}</text>
@@ -67,7 +67,7 @@
             v-if="showPriceInput"
             :focus="showPriceInput"
             v-model="price"
-			@input="calculateMargin(tradeNum)"
+			      @input="calculateMargin(tradeNum)"
             class="myInput flex-1 w-100"
             :placeholder="$t('tips.enterPrice')"
             placeholder-class="input-placeholder"
@@ -80,14 +80,14 @@
         <div>
           <div
             @click="clickPriceInpupt"
-            :class="showPriceInput ? 'fs-12 topTextTemp' : 'fs-14'"
+            :class="showPriceInput ? 'fs-12 topTextTemp' : 'fs-14 topHideTemp'"
             class="text-gray price-label">
               <text>{{ $t('noun.quantity') }}</text>
             </div>
           <input
             v-if="showPriceInput"
             :focus="showPriceInput"
-			@input="calculateMargin(tradeNum)"
+			      @input="calculateMargin(tradeNum)"
             v-model="tradeNum"
             class="myInput flex-1 w-100"
             :placeholder="$t('tips.enterQuantity')"
@@ -110,7 +110,7 @@
         <div>
           <div
             @click="clickPriceInpupt"
-            :class="showPriceInput ? 'fs-12 topTextTemp' : 'fs-14'"
+            :class="showPriceInput ? 'fs-12 topTextTemp' : 'fs-14 topHideTemp'"
             class="text-gray price-label">
               <text>{{ $t('noun.orderValue') }}</text>
             </div>
@@ -292,7 +292,7 @@
       v-model:show="showBuyPopup"
       position="bottom"
       round
-      :style="{ height: '40%' }"
+      :style="{ height: '45%' }"
     >
       <div class="px-20 pos-relative">
         <p class="mt-20">{{ orderTypeObj.value ==='MARKET' ? $t('noun.marketOrder') : $t('noun.priceLimitOrder') }} {{ direction === 'LONG' ? $t('noun.doMore') : $t('noun.doLess') }} {{symbol}}</p>
@@ -326,7 +326,7 @@
 		    <div class="text-black">{{stopLossVal}}</div>
 		  </div>
         </div>
-        <div class="popupBtnBoxBuy pos-fixed w-100 px-20">
+        <div class="popupBtnBoxBuy w-100 mt-20 pb-20">
           <div>
             <van-checkbox v-model="checkedNoPopupWindows" @change="noPopupWindows" shape="square">
               <template #icon="props">
@@ -660,14 +660,18 @@ defineExpose({
     .baseInput-Special {
       background: #F6F7FB;
       border-radius: 8px 8px 8px 8px;
-      height: 48px;
-      line-height: 48px;
+      height: 58px;
+      line-height: 58px;
       .price-label {
         transition: font-size 0.2s ease; // 添加过渡效果
       }
       .topTextTemp {
         height: 20px;
         line-height: 20px;
+      }
+      .topHideTemp {
+        height: 0;
+        line-height: 0;
       }
       .checkTypeBox {
         .imgBox {
@@ -769,6 +773,7 @@ defineExpose({
   .myBtn {
     background: #0FB668;
     border-radius: 6px;
+    border-color: #0FB668
   }
   .img-icon {
     width: 12px;
