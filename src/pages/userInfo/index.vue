@@ -87,7 +87,7 @@
           </div>
         </div>
       </div>
-      <div class="optionBox bg-white mt-5">
+      <div class="optionBox pb-20 bg-white mt-5">
         <div class="pl-20 pr-20 pt-20">
           <div class="fw-b fs-16">{{ $t('userInfo.accountInfo') }}</div>
           <div @click="goIdentityAuth" class="pt-25 flex justify-between">
@@ -166,7 +166,7 @@
         </div>
       </div>
     </div>
-    <div class="loginOutBtn pos-fixed bg-white pt-10 w-100 px-20">
+    <div class="loginOutBtn bg-white pt-10 pb-25 w-100 px-20">
       <van-button class="w-100" type="primary" @click="loginOut">{{ $t('common.loginOut') }}</van-button>
     </div>
   </div>
@@ -351,7 +351,7 @@ const loginOut = () => {
   }
   .optionBox {
     // background: #F6F8FC;
-    padding-bottom: 120px;
+    // padding-bottom: 120px;
     .leftIcon {
       width: 20px;
       height: 20px;
@@ -362,9 +362,9 @@ const loginOut = () => {
     }
   }
   .loginOutBtn {
-    bottom: 30px;
-    left: 0px;
-    right: 0px;
+    // bottom: 30px;
+    // left: 0px;
+    // right: 0px;
   }
 }
 </style>
