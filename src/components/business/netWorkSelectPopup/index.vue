@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="netWorkList flex-1" style="overflow-y: auto;">
-      <div v-for="(item,index) in protocolTypes" :key="index" class="px-15 my-10" @click="chooseProtocolType(item.split('|')[0])">
+      <div v-for="(item,index) in protocolTypes" :key="index" class="px-15 my-15" @click="chooseProtocolType(item.split('|')[0])">
         <div>{{item.split('|')[0]}}({{item.split('|')[1]}})</div>
         <!-- <div>
           <text class="fw-b fs-14">手续费:</text>
@@ -58,7 +58,7 @@ defineExpose({
 
 <style lang="scss" scoped>
 .exMark {
-  width: 18px;
+  width: 38px;
   height: 16px;
 }
 .tipModule {
@@ -69,7 +69,7 @@ defineExpose({
   }
 }
 .netWorkList {
-  margin-top: 100px;
+  margin-top: 130px;
   height: calc(100% - 70px);
   overflow-y: auto;
   position: relative;
