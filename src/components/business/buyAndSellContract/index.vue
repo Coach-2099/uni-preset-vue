@@ -58,7 +58,7 @@
         <div>
           <div
             @click="clickPriceInpupt"
-            :class="showPriceInput ? 'fs-12 topTextTemp' : 'fs-14 topHideTemp'"
+            :class="showPriceInput ? 'fs-12 h-20' : 'fs-14'"
             class="text-gray price-label"
           >
             <text>{{ $t('noun.price') }}</text>
@@ -76,13 +76,16 @@
         <text class="fs-14 px-10 text-black">{{basicToken}}</text>
       </div>
 	  <!-- 下单价格和数量 -->
-      <div v-if="settingAfterConfirmation === '1'" class="baseInput-Special w-100 mt-10 pl-15 py-10 flex justify-between items-center">
+      <div
+        v-if="settingAfterConfirmation === '1'" 
+        class="baseInput-Special w-100 mt-10 pl-15 py-10 flex justify-between items-center">
         <div>
           <div
             @click="clickPriceInpupt"
-            :class="showPriceInput ? 'fs-12 topTextTemp' : 'fs-14 topHideTemp'"
+            :class="showPriceInput ? 'fs-12 h-20' : 'fs-14 topHideTemp'"
             class="text-gray price-label">
-              <text>{{ $t('noun.quantity') }}</text>
+              <!-- <text>{{ $t('noun.quantity') }}</text> -->
+              {{ $t('noun.quantity') }}
             </div>
           <input
             v-if="showPriceInput"
@@ -110,9 +113,10 @@
         <div>
           <div
             @click="clickPriceInpupt"
-            :class="showPriceInput ? 'fs-12 topTextTemp' : 'fs-14 topHideTemp'"
+            :class="showPriceInput ? 'fs-12' : 'fs-14'"
             class="text-gray price-label">
-              <text>{{ $t('noun.orderValue') }}</text>
+              <!-- <text>{{ $t('noun.orderValue') }}</text> -->
+              {{ $t('noun.orderValue') }}
             </div>
           <input
             v-if="showPriceInput"
@@ -123,7 +127,10 @@
             placeholder-class="input-placeholder"
           />
         </div>
-        <div class="checkTypeBox flex jusify-between items-center px-10" @click="checkPriceAndQuantity">
+        <div
+          class="checkTypeBox flex jusify-between items-center px-10"
+          @click="checkPriceAndQuantity"
+        >
           <text class="fs-14 text-black">{{basicToken}}</text>
           <div class="imgBox ml-5">
             <image
@@ -517,10 +524,12 @@ const sliderChange =(val:number) =>{
 	}
 	console.log('tradeSymbol.value.minTradeDigit =',tradeSymbol.value.minTradeDigit)
 	showPriceInput.value = true
-	let marginVal = roundDown(val/100 * marginBalance.value/currentPrice ,tradeSymbol.value.minTradeDigit) //滑动比例×usdt余额/最新价
-	tradeNum.value = roundDown(marginVal * leverage.value.value,tradeSymbol.value.minTradeDigit)
-	tradeVal.value = roundDown(tradeNum.value * currentPrice,tradeSymbol.value.showUnit)
-	if(val === 100){
+	let marginVal = roundDown(val/100 * marginBalance.value/currentPrice ,tradeSymbol.value.minTradeDigit) || 0 //滑动比例×usdt余额/最新价
+	tradeNum.value = roundDown(marginVal * leverage.value.value,tradeSymbol.value.minTradeDigit) || 0
+	tradeVal.value = roundDown(tradeNum.value * currentPrice,tradeSymbol.value.showUnit) || 0
+	console.log('tradeNum::', tradeNum.value)
+  console.log('readeVal!!', tradeVal.value)
+  if(val === 100){
 		margin.value = roundDown(marginBalance.value,tradeSymbol.value.showUnit)
 	}else{
 		margin.value = roundDown(currentPrice * marginVal,tradeSymbol.value.showUnit) //计算所需保证金
@@ -656,17 +665,9 @@ defineExpose({
       background: #F6F7FB;
       border-radius: 8px 8px 8px 8px;
       height: 58px;
-      line-height: 58px;
+      // line-height: 58px;
       .price-label {
         transition: font-size 0.2s ease; // 添加过渡效果
-      }
-      .topTextTemp {
-        height: 20px;
-        line-height: 20px;
-      }
-      .topHideTemp {
-        height: 0;
-        line-height: 0;
       }
       .checkTypeBox {
         .imgBox {
@@ -722,9 +723,6 @@ defineExpose({
         background: #F6F7FB;
         border-radius: 8px 8px 8px 8px;
         height: 42px;
-        .myInput {
-
-        }
         .rightBox {
           image {
             width: 9px;
@@ -732,8 +730,8 @@ defineExpose({
           }
         }
         .input-placeholder {
-          font-size: 14px;
-          color: #B0B0B0;
+          // font-size: 14px;
+          // color: #B0B0B0;
         }
       }
     }

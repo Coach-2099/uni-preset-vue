@@ -57,10 +57,18 @@ const goUser = () => {
     return
   }
 
-  // 默认返回上一页
-  uni.navigateBack({
-    delta: 1
-  })
+  // 默认返回逻辑
+  const pages = getCurrentPages()
+  if (pages.length > 1) {
+    uni.navigateBack({
+      delta: 1
+    })
+  } else {
+    // 无上一页时跳转首页
+    uni.reLaunch({
+      url: '/pages/home/index'
+    })
+  }
 }
 
 </script>

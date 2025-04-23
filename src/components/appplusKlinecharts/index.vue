@@ -20,28 +20,43 @@
 </template>
  
  <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, nextTick } from 'vue'
 import { init } from 'klinecharts'
 
 // 历史
 const klineHistory = ref([])
-// 最新
-const klineNewest = ref({})
+// 最新（使用带时间戳的响应式）
+const klineNewest = ref([])
 const myConfig = config
 
 // 获取kline 历史数据
 const getKlineHistory = () => {
-  //http请求 略
-  klineHistory.value = []
+  nextTick(() => {
+    console.log('数据！！！！！')
+    //http请求 略
+    klineHistory.value = [
+      { close: 4976.16, high: 4977.99, low: 4970.12, open: 4972.89, timestamp: 1587660000000, volume: 204 },
+      { close: 4977.33, high: 4979.94, low: 4971.34, open: 4973.20, timestamp: 1587660060000, volume: 194 },
+      { close: 4977.93, high: 4977.93, low: 4974.20, open: 4976.53, timestamp: 1587660120000, volume: 197 },
+      { close: 4966.77, high: 4968.53, low: 4962.20, open: 4963.88, timestamp: 1587660180000, volume: 28 },
+      { close: 4961.56, high: 4972.61, low: 4961.28, open: 4961.28, timestamp: 1587660240000, volume: 184 },
+      { close: 4964.19, high: 4964.74, low: 4961.42, open: 4961.64, timestamp: 1587660300000, volume: 191 },
+      { close: 4968.93, high: 4972.70, low: 4964.55, open: 4966.96, timestamp: 1587660360000, volume: 105 },
+      { close: 4979.31, high: 4979.61, low: 4973.99, open: 4977.06, timestamp: 1587660420000, volume: 35 },
+      { close: 4977.02, high: 4981.66, low: 4975.14, open: 4981.66, timestamp: 1587660480000, volume: 135 },
+      { close: 4985.09, high: 4988.62, low: 4980.30, open: 4986.72, timestamp: 1587660540000, volume: 76 }
+    ]
+  })
+
 }
 // 获取kline 最新数据 (webscoket)
 const webscoketKline = () => {
   //scoket请求 略
-  klineNewest.value = data
+  // klineNewest.value = data
 }
 onMounted(() => {
-  // kline = init('chart', config)
-  // console.log('setup中的init', kline) // 检查 kline 是否正确初始化
+  console.log('组件挂载')
+  getKlineHistory()
 })
 </script>
 
@@ -53,8 +68,10 @@ import { init, dispose, registerIndicator, registerStyles } from 'klinecharts' /
 var kline
 export default {
   mounted() {
+    console.log('RenderJS 初始化')
     this.initChart()
   },
+  // 不能使用 created 周期
   methods: {
     initChart() {
       const styles = {
@@ -175,9 +192,6 @@ export default {
             showRule: 'always',
             // 'standard' | 'rect'
             showType: 'standard',
-            // e.g.
-            // [{ title: 'time', value: '{time}' }, { title: 'close', value: '{close}' }]
-            // [{ title: { text: 'time', color: '#fff' }, value: { text: '{time}', color: '#fff' } }, { title: 'close', value: '{close}' }]
             custom: [
               { title: 'time', value: '{time}' },
               { title: 'open', value: '{open}' },
@@ -330,6 +344,7 @@ export default {
             }
           },
           tooltip: {
+            show: false,
             offsetLeft: 4,
             offsetTop: 6,
             offsetRight: 4,
@@ -587,48 +602,108 @@ export default {
       }
 
       registerIndicator({
-        name: 'customIndicatorBasic',
-        shortName: 'Basic',
-        series: 'volume',
-        figures: [{
-          key: 'close',
-          title: 'close: ',
-          type: 'line'
-        }],
-        calc: dataList => dataList.map(data => ({ close: data.close }))
+        name: 'customIndicatorDraw',
+        shortName: 'Volume',
+        zLevel: -1,
+        figures: [],
+        calc: dataList => dataList.map(data => ({ volume: data.volume, close: data.close, open: data.open })),
+        createTooltipDataSource: ({ indicator, crosshair }) => {
+          const result = indicator.result;
+          const data = result[crosshair.dataIndex];
+          if (data) {
+            const color = data.open < data.close ? 'rgb(224, 152, 199)' : 'rgb(143, 211, 232)';
+            return {
+              legends: [
+                { title: '', value: { text: data.volume, color } },
+              ]
+            };
+          }
+          return {};
+        },
+        draw: ({ ctx, chart, indicator, bounding, xAxis }) => {
+          const { realFrom, realTo } = chart.getVisibleRange();
+          const { gapBar, halfGapBar } = chart.getBarSpace()
+          const { result } = indicator;
+          let maxVolume = 0;
+          for (let i = realFrom; i < realTo; i++) {
+            const data = result[i];
+            if (data) {
+              maxVolume = Math.max(maxVolume, data.volume);
+            }
+          }
+          const totalHeight = bounding.height * 0.4;
+          const Rect = getFigureClass('rect');
+          for (let i = realFrom; i < realTo; i++) {
+            const data = result[i];
+            if (data) {
+              const height = Math.round(data.volume / maxVolume * totalHeight);
+              const color = data.open < data.close ? 'rgba(224, 152, 199, 0.6)' : 'rgba(143, 211, 232, 0.6)';
+              new Rect({
+                name: 'rect',
+                attrs: {
+                  x: xAxis.convertToPixel(i) - halfGapBar,
+                  y: bounding.height - height,
+                  width: gapBar,
+                  height
+                },
+                styles: { color }
+              }).draw(ctx);
+            }
+          }
+          return true;
+        }
       });
 
       // 设置样式
-      registerStyles({
-        name: 'customTheme',
-        styles: styles
+      registerStyles('customTheme',{
+        candle: {
+          bar: {
+            upColor: '#2b821d',
+            upBorderColor: '#2b821d',
+            upWickColor: '#2b821d',
+            downColor: '#c12e34',
+            downBorderColor: '#c12e34',
+            downWickColor: '#c12e34',
+          },
+          candle: {
+            tooltip: {
+              showRule: 'none',
+              // offsetLeft: 14,
+              // offsetTop: 16,
+              // offsetRight: 14,
+              // offsetBottom: 16,
+            }
+          },
+          tooltip: {
+            showRule: 'none',
+            showName: false,
+            showParams: false,
+          }
+        }
       })
 
-      kline = init('chart')
+      kline = init('chart', {
+        layout: [
+          {
+            type: 'candle',
+            content: ['MA', { name: 'EMA', calcParams: [10, 30] }],
+            options: { order: Number.MIN_SAFE_INTEGER }
+          },
+          { type: 'indicator', content: ['VOL'], options: { order: 10 }  },
+          { type: 'xAxis', options: { order: 9 } }
+        ]
+      })
+      // 设置最后一根蜡烛图离图标的位置
+      kline.setOffsetRightDistance(160)
       // 设置样式
       kline.setStyles('customTheme');
-
-      // kline.setStyles('customStylesBasic1')
       // 添加别的图表
-      kline.createIndicator('customIndicatorBasic')
+      // kline.createIndicator('customIndicatorDraw', true, { id: 'chart' })
       // 添加数据
-      kline.applyNewData([
-        { close: 4976.16, high: 4977.99, low: 4970.12, open: 4972.89, timestamp: 1587660000000, volume: 204 },
-        { close: 4977.33, high: 4979.94, low: 4971.34, open: 4973.20, timestamp: 1587660060000, volume: 194 },
-        { close: 4977.93, high: 4977.93, low: 4974.20, open: 4976.53, timestamp: 1587660120000, volume: 197 },
-        { close: 4966.77, high: 4968.53, low: 4962.20, open: 4963.88, timestamp: 1587660180000, volume: 28 },
-        { close: 4961.56, high: 4972.61, low: 4961.28, open: 4961.28, timestamp: 1587660240000, volume: 184 },
-        { close: 4964.19, high: 4964.74, low: 4961.42, open: 4961.64, timestamp: 1587660300000, volume: 191 },
-        { close: 4968.93, high: 4972.70, low: 4964.55, open: 4966.96, timestamp: 1587660360000, volume: 105 },
-        { close: 4979.31, high: 4979.61, low: 4973.99, open: 4977.06, timestamp: 1587660420000, volume: 35 },
-        { close: 4977.02, high: 4981.66, low: 4975.14, open: 4981.66, timestamp: 1587660480000, volume: 135 },
-        { close: 4985.09, high: 4988.62, low: 4980.30, open: 4986.72, timestamp: 1587660540000, volume: 76 }
-      ])
+      kline.applyNewData(this.klineHistory)
       // console.log('stylesstyles', styles)
       // console.log('myConfig', this.myConfig)
-      
 
-      
       // kline.setStyles({
       //   candle: {
       //     type: 'area',
@@ -637,14 +712,37 @@ export default {
     },
     //监听最新值变化 注: kline值可能还没有  所以需要 kline?.
     updateNewest(newValue, oldValue, ownerInstance, instance) {
+        console.log('添加数据 update', newValue)
         // 添加最新数据 
         kline?.updateData(newValue)
     },
   //监听历史数据变化  注: kline值可能还没有  所以需要 kline?.
     updateHistory(newValue, oldValue, ownerInstance, instance) {
+      console.log('添加数据 add', newValue)
       // 添加历史数据 
       kline?.applyNewData(newValue)
-    }
+      // ownerInstance.callMethod('setKlineHistory', newValue)
+    },
+
+    // sttringToFuncPrototype(option){
+    //   for (const key in option) {
+    //     let prototype = option[key]
+    //     if(typeof prototype === "object") {
+    //       //如果属性值是数组
+    //       //遍历数组
+    //       if(Array.isArray(prototype)) {
+    //         prototype.forEach(item=>{
+    //           if(typeof item === "object") this.sttringToFuncPrototype(item)
+    //         })
+    //       } else {
+    //         this.sttringToFuncPrototype(prototype)
+    //       }
+    //     }
+    //   //转换string为function
+    //   if(typeof prototype === "string" && prototype.includes("function"))
+    //     prototype = eval(`(${prototype})`)
+    //   }
+    // },
   },
   onUnmounted() {
     dispose('chart')
