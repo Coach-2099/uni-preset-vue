@@ -20,7 +20,7 @@
             placeholder="Search"
             :left-icon="searchIcon"
             :clearable="false"
-			@update:model-value="onSearch"
+			      @update:model-value="onSearch"
           />
         </div>
       </div>
@@ -152,8 +152,14 @@ const checkZero = (checked:boolean) => {
 }
 
 const onSearch = (val:string) => {
+  console.log('val', val)
 	if(val.length>0){
-		searchItems.value = props.data.filter((item: any)=>{return item.symbol.indexOf(val)!=-1})	
+    const searchKey = val.toLocaleLowerCase()
+		searchItems.value = props.data.filter(
+      (item: any)=>{
+        return item.symbol.toLocaleLowerCase().includes(searchKey)
+      }
+    )
 	}else{
 		searchItems.value = props.data
 	}

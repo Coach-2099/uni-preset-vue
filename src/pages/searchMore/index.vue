@@ -5,14 +5,22 @@
         v-model="value"
         placeholder="BTC/USDT"
         shape="round"
-        clearable
         show-action
-        @cancel="cancel"
+        clearable
         class="flex-1"
-      />
+      >
+        <template #left>
+          <div @click="cancel" class="flex items-center back-arrow">
+            <div class="triangle-facing-left mx-5"></div>
+          </div>
+        </template>
+        <template #action>
+          <div @search="onSearch">搜索</div>
+        </template>
+      </van-search>
     </div>
     <div class="content">
-      <div v-if="true" class="px-20">
+      <!-- <div v-if="false" class="px-20">
         <p class="text-black fw-b fs-16 mt-15">热门搜索</p>
         <div class="listBox bg-white mt-15 px-15 py-15">
           <div v-for="item in 5" :key="item" class="oneLine mt-10 flex justify-between items-center">
@@ -32,16 +40,22 @@
             </div>
           </div>
         </div>
+      </div> -->
+      <div
+        v-if="loadingData"
+        class="myLoading pt-25 w-100 flex justify-center items-center"
+      >
+        <van-loading type="spinner" />
       </div>
       <div v-else class="px-20 bg-white">
         <div 
-          v-for="index in 5" 
+          v-for="(item, index) in symbolMap" 
           :key="index" 
           class="assetSingle pt-15 pb-5 flex justify-between items-center"
           @click="goAssetDetail"
         >
           <div>
-            <p class="fs-16 text-black">USDT</p>
+            <p class="fs-16 text-black">{{ item.tradeToken }}</p>
             <p class="fs--12 text-gray">2025-02-23  11:43:05</p>
           </div>
           <div class="flex justify-between items-center">
@@ -61,12 +75,38 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
+import { getSymbolsLastPrice } from '@/api/quotes'
+import { onLoad } from '@dcloudio/uni-app';
 
 const value = ref('')
+const loadingData = ref(false)
+const typeObj = ref({} as any)
+const symbolMap = reactive(new Map())
 
+onLoad((option) => {
+  typeObj.value = option
+  console.log('onLoad', option)
+})
 const goAssetDetail = () => {
   console.log('前往详情')
+}
+
+const onSearch = async () => {
+  // console.log('搜索')
+  loadingData.value = true;
+  const params = {
+    klineType: typeObj.type,
+    // sortField: sortField.value,
+    // sortDirection: sortDirection.value
+  }
+  const data = await getSymbolsLastPrice(params)
+  data.forEach((item: any) => {
+    item.tradeToken = item.symbol.split('/')[0]
+    item.basicToken = item.symbol.split('/')[1]
+    symbolMap.set(item.symbol,item)
+    // item.price = item.price.toFixed(2)
+  })
 }
 
 const cancel = () => {
@@ -81,6 +121,16 @@ const cancel = () => {
 .searchMore-index {
   min-height: 100vh;
   background: #F6F7FB;
+  .back-arrow {
+    .triangle-facing-left {
+      display: inline-block;
+      border-left: 2px solid;
+      border-bottom: 2px solid;
+      width: 12px;
+      height: 12px;
+      transform: rotate(45deg);
+    }
+  }
   .content {
     // min-height: 100vh;
     border-radius: 8px;

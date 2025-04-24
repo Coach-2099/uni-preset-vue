@@ -153,28 +153,28 @@ const isSocket = () => {
   })
 }
 
+// 搜索方法
 const searchFun = async () => {
   loadingData.value = true;
   try {
-    // 使用解构赋值确保响应式更新
+    // 清空列表前先复制原始数据
+    const originalData = [...listData.value]
     listData.value = []
-    const params = {
-      klineType: props.type,
-      symbol: props.searchVal
+    // 本地筛选逻辑
+    if (props.searchVal) {
+      const searchKey = props.searchVal.toLowerCase()
+      listData.value = originalData.filter(item => {
+        return item.symbol1.toLowerCase().includes(searchKey) ||
+               item.symbol2.toLowerCase().includes(searchKey)
+      })
+      // 移除setTimeout直接更新状态
+      loadingData.value = false;
+    } else {
+      // 搜索词为空时恢复完整列表
+      loadData(props.type)
     }
-    // 添加await强制等待
-    const data = await getTicker(params)
-    // 使用数组解构保持响应性
-    listData.value = [data].map((item: any) => ({
-      ...item,
-      symbol1: item.symbol.split('/')[0],
-      symbol2: item.symbol.split('/')[1]
-    }))
   } catch (error) {
     console.error('Error fetching data:', error);
-  } finally {
-    // 移除setTimeout直接更新状态
-    loadingData.value = false;
   }
 }
 
