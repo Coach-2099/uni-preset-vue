@@ -544,7 +544,12 @@ const socketService = computed(() => userStore.socketService);
     // color: #fff;
   }
   .quotes {
+<<<<<<< HEAD
     padding-top: 5px;
+=======
+    padding-top: 90px;
+    
+>>>>>>> origin/main
     background: #fff;
     .rises_falls_btn {
       width: 84px;
