@@ -10,7 +10,8 @@ export default {
 		assetRecord: 'Asset Records',
 		generalSettings: 'General Settings',
 		securitySettings: 'Security Settings',
-		messageList:'Message list'
+		messageList:'Message list',
+		inviteFriends: 'Invite friends',
 	},
 	common: {
 		confirm: 'Confirm',
@@ -284,7 +285,7 @@ export default {
 		enterValidPrice: 'Please enter a valid price',
 		enterValidQuantity: 'Please enter a valid quantity',
 		tradingAmountExceedsMax: 'Trading amount exceeds maximum allowed',
-		orderSuccess: 'Order successful'
+		orderSuccess: 'Successful'
 	},
 	withdrawal: {
 		address: 'Address',
@@ -360,7 +361,7 @@ export default {
 		entrustQuantity: 'Entrust Quantity',
 		entryPrice: 'Entry Price',
 		positionMargin: 'Position Margin',
-		setTakeProfitStopLoss: 'Set Take Profit/Stop Loss',
+		setTakeProfitStopLoss: 'Set TP/SL',
 		cancel: 'Cancel',
 		closePosition: 'Close Position',
 		enterTakeProfitStopLoss: 'Please enter take profit/stop loss price',
@@ -391,13 +392,13 @@ export default {
 	chart: {
 		unsupported: 'The current environment does not support chart display',
 		timeframes: {
-			min1: '1min',
-			min5: '5min',
-			min15: '15min',
-			min30: '30min',
-			hour1: '1hour',
-			hour4: '4hour',
-			day1: '1day'
+			min1: '1m',
+			min5: '5m',
+			min15: '15m',
+			min30: '30m',
+			hour1: '1h',
+			hour4: '4h',
+			day1: '1d'
 		},
 		indicators: {
 			open: 'Open',
@@ -409,5 +410,10 @@ export default {
 			low24h: '24h Low',
 			volume24h: '24h Volume'
 		}
+	},
+	news:{
+		cryptocurrency:'Cryptocurrency',
+		metals: 'Metals',
+		original_article:'View original article'
 	}
 }

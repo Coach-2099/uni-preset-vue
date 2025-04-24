@@ -410,5 +410,10 @@ export default {
 			low24h: '24h最低',
 			volume24h: '24h交易额'
 		}
+	},
+	news:{
+		cryptocurrency:'加密货币',
+		metals: '贵金属',
+		original_article:'查看原文'
 	}
 }

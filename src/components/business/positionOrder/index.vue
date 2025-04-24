@@ -162,11 +162,12 @@ const close =async(orderNo: string,quantity: number)=>{
 	const data = await closeOrder(params)
 	if(!data || !data.errMsg){
 		uni.showToast({title: t('position.positionClosed'), icon: 'success'})
+		loadPositions() //重新加载
 	}
 	controlStore.setCanceled(!controlStore.getCanceled)
 }
 
-//平仓
+//撤销
 const cancel =async(orderNo: string)=>{
 	const params = {
 		orderNo:orderNo,
@@ -174,6 +175,7 @@ const cancel =async(orderNo: string)=>{
 	const data = await cancelFuturesOrder(params)
 	if(!data || !data.errMsg){
 		uni.showToast({title: t('position.cancelSuccess'), icon: 'success'})
+		loadPositions() //重新加载
 	}
 	controlStore.setCanceled(!controlStore.getCanceled)
 }
@@ -204,30 +206,32 @@ const loadPositions=async()=>{
 }
 
 const subWebsocket =()=>{
-	socketService.value.subscribe('ticker')
-	socketService.value.on('ticker',(data: any)=>{
-			  if(symbolMap.value.has(data.symbol)){
-				  for(let val of ordersMap.value.values()){
-				  	if(val.status==='POSITIONING'){
-				  		val.unrealizedProfit = calculateUnrealizedProfit(data.close,val.direction,val.quantity,val.entryPrice)
-				  		val.unrealizedProfitScale=roundDown(val.unrealizedProfit/val.margin*100,2)
-						val.close = data.close
-				  	}
+	setTimeout(()=>{
+		socketService.value.subscribe('ticker')
+		socketService.value.on('ticker',(data: any)=>{
+				  if(symbolMap.value.has(data.symbol)){
+					  for(let val of ordersMap.value.values()){
+						if(val.status==='POSITIONING'){
+							val.unrealizedProfit = calculateUnrealizedProfit(data.close,val.direction,val.quantity,val.entryPrice)
+							val.unrealizedProfitScale=roundDown(val.unrealizedProfit/val.margin*100,2)
+							val.close = data.close
+						}
+					  }
 				  }
-			  }
-	})
-	socketService.value.subscribeUser(userStore.userInfo.userId)
-	socketService.value.on(userStore.userInfo.userId, (data: any,type:string) => {
-				const payload = data
-				if(type === 'FUTURES_ORDER_ENTRUSTMENT' || type === 'FUTURES_ORDER_POSITION'){
-					ordersMap.value.set(payload.orderNo,payload)
-					if(type === 'FUTURES_ORDER_POSITION'){
-						symbolMap.value.set(payload.symbol,'')	
+		})
+		socketService.value.subscribeUser(userStore.userInfo.userId)
+		socketService.value.on(userStore.userInfo.userId, (data: any,type:string) => {
+					const payload = data
+					if(type === 'FUTURES_ORDER_ENTRUSTMENT' || type === 'FUTURES_ORDER_POSITION' || type ==='METALS_ORDER_POSITION' || type ==='METALS_ORDER_ENTRUSTMENT'){
+						ordersMap.value.set(payload.orderNo,payload)
+						if(type === 'FUTURES_ORDER_POSITION'|| type ==='METALS_ORDER_POSITION'){
+							symbolMap.value.set(payload.symbol,'')	
+						}
+					}else if(type === 'FUTURES_ORDER_CANCEL' ||type === 'FUTURES_ORDER_BOOM' ||type === 'FUTURES_ORDER_CLOSED' ||type === 'METALS_ORDER_CANCEL' ||type === 'METALS_ORDER_BOOM' ||type === 'METALS_ORDER_CLOSED' ){
+						ordersMap.value.delete(payload.orderNo)
 					}
-				}else if(type === 'FUTURES_ORDER_CANCEL' ||type === 'FUTURES_ORDER_BOOM' ||type === 'FUTURES_ORDER_CLOSED' ){
-					ordersMap.value.delete(payload.orderNo)
-				}
-	})
+		})
+	},500)
 }
 onShow(()=>{
 	loadPositions()
@@ -239,7 +243,6 @@ onMounted(() => {
   })
 })
 onUnmounted(() => {
-	console.log(t('position.removeUserListener'))
 	socketService.value.unsubscribe('ticker');
 	socketService.value.unsubscribeUser(userStore.userInfo.userId);
 })

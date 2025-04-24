@@ -46,7 +46,10 @@ const viteConfig = defineConfig(({ mode }: ConfigEnv) => {
             hmr: {
                 overlay: false
             },
-        }
+        },
+		esbuild: {
+			drop: ["console","debugger"]
+		}
     };
 });
 

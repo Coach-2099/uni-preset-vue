@@ -210,16 +210,17 @@ const getUser = async () => {
 	  isValid: userStore.userInfo.isValid
   }
 
-  if(!userInfo.value.phone) {
-    showConfirmDialog({
-      showCancelButton: false,
-      message: t('tips.bindPhoneOrEmail'),
-    }).then(() => {
-      uni.navigateTo({
-        url: '/pages/modifyPhone/index'
-      })
-    })
-  } else if (!userInfo.value.email) {
+  // if(!userInfo.value.phone) {
+  //   showConfirmDialog({
+  //     showCancelButton: false,
+  //     message: t('tips.bindPhoneOrEmail'),
+  //   }).then(() => {
+  //     uni.navigateTo({
+  //       url: '/pages/modifyPhone/index'
+  //     })
+  //   })
+  // } else 
+  if (!userInfo.value.email) {
     showConfirmDialog({
       showCancelButton: false,
       message: t('tips.bindPhoneOrEmail'),

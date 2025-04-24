@@ -241,8 +241,8 @@ export function formatISODate(date:string){
 }
 
 //自定义格式
-export function formatDate(date:number,format:string){
-	return format(new Date(date),format)
+export function formatDate(date:string,p:string){
+	return format(new Date(date),p)
 }
 
 /* 电子邮箱 */

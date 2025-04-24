@@ -288,6 +288,7 @@ const transfer =async() =>{
 	if(!data || !data.errMsg){
 		uni.showToast({title: t('transfer.transferSuccess'), icon: 'success'})
 		balance()//重新获取余额信息
+		amount.value = ''
 	}
 }
 

@@ -135,7 +135,7 @@ const basicToken = ref('') //基础币种
 
 const subSymbol = ref('') //当前订阅的交易对
 
-const MAX_DEPTH_LENGTH = 8 // 最大显示20条深度数据
+const MAX_DEPTH_LENGTH = 7 // 最大显示20条深度数据
 
 // 监控交易对变化
 watch(

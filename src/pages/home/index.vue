@@ -182,17 +182,17 @@
         </van-tab>
       </van-tabs>
     </div>
-    <!-- <div class="mt-5 pt-10 bg-white news">
+    <div class="mt-5 pt-10 bg-white news">
       <van-tabs v-model:active="tabType" ref="tabsNewsRefs" @click-tab="clickNews" shrink>
-        <van-tab title="探索">
+        <van-tab :title="$t('news.cryptocurrency')" name="cryptocurrency">
           <div class="newsTemp mt-20 ml-15 mr-15 ">
             <div class="title flex justify-start items-center">
               <div class="Dot"></div>
-              <text class="ml-10 fs-14 fw-b text-balck">2025年2月22日</text>
+              <text class="ml-10 fs-14 fw-b text-balck">{{feed?.lastBuildDate}}</text>
             </div>
           </div>
           <div class="article ml-15 mr-15">
-            <div class="entry">
+            <div class="entry" v-for="(item,index) in feed?.items" :key="index">
               <div class="time flex items-center text-gray fs-12">
                 <div style="
                   width: 5px;
@@ -200,15 +200,15 @@
                   border-radius: 50%;
                   background: #B0B0B0;"
                 ></div>
-                <text class="ml-15">20:33</text>
+                <text class="ml-15">{{formatDate(item?.isoDate,'p')}}</text>
               </div>
-              <div class="title ml-15 fw-b text-black mt-10 fs-16">美聯儲官員下週密集發聲，市場注核心PCE物價指數</div>
+              <div class="title ml-15 fw-b text-black mt-10 fs-16">{{item?.title}}</div>
               <div class="mt-20">
-                <a href="#" class="view-source ml-15 fs-12">查看原文</a>
+                <a :href="item.link" target="_blank" class="view-source ml-15 fs-12" >{{$t('news.original_article')}}</a>
               </div>
             </div>
 
-            <div class="entry mt-25">
+            <!-- <div class="entry mt-25">
               <div class="time flex items-center text-gray fs-12">
                 <div style="
                   width: 5px;
@@ -222,14 +222,36 @@
               <div class="mt-20">
                 <a href="#" class="view-source ml-15 fs-12">查看原文</a>
               </div>
-            </div>
+            </div> -->
           </div>
         </van-tab>
-        <van-tab title="关注中"></van-tab>
-        <van-tab title="公告"></van-tab>
-        <van-tab title="新闻"></van-tab>
+        <van-tab :title="$t('news.metals')" name="metals">
+			<div class="newsTemp mt-20 ml-15 mr-15 ">
+			  <div class="title flex justify-start items-center">
+			    <div class="Dot"></div>
+			    <text class="ml-10 fs-14 fw-b text-balck">{{formatDate(feed?.lastBuildDate,'P')}}</text>
+			  </div>
+			</div>
+			<div class="article ml-15 mr-15">
+			  <div class="entry" v-for="(item,index) in feed?.items" :key="index">
+			    <div class="time flex items-center text-gray fs-12">
+			      <div style="
+			        width: 5px;
+			        height: 5px;
+			        border-radius: 50%;
+			        background: #B0B0B0;"
+			      ></div>
+			      <text class="ml-15">{{formatDate(item?.isoDate,'p')}}</text>
+			    </div>
+			    <div class="title ml-15 fw-b text-black mt-10 fs-16">{{item?.title}}</div>
+			    <div class="mt-20">
+			      <a :href="item.link" target="_blank" class="view-source ml-15 fs-12" >{{$t('news.original_article')}}</a>
+			    </div>
+			  </div>
+			</div>
+		</van-tab>
       </van-tabs>
-    </div> -->
+    </div>
     <CustomNavBar></CustomNavBar>
   </div>
 </template>
@@ -251,6 +273,8 @@ import { useUserStore } from '@/stores/user';
 import { getAsset } from '@/api/asset';
 import { roundDown } from '@/utils/util';
 import { getNotice } from '@/api/common';
+import rssService from '@/utils/rssService';
+import {formatDate} from '@/utils/util'
 
 // import rechargeSVG from '@/static/svg/home/recharge.svg'; // 导入SVG文件
 
@@ -278,6 +302,10 @@ const pages = ref({
 
 const noticeList =ref([]) //消息列表
 
+const feed = ref({}) //rss 新闻订阅列表
+
+const news =ref(null) //当前点击的新闻tabs
+
 const spotQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const futuresQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const metalsQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
@@ -303,6 +331,7 @@ const socketService = computed(() => userStore.socketService);
 	  	getBalance()
 	  }
 	  subTicker()
+	  rsssub()
   })
 
   const subTicker=()=>{
@@ -420,13 +449,15 @@ const socketService = computed(() => userStore.socketService);
 
   // 切换新闻标签
   const clickNews = (e: any) => {
-    nextTick(() => {
-      tabsNewsRefs.value?.resize();
-    })
+    // nextTick(() => {
+    //   tabsNewsRefs.value?.resize();
+    // })
+	news.value = e
+	rsssub()
   }
 
   const viewMore = () => {
-    uni.switchTab({
+    uni.navigateTo({
       url: '/pages/quotes/index',
     });
   }
@@ -446,6 +477,18 @@ const socketService = computed(() => userStore.socketService);
     //   url: '/pages/customerService/index',
     // });
   }
+  
+  const rsssub = async()=>{
+	  // console.log(' load rss')
+	  if(!news.value || news.value.name === 'cryptocurrency'){
+		  feed.value = await rssService.fetchRssFeed('https://rsshub.app/blockworks')
+	  }else{
+		  feed.value = await rssService.fetchRssFeed('https://rsshub.app/bullionvault/gold-news')
+	  }
+	  console.log('feed = :',feed.value)
+  }
+  
+  
 
 </script>
 
