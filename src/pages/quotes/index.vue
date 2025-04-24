@@ -1,7 +1,18 @@
 <template>
   <div class="quotes-index">
     <div class="mt-15">
-      <van-search v-model="value" placeholder="BTC/USDT" shape="round" @click="goSearchMore" />
+      <van-search
+        v-model="searchValue"
+        placeholder="BTC/USDT"
+        shape="round"
+        show-action
+        @search="onClickButton"
+      >
+        <template #action>
+          <div @click="onClickButton">搜索</div>
+        </template>
+      </van-search>
+      <!-- @click="goSearchMore" -->
     </div>
     <div class="quotesList">
       <van-tabs v-model:active="active" @click-tab="onClickTab" sticky shrink>
@@ -44,7 +55,7 @@ const userStore = useUserStore();
 const socketService = computed(() => userStore.socketService);
 
 
-const value = ref('')
+const searchValue = ref('')
 const active = ref(0)
 const loading = ref(false)
 
@@ -77,8 +88,6 @@ onMounted(() => {
           currentRef.value?.refreshData(data);
         });
       },100)
-
-
   })
 })
 
@@ -96,10 +105,25 @@ const onClickTab = (name: any) => {
   })
  };
 
+const onClickButton = () => {
+  if (active.value == 0) {
+    spotQuoteListRefs.value?.searchFun(searchValue.value)
+  } else if (active.value == 1) {
+    futuresQuoteListRefs.value?.searchFun(searchValue.value)
+  } else if (active.value == 2) {
+    metalsQuoteListRefs.value?.searchFun(searchValue.value)
+  }
+}
+
 const goSearchMore = () => {
-  uni.navigateTo({
-    url: '/pages/searchMore/index'
-  })
+  // let isType = 'SPOT'
+  // if (active.value == 0) isType == 'SPOT'
+  // if (active.value == 1) isType == 'FUTURES'
+  // if (active.value == 2) isType == 'METALS'
+  // uni.navigateTo({
+  //   url: '/pages/searchMore/index?type=' + isType
+  // })
+
 }
 
 </script>

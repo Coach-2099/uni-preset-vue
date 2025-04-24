@@ -98,6 +98,7 @@
         </template>
       </basePullRefresh>
       <template v-else>
+        <!-- 顶部筛选功能 -->
         <div class="mt-10 ml-15 mr-15 flex justify-between">
           <div class="flex-1 flex text-gray fs-12">
             <div 
@@ -198,6 +199,9 @@ const controlStore = useControlStore();
 const sortField = ref('')
 const sortDirection = ref('')
 const isLoading = ref(false)
+/**
+ * 控制页面显示隐藏加载效果
+ */
 const loadingData = ref(true)
 const symbolMap = reactive(new Map())
 
@@ -206,7 +210,10 @@ const props = defineProps({
     type: String,
     default: 'SPOT'
   },
-  // 新增下拉刷新控制参数
+  /**
+   * 是否需要下拉刷新
+   * 默认：true
+   */
   needPullRefresh: {
     type: Boolean,
     default: true
@@ -255,12 +262,37 @@ const loadData = async () => {
   } catch (error) {
     console.error('Error fetching data:', error);
   } finally {
-    setTimeout(() => {
-      nextTick(() => {
-        loadingData.value = false;
-        console.log('结束刷新', loadingData.value, new Date().getTime())
-      })
-    }, 0)
+    loadingData.value = false;
+  }
+}
+
+const searchFun = (searchVal: any) => {
+  console.log('搜索', searchVal)
+  loadingData.value = true;
+  try {
+    const searchKey = searchVal.toLowerCase().trim();
+    // 获取原始数据副本
+    const originalData = Array.from(symbolMap.values());
+    // 清空当前数据
+    symbolMap.clear();
+    // 本地筛选逻辑
+    if (searchKey) {
+      originalData.forEach(item => {
+        const matchTrade = item.tradeToken.toLowerCase().includes(searchKey);
+        const matchBasic = item.basicToken.toLowerCase().includes(searchKey);
+        if (matchTrade || matchBasic) {
+          symbolMap.set(item.symbol, item);
+        }
+      });
+    } else {
+      // 恢复完整数据
+      // originalData.forEach(item => symbolMap.set(item.symbol, item));
+      loadData()
+    }
+  } catch(err) {
+    console.log(err)
+  } finally {
+    loadingData.value = false;
   }
 }
 
@@ -341,7 +373,8 @@ const formatVolume = (volume:any) => {
 defineExpose({
   loadData,
   clearData,
-  refreshData
+  refreshData,
+  searchFun
 })
 
 </script>
