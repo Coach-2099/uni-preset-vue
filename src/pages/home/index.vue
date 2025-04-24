@@ -182,7 +182,7 @@
         </van-tab>
       </van-tabs>
     </div>
-    <div class="mt-5 pt-10 bg-white news">
+    <!-- <div class="mt-5 pt-10 bg-white news">
       <van-tabs v-model:active="tabType" ref="tabsNewsRefs" @click-tab="clickNews" shrink>
         <van-tab title="探索">
           <div class="newsTemp mt-20 ml-15 mr-15 ">
@@ -229,7 +229,7 @@
         <van-tab title="公告"></van-tab>
         <van-tab title="新闻"></van-tab>
       </van-tabs>
-    </div>
+    </div> -->
     <CustomNavBar></CustomNavBar>
   </div>
 </template>
@@ -544,12 +544,8 @@ const socketService = computed(() => userStore.socketService);
     // color: #fff;
   }
   .quotes {
-<<<<<<< HEAD
     padding-top: 5px;
-=======
-    padding-top: 90px;
-    
->>>>>>> origin/main
+    padding-bottom: 90px;
     background: #fff;
     .rises_falls_btn {
       width: 84px;
