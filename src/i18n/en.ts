@@ -3,7 +3,7 @@ export default {
 		home: 'Home',
 		quotes: 'Quotes',
 		trade: 'Spot',
-		contract: 'Contract',
+		contract: 'Futures',
 		myAssets: 'Assets',
 		metals: 'Metals',
 		assetDetail: 'Asset Details',
@@ -80,7 +80,7 @@ export default {
 	},
 	noun: {
 		spotGoods: 'Spot',
-		futureGoods: 'Contract',
+		futureGoods: 'Futures',
 		metalsGoods: 'Metals',
 		recharge: 'Deposit',
 		transfer: 'Transfer',

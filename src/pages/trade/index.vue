@@ -49,8 +49,8 @@
       </div>
     </div>
     <div v-if="activeTab === 'left'" class="btnBox pos-fixed w-100 flex">
-      <van-button class="buyBtn flex-1" type="success">{{ $t('operation.buy') }}</van-button>
-      <van-button class="sellBtn flex-1" type="danger">{{ $t('operation.sell') }}</van-button>
+      <van-button class="buyBtn flex-1" type="success" @click="switchTab('right')">{{ $t('operation.buy') }}</van-button>
+      <van-button class="sellBtn flex-1" type="danger" @click="switchTab('right')">{{ $t('operation.sell') }}</van-button>
     </div>
     <CustomNavBar></CustomNavBar>
   </div>
