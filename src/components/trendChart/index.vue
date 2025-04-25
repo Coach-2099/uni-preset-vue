@@ -170,23 +170,23 @@ const subScribe =(symbol:string)=>{
 	    // isFinish 为 true 时 push新数据
 	    const candle = {
 	      time: candleTime, // 转换为秒级时间戳
-	      open: Number(data.open.toFixed(2)),
-	      high: Number(data.high.toFixed(2)),
-	      low: Number(data.low.toFixed(2)),
+	      open: Number(data.open),
+	      high: Number(data.high),
+	      low: Number(data.low),
 	      close: Number(lastPrice.value),
-	      volume: Number(data.vol.toFixed(2))
+	      volume: Number(data.vol)
 	    }
       // 判断当前要push的数据和store中的数据是否一致
 	    chartRef.value?.appendNewCandle(candle)
 	  } else {
 	    // isFinish 为 false 时更新最新数据
 	    const candle = {
-	      open: Number(data.open.toFixed(2)),
-	      high: Number(data.high.toFixed(2)),
-	      low: Number(data.low.toFixed(2)),
+	      open: Number(data.open),
+	      high: Number(data.high),
+	      low: Number(data.low),
 	      close: Number(lastPrice.value),
 	      time: candleTime,
-	      volume: Number(data.vol.toFixed(2))
+	      volume: Number(data.vol)
 	    }
 	    chartRef.value?.updateLastCandle(candle)
 	  }
@@ -279,11 +279,11 @@ const loadData = async (startTime: number,endTime:number,isFisrtLoad: boolean) =
 	  for (let i = 0; i < klineList.length; i++) {
 		  const kline = {
         time: klineList[i].startTime/1000, // 转换为秒级时间戳
-        open: Number(klineList[i].open.toFixed(2)),
-        high: Number(klineList[i].high.toFixed(2)),
-        low: Number(klineList[i].low.toFixed(2)),
-        close: Number(klineList[i].close.toFixed(2)),
-        volume: Number(klineList[i].vol.toFixed(2))
+        open: Number(klineList[i].open),
+        high: Number(klineList[i].high),
+        low: Number(klineList[i].low),
+        close: Number(klineList[i].close),
+        volume: Number(klineList[i].vol)
 		  }
 			candleData.value.push(kline)
 	  }
@@ -294,11 +294,11 @@ const loadData = async (startTime: number,endTime:number,isFisrtLoad: boolean) =
 	  for (let i = kl; i >= 0; i--) {
 		  const kline = {
         time: klineList[i].startTime/1000, // 转换为秒级时间戳
-        open: Number(klineList[i].open.toFixed(2)),
-        high: Number(klineList[i].high.toFixed(2)),
-        low: Number(klineList[i].low.toFixed(2)),
-        close: Number(klineList[i].close.toFixed(2)),
-        volume: Number(klineList[i].vol.toFixed(2))
+        open: Number(klineList[i].open),
+        high: Number(klineList[i].high),
+        low: Number(klineList[i].low),
+        close: Number(klineList[i].close),
+        volume: Number(klineList[i].vol)
 		  }
 		  if (candleData.value[0].time > kline.time) {
         candleData.value.unshift(kline)

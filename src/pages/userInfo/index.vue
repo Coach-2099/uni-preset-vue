@@ -177,6 +177,7 @@ import navigationBar from '@/components/navigationBar/index.vue'
 import { ref, onMounted, onUnmounted, createApp } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { useI18n } from 'vue-i18n';
+import { getCustomerService } from '@/api/common';
 
 const { t } = useI18n();
 
@@ -193,9 +194,12 @@ const userInfo = ref({...DEFAULT_USER_INFO})
 
 const tabVal = ref(1);
 
+const customerUrl = ref('') //客服链接地址
+
 
 onMounted(() => {
   getUser()
+  getCustomer()
 })
 
 const getUser = async () => {
@@ -263,6 +267,11 @@ const goIdentityAuth = () => {
   }
 };
 
+const getCustomer =async() =>{
+	const data = await getCustomerService()
+	customerUrl.value = data
+}
+
 const goBack = () => { 
   uni.switchTab({
     url: '/pages/home/index',
@@ -270,7 +279,7 @@ const goBack = () => {
 }
 
 const goCustomerService = () => {
-  console.log('前往客服中心')
+	location.href = 'https://msg.btchatc1.top?appId=0qkyvQAz&userId='+userInfo.value.userId+'&redirectUrl='+encodeURIComponent(customerUrl.value)
 }
 
 const goLanguage = () => {

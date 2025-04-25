@@ -188,7 +188,7 @@
           <div class="newsTemp mt-20 ml-15 mr-15 ">
             <div class="title flex justify-start items-center">
               <div class="Dot"></div>
-              <text class="ml-10 fs-14 fw-b text-balck">{{feed?.lastBuildDate}}</text>
+              <text class="ml-10 fs-14 fw-b text-balck">{{formatDate(feed?.lastBuildDate,'PP')}}</text>
             </div>
           </div>
           <div class="article ml-15 mr-15">
@@ -229,7 +229,7 @@
 			<div class="newsTemp mt-20 ml-15 mr-15 ">
 			  <div class="title flex justify-start items-center">
 			    <div class="Dot"></div>
-			    <text class="ml-10 fs-14 fw-b text-balck">{{formatDate(feed?.lastBuildDate,'P')}}</text>
+			    <text class="ml-10 fs-14 fw-b text-balck">{{formatDate(feed?.lastBuildDate,'PP')}}</text>
 			  </div>
 			</div>
 			<div class="article ml-15 mr-15">
@@ -256,13 +256,6 @@
   </div>
 </template>
 
-<!-- #ifdef APP-PLUS -->
-<script module="vconsole" lang="renderjs">
-   import VConsole from 'vconsole' // TODO
-   new VConsole() // 使用vconsole
-</script>
-<!-- #endif -->
-
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue';
 import { onLaunch, onShow, onLoad, onUnload } from "@dcloudio/uni-app";
@@ -272,7 +265,7 @@ import quoteList from '@/components/business/quoteList/index.vue'; // 使用大�
 import { useUserStore } from '@/stores/user';
 import { getAsset } from '@/api/asset';
 import { roundDown } from '@/utils/util';
-import { getNotice } from '@/api/common';
+import { getNotice,getCustomerService } from '@/api/common';
 import rssService from '@/utils/rssService';
 import {formatDate} from '@/utils/util'
 
@@ -306,6 +299,8 @@ const feed = ref({}) //rss 新闻订阅列表
 
 const news =ref(null) //当前点击的新闻tabs
 
+const customerUrl = ref('') //客服链接地址
+
 const spotQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const futuresQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const metalsQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
@@ -324,6 +319,7 @@ const socketService = computed(() => userStore.socketService);
       // 切换货币信息
       onClickTab({name: 0})
     })
+	getCustomer()
   });
 
   onShow(()=>{
@@ -373,7 +369,10 @@ const socketService = computed(() => userStore.socketService);
     // 取消所有订阅
     socketService.value.unsubscribe('ticker');
   })
-
+const getCustomer =async() =>{
+	const data = await getCustomerService()
+	customerUrl.value = data
+}
 
  const getBalance = async()=>{
 	 const params = {
@@ -476,6 +475,7 @@ const socketService = computed(() => userStore.socketService);
     // uni.navigateTo({
     //   url: '/pages/customerService/index',
     // });
+	location.href = 'https://msg.btchatc1.top?appId=0qkyvQAz&userId='+userStore.userInfo.userId+'&redirectUrl='+encodeURIComponent(customerUrl.value)
   }
   
   const rsssub = async()=>{
@@ -485,7 +485,6 @@ const socketService = computed(() => userStore.socketService);
 	  }else{
 		  feed.value = await rssService.fetchRssFeed('https://rsshub.app/bullionvault/gold-news')
 	  }
-	  console.log('feed = :',feed.value)
   }
   
   
@@ -588,7 +587,7 @@ const socketService = computed(() => userStore.socketService);
   }
   .quotes {
     padding-top: 5px;
-    padding-bottom: 90px;
+    // padding-bottom: 90px;
     background: #fff;
     .rises_falls_btn {
       width: 84px;

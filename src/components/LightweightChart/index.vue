@@ -110,7 +110,7 @@ const visibleEMAData = computed(() => {
     const lastData = series.data().at(-1)
     return {
       period: series.options().title?.split(' ')[1],
-      value: lastData?.value?.toFixed(2),
+      value: lastData?.value,
       color: series.options().color
     }
   }).filter(Boolean)
@@ -270,7 +270,7 @@ const calculateEMA = (period: number) => {
     
     emaData.push({
       time: props.data[i].time,
-      value: Number(ema.toFixed(4))
+      value: Number(ema)
     })
   }
   return emaData
@@ -350,7 +350,7 @@ const updateEMAForLastCandle = (candle: CandleData) => {
       
       series.update({
         time: candle.time,
-        value: Number(newEma.toFixed(4))
+        value: Number(newEma)
       })
     }
   })
@@ -466,7 +466,7 @@ const initChartStructure = async () => {
       const data = param.seriesData?.get(series) as { value?: number }
       return {
         period: series.options().title?.split(' ')[1],
-        value: data?.value?.toFixed(2)
+        value: data?.value
       }
     })
 
