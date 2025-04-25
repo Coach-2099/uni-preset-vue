@@ -429,6 +429,9 @@ const initChartStructure = async () => {
     rightPriceScale: { 
       scaleMargins: { top: 0.3, bottom: 0.25 },
       borderVisible: false, // 新增：隐藏右侧Y轴轴线
+      // mode: 3, // 2 表示 precision 模式
+      autoScale: true,
+      // minimumWidth: 10,
      },
     crosshair: {
       horzLine: {
@@ -531,7 +534,12 @@ const initChartStructure = async () => {
     downColor: '#ef5350',
     borderVisible: false,
     wickUpColor: '#26a69a',
-    wickDownColor: '#ef5350'
+    wickDownColor: '#ef5350',
+    priceFormat: {
+      type: 'price',
+      minMove: 0.00000001,
+      precision: 8
+    }
   })
 
   // 初始化成交量系列（不设置数据）
@@ -558,6 +566,26 @@ const initChartStructure = async () => {
 // 修改后的数据渲染方法
 const renderChartData = async () => {
   if (!chart || !candleSeries) return
+
+  // 动态设置价格精度
+  if (props.data.length > 0) {
+    // 计算最大小数位数
+    const maxDecimals = props.data.reduce((max, d) => {
+      const priceStr = d.close.toString();
+      const decimalIndex = priceStr.indexOf('.');
+      return decimalIndex === -1 ? 0 : Math.max(max, priceStr.length - decimalIndex - 1);
+    }, 0);
+
+    const precision = Math.min(maxDecimals, 8);
+    // 更新蜡烛图系列的价格格式
+    candleSeries.applyOptions({
+      priceFormat: {
+        type: 'price',
+        precision,
+        minMove: Math.pow(10, -precision)
+      }
+    });
+  }
 
   // 新增数据排序和验证
   const sortedData = [...props.data].sort((a, b) => a.time - b.time)
