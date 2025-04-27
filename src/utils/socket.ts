@@ -178,7 +178,7 @@ class SocketService {
       // this.isConnected.value = true;
       this.startHeartbeat();
       if(this.retryCount>0 && this.subscriptions.size>0){
-        // location.reload() //为了防止页面断开时已订阅内容数据无法重新监听，强制刷新
+        location.reload() //为了防止页面断开时已订阅内容数据无法重新监听，强制刷新
         this.retryCount = 0
       }
       // 重连时恢复订阅, 已刷新当前页，重新恢复订阅无效，因数据无法被监听处理

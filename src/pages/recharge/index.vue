@@ -103,7 +103,7 @@
       </div>
     </div> -->
     <div class="textDescription fs-12 pt-5 mt-25">
-      <div class="bg-white pt-20 px-20" v-html="rechargeDesc">
+      <div class="bg-white pt-20 px-20" v-html="sanitizeHTML(rechargeDesc)">
       </div>
     </div>
 
@@ -130,6 +130,7 @@ import currencySelectPopup from '@/components/business/currencySelectPopup/index
 import networkSelectPopup from '@/components/business/netWorkSelectPopup/index.vue'
 import QrcodeVue from 'qrcode.vue'
 import { useI18n } from 'vue-i18n'
+import { sanitizeHTML } from '@/utils/util';
 const { t } = useI18n()
 
 const address = ref('') //地址
@@ -141,6 +142,7 @@ const networkSelectPopupRef:any = ref(null)
 const symbol =ref('USDT')
 const protocolType = ref('ERC20')
 const networkShow = ref(true)
+const protocolTypes = ref([])
 onMounted(() => {
   currentSelectRef.value?.showFLoatingPanel('recharge')
 })
@@ -154,7 +156,6 @@ const getRechargeAddres = async () => {
 }
 
 const goAssetRecord = () => {
-  console.log('资产列表')
   uni.navigateTo({
     url: '/pages/AssetRecord/index?type=Deposit'
   })
@@ -165,7 +166,7 @@ const openPopup = () => {
 }
 
 const openNetworkPopup = () => {
-  networkSelectPopupRef.value?.showFLoatingPanel()
+  networkSelectPopupRef.value?.showFLoatingPanel(protocolTypes.value)
 }
 
 //接收子组件传过来的币种信息
@@ -176,6 +177,7 @@ const chooseToken =(item: any) =>{
 	name.value = item.name
 	img.value = item.name
 	if(item.protocolTypes && item.protocolTypes.length>1){
+		protocolTypes.value = item.protocolTypes
 		networkSelectPopupRef.value?.showFLoatingPanel(item.protocolTypes)	
 		networkShow.value = true
 	}else{

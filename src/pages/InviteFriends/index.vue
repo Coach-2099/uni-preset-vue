@@ -74,6 +74,11 @@ const banners = async()=>{
       .my-swipe {
         border-radius: 18px 18px 18px 18px;
         height: 230px;
+		// width: 100%;
+		image {
+			width: 100%;
+			height: 100%;
+		}
       }
     }
     .copyTemp {
