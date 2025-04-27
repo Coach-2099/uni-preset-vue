@@ -95,6 +95,7 @@ watch(
 )
 
 onLoad(() => {
+  uni.hideTabBar()
 	if(controlStore.getQuotesData('FUTURES')?.symbol){
 		  symbol.value= controlStore.getQuotesData('FUTURES')?.symbol
 	}else{
@@ -159,6 +160,20 @@ const sliderStyle = computed(() => ({
 </script>
 
 <style lang="scss">
+/* App 端特定样式 */
+// #ifdef APP-PLUS
+:deep(.van-tabs) {
+  /* 修复底部指示器样式 */
+  .van-tabs__line {
+    display: none!important;
+  }
+  /* 确保激活状态的标签颜色正确 */
+  .van-tab--active {
+    font-weight: bold;
+    color: #333333 !important;
+  }
+}
+// #endif
 .contract-index {
   background: #F6F7FB;
   height: 100%;

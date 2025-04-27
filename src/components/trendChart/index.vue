@@ -54,7 +54,11 @@
     <!-- #endif -->
     
     <!-- #ifdef APP-PLUS -->
-    <appplusKlinecharts ref="appplusKlinechartsRef"></appplusKlinecharts>
+    <appplusKlinecharts
+      v-model:chartData="candleData"
+      v-model:updateTrigger="updateTrigger"
+      ref="appplusKlinechartsRef"
+    ></appplusKlinecharts>
     <!-- #endif -->
 
     <!-- <button @click="toggleTheme">切换主题</button> -->
@@ -116,6 +120,8 @@ const intervalMap:any = {
 }
 
 const candleData:any = ref([])
+const updateTrigger = ref(0) // 用于更新图表数据的触发器
+const candleDataString: any = ref('[]') // 用于传递给renderjs的字符串数据
 
 // EMA配置
 const emaConfigs = ref([
@@ -287,6 +293,11 @@ const loadData = async (startTime: number,endTime:number,isFisrtLoad: boolean) =
 		  }
 			candleData.value.push(kline)
 	  }
+    updateTrigger.value++
+    console.log('加载数据状态变化!', updateTrigger.value)
+    console.log('加载数据长度变化!', candleData.value)
+    // candleDataString.value = JSON.stringify(candleData.value)
+    // console.log('candleDataString.value##', candleDataString.value)
   } else {
     // 加载数据
     console.log(' init result ={}',candleData.value.length)

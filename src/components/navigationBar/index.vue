@@ -1,5 +1,6 @@
 <template>
   <div class="navigationBar-index">
+    <div style="height: var(--status-bar-height)"></div>
     <van-sticky>
       <div class="flex justify-between items-center pl-15 pr-15 headerTemp pos-relative">
         <div @click="goUser" class="flex items-center back-arrow">

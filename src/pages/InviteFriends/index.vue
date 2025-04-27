@@ -68,6 +68,7 @@ const banners = async()=>{
 
 <style lang="scss" scoped>
 .InviteFriends-index {
+  height: 100%;
   .content {
     padding: 0 18px;
     .bannerBox {

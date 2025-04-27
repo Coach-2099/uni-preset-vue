@@ -119,8 +119,10 @@
     </div>
     <div class="pl-5 pr-10 quotes bg-white">
       <van-tabs
-        v-model:active="active" 
+        v-show="vTabs"
+        v-model:active="active"
         shrink
+        type="line"
         ref="tabsTradeRefs"
         title-active-color="#333333"
         title-inactive-color="#B0B0B0"
@@ -136,7 +138,7 @@
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
             <p class="fs-12">{{ $t('homeIndex.viewMore') }}</p>
             <!-- <van-image class="ml-5" width="8" height="10" src="/static/images/right.png" /> -->
-            <iamge
+            <image
               src="~@/static/images/right.png"
               mode="widthFix"
               class="ml-5"
@@ -153,7 +155,6 @@
           ></quoteList>
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
             <p class="fs-12">{{ $t('homeIndex.viewMore') }}</p>
-            <!-- <van-image class="ml-5" width="9" height="7" src="/static/images/right.png" /> -->
             <image
               src="~@/static/images/right.png"
               mode="widthFix"
@@ -172,7 +173,7 @@
           <div class="moreTemp flex justify-center items-center" @click="viewMore">
             <p class="fs-12">{{ $t('homeIndex.viewMore') }}</p>
             <!-- <van-image class="ml-5" width="9" height="7" src="/static/images/right.png" /> -->
-            <iamge
+            <image
               src="~@/static/images/right.png"
               mode="widthFix"
               class="ml-5"
@@ -264,10 +265,10 @@ import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼�
 import quoteList from '@/components/business/quoteList/index.vue'; // 使用大驼峰命名
 import { useUserStore } from '@/stores/user';
 import { getAsset } from '@/api/asset';
-import { roundDown } from '@/utils/util';
+import { roundDown, formatDate } from '@/utils/util';
 import { getNotice,getCustomerService } from '@/api/common';
 import rssService from '@/utils/rssService';
-import {formatDate} from '@/utils/util'
+import { useRect } from '@vant/use'
 
 // import rechargeSVG from '@/static/svg/home/recharge.svg'; // 导入SVG文件
 
@@ -301,6 +302,8 @@ const news =ref(null) //当前点击的新闻tabs
 
 const customerUrl = ref('') //客服链接地址
 
+const vTabs = ref(false) //是否显示tabs
+
 const spotQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const futuresQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
 const metalsQuoteListRefs = ref<InstanceType<typeof quoteList> | null>(null);
@@ -308,10 +311,13 @@ const socketService = computed(() => userStore.socketService);
 
   onLoad(() => {
     uni.hideTabBar()
+    
   })
 
   // Connect to the socket server
   onMounted(() => {
+    vTabs.value = true
+
     // 切换类型时请求
     nextTick(() => {
       // 请求公告信息
@@ -319,7 +325,7 @@ const socketService = computed(() => userStore.socketService);
       // 切换货币信息
       onClickTab({name: 0})
     })
-	getCustomer()
+	  getCustomer()
   });
 
   onShow(()=>{
@@ -329,6 +335,12 @@ const socketService = computed(() => userStore.socketService);
 	  subTicker()
 	  rsssub()
   })
+
+  // 手动修复指示器位置
+
+  const setActive = () => {
+    active.value = 0
+  }
 
   const subTicker=()=>{
 	  nextTick(() => {
@@ -492,6 +504,20 @@ const getCustomer =async() =>{
 </script>
 
 <style lang="scss" scoped>
+/* App 端特定样式 */
+// #ifdef APP-PLUS
+:deep(.van-tabs) {
+  /* 修复底部指示器样式 */
+  .van-tabs__line {
+    display: none!important;
+  }
+  /* 确保激活状态的标签颜色正确 */
+  .van-tab--active {
+    font-weight: bold;
+    color: #333333 !important;
+  }
+}
+// #endif
 .home-index {
   height: 100%;
   background: #F6F8FC;

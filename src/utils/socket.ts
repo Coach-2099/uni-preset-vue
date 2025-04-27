@@ -144,7 +144,7 @@ class SocketService {
         console.error('连接初始化失败', err);
       }
     });
-    console.log('APP WebSocket 初始化完成', this.ws);
+    // console.log('APP WebSocket 初始化完成', this.ws);
 
     const socketTask = this.ws as UniApp.SocketTask;
     socketTask.onOpen(() => {
@@ -197,7 +197,7 @@ class SocketService {
         this.handleOpen();
       });
       uni.onSocketMessage((e: any) => {
-        console.log('收到消息：!!!', e.data);
+        // console.log('收到消息：!!!', e.data);
         this.handleMessage(e.data)
       });
     // #endif

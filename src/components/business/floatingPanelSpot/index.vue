@@ -177,6 +177,20 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
+/* App 端特定样式 */
+// #ifdef APP-PLUS
+:deep(.van-tabs) {
+  /* 修复底部指示器样式 */
+  .van-tabs__line {
+    display: none!important;
+  }
+  /* 确保激活状态的标签颜色正确 */
+  .van-tab--active {
+    font-weight: bold;
+    color: #333333 !important;
+  }
+}
+// #endif
 .searchModule {
   width: 100%;
   border-top-left-radius: 15px;

@@ -118,7 +118,7 @@ import CustomNavBar from '@/components/customNavBar/index.vue'; // 使用大驼�
 import assetsModule from '@/components/business/assetsModule/index.vue'
 import { getAsset } from '@/api/asset';
 import { roundDown } from '@/utils/util';
-import { onShow } from '@dcloudio/uni-app';
+import { onLoad, onShow } from '@dcloudio/uni-app';
 import { formartRose } from '@/utils/util'
 
 const active = ref(0);
@@ -144,6 +144,10 @@ const getBalance = async()=>{
  futuresAccount.value = data.futuresAccount
  metalsAccount.value = data.metalsAccount
 }
+
+onLoad(() => {
+  uni.hideTabBar()
+})
 
 onShow(()=>{
 	getBalance()
@@ -177,6 +181,20 @@ const goInvite = () => {
 </script>
 
 <style lang="scss" scoped>
+/* App 端特定样式 */
+// #ifdef APP-PLUS
+:deep(.van-tabs) {
+  /* 修复底部指示器样式 */
+  .van-tabs__line {
+    display: none!important;
+  }
+  /* 确保激活状态的标签颜色正确 */
+  .van-tab--active {
+    font-weight: bold;
+    color: #333333 !important;
+  }
+}
+// #endif
 .assets-index {
   background: #F6F8FC;  height: 100%;
   .assetsInfo {

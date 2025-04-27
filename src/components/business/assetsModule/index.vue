@@ -5,7 +5,7 @@
         <div class="flex-1">
           <van-checkbox v-model="checked" @change="checkZero" shape="square">
             <template #icon="props">
-              <img class="img-icon" :src="props.checked ? activeIcon : inactiveIcon" />
+              <image class="img-icon" :src="props.checked ? activeIcon : inactiveIcon" />
             </template>
             <text
               class="fs-14"
@@ -18,10 +18,15 @@
             v-model="searchValue"
             shape="round"
             placeholder="Search"
-            :left-icon="searchIcon"
             :clearable="false"
 			      @update:model-value="onSearch"
-          />
+          >
+            <template #left-icon>
+              <div class="flex items-center justify-between">
+                <image class="img-icon" :src="searchIcon" />
+              </div>
+            </template>
+          </van-search>
         </div>
       </div>
       <div v-if="type === 'wallet' || type === 'spot'"

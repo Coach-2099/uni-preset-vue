@@ -16,12 +16,10 @@ import plugins from './plugins'
 import { useUserStore } from '@/stores/user';
 
 // vconsole
+// import Vconsole from 'vconsole'
+// let vConsole = new Vconsole();
+// export default vConsole
 
-// // #ifdef H5
-//   import Vconsole from 'vconsole'
-//   let vConsole = new Vconsole();
-//   export default vConsole
-// // #endif
 
 export function createApp() {
   const app = createSSRApp(App);
@@ -30,6 +28,7 @@ export function createApp() {
   app.use(Vant)
   app.use(Icon)
   app.use(plugins)
+
 
   // 页面加载时自动初始化WebSocket
   const userStore = useUserStore();
