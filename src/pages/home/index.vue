@@ -227,12 +227,12 @@
           </div>
         </van-tab>
         <van-tab :title="$t('news.metals')" name="metals">
-			<div class="newsTemp mt-20 ml-15 mr-15 ">
+			<!-- <div class="newsTemp mt-20 ml-15 mr-15 ">
 			  <div class="title flex justify-start items-center">
 			    <div class="Dot"></div>
 			    <text class="ml-10 fs-14 fw-b text-balck">{{formatDate(feed?.lastBuildDate,'PP')}}</text>
 			  </div>
-			</div>
+			</div> -->
 			<div class="article ml-15 mr-15">
 			  <div class="entry" v-for="(item,index) in feed?.items" :key="index">
 			    <div class="time flex items-center text-gray fs-12">
@@ -242,7 +242,7 @@
 			        border-radius: 50%;
 			        background: #B0B0B0;"
 			      ></div>
-			      <text class="ml-15">{{formatDate(item?.isoDate,'p')}}</text>
+			      <text class="ml-15">{{formatDate(item?.pubDate,'Pp')}}</text>
 			    </div>
 			    <div class="title ml-15 fw-b text-black mt-10 fs-16">{{item?.title}}</div>
 			    <div class="mt-20">
@@ -268,7 +268,7 @@ import { getAsset } from '@/api/asset';
 import { roundDown, formatDate } from '@/utils/util';
 import { getNotice,getCustomerService } from '@/api/common';
 import rssService from '@/utils/rssService';
-import { useRect } from '@vant/use'
+import newsService from '@/api/news'
 
 // import rechargeSVG from '@/static/svg/home/recharge.svg'; // 导入SVG文件
 
@@ -495,7 +495,8 @@ const getCustomer =async() =>{
 	  if(!news.value || news.value.name === 'cryptocurrency'){
 		  feed.value = await rssService.fetchRssFeed('https://rsshub.app/blockworks')
 	  }else{
-		  feed.value = await rssService.fetchRssFeed('https://rsshub.app/bullionvault/gold-news')
+		  feed.value = await newsService.fetchRssData()
+		  console.log('feed data = ',feed.value)
 	  }
   }
   
