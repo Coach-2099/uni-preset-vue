@@ -5,7 +5,7 @@
       type="2d"
       id="kline-chart"
       class="kline-chart"
-      :style="{ width: '100%', height: '500px' }"
+      :style="{ width: '100%', height: '450px' }"
       :chart-data-string="chartDataString" 
       :change:chart-data-string="klineRender.updateChartData"
       @error="handleError"
@@ -149,7 +149,7 @@ export default {
         // 关键步骤2：延迟执行确保数据已经被处理
         setTimeout(() => {
           // 设置图表时间范围以显示最近的数据
-          this.chart.timeScaleController().zoom(startIndex, endIndex);
+          // this.chart.timeScaleController().zoom(startIndex, endIndex);
           
           // 关键步骤3：强制图表刷新
           this.chart.render();
@@ -185,6 +185,7 @@ export default {
 
         // 初始化 K 线图
         const chart = init('kline-chart', {
+          // styles: config,
           layout: [
             {
               type: 'candle',
@@ -203,9 +204,9 @@ export default {
         this.chart = chart;
         
         // 设置图表加载完成事件
-        chart.subscribeAction('onLoadMore', () => {
-          console.log('图表加载更多数据...');
-        });
+        // chart.subscribeAction('onLoadMore', () => {
+        //   console.log('图表加载更多数据...');
+        // });
 
         // 初始加载数据
         if (this.chartData && this.chartData.length > 0) {
