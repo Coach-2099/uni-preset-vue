@@ -18,7 +18,9 @@
       </div>
     </div>
     <div class="inputBox">
-      <div class="mybasetSelect baseSelect w-100 mt-10 pl-15 pr-10 py-5 flex justify-between items-center">
+      <div
+        v-click-outside="onClickOutside"
+        class="mybasetSelect baseSelect w-100 mt-10 pl-15 pr-10 py-5 flex justify-between items-center">
         <van-popover
           placement="bottom-end"
           v-model:show="showPopoverOrderType"
@@ -178,6 +180,9 @@ import { useControlStore } from '@/stores/control';
 import { onShow } from '@dcloudio/uni-app';
 import { useI18n } from 'vue-i18n';
 
+import { useClickOutside } from '@vant/use';
+
+
 const { t } = useI18n();
 const controlStore = useControlStore();
 const props = defineProps({
@@ -225,6 +230,11 @@ const checkTemp = (type: string) => {
   value.value = 0
   tradeNum.value = 0
   tradeVal.value = 0
+}
+
+// 失去焦点 修改为false
+const onClickOutside = () => {
+  showPopoverOrderType.value = false;
 }
 
 //市价 限价选择
@@ -292,7 +302,13 @@ const loadSpotBalance = async () => {
 }
 
 onMounted(()=>{
-	
+  uni.$on('touchstart', (event) => {
+    // Check if the popover is open and the click is outside
+    if (showPopoverOrderType.value) {
+      // Close the popover when clicking outside
+      showPopoverOrderType.value = false;
+    }
+  });
 })
 
 onShow(()=>{
