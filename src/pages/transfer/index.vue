@@ -22,6 +22,7 @@
               :actions="actionsAccountType"
               @select="onSelectFromAccountType"
               style="--van-popover-action-width: 138px"
+              :teleport="null"
             >
               <template #reference>
                 <div class="baseSelect w-100 py-5 flex justify-between items-center">
@@ -62,6 +63,7 @@
                 :actions="toAccountType"
                 @select="onSelectToAccountType"
                 style="--van-popover-action-width: 138px"
+                :teleport="null"
               >
                 <template #reference>
                   <div class="baseSelect w-100 py-5 flex justify-between items-center">
@@ -97,6 +99,7 @@
 			  :actions="transferData"
 			  @select="onSelectTransferToken"
         style="--van-popover-action-width: 138px"
+        :teleport="null"
 			>
 			  <template #reference>
 			    <div class="baseSelect w-100 py-5 flex justify-between items-center">

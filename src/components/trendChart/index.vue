@@ -52,12 +52,12 @@
       @load-more-data="handleLoadMore"
     ></lightWeightChart>
     <!-- #endif -->
-    
     <!-- #ifdef APP-PLUS -->
     <appplusKlinecharts
+      ref="appplusKlinechartsRef"
       v-model:chartData="candleData"
       v-model:updateTrigger="updateTrigger"
-      ref="appplusKlinechartsRef"
+      @chart-ready="onChartReady"
     ></appplusKlinecharts>
     <!-- #endif -->
 
@@ -76,6 +76,7 @@ import { useControlStore } from '@/stores/control';
 import { useUserStore } from '@/stores/user';
 import floatingPanelProps from '@/components/business/floatingPanelSpot/index.vue';
 import { formartRose } from '@/utils/util';
+import appLightweightChart from '@/components/appLightweightChart/index.vue';
 import type {  UTCTimestamp } from 'lightweight-charts';
 
 const props = defineProps({
@@ -105,8 +106,11 @@ const VOL24h = ref(0) //24h交易额
 const lastPrice = ref(0) //最新成交价
 const hasMore = ref(true) //是否已读完K线全部数据
 
+// 新增指示图表是否已准备好的状态
+const chartReady = ref(false)
+
 // 默认socket 时间间隔为5m
-const defaultSocketVal = ref('5m'); // 5m
+const defaultSocketVal = ref('1m'); // 5m
 
 // 新增时间间隔映射
 const intervalMap:any = {
@@ -155,49 +159,114 @@ const candleColors = ref({
   priceLineVisible: true // 显示价格线
 })
 
-const subScribe =(symbol:string)=>{
-	// 设置新symbol的订阅和监听
-	socketService.value.subscribe('ticker', symbol);
-	socketService.value.on(`${symbol}-ticker`, (data: any) => {
-	  rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
-	  HIGH24h.value = data.high
-	  LOW24h.value = data.low
-	  VOL24h.value = data.vol
-	  lastPrice.value = data.close
-	})
+// 修改 socket 监听部分
+const subScribe = (symbol: string) => {
+  // 设置新symbol的订阅和监听
+  socketService.value.subscribe('ticker', symbol);
+  socketService.value.on(`${symbol}-ticker`, (data: any) => {
+    rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
+    HIGH24h.value = data.high
+    LOW24h.value = data.low
+    VOL24h.value = data.vol
+    lastPrice.value = data.close
+  })
 
-	// 订阅K线数据
-  console.log('k线数据')
-	socketService.value.subscribe(`kline-${defaultSocketVal.value}`,symbol);
-	socketService.value.on(`${symbol}-kline-${defaultSocketVal.value}`, (data: any) => {
-	// 确保时间戳是有效的UTCTimestamp（秒级）
-	const candleTime = data.startTime / 1000
-	  if (data.isFinish) {
-	    // isFinish 为 true 时 push新数据
-	    const candle = {
-	      time: candleTime, // 转换为秒级时间戳
-	      open: Number(data.open),
-	      high: Number(data.high),
-	      low: Number(data.low),
-	      close: Number(lastPrice.value),
-	      volume: Number(data.vol)
-	    }
-      // 判断当前要push的数据和store中的数据是否一致
-	    chartRef.value?.appendNewCandle(candle)
-	  } else {
-	    // isFinish 为 false 时更新最新数据
-	    const candle = {
-	      open: Number(data.open),
-	      high: Number(data.high),
-	      low: Number(data.low),
-	      close: Number(lastPrice.value),
-	      time: candleTime,
-	      volume: Number(data.vol)
-	    }
-	    chartRef.value?.updateLastCandle(candle)
-	  }
-	})
+  // 订阅K线数据
+  console.log('订阅k线数据')
+  socketService.value.subscribe(`kline-${defaultSocketVal.value}`,symbol);
+  socketService.value.on(`${symbol}-kline-${defaultSocketVal.value}`, (data: any, type?: string) => {
+    console.log('socket 接收到数据！！！！！！！！！！！', data, 'type', type)
+    // 处理重连事件
+    if (type === 'reconnect') {
+      console.log('检测到 Socket 重连，重新初始化图表数据');
+      // 重新加载历史数据
+      const currentTime = new Date().getTime();
+      const endTime = currentTime - intervalMap[getPeriodByInterval(currentInterval.value)];
+      loadData(endTime, currentTime, true);
+      return;
+    }
+    // 确保时间戳是有效的UTCTimestamp（秒级）
+    const candleTime = data.startTime / 1000
+    if (data.isFinish) {
+      // isFinish 为 true 时 push新数据
+      const candle = {
+        time: candleTime, // 转换为秒级时间戳
+        open: Number(data.open),
+        high: Number(data.high),
+        low: Number(data.low),
+        close: Number(lastPrice.value),
+        volume: Number(data.vol)
+      }
+      
+      // 针对不同平台使用不同方法更新图表
+      // #ifdef H5
+      chartRef.value?.appendNewCandle(candle)
+      // #endif
+      
+      // #ifdef APP-PLUS
+      // 只有在图表准备好后才更新
+      if (chartReady.value && appplusKlinechartsRef.value) {
+        appplusKlinechartsRef.value.appendNewCandle(candle)
+        
+        // 更新本地数据数组，确保数据同步
+        candleData.value.push(candle)
+        // 强制更新触发器
+        updateTrigger.value = Date.now()
+      }
+      // #endif
+    } else {
+      // isFinish 为 false 时更新最新数据
+      const candle = {
+        open: Number(data.open),
+        high: Number(data.high),
+        low: Number(data.low),
+        close: Number(lastPrice.value),
+        time: candleTime,
+        volume: Number(data.vol)
+      }
+      
+      // 针对不同平台使用不同方法更新图表
+      // #ifdef H5
+      chartRef.value?.updateLastCandle(candle)
+      // #endif
+      
+      // #ifdef APP-PLUS
+      // 只有在图表准备好后才更新
+      console.log('chartReady.value', chartReady.value)
+      console.log('appplusKlinechartsRef.value', appplusKlinechartsRef.value)
+      if (chartReady.value && appplusKlinechartsRef.value) {
+        appplusKlinechartsRef.value.updateLastCandle(candle)
+        
+        // 更新本地数据数组中的最后一条，确保数据同步
+        if (candleData.value.length > 0) {
+          const lastIndex = candleData.value.length - 1
+          if (candleData.value[lastIndex].time === candleTime) {
+            candleData.value[lastIndex] = candle
+            // 强制更新触发器
+            updateTrigger.value = Date.now()
+          }
+        }
+      }
+      // #endif
+    }
+  })
 }
+
+// 新增图表准备好的回调
+const onChartReady = () => {
+  chartReady.value = true
+  console.log('KLine图表已准备好')
+  
+  // 如果已经有数据，确保图表能够显示数据
+  if (candleData.value.length > 0) {
+    updateTrigger.value = Date.now()
+  }
+}
+
+// 图表错误处理
+const onChartError = (error:any) => {
+  console.error('图表错误:', error);
+};
 
 // 新增以下监听代码,对新交易对进行订阅，取消老的订阅
 watch(
@@ -238,6 +307,7 @@ onMounted(() => {
       if(lastPrice.value===0){
         getLastPrice()
       }
+      console.log('第一次加载数据')
       subScribe(symbolInfo.value)
     },100)
     // 第一次进入要加载数据
@@ -293,8 +363,6 @@ const loadData = async (startTime: number,endTime:number,isFisrtLoad: boolean) =
 		  }
 			candleData.value.push(kline)
 	  }
-    updateTrigger.value++
-    console.log('加载数据状态变化!', updateTrigger.value)
     console.log('加载数据长度变化!', candleData.value)
     // candleDataString.value = JSON.stringify(candleData.value)
     // console.log('candleDataString.value##', candleDataString.value)
@@ -354,23 +422,26 @@ const toggleTheme = () => {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
 }
 
-// 处理时间周期变化
+// 处理时间周期变化时确保更新 App 图表
 const handleIntervalChange = async (interval: number, socketVal: string) => {
   // 先更新当前时间间隔
   currentInterval.value = interval
   defaultSocketVal.value = socketVal
   candleData.value = []
+  
   // 清空旧数据
-	// chartRef.value?.clearData()
-    // 重新加载数据
-	const currentTime = new Date().getTime()
-	const endTime = currentTime- intervalMap[getPeriodByInterval(currentInterval.value)]
+  // 重新加载数据
+  const currentTime = new Date().getTime()
+  const endTime = currentTime - intervalMap[getPeriodByInterval(currentInterval.value)]
 
   // 强制更新图表
   nextTick(() => {
-    loadData(endTime,currentTime,true) //初次加载
-  //   // 假设LightweightChart组件有一个方法来更新数据，这里改为更新v-model绑定的数据
-    // candleData.value = [...candleData.value];
+    loadData(endTime, currentTime, true) //初次加载
+    
+    // 确保触发 App 端的更新
+    // #ifdef APP-PLUS
+    updateTrigger.value = Date.now()
+    // #endif
   })
 }
 

@@ -49,6 +49,15 @@ watch(() => props.chartData, (newData) => {
   }
 }, { deep: true, immediate: true });
 
+// 新增：监听 updateTrigger 变化，强制更新图表
+watch(() => props.updateTrigger, (newValue, oldValue) => {
+  console.log('检测到 updateTrigger 变化:', newValue);
+  if (newValue !== oldValue && klineRender && typeof klineRender.forceUpdate === 'function') {
+    // 强制刷新图表，重新渲染数据
+    klineRender.forceUpdate();
+  }
+});
+
 // 处理 Canvas 错误
 function handleError(e) {
   console.error('Canvas error:', e);
@@ -67,9 +76,50 @@ function handleMessage(event) {
   }
 }
 
-// 暴露方法供 renderjs 调用
+// 方法用于实时更新最新的K线和添加新的K线
+function updateLastCandle(candle) {
+  console.log('调用 updateLastCandle 方法', candle);
+  
+  if (klineRender && typeof klineRender.updateLastCandle === 'function') {
+    try {
+      // 将 candle 对象转换为字符串
+      const candleStr = JSON.stringify(candle);
+      klineRender.updateLastCandle(candleStr);
+      return true;
+    } catch (error) {
+      console.error('updateLastCandle 调用出错:', error);
+      return false;
+    }
+  } else {
+    console.warn('klineRender 或 updateLastCandle 方法不存在');
+    return false;
+  }
+}
+
+function appendNewCandle(candle) {
+  console.log('调用 appendNewCandle 方法', candle);
+  
+  if (klineRender && typeof klineRender.appendNewCandle === 'function') {
+    try {
+      // 将 candle 对象转换为字符串
+      const candleStr = JSON.stringify(candle);
+      klineRender.appendNewCandle(candleStr);
+      return true;
+    } catch (error) {
+      console.error('appendNewCandle 调用出错:', error);
+      return false;
+    }
+  } else {
+    console.warn('klineRender 或 appendNewCandle 方法不存在');
+    return false;
+  }
+}
+
+// 暴露方法供外部调用
 defineExpose({
-  handleMessage
+  handleMessage,
+  updateLastCandle,
+  appendNewCandle
 });
 </script>
 
@@ -112,14 +162,81 @@ export default {
         }
         
         // 解析JSON数据
-        const parsedData = JSON.parse(newValue);
-        console.log('数据解析成功，数据点数量:', parsedData.length);
-        this.chartData = parsedData;
+        const rawData = JSON.parse(newValue);
+        console.log('数据解析成功，原始数据点数量:', rawData.length);
+        
+        // 转换数据格式，处理时间戳
+        const formattedData = rawData.map(item => {
+          console.log('item!!!!!!!', item)
+          // 创建符合 KLineCharts 要求的格式
+          return { 
+            timestamp: typeof item.time === 'number' ? item.time * 1000 : Number(item.time) * 1000, // 转为毫秒级
+            open: Number(item.open),
+            high: Number(item.high),
+            low: Number(item.low),
+            close: Number(item.close),
+            volume: Number(item.volume)
+          };
+        }).filter(item => {
+          console.log('筛选时间', item.timestamp)
+          // 验证时间戳有效性
+          if (isNaN(item.timestamp) || !isFinite(item.timestamp)) {
+            console.error('发现无效时间戳:', item.timestamp);
+            return false;
+          }
+          return true;
+        });
+        
+        console.log('数据格式转换完成，有效数据点:', formattedData.length);
+        this.chartData = formattedData;
         
         // 更新图表
         this.updateChart();
       } catch (error) {
         console.error('处理数据变化错误:', error);
+      }
+    },
+    
+    // 新增：强制更新图表方法，响应 updateTrigger 变化
+    forceUpdate() {
+      console.log('强制更新图表...');
+      if (!this.chart || !this.chartData || this.chartData.length === 0) {
+        console.warn('无法强制更新图表：图表未初始化或数据为空');
+        return;
+      }
+      
+      try {
+        // 创建新的图表数据引用，确保图表能检测到变化
+        const clonedData = JSON.parse(JSON.stringify(this.chartData));
+        
+        // 清除现有数据
+        this.chart.clearData();
+        
+        // 使用延时确保清除和添加不会冲突
+        setTimeout(() => {
+          // 重新应用完整数据集
+          this.chart.applyNewData(clonedData);
+          
+          // 计算合适的显示范围
+          const dataLength = clonedData.length;
+          if (dataLength > 0) {
+            const visibleCount = Math.min(50, dataLength);
+            const startIndex = Math.max(0, dataLength - visibleCount);
+            const endIndex = dataLength - 1;
+            
+            // 设置视图范围
+            if (this.chart.timeScaleController && typeof this.chart.timeScaleController().zoom === 'function') {
+              this.chart.timeScaleController().zoom(startIndex, endIndex);
+            }
+          }
+          
+          // 强制重新渲染
+          this.chart.render();
+          
+          console.log('图表强制更新成功');
+        }, 50);
+      } catch (error) {
+        console.error('强制更新图表错误:', error);
       }
     },
     
@@ -136,7 +253,7 @@ export default {
         // 清除所有数据
         this.chart.clearData();
         
-        // 应用新数据
+        // 应用新数据 - 数据已经在前面的方法中转换为正确格式
         this.chart.applyNewData(this.chartData);
         
         // 关键步骤1：设置合适的时间区间，确保图表自动显示
@@ -149,7 +266,9 @@ export default {
         // 关键步骤2：延迟执行确保数据已经被处理
         setTimeout(() => {
           // 设置图表时间范围以显示最近的数据
-          // this.chart.timeScaleController().zoom(startIndex, endIndex);
+          if (this.chart.timeScaleController && typeof this.chart.timeScaleController().zoom === 'function') {
+            this.chart.timeScaleController().zoom(startIndex, endIndex);
+          }
           
           // 关键步骤3：强制图表刷新
           this.chart.render();
@@ -161,6 +280,109 @@ export default {
         this.$ownerInstance.callMethod('handleMessage', {
           detail: { type: 'chartError', error: error.message }
         });
+      }
+    },
+
+    // 更新最后一个蜡烛图数据
+    updateLastCandle(candleStr) {
+      if (!this.chart) {
+        console.warn('无法更新数据：图表未初始化');
+        return;
+      }
+      
+      try {
+        const candle = JSON.parse(candleStr);
+        console.log('更新最后一个K线数据:', candle);
+        
+        // 验证和修复时间戳
+        if (typeof candle.time === 'string') {
+          candle.time = Number(candle.time);
+        } else if (candle.time instanceof Date) {
+          candle.time = Math.floor(candle.time.getTime() / 1000);
+        }
+        
+        if (isNaN(candle.time) || !isFinite(candle.time)) {
+          throw new Error(`无效的时间戳: ${candle.time}`);
+        }
+        
+        // 根据 KLineChart 文档，使用 updateData 方法更新最后一条数据
+        if (this.chartData.length > 0) {
+          // 根据时间戳找到对应的数据索引
+          const dataIndex = this.chartData.findIndex(item => item.time === candle.time);
+          
+          if (dataIndex >= 0) {
+            // 更新本地数据
+            this.chartData[dataIndex] = candle;
+            
+            // 更新图表数据
+            this.chart.updateData(candle);
+            console.log('成功更新最后一条K线数据');
+          } else {
+            console.warn('未找到匹配的K线数据进行更新');
+            // 如果找不到匹配的数据，可能需要添加新数据
+            this.appendNewCandle(candleStr);
+          }
+        }
+        
+        // 强制重新渲染
+        this.chart.render();
+      } catch (error) {
+        console.error('更新最后一个K线数据错误:', error);
+      }
+    },
+
+    // 添加一个新的蜡烛图数据
+    appendNewCandle(candleStr) {
+      if (!this.chart) {
+        console.warn('无法添加数据：图表未初始化');
+        return;
+      }
+      
+      try {
+        const candle = JSON.parse(candleStr);
+        console.log('添加新的K线数据:', candle);
+        
+        // 检查是否已存在相同时间的数据
+        const existingIndex = this.chartData.findIndex(item => item.time === candle.time);
+        
+        if (existingIndex >= 0) {
+          // 如果已存在相同时间的数据，则更新它
+          this.chartData[existingIndex] = candle;
+          this.chart.updateData(candle);
+          console.log('更新已存在的K线数据');
+        } else {
+          // 添加到本地数据
+          this.chartData.push(candle);
+          
+          // 使用 addData 方法添加新数据
+          this.chart.addData(candle);
+          console.log('添加新的K线数据成功');
+          
+          // 如果数据超过了一定数量，可以考虑移除最旧的数据
+          const maxDataPoints = 1000; // 最大数据点数量，可以根据需要调整
+          if (this.chartData.length > maxDataPoints) {
+            this.chartData.shift(); // 移除最旧的数据
+          }
+        }
+        
+        // 滚动到最新数据
+        const dataLength = this.chartData.length;
+        if (dataLength > 0) {
+          // 设置视图显示最新数据
+          const visibleCount = 50; // 可见的蜡烛图数量
+          const startIndex = Math.max(0, dataLength - visibleCount);
+          const endIndex = dataLength - 1;
+          
+          // 只有在需要时才调整视图范围
+          if (this.chart.timeScaleController && typeof this.chart.timeScaleController().zoom === 'function') {
+            this.chart.timeScaleController().zoom(startIndex, endIndex);
+          }
+        }
+        
+        // 强制重新渲染
+        this.chart.render();
+      } catch (error) {
+        console.error('添加新的K线数据错误:', error);
       }
     },
 
@@ -178,23 +400,38 @@ export default {
         }
 
         // 设置图表初始化配置
-        // 注：根据KLineCharts 10.x的文档，组件默认宽度是100%但高度是默认固定的
-        // 确保canvas元素有明确的宽高设置
         canvasElement.width = canvasElement.clientWidth;
-        canvasElement.height = canvasElement.clientHeight || 500;
+        canvasElement.height = canvasElement.clientHeight || 450;
 
         // 初始化 K 线图
         const chart = init('kline-chart', {
-          // styles: config,
+          style: config,
           layout: [
             {
               type: 'candle',
-              content: ['MA', { name: 'EMA', calcParams: [10, 30] }],
+              content: [{ name: 'EMA', calcParams: [3, 7, 21] }],
               options: { order: Number.MIN_SAFE_INTEGER }
             },
             { type: 'indicator', content: ['VOL'], options: { order: 10 }  },
             { type: 'xAxis', options: { order: 9 } }
-          ]
+          ],
+          // 添加 yAxis 配置，设置自动适配价格范围
+          // yAxis: {
+          //   autoCalcTickInterval: true,  // 自动计算刻度间隔
+          //   autoFit: true,              // 自动适应数据范围
+          //   minSpringbackRate: 0.2      // 弹回率，控制边界距离
+          // },
+          // // 添加时间轴配置
+          // timeAxis: {
+          //   visibleBarCount: 50,
+          //   scrollToPosition: 'last', // 始终滚动到最后一个蜡烛图
+          //   realTime: true // 启用实时模式
+          // },
+          // // 添加交互配置
+          // interactions: [
+          //   { key: 'panning' },
+          //   { key: 'zoomX' }
+          // ]
         });
 
         if (!chart) {
@@ -202,11 +439,6 @@ export default {
         }
 
         this.chart = chart;
-        
-        // 设置图表加载完成事件
-        // chart.subscribeAction('onLoadMore', () => {
-        //   console.log('图表加载更多数据...');
-        // });
 
         // 初始加载数据
         if (this.chartData && this.chartData.length > 0) {
@@ -253,7 +485,6 @@ export default {
         this.setupIntervalResize();
       }
     },
-    
     // 备选方案：使用定时器检查尺寸变化
     setupIntervalResize() {
       const chartElement = document.getElementById('kline-chart');
@@ -276,7 +507,6 @@ export default {
       
       console.log('尺寸变化检测定时器已设置');
     },
-    
     // 处理尺寸调整
     handleResize() {
       console.log('检测到尺寸变化，重新调整图表大小');
@@ -284,7 +514,6 @@ export default {
         this.chart.resize();
       }
     },
-
     // 清理资源的方法
     cleanupResources() {
       // 清理图表实例

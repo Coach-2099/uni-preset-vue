@@ -15,11 +15,6 @@ import plugins from './plugins'
 // 进行socket连接
 import { useUserStore } from '@/stores/user';
 
-// vconsole
-// import Vconsole from 'vconsole'
-// let vConsole = new Vconsole();
-// export default vConsole
-
 
 export function createApp() {
   const app = createSSRApp(App);

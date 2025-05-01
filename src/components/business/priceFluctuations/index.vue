@@ -99,6 +99,7 @@
 
 <script setup lang="ts">
 import { ref, watch, computed, onMounted, onUnmounted, onDeactivated } from 'vue';
+import { onLaunch, onShow, onLoad, onUnload } from "@dcloudio/uni-app";
 import { getDepth } from '@/api/quotes'
 import { useControlStore } from '@/stores/control'
 import { storeToRefs } from 'pinia'
@@ -147,12 +148,22 @@ watch(
   }
 );
 
+onShow(() => {
+  // #ifdef APP-PLUS
+  if(controlStore.getQuotesData(props.type)?.symbol){
+    subSymbol.value = controlStore.getQuotesData(props.type)?.symbol
+  }
+  loadData({klineType: props.type, symbol: subSymbol.value})
+  // #endif
+})
 
 onMounted(()=>{
+  // #ifdef H5
 	if(controlStore.getQuotesData(props.type)?.symbol){
 		subSymbol.value = controlStore.getQuotesData(props.type)?.symbol
 	}
 	loadData({klineType: props.type, symbol: subSymbol.value})
+  // #endif
 })
 
 onUnmounted(() => {})
