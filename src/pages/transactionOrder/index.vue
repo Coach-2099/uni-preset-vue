@@ -23,7 +23,7 @@
                   <div class="orderTypeTemp ml-5 fs-10 text-red">{{ item.direction }}</div>
                 </div>
                 <div class="bottom flex justify-between items-center">
-                  <p class="fs-12 text-gray">{{ item.createTime }}</p>
+                  <p class="fs-12 text-gray">{{ formatISODate(item.createTime) }}</p>
                   <div class="rightTemp flex justify-between items-baseline">
                     <p class="fs-12 text-gray">{{ item.orderNo }}</p>
                     <div class="ml-5 copyImg" @click="copyText(item.orderNo)">
@@ -93,6 +93,7 @@ import { getOrderList, getFuturesOrderList } from '@/api/trade';
 import dataDefault from '@/components/dataDefault/index.vue'
 import { onLoad } from '@dcloudio/uni-app';
 import { useI18n } from 'vue-i18n';
+import {formatISODate} from '@/utils/util'
 
 const { t } = useI18n();
 const active = ref(0)

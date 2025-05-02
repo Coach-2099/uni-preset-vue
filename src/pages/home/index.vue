@@ -201,7 +201,7 @@
                   border-radius: 50%;
                   background: #B0B0B0;"
                 ></div>
-                <text class="ml-15">{{formatDate(item?.isoDate,'p')}}</text>
+                <text class="ml-15">{{formatDate(item?.pubDate,'p')}}</text>
               </div>
               <div class="title ml-15 fw-b text-black mt-10 fs-16">{{item?.title}}</div>
               <div class="mt-20">

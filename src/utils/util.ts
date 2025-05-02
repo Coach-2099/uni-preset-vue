@@ -237,11 +237,13 @@ export function roundDown(value : number, decimals : number) {
 
 //formart iso date
 export function formatISODate(date : string) {
+	date = date.replace(/-/g, "/")
 	return format(new Date(date), 'Pp')
 }
 
 //自定义格式
 export function formatDate(date : string, p : string) {
+	date = date.replace(/-/g, "/")
 	return format(new Date(date), p)
 }
 
