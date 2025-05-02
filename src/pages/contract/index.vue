@@ -1,6 +1,5 @@
 <template>
   <div class="contract-index pos-relative">
-    <div style="height: var(--status-bar-height)"></div>
     <div class="top bg-white">
       <div class="switch-container-box bg-white pos-fixed w-100 flex justify-between">
         <div class="w-100 pos-relative switch-container flex justify-between">
@@ -84,6 +83,8 @@ const symbol = ref('BTC/USDT') //默认交易对
 
 const tabsRefs: any = ref(null);
 
+const statusBarHeight = ref('0px')
+
 watch(
   () => controlStore.getQuotesData('FUTURES')?.symbol,
   (newVal, oldVal) => {
@@ -93,6 +94,17 @@ watch(
 	}
   }
 )
+
+onMounted(() => {
+  // #ifdef APP-PLUS
+  uni.getSystemInfo({
+    success: (res) => {
+      // 设置状态栏高度
+      statusBarHeight.value = res.statusBarHeight + 'px'
+    }
+  })
+  // #endif
+})
 
 onLoad(() => {
   uni.hideTabBar()
@@ -181,7 +193,9 @@ const sliderStyle = computed(() => ({
     padding: 20rpx;
     .switch-container-box {
       left: 0;
+      // #ifdef H5
       top: 0;
+      // #endif
       padding: 20rpx;
       z-index: 29;
       height: 50px;

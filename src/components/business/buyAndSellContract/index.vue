@@ -5,6 +5,7 @@
       placement="bottom-end"
       :actions="leverageData"
       @select="onSelect"
+      :teleport="null"
     >
       <template #reference>
         <div class="dropDownBox flex justify-between align-center w-100">
@@ -33,6 +34,7 @@
         v-model:show="showPopoverOrderType"
         :actions="actionsOrderType"
         @select="onSelectOrderType"
+        :teleport="null"
       >
         <template #reference>
           <div class="baseSelect w-100 py-5 flex justify-between items-center">

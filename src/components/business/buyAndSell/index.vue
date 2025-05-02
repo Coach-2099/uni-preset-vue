@@ -18,16 +18,19 @@
       </div>
     </div>
     <div class="inputBox">
-      <div class="baseSelect w-100 mt-10 pl-15 pr-10 py-5 flex justify-between items-center">
+      <div
+        v-click-outside="onClickOutside"
+        class="mybasetSelect baseSelect w-100 mt-10 pl-15 pr-10 py-5 flex justify-between items-center">
         <van-popover
           placement="bottom-end"
           v-model:show="showPopoverOrderType"
           :actions="actionsOrderType"
           @select="onSelectOrderType"
           style="--van-popover-action-width: 138px"
+          :teleport="null"
         >
           <template #reference>
-            <div class="baseSelect w-100 py-5 flex justify-between items-center">
+            <div class=" w-100 py-5 flex justify-between items-center">
               <div class="leftBox flex-1  items-center">
                 <p class="fs-14 text-black">{{ orderTypeObj?.text }}</p>
               </div>
@@ -177,6 +180,9 @@ import { useControlStore } from '@/stores/control';
 import { onShow } from '@dcloudio/uni-app';
 import { useI18n } from 'vue-i18n';
 
+import { useClickOutside } from '@vant/use';
+
+
 const { t } = useI18n();
 const controlStore = useControlStore();
 const props = defineProps({
@@ -226,6 +232,11 @@ const checkTemp = (type: string) => {
   tradeVal.value = 0
 }
 
+// 失去焦点 修改为false
+const onClickOutside = () => {
+  showPopoverOrderType.value = false;
+}
+
 //市价 限价选择
 const onSelectOrderType = (action: any) => {
   orderTypeObj.value = action
@@ -237,6 +248,7 @@ const onSelectOrderType = (action: any) => {
 }
 //滑动获取交易量
 const sliderChange =(val:number) =>{
+  console.log('sliderChange = ',val)
 	showPriceInput.value = true
 	let lastPrice = 0
 	if(orderTypeObj.value.value ==='MARKET'){
@@ -290,7 +302,13 @@ const loadSpotBalance = async () => {
 }
 
 onMounted(()=>{
-	
+  uni.$on('touchstart', (event) => {
+    // Check if the popover is open and the click is outside
+    if (showPopoverOrderType.value) {
+      // Close the popover when clicking outside
+      showPopoverOrderType.value = false;
+    }
+  });
 })
 
 onShow(()=>{
@@ -426,6 +444,7 @@ defineExpose({
       }
       .custom-progress-points {
         position: absolute;
+        pointer-events: 'none';
         top: 50%;
         left: 0;
         right: 0;
@@ -434,6 +453,7 @@ defineExpose({
         justify-content: space-between;
         padding: 0 10px; // 根据实际情况调整
         image {
+          pointer-events: none !important;
           width: 14px;
           height: 14px;
         }

@@ -116,6 +116,7 @@ watch(() => props.searchVal, (newVal, oldVal) => {
 })
 
 const loadData = async (kType: any) => {
+  console.log('加载数据！！！！！！！！！！！！！！！！！！！！！')
   loadingData.value = true;
   klineType.value = kType
   // 使用解构赋值确保响应式更新
@@ -136,6 +137,7 @@ const loadData = async (kType: any) => {
 };
 
 const isSocket = () => {
+  console.log('进行socket连接')
   // 查询数据后进行sockt 连接
   socketService.value.subscribe('ticker');
   socketService.value.on('ticker', (data: any) => {

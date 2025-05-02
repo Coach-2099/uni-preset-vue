@@ -504,6 +504,13 @@ const getCustomer =async() =>{
 
 </script>
 
+<!-- #ifdef APP-PLUS -->
+<script module="vconsole" lang="renderjs">  
+   import VConsole from 'vconsole' // TODO
+   new VConsole() // 使用vconsole
+</script>
+<!-- #endif -->
+
 <style lang="scss" scoped>
 /* App 端特定样式 */
 // #ifdef APP-PLUS
