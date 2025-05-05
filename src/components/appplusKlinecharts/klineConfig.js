@@ -29,10 +29,13 @@ export const config = {
       noChangeColor: '#888888'
     },
     tooltip: {
-      showRule: 'always',
+      showRule: 'none',
       showType: 'standard',
       labels: ['时间', '开', '收', '高', '低', '成交量'],
       values: null
+    },
+    priceMark: {
+      show: false
     }
   },
   indicator: {

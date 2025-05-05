@@ -9,7 +9,6 @@
           class="base-input w-100"
           :placeholder="$t('identityAuth.placeholders.familyName')"
           placeholder-class="input-placeholder"
-          @input="inputfirstName"
         />
       </div>
       <div class="flex justify-between items-center mt-20">
@@ -19,17 +18,15 @@
           class="base-input w-100"
           :placeholder="$t('identityAuth.placeholders.lastName')"
           placeholder-class="input-placeholder"
-          @input="inputlastName"
         />
       </div>
       <div class="flex justify-between items-center mt-20">
         <div class="label">{{ $t('identityAuth.labels.cardNumber') }}</div>
         <input
-          v-model="idNuber"
+          v-model="idCard"
           class="base-input w-100"
           :placeholder="$t('identityAuth.placeholders.cardNumber')"
           placeholder-class="input-placeholder"
-          @input="inputIdNumber"
         />
       </div>
       <div class="flex justify-between items-center mt-20">
@@ -121,7 +118,7 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const firstName = ref('')
 const lastName = ref('')
-const idNuber = ref('')
+const idCard = ref('')
 
 const fileFront = ref('')
 const fileBack = ref('')
@@ -137,19 +134,6 @@ const typeArray = ref([
   {text: t('userInfo.identityTypes.passport'), value: 'PASSPORT'}, 
   {text: t('userInfo.identityTypes.drivingLicense'), value: 'DRVING_LICENSE'}])
 const checkType = ref(0)
-
-const inputfirstName = () => {
-  console.log('firstName', firstName.value)
-}
-
-const inputlastName = () => {
-  console.log('lastName', lastName.value)
-}
-
-const inputIdNumber = () => {
-  console.log('idNuber', idNuber.value)
-}
-
 const afterReadFront = async (file: any) => {
   const data = await uploadImage(file.content)
   fileFront.value = file.content
@@ -170,17 +154,29 @@ const bindPickerChange = (e:any) => {
 }
 
 const uploadFun = async () => {
+  if(!firstName.value){
+	  return uni.showToast({ title: t('userInfo.identityAuth.validation.firstName'), icon: 'none' })
+  }else if(!lastName.value){
+	 return uni.showToast({ title: t('userInfo.identityAuth.validation.lastName'), icon: 'none' })
+  }else if(!idCard.value){
+	 return uni.showToast({ title: t('userInfo.identityAuth.validation.idCard'), icon: 'none' })
+  }
+  else if(!fileFrontSrc.value){
+	 return uni.showToast({ title: t('userInfo.identityAuth.validation.frontSide'), icon: 'none' })
+  }else if(!fileBackSrc.value){
+	  return uni.showToast({ title: t('userInfo.identityAuth.validation.backSide'), icon: 'none' })
+  }
   const params = {
     name: firstName.value,
     lastName: lastName.value,
-    idCard: idNuber.value,
+    idCard: idCard.value,
     type: typeArray.value[checkType.value].text, // IDCARD:身份证,PASSPORT:护照,DRVING_LICENSE:驾照
     zmImg: fileFrontSrc.value,
     fmImg: fileBackSrc.value
   }
   const data = await userKyc(params)
   if(!data || !data.errMsg){
-	  uni.showToast({ title: t('userInfo.verificationSuccess'), icon: 'none' })
+	  uni.showToast({ title: t('userInfo.verificationSuccess'), icon: 'success' })
 	  uni.redirectTo({
 		url: '/pages/userInfo/index'
 	  })

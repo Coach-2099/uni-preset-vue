@@ -4,16 +4,26 @@
     <div class="mt-20">
       <van-radio-group v-model="checkRadio">
         <van-cell-group inset>
-          <van-cell :title="$t('language.chinese')" clickable @click="checked('1')">
-            <template #right-icon>
-              <van-radio name="1" />
-            </template>
-          </van-cell>
           <van-cell :title="$t('language.english')" clickable @click="checked('2')">
             <template #right-icon>
               <van-radio name="2" />
             </template>
           </van-cell>
+		  <van-cell :title="$t('language.japanese')" clickable @click="checked('3')">
+		    <template #right-icon>
+		      <van-radio name="3" />
+		    </template>
+		  </van-cell>
+		  <van-cell :title="$t('language.korean')" clickable @click="checked('4')">
+		    <template #right-icon>
+		      <van-radio name="4" />
+		    </template>
+		  </van-cell>
+		  <van-cell :title="$t('language.chinese')" clickable @click="checked('1')">
+		    <template #right-icon>
+		      <van-radio name="1" />
+		    </template>
+		  </van-cell>
         </van-cell-group>
       </van-radio-group>
       <div class="myBtn pos-fixed w-100">
@@ -39,6 +49,10 @@ onLoad(() => {
     checkRadio.value = '1'
   } else if (lang === 'en') {
     checkRadio.value = '2'
+  }else if (lang === 'ja') {
+    checkRadio.value = '3'
+  }else if (lang === 'ko') {
+    checkRadio.value = '4'
   }
 })
 
@@ -50,7 +64,9 @@ const confirm = () => {
   // 转换语言标识符为i18n标准格式
   const langMap: any = {
     '1': 'zh-Hans',
-    '2': 'en'
+    '2': 'en',
+	'3': 'ja',
+	'4': 'ko'
   };
   const selectedLang = langMap[checkRadio.value];
   

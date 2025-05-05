@@ -13,7 +13,7 @@
     <div class="contentBox mt-20">
       <div v-for="(item, index) in dataList" :key="item.ts +'-'+ index" class="orderContent mt-15 flex justify-between px-15">
         <div class="titleBox flex-1 flex justify-stretch">
-          <div class="titleName text-black fs-12 half-width">{{ formatTime(item.ts) }}</div>
+          <div class="titleName text-black fs-12 half-width">{{ formatISODate(item.ts) }}</div>
           <div class="titleName text-black fs-12 half-width">
 			<text v-if="type==='FUTURES'||type==='METALS'" class="text-black fs-12" :class="item.direction == 'sell' ? 'sell-red' : 'buy-green'">{{ item.direction == 'sell'?'做空':'做多' }}</text>  
             <text v-else class="text-black fs-12" :class="item.direction == 'sell' ? 'sell-red' : 'buy-green'">{{ item.direction == 'sell'?'卖出':'买入' }}</text>
@@ -34,6 +34,7 @@ import { getTradeDetail } from '@/api/quotes'
 import { useControlStore } from '@/stores/control';
 import { onLaunch, onLoad, onShow } from "@dcloudio/uni-app";
 import { useUserStore } from '@/stores/user';
+import {formatISODate} from '@/utils/util'
 
 const userStore = useUserStore();
 const socketService = computed(() => userStore.socketService);

@@ -45,8 +45,10 @@ export default {
 		loginOut: 'Log out'
 	},
 	language: {
-		chinese: '中文',
-		english: 'English'
+		chinese: 'Taiwan',
+		english: 'English',
+		japanese: 'Japanese',
+		korean: 'Korean'
 	},
 	 securitySettings: {
 	    accountActivity: 'Account Activity',
@@ -213,6 +215,15 @@ export default {
 			idCard: 'ID Card',
 			passport: 'Passport',
 			drivingLicense: 'Driving License'
+		},
+		identityAuth: {
+		    validation: {
+		      firstName: 'Please enter your family name',
+		      lastName: 'Please enter your last name',
+		      idCard: 'Please enter the ID card number',
+		      frontSide: 'Please upload the front side of the ID card',
+		      backSide: 'Please upload the back side of the ID card'
+		    }
 		},
 		verificationSuccess: 'Submitted for certification',
 		username: 'Username',
