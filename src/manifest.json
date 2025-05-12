@@ -7,11 +7,6 @@
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
-        "webView": {
-            "webviewBGTransparent": true,
-            "scrollIndicator": "none",
-            "scalable": false 
-        },
         "usingComponents" : true,
         "nvueStyleCompiler" : "uni-app",
         "compilerVersion" : 3,
