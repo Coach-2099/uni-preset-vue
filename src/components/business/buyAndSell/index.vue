@@ -51,7 +51,6 @@
             @click="orderTypeObj?.value === 'LIMIT'?clickPriceInpupt:''"
             :class="showPriceInput ? 'fs-12 h-20' : 'fs-14'"
             class="text-gray price-label">{{ $t('noun.price') }}</div>
-            <!-- :focus="showPriceInput" -->
           <input
             v-if="showPriceInput"
             :focus="showPriceInput"
@@ -144,15 +143,6 @@
         </div>
         <text class="fs-14 px-10 text-gray">{{basicToken}}</text>
       </div>
-      <!-- <div class="baseText w-100 mt-10 pl-15 pr-10 py-5 flex justify-between items-center">
-        <div class="leftBox flex items-center">
-          <p class="fs-12 text-black">{{ $t('noun.buyUpTo') }}</p>
-        </div>
-        <div class="rightBox flex items-center">
-          <text class="fs-12 text-light-gray">2.22304</text>
-          <text class="fs-12 text-gray ml-5">BTC</text>
-        </div>
-      </div> -->
       <div class="myBtnBox mt-15">
         <van-button
           v-if="checkActive == 'buy'"
@@ -180,8 +170,9 @@ import { useControlStore } from '@/stores/control';
 import { onShow } from '@dcloudio/uni-app';
 import { useI18n } from 'vue-i18n';
 
+// #ifdef APP-PLUS
 import { useClickOutside } from '@vant/use';
-
+// #endif
 
 const { t } = useI18n();
 const controlStore = useControlStore();
@@ -373,7 +364,7 @@ defineExpose({
 })
 </script>
 
-<style lang="scss" scoped>
+// <style lang="scss" scoped>
 :deep(.van-popover__wrapper) {
   width: 100%;
 }

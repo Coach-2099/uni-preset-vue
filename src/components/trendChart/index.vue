@@ -76,7 +76,7 @@ import { useControlStore } from '@/stores/control';
 import { useUserStore } from '@/stores/user';
 import floatingPanelProps from '@/components/business/floatingPanelSpot/index.vue';
 import { formartRose } from '@/utils/util';
-import appLightweightChart from '@/components/appLightweightChart/index.vue';
+// import appLightweightChart from '@/components/appLightweightChart/index.vue';
 import type {  UTCTimestamp } from 'lightweight-charts';
 
 const props = defineProps({

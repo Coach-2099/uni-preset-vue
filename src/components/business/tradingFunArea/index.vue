@@ -18,12 +18,6 @@
           <text class="text-red">{{ formartRose(rose) }}</text>
         </div>
       </div>
-      <!-- <div class="toolsBtn" @click="showChartBtn">
-        <image
-          src="/static/images/tools.png"
-          mode="scaleToFill"
-        />
-      </div> -->
     </div>
     <div v-if="showChart" class="lineChartBox mt-25">
     </div>
@@ -35,7 +29,6 @@
         <buyAndSell v-if="type == 'SPOT'" ref="buySellRef" :lastPrice="lastPrice" :symbol="symbol"></buyAndSell>
         <buyAndSellContract v-if="type == 'FUTURES'|| type == 'METALS'" ref="buyAndSellContractRef" :type="type" :lastPrice="lastPrice" :symbol="symbol"></buyAndSellContract>
       </div>
-      <!-- <div class="flex-1"> -->
       <div class="rightDev">
         <priceFluctuations :lastPrice="lastPrice" ref="priceFluctuationsRef" :type="type"></priceFluctuations>
       </div>

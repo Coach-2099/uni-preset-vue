@@ -119,12 +119,12 @@ onMounted(() => {
 onLoad(() => {
   uni.hideTabBar()
   if(controlStore.getQuotesData('SPOT')?.symbol){
-  	  symbol.value= controlStore.getQuotesData('SPOT')?.symbol
+    symbol.value= controlStore.getQuotesData('SPOT')?.symbol
   }else{
-  	  controlStore.setQuotesData('SPOT',{
-  		  symbol:symbol.value,
-  		  activeType:'right'
-  	  })
+    controlStore.setQuotesData('SPOT',{
+      symbol:symbol.value,
+      activeType:'right'
+    })
   }
 	loadInfo(symbol.value)
   // 修正类型错误，确保赋值为 'left' 或 'right'
@@ -144,7 +144,7 @@ const loadInfo =(symbol:string)=>{
 
 
 onLaunch(() => {
-  uni.hideTabBar();
+  uni.hideTabBar()
 })
 
 const switchTab = (tab: 'left' | 'right') => {
