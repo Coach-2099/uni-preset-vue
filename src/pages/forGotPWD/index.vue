@@ -115,7 +115,9 @@ const verifyAccount = async () => {
     userName: userName.value,
   }
   const data = await chkAccount(params);
-  showResetPassword.value = true;
+  if(!data || !data.errMsg){
+	showResetPassword.value = true;
+  }
 }
 
 const resetPassword = async () => {

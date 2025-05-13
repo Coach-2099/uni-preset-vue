@@ -86,22 +86,22 @@
         shrink
         sticky
       >
-        <van-tab title="WALLET" name="wallet">
+        <van-tab :title="$t('transfer.accounts.wallet')" name="wallet">
           <div class="px-20">
             <assetsModule type="wallet" :data="basicAccountList"></assetsModule>
           </div>
         </van-tab>
-        <van-tab title="SPOT" name="spot">
+        <van-tab :title="$t('navBar.trade')" name="spot">
           <div class="px-20">
             <assetsModule type="spot" :data="spotAccountList"></assetsModule>
           </div>
         </van-tab>
-        <van-tab title="FUTURES" name="futures">
+        <van-tab :title="$t('navBar.contract')" name="futures">
           <div class="px-20">
             <assetsModule type="futures" :data="futuresAccount"></assetsModule>
           </div>
         </van-tab>
-        <van-tab title="METALS" name="metals">
+        <van-tab :title="$t('navBar.metals')" name="metals">
           <div class="px-20">
             <assetsModule type="metals" :data="metalsAccount"></assetsModule>
           </div>

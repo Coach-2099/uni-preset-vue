@@ -94,45 +94,51 @@ const confirmFun = async () => {
     code: verificationCode.value,
     password: password.value
   }
-  await setTradepwd(params)
-  uni.showToast({
-    title: t('tips.success'),
-    icon: 'none'
-  })
-  await userStore.getUser()
-  setTimeout(() => {
-    uni.navigateBack()
-  }, 1000)
+  const data = await setTradepwd(params)
+   if(!data || !data.errMsg){
+	  uni.showToast({
+		title: t('tips.success'),
+		icon: 'none'
+	  })
+	  await userStore.getUser()
+	  setTimeout(() => {
+		uni.navigateBack()
+	  }, 1000)
+  }
 }
 
 // 获取验证码
 const getCode = async () => {
-  const phone = userStore.userInfo.phone;
-  const email = userStore.userInfo.email;
-  if (!phone || !email) {
-    uni.showToast({
-      title: t('tips.bindPhoneOrEmail'),
-      icon: 'none'
-    })
-    return;
-  }
+  // const phone = userStore.userInfo.phone;
+  // const email = userStore.userInfo.email;
+  // if (!phone || !email) {
+  //   uni.showToast({
+  //     title: t('tips.bindPhoneOrEmail'),
+  //     icon: 'none'
+  //   })
+  //   return;
+  // }
 
   // 有手机的话就给手机发送验证码
-  vcodeRef.value.startCountdown()
-  if (phone) {
-    accountNumber.value = phone;
-  } else if (email) {
-    accountNumber.value = email;
-  }
+  // vcodeRef.value.startCountdown()
+  // if (email) {
+  //   accountNumber.value = email;
+  // }else if (phone) {
+  //   accountNumber.value = phone;
+  // } 
+  
+  accountNumber.value = userStore.userInfo.username
   const params = {
     userName: accountNumber.value,
     countryCode: '',
   }
-  await sendmsg(params)
-  uni.showToast({
-    title: t('tips.vCodeHasSent'),
-    icon: 'none'
-  })
+ const data = await sendmsg(params)
+ if(!data || !data.errMsg){
+	  uni.showToast({
+		title: t('tips.vCodeHasSent'),
+		icon: 'none'
+	  })
+  }
 }
 
 const changePassword = () => {

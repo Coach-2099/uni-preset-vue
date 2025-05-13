@@ -118,9 +118,9 @@ export default {
 		copy: 'Copy'
 	},
 	tips: {
-		success: 'Operation successful',
-		error: 'Operation failed',
-		warning: 'Operation warning',
+		success: 'Successful',
+		error: 'Failed',
+		warning: 'Warning',
 		noData: 'No data',
 		noMoreData: 'No more data',
 		loading: 'Loading...',
