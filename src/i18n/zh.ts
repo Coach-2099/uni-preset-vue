@@ -5,7 +5,7 @@ export default {
 		trade: '現貨',
 		contract: '合約',
 		myAssets: '資產',
-		metals: '貴金屬',
+		metals: '美股',
 		assetDetail: '資產詳情',
 		assetRecord: '資產記錄',
 		inviteFriends: '邀請好友',
@@ -83,7 +83,7 @@ export default {
 	noun: {
 		spotGoods: '現貨',
 		futureGoods: '合約',
-		metalsGoods: '貴金屬',
+		metalsGoods: '美股',
 		recharge: '充值',
 		transfer: '轉賬',
 		withdraw: '提現',
@@ -329,14 +329,14 @@ export default {
 		availableAmount: '可用餘額',
 		sameAccountError: '轉出和轉入帳戶不能相同',
 		futuresOnlyUSDT: '合約帳戶僅支持USDT',
-		metalsOnlyUSD: '貴金屬帳戶僅支持USD',
+		metalsOnlyUSD: '美股帳戶僅支持USD',
 		insufficientBalance: '餘額不足',
 		transferSuccess: '劃轉成功',
 		accounts: {
 			wallet: '資金帳戶',
 			spotAccount: '現貨帳戶',
 			futuresAccount: '合約帳戶',
-			preciousMetalsAccount: '貴金屬帳戶'
+			preciousMetalsAccount: '美股帳戶'
 		}
 	},
 	withdrawal: {
@@ -424,7 +424,7 @@ export default {
 	},
 	news: {
 		cryptocurrency: '加密貨幣',
-		metals: '貴金屬',
+		metals: '美股',
 		original_article: '查看原文'
 	}
 }

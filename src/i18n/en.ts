@@ -5,7 +5,7 @@ export default {
 		trade: 'Spot',
 		contract: 'Futures',
 		myAssets: 'Assets',
-		metals: 'Metals',
+		metals: 'US stocks',
 		assetDetail: 'Asset Details',
 		assetRecord: 'Asset Records',
 		generalSettings: 'General Settings',
@@ -83,7 +83,7 @@ export default {
 	noun: {
 		spotGoods: 'Spot',
 		futureGoods: 'Futures',
-		metalsGoods: 'Metals',
+		metalsGoods: 'US stocks',
 		recharge: 'Deposit',
 		transfer: 'Transfer',
 		withdraw: 'Withdraw',
@@ -348,14 +348,14 @@ export default {
 	    availableAmount: 'Available Balance',
 	    sameAccountError: 'Source and destination accounts cannot be the same',
 	    futuresOnlyUSDT: 'Futures account only supports USDT',
-	    metalsOnlyUSD: 'Metals account only supports USD',
+	    metalsOnlyUSD: 'US stocks account only supports USD',
 	    insufficientBalance: 'Insufficient Balance',
 	    transferSuccess: 'Transfer Successful',
 	    accounts: {
 	      wallet: 'Wallet',
 	      spotAccount: 'Spot Account',
 	      futuresAccount: 'Futures Account',
-	      preciousMetalsAccount: 'Metals Account'
+	      preciousMetalsAccount: 'US stocks Account'
 	    }
 	  },
 	verification: {
@@ -424,7 +424,7 @@ export default {
 	},
 	news:{
 		cryptocurrency:'Cryptocurrency',
-		metals: 'Metals',
+		metals: 'US stocks',
 		original_article:'View original article'
 	}
 }

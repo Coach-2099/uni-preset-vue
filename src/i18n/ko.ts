@@ -5,7 +5,7 @@ export default {
 		trade: '현물',
 		contract: '선물',
 		myAssets: '자산',
-		metals: '귀금속',
+		metals: '미국 주식',
 		assetDetail: '자산 상세',
 		assetRecord: '자산 기록',
 		generalSettings: '일반 설정',
@@ -83,7 +83,7 @@ export default {
 	noun: {
 		spotGoods: '현물',
 		futureGoods: '선물',
-		metalsGoods: '귀금속',
+		metalsGoods: '미국 주식',
 		recharge: '입금',
 		transfer: '이체',
 		withdraw: '출금',
@@ -348,14 +348,14 @@ export default {
 		availableAmount: '사용 가능 잔액',
 		sameAccountError: '출금 및 입금 계정은 같을 수 없습니다',
 		futuresOnlyUSDT: '선물 계정은 USDT만 지원',
-		metalsOnlyUSD: '귀금속 계정은 USD만 지원',
+		metalsOnlyUSD: '미국 주식 계정은 USD만 지원',
 		insufficientBalance: '잔액 부족',
 		transferSuccess: '이체 성공',
 		accounts: {
 			wallet: '지갑',
 			spotAccount: '현물 계정',
 			futuresAccount: '선물 계정',
-			preciousMetalsAccount: '귀금속 계정'
+			preciousMetalsAccount: '미국 주식 계정'
 		}
 	},
 	verification: {
@@ -424,7 +424,7 @@ export default {
 	},
 	news: {
 		cryptocurrency: '암호화폐',
-		metals: '귀금속',
+		metals: '미국 주식',
 		original_article: '원문 기사 보기'
 	}
 }
