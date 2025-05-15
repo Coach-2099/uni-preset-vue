@@ -5,7 +5,7 @@ export default {
 		trade: 'スポット',
 		contract: '先物',
 		myAssets: '資産',
-		metals: '貴金属',
+		metals: '米国株',
 		assetDetail: '資産詳細',
 		assetRecord: '資産記録',
 		generalSettings: '一般設定',
@@ -83,7 +83,7 @@ export default {
 	noun: {
 		spotGoods: 'スポット',
 		futureGoods: '先物',
-		metalsGoods: '貴金属',
+		metalsGoods: '米国株',
 		recharge: '入金',
 		transfer: '振替',
 		withdraw: '出金',
@@ -348,14 +348,14 @@ export default {
 		availableAmount: '利用可能残高',
 		sameAccountError: '送金元と送金先のアカウントは同じにできません',
 		futuresOnlyUSDT: '先物口座はUSDTのみ対応',
-		metalsOnlyUSD: '貴金属口座はUSDのみ対応',
+		metalsOnlyUSD: '米国株口座はUSDのみ対応',
 		insufficientBalance: '残高不足',
 		transferSuccess: '移動成功',
 		accounts: {
 			wallet: 'ウォレット',
 			spotAccount: 'スポット口座',
 			futuresAccount: '先物口座',
-			preciousMetalsAccount: '貴金属口座'
+			preciousMetalsAccount: '米国株口座'
 		}
 	},
 	verification: {
@@ -424,7 +424,7 @@ export default {
 	},
 	news: {
 		cryptocurrency: '暗号通貨',
-		metals: '貴金属',
+		metals: '米国株',
 		original_article: '原記事を見る'
 	}
 }
