@@ -42,8 +42,8 @@
         <div class="contentBuySell w-100 flex justify-between mt-15">
           <div class="tempBox w-100">
             <div v-for="(item, index) in bidsList" :key="index" class="buyTemp pos-relative flex flex-1 justify-between">
-              <div class="fs-12 text-black">{{type === 'METALS'?item.price.toFixed(2):item[1]}}</div>
-              <div class="fs-12 text-light-green">{{type === 'METALS'?item.volume.toFixed(2):item[0]}}</div>
+              <div class="fs-12 text-black">{{type === 'METALS'||type === 'STOCK'?item.price.toFixed(2):item[1]}}</div>
+              <div class="fs-12 text-light-green">{{type === 'METALS'||type === 'STOCK'?item.volume.toFixed(2):item[0]}}</div>
               <!-- 绿色背景层 -->
               <div 
                 class="bg-layer pos-absolute"
@@ -53,8 +53,8 @@
           </div>
           <div class="tempBox w-100">
             <div v-for="(item, index) in asksList" :key="index" class="sellTemp pos-relative flex flex-1 justify-between">
-              <div class="fs-12 text-red">{{ type === 'METALS'?item.volume.toFixed(2):item[0] }}</div>
-              <div class="fs-12 text-black">{{ type === 'METALS'?item.price.toFixed(2):item[1] }}</div>
+              <div class="fs-12 text-red">{{ type === 'METALS'||type === 'STOCK'?item.volume.toFixed(2):item[0] }}</div>
+              <div class="fs-12 text-black">{{ type === 'METALS'||type === 'STOCK'?item.price.toFixed(2):item[1] }}</div>
               <!-- 红色背景层 -->
               <div 
                 class="bg-layer pos-absolute"

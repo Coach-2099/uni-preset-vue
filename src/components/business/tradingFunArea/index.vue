@@ -26,7 +26,7 @@
       :class="{'marginTop75': !showChart}"
     >
       <div class="buyAndSellMoudle flex-1">
-        <buyAndSell v-if="type == 'SPOT'" ref="buySellRef" :lastPrice="lastPrice" :symbol="symbol"></buyAndSell>
+        <buyAndSell v-if="type == 'SPOT'||type == 'STOCK'" :type="type" ref="buySellRef" :lastPrice="lastPrice" :symbol="symbol"></buyAndSell>
         <buyAndSellContract v-if="type == 'FUTURES'|| type == 'METALS'" ref="buyAndSellContractRef" :type="type" :lastPrice="lastPrice" :symbol="symbol"></buyAndSellContract>
       </div>
       <div class="rightDev">
@@ -87,11 +87,14 @@ const loadInfo=(symbol:string)=>{
 			lastPrice.value = data.close
 			rose.value = Number((data.close-data.open)/data.open*100).toFixed(2)
 		})
+		// if(lastPrice.value === 0){
+			getLastPrice(symbol)
+		// }
 		priceFluctuationsRef.value?.loadData({
 		  klineType: props.type,
 		  symbol: symbol
 		})
-		if(props.type==='SPOT'){
+		if(props.type==='SPOT' || props.type==='STOCK'){
 			buySellRef.value?.loadData({
 			  symbol: symbol
 			})
@@ -99,9 +102,6 @@ const loadInfo=(symbol:string)=>{
 			buyAndSellContractRef.value?.loadData({
 			  symbol: symbol
 			})
-		}
-		if(lastPrice.value === 0){
-			getLastPrice(symbol)
 		}
 	})
 }
@@ -112,6 +112,7 @@ watch(
 	if(newVal){
 		socketService.value.unsubscribe('ticker',oldVal);
 		socketService.value.unsubscribe('depth',oldVal); //取消原有订阅
+		console.log('newVal =',newVal)
 		loadInfo(newVal); //订阅新的交易对
 	}
   }

@@ -57,6 +57,13 @@ import { useControlStore } from '@/stores/control';
 import { formatISODate } from '@/utils/util';
 import { useI18n } from 'vue-i18n';
 
+const props = defineProps({
+  type:{
+	  type:String,
+	  default:'SPOT'
+  }
+})
+
 const { t } = useI18n();
 const controlStore = useControlStore();
 
@@ -87,7 +94,8 @@ const loadSpotOrders=async()=>{
 	const params ={
 		status:'ENTRUSTMENT',
 		current:current.value,
-		size:size.value
+		size:size.value,
+		accountType: props.type
 	}
 	const data = await getOrderList(params)
 	ordersMap.value.clear()

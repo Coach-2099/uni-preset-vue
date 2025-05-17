@@ -180,6 +180,10 @@ const props = defineProps({
   lastPrice:{ //最新价
 	  type:Number,
 	  default: 0
+  },
+  type:{
+  	  type:String,
+  	  default:'SPOT'
   }
 })
 
@@ -285,7 +289,8 @@ const calculateMargin = (val: number) =>{
 //获取用户当前交易对币种可用余额
 const loadSpotBalance = async () => {
 	const params = {
-	  symbol: symbol.value
+	  symbol: symbol.value,
+	  accountType: props.type
 	}
   const data = await getSpotBalance(params)
   tradeCoinBalance.value = data.tradeTokenBalance //获取余额数据
@@ -344,6 +349,7 @@ const submitTrade = async () => {
 	  tradePrice: price.value===t('noun.marketOrder')?0:price.value,
 	  tradeType: orderTypeObj.value.value,
 	  direction: checkActive.value.toLocaleUpperCase(),
+	  accountType: props.type
 	}
 	const data = await spotTrade(params) //合约下单
 	if(!data || !data.errMsg){

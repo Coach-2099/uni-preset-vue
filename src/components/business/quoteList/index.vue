@@ -325,7 +325,7 @@ const goDetail = (v: any) => {
   // 合约
   if (props.type === 'FUTURES') return uni.switchTab({ url: `/pages/contract/index` })
   // 贵金属
-  if (props.type === 'METALS') return uni.switchTab({ url: `/pages/metals/index` })
+  if (props.type === 'STOCK') return uni.switchTab({ url: `/pages/stock/index` })
 }
 
 // 自包含排序逻辑

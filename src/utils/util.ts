@@ -249,7 +249,7 @@ export function formatDate(date : string, p : string) {
 
 /* 电子邮箱 */
 export function isEmail(value : string) {
-	const reg = new RegExp('^([-_A-Za-z0-9.]+)@([_A-Za-z0-9]+\\.)+[A-Za-z0-9]{2,3}$');
+	const reg = new RegExp('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$');
 	if (!reg.test(value)) {
 		return false
 	}

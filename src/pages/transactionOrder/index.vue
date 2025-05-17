@@ -35,7 +35,7 @@
                   </div>
                 </div>
               </div>
-              <div class="content" v-if="active ===0">
+              <div class="content" v-if="active ===0 || active ===2">
 				  <div class="mt-15 fs-12 text-gray flex justify-between items-center">
 				    <p>{{ $t('transactionOrder.tradingMethod') }}</p>
 				    <p>{{ item.dealWay }}</p>
@@ -136,14 +136,17 @@ const loadData = async () => {
 	  accountType.value = 'FUTURES'
     getFuturesAndMetalList()
   }else{
-	  accountType.value = 'METALS'
-	getFuturesAndMetalList()  
+	  accountType.value = 'STOCK'
+	  getSpotList()  
+	//   accountType.value = 'METALS' //切换成美股
+	// getFuturesAndMetalList()  
   }
 }
 
 const getSpotList = async () => {
   const params = {
     status: status.value,
+	accountType: accountType.value,
     page: {
       current: 1,
       size: 10,

@@ -83,12 +83,18 @@ const routeConfig = computed(() => ({
     activeIcon: '/static/svg/tabbar/gang1.svg',
     backgroundColor: '#F5F6FA'
   },
- '/pages/metals/index': {
-    title: t('navBar.metals'),
-    icon: '/static/svg/tabbar/gang0.svg',
-    activeIcon: '/static/svg/tabbar/gang1.svg',
-    backgroundColor: '#F5F6FA'
-  },
+  '/pages/stock/index': {
+     title: t('navBar.metals'),
+     icon: '/static/svg/tabbar/trade0.svg',
+     activeIcon: '/static/svg/tabbar/trade1.svg',
+     backgroundColor: '#F5F6FA'
+   },
+ // '/pages/metals/index': {
+ //    title: t('navBar.metals'),
+ //    icon: '/static/svg/tabbar/gang0.svg',
+ //    activeIcon: '/static/svg/tabbar/gang1.svg',
+ //    backgroundColor: '#F5F6FA'
+ //  },
   '/pages/myAssets/index': {
     title: t('navBar.myAssets'),
     icon: '/static/svg/tabbar/mine0.svg',

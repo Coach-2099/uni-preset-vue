@@ -166,7 +166,7 @@
         <van-tab :title="$t('noun.metalsGoods')">
           <quoteList
             ref="metalsQuoteListRefs"
-            type="METALS"
+            type="STOCK"
             :maxItems="5"
             :needPullRefresh="false"
           ></quoteList>

@@ -21,23 +21,23 @@
       </div>
       <div class="tabBox">
         <div v-if="activeTab === 'left'">
-          <trendChart type="SPOT"></trendChart>
+          <trendChart type="STOCK"></trendChart>
         </div>
         <div v-if="activeTab === 'right'">
-          <tradingFunArea type="SPOT" :symbol="symbol"></tradingFunArea>
+          <tradingFunArea type="STOCK" :symbol="symbol"></tradingFunArea>
         </div>
       </div>
     </div>
     <div class="bottom pos-relative bg-white mt-5 px-10">
       <van-tabs v-model:active="active" offset-top="74" @click-tab="onClickTab" shrink sticky>
         <van-tab v-if="activeTab === 'left'" :title="$t('contract.orderBook')">
-          <realTimeTransactions ref="realTimeTransactionsRef" type="SPOT"></realTimeTransactions>
+          <realTimeTransactions ref="realTimeTransactionsRef" type="STOCK"></realTimeTransactions>
         </van-tab>
         <van-tab v-if="activeTab === 'left'" :title="$t('contract.transactions')">
-          <transactionOrder ref="transactionOrderRef" type="SPOT"></transactionOrder>
+          <transactionOrder ref="transactionOrderRef" type="STOCK"></transactionOrder>
         </van-tab>
         <van-tab v-if="activeTab === 'right'" :title="$t('contract.order')">
-          <tradeOrder ref="tradeOrderRef" type="SPOT"></tradeOrder>
+          <tradeOrder ref="tradeOrderRef" type="STOCK"></tradeOrder>
         </van-tab>
       </van-tabs>
       <div v-if="activeTab === 'right'" class="orderIconBox pos-absolute" @click="goOrder">
@@ -77,7 +77,7 @@ const realTimeTransactionsRef: any = ref(null)
 const transactionOrderRef: any = ref(null)
 const tradeOrderRef: any = ref(null)
 
-const symbol = ref('BTC/USDT')
+const symbol = ref('AAPL/USD')
 
 // 添加状态栏高度变量
 const statusBarHeight = ref('0px')
@@ -89,7 +89,7 @@ const initComponents = ref({
 })
 
 watch(
-  () => controlStore.getQuotesData('SPOT')?.symbol,
+  () => controlStore.getQuotesData('STOCK')?.symbol,
   (newVal, oldVal) => {
 	if(newVal){
 		loadInfo(newVal); //订阅新的交易对
@@ -118,24 +118,24 @@ onMounted(() => {
 
 onLoad(() => {
   uni.hideTabBar()
-  if(controlStore.getQuotesData('SPOT')?.symbol){
-    symbol.value= controlStore.getQuotesData('SPOT')?.symbol
+  if(controlStore.getQuotesData('STOCK')?.symbol){
+    symbol.value= controlStore.getQuotesData('STOCK')?.symbol
   }else{
-    controlStore.setQuotesData('SPOT',{
+    controlStore.setQuotesData('STOCK',{
       symbol:symbol.value,
       activeType:'right'
     })
   }
 	loadInfo(symbol.value)
   // 修正类型错误，确保赋值为 'left' 或 'right'
-  activeTab.value = controlStore.getQuotesData('SPOT')?.activeType || 'left';
+  activeTab.value = controlStore.getQuotesData('STOCK')?.activeType || 'left';
 })
 
 const loadInfo =(symbol:string)=>{
 	nextTick(()=>{
 		setTimeout(()=>{
 			realTimeTransactionsRef.value?.loadData({  //调用深度行情，只有在K线图页面才处理
-			  klineType: 'SPOT',
+			  klineType: 'STOCK',
 			  symbol: symbol
 			})
 		},100)
@@ -164,7 +164,7 @@ const sliderStyle = computed(() => ({
 
 const goOrder = () => {
   uni.navigateTo({
-    url: '/pages/transactionOrder/index?type=SPOT'
+    url: '/pages/transactionOrder/index?type=STOCK'
   })
 }
 
@@ -182,7 +182,7 @@ const onClickTab = (e: any) => {
 		default:
     }
     console.log('currentRef', currentRef.value)
-    currentRef.value?.loadData({klineType: 'SPOT', symbol: symbol.value});
+    currentRef.value?.loadData({klineType: 'STOCK', symbol: symbol.value});
   })
 }
 

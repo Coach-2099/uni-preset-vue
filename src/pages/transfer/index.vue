@@ -21,7 +21,7 @@
               placement="bottom-start"
               :actions="actionsAccountType"
               @select="onSelectFromAccountType"
-              style="--van-popover-action-width: 138px"
+              style="--van-popover-action-width: 158px"
               :teleport="null"
             >
               <template #reference>
@@ -62,7 +62,7 @@
                 placement="bottom-start"
                 :actions="toAccountType"
                 @select="onSelectToAccountType"
-                style="--van-popover-action-width: 138px"
+                style="--van-popover-action-width: 158px"
                 :teleport="null"
               >
                 <template #reference>
@@ -193,16 +193,21 @@ const actionsAccountType = [
   { text: t('transfer.accounts.wallet'), value: 'WALLET' },
   { text: t('transfer.accounts.spotAccount'), value: 'SPOT' },
   { text: t('transfer.accounts.futuresAccount'), value: 'FUTURES' },
-  { text: t('transfer.accounts.preciousMetalsAccount'), value: 'METALS' },
+  { text: t('transfer.accounts.preciousMetalsAccount'), value: 'STOCK' },
+  // { text: t('transfer.accounts.preciousMetalsAccount'), value: 'METALS' },
 ]
 
 //选择转出账户
 const onSelectFromAccountType = (action: any) => {
 		if(action.value === 'FUTURES' && transferToken.value?.text !== 'USDT'){
 			return uni.showToast({title: t('transfer.futuresOnlyUSDT'), icon: 'none'})
-		}else if(action.value === 'METALS' && transferToken.value?.text !== 'USD'){
+		}
+		else if(action.value === 'STOCK' && transferToken.value?.text !== 'USD'){
 			return uni.showToast({title: t('transfer.metalsOnlyUSD'), icon: 'none'})
 		}
+		// else if(action.value === 'METALS' && transferToken.value?.text !== 'USD'){
+		// 	return uni.showToast({title: t('transfer.metalsOnlyUSD'), icon: 'none'})
+		// }
 		toAccountType.value = actionsAccountType.filter((item: any)=>{return item.value!==action.value})	
 		fromAccount.value = action
 		balance() //切换账户时重新获取余额
@@ -212,9 +217,12 @@ const onSelectFromAccountType = (action: any) => {
 const onSelectToAccountType = (action: any) => {
 		if(action.value === 'FUTURES' && transferToken.value?.text !== 'USDT'){
 			return uni.showToast({title: t('transfer.futuresOnlyUSDT'), icon: 'none'})
-		}else if(action.value === 'METALS' && transferToken.value?.text !== 'USD'){
+		}else if(action.value === 'STOCK' && transferToken.value?.text !== 'USD'){
 			return uni.showToast({title: t('transfer.metalsOnlyUSD'), icon: 'none'})
 		}
+		// else if(action.value === 'METALS' && transferToken.value?.text !== 'USD'){
+		// 	return uni.showToast({title: t('transfer.metalsOnlyUSD'), icon: 'none'})
+		// }
 		toAccount.value = action
 }
 
@@ -222,9 +230,12 @@ const onSelectToAccountType = (action: any) => {
 const onSelectTransferToken = (action: any) => {
 		if(fromAccount.value?.text === 'FUTURES' && action.text !== 'USDT'){
 			return uni.showToast({title: t('transfer.futuresOnlyUSDT'), icon: 'none'})
-		}else if(fromAccount.value?.text === 'METALS' && action.text !== 'USD'){
+		}else if(fromAccount.value?.text === 'STOCK' && action.text !== 'USD'){
 			return uni.showToast({title: t('transfer.metalsOnlyUSD'), icon: 'none'})
 		}
+		// else if(fromAccount.value?.text === 'METALS' && action.text !== 'USD'){
+		// 	return uni.showToast({title: t('transfer.metalsOnlyUSD'), icon: 'none'})
+		// }
 		transferToken.value = action
 		balance()
 }
@@ -276,7 +287,7 @@ const transfer =async() =>{
 		return uni.showToast({title: t('transfer.sameAccountError'), icon: 'none'})
 	}else if((fromAccount.value?.value === 'FUTURES'||toAccount.value?.value === 'FUTURES') && transferToken.value?.text !== 'USDT'){
 		return uni.showToast({title: t('transfer.futuresOnlyUSDT'), icon: 'none'})
-	}else if((fromAccount.value?.value === 'METALS' || toAccount.value?.value === 'METALS') && transferToken.value?.text !== 'USD'){
+	}else if((fromAccount.value?.value === 'STOCK' || toAccount.value?.value === 'STOCK') && transferToken.value?.text !== 'USD'){
 		return uni.showToast({title: t('transfer.metalsOnlyUSD'), icon: 'none'})
 	}else if(tokenBalance.value<amount.value){
 		return uni.showToast({title: t('transfer.insufficientBalance'), icon: 'none'})

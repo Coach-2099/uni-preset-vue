@@ -46,7 +46,7 @@
         <van-tab :title="$t('noun.metalsGoods')">
           <selectSpot
             ref="SelectMetalsGoodsRef"
-            type="METALS"
+            type="STOCK"
             v-model:searchVal="searchValue"
             @closeModel="showFLoatingPanel"
           ></selectSpot>
@@ -97,7 +97,7 @@ const showFLoatingPanel = (data: any) => {
           nextTick(() => {
             SelectFutureGoodsRef.value?.loadData(data.type) 
           })
-        } else if (data.type === 'METALS') {
+        } else if (data.type === 'STOCK') {
           active.value = 2
           nextTick(() => {
             SelectMetalsGoodsRef.value?.loadData(data.type) 
@@ -121,9 +121,9 @@ const showFLoatingPanel = (data: any) => {
         uni.switchTab({
           url: '/pages/contract/index'
         })
-      } else if (data.jumpType === 'METALS') {
+      } else if (data.jumpType === 'STOCK') {
 		   uni.switchTab({
-			 url: '/pages/metals/index'
+			 url: '/pages/stock/index'
 		   })
       }
     }
@@ -135,7 +135,7 @@ const onClickButton = () => {
     SelectSpotRef.value?.searchFun()
   } else if (jumpKlineType.value == 'FUTURE') {
     SelectFutureGoodsRef.value?.searchFun()
-  } else if (jumpKlineType.value == 'METALS') {
+  } else if (jumpKlineType.value == 'STOCK') {
     SelectMetalsGoodsRef.value?.searchFun()
   }
 }
@@ -155,7 +155,7 @@ const onClickTab = (e: any) => {
         break
       case 2:
         currentRef =SelectMetalsGoodsRef
-        kType = 'METALS'
+        kType = 'STOCK'
         default:
 	  }
     tabsRefs.value.resize();

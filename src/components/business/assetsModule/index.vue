@@ -1,7 +1,7 @@
 <template>
   <div class="assetsModule-temp mt-15">
     <div>
-      <div class="flex items-center justify-between" v-if="type === 'wallet' || type === 'spot'">
+      <div class="flex items-center justify-between" v-if="type === 'wallet' || type === 'spot' || type ==='stock'">
         <div class="flex-1">
           <van-checkbox v-model="checked" @change="checkZero" shape="square">
             <template #icon="props">
@@ -29,7 +29,7 @@
           </van-search>
         </div>
       </div>
-      <div v-if="type === 'wallet' || type === 'spot'"
+      <div v-if="type === 'wallet' || type === 'spot' || type ==='stock'"
         v-for="(item,index) in searchItems" :key="index" 
         class="flex items-center justify-between mt-15"
         @click="goDetail"
@@ -116,7 +116,7 @@ const props = defineProps({
 watch(
   () => props.data,
   (newVal, oldVal) => {
-	if(props.type === 'wallet'|| props.type === 'spot'){
+	if(props.type === 'wallet'|| props.type === 'spot'||props.type === 'stock'){
 		searchItems.value = props.data
 	}
   }
@@ -126,7 +126,7 @@ watch(
 const loadData = async () => {
   try {
     const params = {
-      klineType: 'SPOT',
+      klineType: props.type==='stock'?'STOCK':'SPOT',
     }
     const data = await getSymbolsLastPrice(params)
     data.forEach((item: any) => {
@@ -171,7 +171,7 @@ const onSearch = (val:string) => {
 }
 
 onShow(()=>{
-	if(props.type === 'wallet'|| props.type === 'spot'){
+	if(props.type === 'wallet'|| props.type === 'spot' || props.type==='stock'){
 		searchItems.value = props.data
 	}
 	loadData()

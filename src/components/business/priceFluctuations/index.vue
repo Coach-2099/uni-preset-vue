@@ -22,8 +22,8 @@
 	<div class="contentTemp">
 	  <div class="listBox">
 	    <div v-for="(item, index) in bidsList" :key="index" class="contentList pos-relative flex justify-between items-center">
-	      <div class="fs-12 text-red">{{type === 'METALS'?item.price.toFixed(2):item[0]}}</div>
-	      <div class="fs-12 text-black">{{type === 'METALS'?item.volume.toFixed(2):item[1]}}</div>
+	      <div class="fs-12 text-red">{{type === 'STOCK'?item.price.toFixed(2):item[0]}}</div>
+	      <div class="fs-12 text-black">{{type === 'STOCK'?item.volume.toFixed(2):item[1]}}</div>
 	      <div
 	        class="bg-layer pos-absolute sellTemp"
 	        :style="{ 'width': fluctuationWidth +'%' }"
@@ -43,8 +43,8 @@
    <div class="contentTemp">
      <div class="listBox">
        <div v-for="(item, index) in asksList" :key="index" class="contentList pos-relative flex justify-between items-center">
-         <div class="fs-12 text-light-green">{{type === 'METALS'?item.price.toFixed(2):item[0]}}</div>
-         <div class="fs-12 text-black">{{type === 'METALS'?item.volume.toFixed(2):item[1]}}</div>
+         <div class="fs-12 text-light-green">{{type === 'STOCK'?item.price.toFixed(2):item[0]}}</div>
+         <div class="fs-12 text-black">{{type === 'STOCK'?item.volume.toFixed(2):item[1]}}</div>
          <div
            class="bg-layer pos-absolute buyTemp"
            :style="{ 'width': fluctuationWidth +'%' }"
@@ -211,7 +211,7 @@ const depthData =(bidsList:any,asksList:any,type:string)=>{
 	// 新增计算逻辑
 	let bidsTotal = 0
 	let asksTotal = 0
-	if(type === 'METALS'){
+	if(type === 'STOCK'){
 	//贵金属行情数据格式不一样
 		bidsTotal = bidsList.reduce((sum, item) => sum + item.volume, 0)
 		asksTotal = asksList.reduce((sum, item) => sum + item.volume, 0)

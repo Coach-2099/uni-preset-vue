@@ -15,8 +15,11 @@
 			{
 				"pagePath": "pages/contract/index"
 			},
+			// {
+			// 	"pagePath": "pages/metals/index"
+			// },
 			{
-				"pagePath": "pages/metals/index"
+				"pagePath": "pages/stock/index"
 			},
 			{
 				"pagePath": "pages/myAssets/index"
@@ -72,6 +75,15 @@
 			"style": {
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "贵金属",
+				"enablePullDownRefresh": false,
+				"disableScroll": true
+			}
+		},
+		{
+			"path": "pages/stock/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "美股",
 				"enablePullDownRefresh": false,
 				"disableScroll": true
 			}

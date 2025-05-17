@@ -101,11 +101,16 @@
             <assetsModule type="futures" :data="futuresAccount"></assetsModule>
           </div>
         </van-tab>
-        <van-tab :title="$t('navBar.metals')" name="metals">
+		<van-tab :title="$t('navBar.metals')" name="stock">
+		  <div class="px-20">
+		    <assetsModule type="stock" :data="stockAccountList"></assetsModule>
+		  </div>
+		</van-tab>
+        <!-- <van-tab :title="$t('navBar.metals')" name="metals">
           <div class="px-20">
             <assetsModule type="metals" :data="metalsAccount"></assetsModule>
           </div>
-        </van-tab>
+        </van-tab> -->
       </van-tabs>
     </div>
     <CustomNavBar></CustomNavBar>
@@ -129,6 +134,7 @@ const basicAccountList = ref([]) //基础账户列表
 const spotAccountList =ref([]) //现货
 const futuresAccount =ref({}) //合约
 const metalsAccount =ref({}) //贵金属
+const stockAccountList = ref([]) //美股
 
 //查询余额
 const getBalance = async()=>{
@@ -141,6 +147,7 @@ const getBalance = async()=>{
  plAmount.value = roundDown(data.todayPnlAmount,2)
  basicAccountList.value = data.basicAccountList
  spotAccountList.value = data.spotAccountList
+ stockAccountList.value = data.stockAccountList
  futuresAccount.value = data.futuresAccount
  metalsAccount.value = data.metalsAccount
 }
