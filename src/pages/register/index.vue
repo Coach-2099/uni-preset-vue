@@ -229,7 +229,7 @@ const getCode = async () => {
   if (!userName.value) return uni.showToast({ title: t('tips.enterAccount'), icon: 'none' })
   if (active.value === 0) {
     // 校验邮箱格式
-    if (isEmail(userName.value)) return uni.showToast({ title: t('tips.emailFormatIsIncorrect'), icon: 'none' })
+    if (!isEmail(userName.value)) return uni.showToast({ title: t('tips.emailFormatIsIncorrect'), icon: 'none' })
   }
   vcodeRef.value.startCountdown()
   const params = {
