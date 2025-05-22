@@ -98,7 +98,7 @@ const theme = ref<'light' | 'dark'>('light')
 const currentInterval = ref(300) // 间隔多少时间的图表数据
 
 const symbolInfo = ref('BTC/USDT')
-const timeInterval = ref('min_15') // K线周期,可用值:min_1,min_5,min_15,min_30,min_60,hour_4,day_1
+const timeInterval = ref('min_5') // K线周期,可用值:min_1,min_5,min_15,min_30,min_60,hour_4,day_1
 const rose = ref(0) //实时最新涨跌幅比例
 const HIGH24h = ref(0) //24h最高
 const LOW24h = ref(0) //24h最低
@@ -110,7 +110,7 @@ const hasMore = ref(true) //是否已读完K线全部数据
 const chartReady = ref(false)
 
 // 默认socket 时间间隔为5m
-const defaultSocketVal = ref('1m'); // 5m
+const defaultSocketVal = ref('5m'); // 5m
 
 // 新增时间间隔映射
 const intervalMap:any = {
@@ -288,7 +288,6 @@ watch(
         symbolInfo.value = newSymbol
         // 这里可以添加symbol变化后的处理逻辑
         handleIntervalChange(currentInterval.value, defaultSocketVal.value)
-        subScribe(newSymbol)
       }
     }
   },
@@ -437,7 +436,7 @@ const handleIntervalChange = async (interval: number, socketVal: string) => {
   // 强制更新图表
   nextTick(() => {
     loadData(endTime, currentTime, true) //初次加载
-    
+    subScribe(symbolInfo.value)
     // 确保触发 App 端的更新
     // #ifdef APP-PLUS
     updateTrigger.value = Date.now()
