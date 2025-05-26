@@ -1,35 +1,37 @@
 <template>
   <div class="certification-index bg-light ">
     <navigationBar :customHandler="goBack" :title="$t('navigationBarTitle.certification')"></navigationBar>
-    <div class="mt-10">
-      <van-cell-group inset>
-        <van-cell :title="$t('userInfo.username')" :value="userInfo.username" />
-        <van-cell :title="$t('common.email')" :value="userInfo.email" />
-        <van-cell :title="$t('common.phone')" :value="userInfo.phone" />
-        <van-cell :title="$t('identityAuth.labels.name')" :value="userInfo.name" />
-        <van-cell :title="$t('identityAuth.labels.identityType')" :value="typeFormat(userInfo.documentType)" />
-      </van-cell-group>
-      <div class="imgBox w-100 px-15 flex justify-between">
-        <div v-if="userInfo.idcardImgZm" class="pos-relative relativeBox">
-          <div class="myPreview bg-white items-center pos-absolute">
-            <image
-              class="myPreviewImg"
-              :src="userInfo.idcardImgZm"
-              mode="scaleToFill"
-            />
+    <van-config-provider :theme="themeVal">
+      <div class="mt-10">
+        <van-cell-group inset>
+          <van-cell :title="$t('userInfo.username')" :value="userInfo.username" />
+          <van-cell :title="$t('common.email')" :value="userInfo.email" />
+          <van-cell :title="$t('common.phone')" :value="userInfo.phone" />
+          <van-cell :title="$t('identityAuth.labels.name')" :value="userInfo.name" />
+          <van-cell :title="$t('identityAuth.labels.identityType')" :value="typeFormat(userInfo.documentType)" />
+        </van-cell-group>
+        <div class="imgBox w-100 px-15 flex justify-between">
+          <div v-if="userInfo.idcardImgZm" class="pos-relative relativeBox">
+            <div class="myPreview bg-white items-center pos-absolute">
+              <image
+                class="myPreviewImg"
+                :src="userInfo.idcardImgZm"
+                mode="scaleToFill"
+              />
+            </div>
           </div>
-        </div>
-        <div v-if="userInfo.idcardImgFm" class="pos-relative relativeBox">
-          <div class="myPreview bg-white items-center pos-absolute">
-            <image
-              class="myPreviewImg"
-              :src="userInfo.idcardImgFm"
-              mode="scaleToFill"
-            />
+          <div v-if="userInfo.idcardImgFm" class="pos-relative relativeBox">
+            <div class="myPreview bg-white items-center pos-absolute">
+              <image
+                class="myPreviewImg"
+                :src="userInfo.idcardImgFm"
+                mode="scaleToFill"
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </van-config-provider>
   </div>
 </template>
 <script lang="ts" setup>
@@ -37,6 +39,8 @@ import { ref, onMounted } from 'vue';
 import navigationBar from '@/components/navigationBar/index.vue';
 import { useUserStore } from '@/stores/user';
 import { onLoad } from '@dcloudio/uni-app';
+
+const themeVal = uni.getStorageSync('APP_THEME') || 'light'
 
 const userStore = useUserStore();
 const userInfo = userStore.userInfo;
@@ -83,6 +87,7 @@ const typeFormat = (type: string) => {
 <style lang="scss" scoped>
 .certification-index {
   height: 100vh;
+  background: var(--color-background);
   .imgBox {
     margin-top: 35px;
     .relativeBox {

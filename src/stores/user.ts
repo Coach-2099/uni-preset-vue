@@ -11,6 +11,7 @@ interface UserSate {
     temToken: string | null
     customerServiceUrl: string | null
     socketService: any | null
+    isTheme: string | undefined
 }
 export const useUserStore = defineStore('userStore', {
     state: (): UserSate => ({
@@ -18,7 +19,8 @@ export const useUserStore = defineStore('userStore', {
         token: cache.get(TOKEN_KEY) || null,
         temToken: null,
         customerServiceUrl: '',
-        socketService: null
+        socketService: null,
+        isTheme: uni.getStorageSync('APP_THEME') || 'light'
     }),
     getters: {
         isLogin: (state) => !!state.token

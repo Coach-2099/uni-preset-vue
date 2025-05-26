@@ -1,35 +1,37 @@
 <template>
-  <div class="languageSetting-index ba-white pos-relative">
+  <div class="languageSetting-index pos-relative">
     <navigationBar :title="$t('navigationBarTitle.settingLanguage')"></navigationBar>
-    <div class="mt-20">
-      <van-radio-group v-model="checkRadio">
-        <van-cell-group inset>
-          <van-cell :title="$t('language.english')" clickable @click="checked('2')">
-            <template #right-icon>
-              <van-radio name="2" />
-            </template>
-          </van-cell>
-		  <van-cell :title="$t('language.japanese')" clickable @click="checked('3')">
-		    <template #right-icon>
-		      <van-radio name="3" />
-		    </template>
-		  </van-cell>
-		  <van-cell :title="$t('language.korean')" clickable @click="checked('4')">
-		    <template #right-icon>
-		      <van-radio name="4" />
-		    </template>
-		  </van-cell>
-		  <van-cell :title="$t('language.chinese')" clickable @click="checked('1')">
-		    <template #right-icon>
-		      <van-radio name="1" />
-		    </template>
-		  </van-cell>
-        </van-cell-group>
-      </van-radio-group>
-      <div class="myBtn pos-fixed w-100">
-        <van-button type="primary" class="w-100 mt-20" @click="confirm">{{ $t('common.confirm') }}</van-button>
+    <van-config-provider :theme="themeVal">
+      <div class="mt-20">
+        <van-radio-group v-model="checkRadio">
+          <van-cell-group inset>
+            <van-cell :title="$t('language.english')" clickable @click="checked('2')">
+              <template #right-icon>
+                <van-radio name="2" />
+              </template>
+            </van-cell>
+        <van-cell :title="$t('language.japanese')" clickable @click="checked('3')">
+          <template #right-icon>
+            <van-radio name="3" />
+          </template>
+        </van-cell>
+        <van-cell :title="$t('language.korean')" clickable @click="checked('4')">
+          <template #right-icon>
+            <van-radio name="4" />
+          </template>
+        </van-cell>
+        <van-cell :title="$t('language.chinese')" clickable @click="checked('1')">
+          <template #right-icon>
+            <van-radio name="1" />
+          </template>
+        </van-cell>
+          </van-cell-group>
+        </van-radio-group>
+        <div class="myBtn pos-fixed w-100">
+          <van-button type="primary" class="w-100 mt-20" @click="confirm">{{ $t('common.confirm') }}</van-button>
+        </div>
       </div>
-    </div>
+    </van-config-provider>
   </div>
 </template>
 
@@ -42,6 +44,8 @@ import { onLoad } from '@dcloudio/uni-app';
 const { locale } = useI18n();
 // 初始化时根据存储值设置选中状态
 const checkRadio = ref('1')
+const themeVal = uni.getStorageSync('APP_THEME') || 'light'
+
 
 onLoad(() => {
   const lang = uni.getStorageSync('language')
@@ -84,6 +88,8 @@ const confirm = () => {
 
 <style lang="scss" scoped>
 .languageSetting-index {
+  height: 100vh;
+  background: var(--color-background);
   .myBtn {
     bottom: 80px;
     left: 0;

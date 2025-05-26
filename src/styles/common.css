@@ -5,6 +5,56 @@
   font-style: normal;
 };
 
+:root {
+  /* 亮色主题 */
+  --color-primary: #1989fa;
+  --color-light-primary: #1777ff;
+  --color-success: #07c160;
+  --color-warning: #ff976a;
+  --color-danger: #ee0a24;
+  --color-text: #333;
+  --color-navBar-text: #666;
+  --color-by-black: #121214;
+  --color-background: #ffffff;
+  --color-background-1: #ffffff;
+  --color-background-2: #F6F7FB;
+  --color-background-box: #f6f7fb;
+  --color-border-top: #f5f7fa;
+  --color-tab-text: #333333;
+}
+
+/* 暗色主题 */
+.theme-dark {
+  --color-primary: #f6a600;
+  --color-light-primary: #f6a700;
+  --color-success: #2daf7d;
+  --color-warning: #ff8f4a;
+  --color-danger: #ff4444;
+  --color-text: #e0e0e0;
+  --color-navBar-text: #fbfcff;
+  --color-by-black: #fcfeff;
+  --color-background: #0f1112;
+  /* 黑色带有一点透明度 */
+  --color-background-1: #15161a;
+  --color-background-2: #000100;
+  --color-background-box: #24282c;
+  --color-border-top: #282a2c;
+  --color-tab-text: #fbfdfe;
+}
+
+:root:root {
+  /* Vant组件变量 */
+  --van-tabs-bottom-bar-color: var(--color-primary);
+  --van-button-primary-background: var(--color-primary);
+  --van-button-primary-border-color: var(--color-primary);
+  --van-success-color: var(--color-success);
+  --van-warning-color: var(--color-warning);
+  --van-danger-color: var(--color-danger);
+  --van-text-color: var(--color-text);
+  --van-background-color: var(--color-background);
+  --van-cell-background-color: var(--color-background); 
+}
+
 /* 统一字体 */
 body {
   font-family: 'biance-PLEX' sans-serif;
@@ -253,9 +303,9 @@ body {
 .fw-b { font-weight: bold; }
 
 /* 文本颜色类 */
-.text-black { color: #333333; }
+.text-black { color: var(--color-text); }
 .text-white { color: #FFFFFF; }
-.text-by-black { color: #121214; }
+.text-by-black { color: var(--color-by-black); }
 .text-gray { color: #B0B7C1; }
 .text-light-gray { color: #D3D3D3; }
 .text-blue { color: #2752e7; }
@@ -266,7 +316,7 @@ body {
 .text-yellow { color: #FFFF00; }
 .text-orange { color: #FFA500; }
 
-.bg-white { background-color: #FFFFFF; }
+.bg-white { background-color: var(--color-background); }
 .bg-black { background-color: #000000; }
 .bg-gray { background-color: #808080; }
 .bg-light-gray { background-color: #D3D3D3; }

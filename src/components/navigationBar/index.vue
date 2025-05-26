@@ -4,10 +4,24 @@
     <van-sticky>
       <div class="flex justify-between items-center pl-15 pr-15 headerTemp pos-relative">
         <div @click="goUser" class="flex items-center back-arrow">
-          <image
+          <!-- <image
             src="/static/svg/tools/left.svg"
             mode="scaleToFill"
-          />
+          /> -->
+          <svg style="width: 16px;height: 14px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 14.31">
+            <defs>
+              <clipPath id="a">
+                <path d="M0 0h16v14.31H0z" style="fill:none"/>
+              </clipPath>
+              <!-- <style>
+                .a{fill:#b0b0b0}
+              </style> -->
+            </defs>
+            <g style="clip-path:url(#a)" transform="rotate(180 8 7.155)">
+              <path style="fill:var(--color-text)" d="M14.6 8.134H.917a.982.982 0 0 1 0-1.96H14.6a.982.982 0 0 1 0 1.96"/>
+              <path style="fill:var(--color-text)" d="M9.816 14.31a.885.885 0 0 1-.649-.287 1.029 1.029 0 0 1 0-1.386l4.906-5.244a.353.353 0 0 0 0-.475L9.168 1.673a1.029 1.029 0 0 1 0-1.386.876.876 0 0 1 1.3 0l4.906 5.244a2.411 2.411 0 0 1 0 3.249l-4.906 5.243a.885.885 0 0 1-.649.287"/>
+            </g>
+          </svg>
         </div>
         <div class="fw-b fs-20 text-black pos-absolute headerTitle">
           {{ title }}
@@ -79,7 +93,7 @@ const goUser = () => {
   .headerTemp {
     height: 50px;
     line-height: 50px;
-    background: #ffffff;
+    background: var(--color-background);
     .back-arrow {
       image {
         width: 16px;
@@ -90,6 +104,7 @@ const goUser = () => {
       left: 50%;
       transform: translate(-50%);
       max-width: 60vw;
+      color: var(--color-text);
     }
     .rightTemp {
       // min-width: 80px;

@@ -76,7 +76,7 @@
                 <!-- <div>
                   <text class="fs-12 text-gray">{{ formatVolume(item.vol) + ' ' + item.symbol2 }}</text>
                 </div> -->
-                <text class="fs-16">{{ v.tradeToken }}</text>
+                <text class="fs-16 text-by-black">{{ v.tradeToken }}</text>
                 <text class="fs-12 text-gray">/ {{ v.basicToken }}</text>
                 <div>
                   <text class="fs-12 text-gray">{{ formatVolume(v.vol) + ' ' + v.basicToken }}</text>
@@ -158,14 +158,14 @@
             class="mt-5 ml-15 mr-15 pb-5 flex ff-biance fw-b justify-between items-center"
           >
             <div class="flex-1">
-              <text class="fs-16">{{ v.tradeToken }}</text>
+              <text class="fs-16 text-by-black">{{ v.tradeToken }}</text>
               <text class="fs-12 text-gray">/ {{ v.basicToken }}</text>
               <div>
                 <text class="fs-12 text-gray">{{ formatVolume(v.vol) + ' ' + v.basicToken }}</text>
               </div>
             </div>
             <div class="flex-1 flex justify-end items-center">
-              <div class="flex-1 text-right items-center mr-20">{{ v.close }}</div>
+              <div class="flex-1 text-right items-center text-by-black mr-20">{{ v.close }}</div>
               <van-button 
                 class="flex-1 text-right rises_falls_btn" 
                 :class="v.rose > 0 ? 'rise_btn' : 'fall_btn'"
@@ -395,11 +395,16 @@ defineExpose({
   }
   .rise_btn {
     background: #0FB668;
+    border: none;
     border-radius: 6px 6px 6px 6px;
   }
   .fall_btn {
     background: #FF3E47;
+    border: none;
     border-radius: 6px 6px 6px 6px;
   }
+}
+:deep(.van-tabs__line) {
+  background-color: orange;
 }
 </style>

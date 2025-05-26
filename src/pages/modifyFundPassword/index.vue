@@ -1,59 +1,61 @@
 <template>
   <div class="modifyFundPassword-index">
     <navigationBar :title="$t('common.fundPassword')"></navigationBar>
-    <div class="inputTemp mt-25 px-20">
-      <div class="mt-10">
-        <div class="flex justify-between items-center">
-          <p class="fs-14 text-black">{{ $t('common.account') }}</p>
+    <van-config-provider :theme="themeVal">
+      <div class="inputTemp mt-25 px-20">
+        <div class="mt-10">
+          <div class="flex justify-between items-center">
+            <p class="fs-14 text-black">{{ $t('common.account') }}</p>
+          </div>
+          <div class="baseInput mt-5 flex justify-between items-center">
+            <input
+              v-model="userName"
+              class="myInput flex-1 px-10 py-10 w-100"
+              :disabled="true"
+            />
+          </div>
         </div>
-        <div class="baseInput mt-5 flex justify-between items-center">
-          <input
-            v-model="userName"
-            class="myInput flex-1 px-10 py-10 w-100"
-            :disabled="true"
-          />
+        <div class="mt-10">
+          <div class="flex justify-between items-center">
+            <p class="fs-14 text-black">{{ $t('common.vCode') }}</p>
+          </div>
+          <div class="baseInput mt-5 flex justify-between items-center">
+            <input
+              v-model="verificationCode"
+              class="myInput flex-1 px-10 py-10 w-100 mr-10"
+              :placeholder="$t('tips.enterVCode')"
+            />
+            <!-- :disabled="!accountNumber" -->
+            <baseVCodeButton ref="vcodeRef"  @get-code="getCode" />
+          </div>
+        </div>
+        <div class="mt-10">
+          <div class="flex justify-between items-center">
+            <p class="fs-14 text-black">{{ $t('common.fundPassword') }}</p>
+          </div>
+          <div class="baseInput mt-5 flex justify-between items-center">
+            <input
+              v-model="password"
+              class="myInput flex-1 px-10 py-10 w-100"
+              :placeholder="$t('tips.enterPassword')"
+              :password="showPassword"
+            />
+            <text class="uni-icon flex justify-center items-center pr-5 right-icon">
+              <van-icon name="eye" @click="changePassword"/>
+            </text>
+          </div>
         </div>
       </div>
-      <div class="mt-10">
-        <div class="flex justify-between items-center">
-          <p class="fs-14 text-black">{{ $t('common.vCode') }}</p>
-        </div>
-        <div class="baseInput mt-5 flex justify-between items-center">
-          <input
-            v-model="verificationCode"
-            class="myInput flex-1 px-10 py-10 w-100 mr-10"
-            :placeholder="$t('tips.enterVCode')"
-          />
-          <!-- :disabled="!accountNumber" -->
-          <baseVCodeButton ref="vcodeRef"  @get-code="getCode" />
-        </div>
+      <div class="btnBox bg-white w-100 pos-fixed">
+        <van-button
+          class="confirmBtn w-100 fw-b fs-20"
+          type="primary"
+          @click="confirmFun"
+        >
+          {{ $t('common.confirm') }}
+        </van-button>
       </div>
-      <div class="mt-10">
-        <div class="flex justify-between items-center">
-          <p class="fs-14 text-black">{{ $t('common.fundPassword') }}</p>
-        </div>
-        <div class="baseInput mt-5 flex justify-between items-center">
-          <input
-            v-model="password"
-            class="myInput flex-1 px-10 py-10 w-100"
-            :placeholder="$t('tips.enterPassword')"
-            :password="showPassword"
-          />
-          <text class="uni-icon flex justify-center items-center pr-5 right-icon">
-            <van-icon name="eye" @click="changePassword"/>
-          </text>
-        </div>
-      </div>
-    </div>
-    <div class="btnBox bg-white w-100 pos-fixed">
-      <van-button
-        class="confirmBtn w-100 fw-b fs-20"
-        type="primary"
-        @click="confirmFun"
-      >
-        {{ $t('common.confirm') }}
-      </van-button>
-    </div>
+    </van-config-provider>
   </div>
 </template>
 
@@ -67,6 +69,8 @@ import { onShow } from '@dcloudio/uni-app';
 import { useUserStore } from '@/stores/user';
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
+
+const themeVal = uni.getStorageSync('APP_THEME') || 'light'
 
 const vcodeRef = ref()
 const userStore = useUserStore();
@@ -149,6 +153,9 @@ const changePassword = () => {
 
 <style lang="scss">
 .modifyFundPassword-index {
+  height: 100vh;
+  // background: #ffffff;
+  background: var(--color-background-1);
   .inputTemp {
     padding-bottom: 100px;
     .baseInput {
@@ -168,6 +175,7 @@ const changePassword = () => {
         min-height: 46px;
         margin-left: -5px;
         background: #F6F7FB;
+        border-radius: 0px 8px 8px 0px;
       }
     }
   }
@@ -179,6 +187,7 @@ const changePassword = () => {
       height: 54px;
       background: #1777FF;
       border-radius: 6px 6px 6px 6px;
+      border: 1px solid #1777FF;
     }
   }
 }

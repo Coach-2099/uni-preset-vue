@@ -254,6 +254,13 @@
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "certification"
 			}
+		},
+		{
+			"path": "pages/theme/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "theme"
+			}
 		}
 	],
 	"globalStyle": {
