@@ -58,13 +58,13 @@ defineExpose({
 
 <style lang="scss" scoped>
 .exMark {
-  width: 38px;
+  width: 28px;
   height: 16px;
 }
 .tipModule {
   z-index: 99;
   .tipBox {
-    background: #F6F7FB;
+    background: var(--color-background-box);
     border-radius: 6px;
   }
 }

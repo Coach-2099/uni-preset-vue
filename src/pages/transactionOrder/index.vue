@@ -1,87 +1,92 @@
 <template>
   <div class="transactionOrder-index">
     <navigationBar :title="$t('transactionOrder.allOrder')"></navigationBar>
-    <div class="">
-      <van-tabs
-        v-model:active="active"
-        animated
-        sticky
-        shrink
-        @click-tab="onClickTab"
-      >
-        <van-tab v-for="(item, index) in activeList" :key="index" :title="item.title">
-          <div class="orderList px-20 pt-5 pb-25">
-            <div
-			  v-if="orderList.length>0"
-              class="orderBox mt-20 bg-white"
-              v-for="(item, index) in orderList"
-              :key="item.orderNo"
-            >
-              <div class="header pb-10">
-                <div class="top flex items-baseline">
-                  <p class="fs-16 fw-b">{{ item.symbol }}</p>
-                  <div class="orderTypeTemp ml-5 fs-10 text-red">{{ item.direction }}</div>
-                </div>
-                <div class="bottom flex justify-between items-center">
-                  <p class="fs-12 text-gray">{{ formatISODate(item.createTime) }}</p>
-                  <div class="rightTemp flex justify-between items-baseline">
-                    <p class="fs-12 text-gray">{{ item.orderNo }}</p>
-                    <div class="ml-5 copyImg" @click="copyText(item.orderNo)">
-                      <image
-                        src="/static/images/copy.png"
-                        mode="scaleToFill"
-                      />
+    <div class="transactionOrderBox">
+      <van-config-provider :theme="themeVal">
+        <van-tabs
+          v-model:active="active"
+          animated
+          sticky
+          shrink
+          background="var(--color-background-1)"
+          title-active-color="var(--color-tab-text)"
+          title-inactive-color="#B0B0B0"
+          @click-tab="onClickTab"
+        >
+          <van-tab v-for="(item, index) in activeList" :key="index" :title="item.title">
+            <div class="orderList px-20 pt-5 pb-25">
+              <div
+                v-if="orderList.length>0"
+                class="orderBox mt-20 bg-white"
+                v-for="(item, index) in orderList"
+                :key="item.orderNo"
+              >
+                <div class="header pb-10">
+                  <div class="top flex items-baseline">
+                    <p class="fs-16 fw-b">{{ item.symbol }}</p>
+                    <div class="orderTypeTemp ml-5 fs-10 text-red">{{ item.direction }}</div>
+                  </div>
+                  <div class="bottom flex justify-between items-center">
+                    <p class="fs-12 text-gray">{{ formatISODate(item.createTime) }}</p>
+                    <div class="rightTemp flex justify-between items-baseline">
+                      <p class="fs-12 text-gray">{{ item.orderNo }}</p>
+                      <div class="ml-5 copyImg" @click="copyText(item.orderNo)">
+                        <image
+                          src="/static/images/copy.png"
+                          mode="scaleToFill"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="content" v-if="active ===0">
-				  <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-				    <p>{{ $t('transactionOrder.tradingMethod') }}</p>
-				    <p>{{ item.dealWay }}</p>
-				  </div>
-                <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-                  <p>{{ $t('transactionOrder.orderPrice') }}</p>
-                  <p>{{ item.tradePrice }}</p>
-                </div>
-                <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-                  <p>{{ $t('transactionOrder.volumeVsOrderQuantity') }}</p>
-                  <p>{{item.completeNum}}/{{ item.tradeNum }}</p>
-                </div>
-                <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-                  <p>{{ $t('transactionOrder.status') }}</p>
-                  <p>{{ spotStatus(item.status) }}</p>
-                </div>
-              </div>
-			  <div class="content" v-else>
-				<div class="mt-15 fs-12 text-gray flex justify-between items-center">
-				  <p>{{ $t('transactionOrder.tradingMethod') }}</p>
-				  <p>{{ item.tradeType }}</p>
-				</div>
-			    <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-			      <p>{{ $t('transactionOrder.entryPrice') }}</p>
-			      <p>{{ item.entryPrice }}</p>
-			    </div>
-			    <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-			      <p>{{ $t('transactionOrder.liquidationPrice') }}</p>
-			      <p>{{ item.liquidationPrice }}</p>
-			    </div>
-			    <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-			      <p>{{ $t('noun.quantity') }}</p>
-			      <p>{{ item.quantity }}</p>
-			    </div>
-			    <div class="mt-15 fs-12 text-gray flex justify-between items-center">
-			      <p>{{ $t('transactionOrder.status') }}</p>
-			      <p>{{ formatStatus(item.status) }}</p>
-			    </div>
-			  </div>
+                <div class="content" v-if="active ===0">
+            <div class="mt-15 fs-12 text-gray flex justify-between items-center">
+              <p>{{ $t('transactionOrder.tradingMethod') }}</p>
+              <p>{{ item.dealWay }}</p>
             </div>
-			<div v-else class="defaultTemp">
-			  <dataDefault></dataDefault>
-			</div>
+                  <div class="mt-15 fs-12 text-gray flex justify-between items-center">
+                    <p>{{ $t('transactionOrder.orderPrice') }}</p>
+                    <p>{{ item.tradePrice }}</p>
+                  </div>
+                  <div class="mt-15 fs-12 text-gray flex justify-between items-center">
+                    <p>{{ $t('transactionOrder.volumeVsOrderQuantity') }}</p>
+                    <p>{{item.completeNum}}/{{ item.tradeNum }}</p>
+                  </div>
+                  <div class="mt-15 fs-12 text-gray flex justify-between items-center">
+                    <p>{{ $t('transactionOrder.status') }}</p>
+                    <p>{{ spotStatus(item.status) }}</p>
+                  </div>
+                </div>
+          <div class="content" v-else>
+          <div class="mt-15 fs-12 text-gray flex justify-between items-center">
+            <p>{{ $t('transactionOrder.tradingMethod') }}</p>
+            <p>{{ item.tradeType }}</p>
           </div>
-        </van-tab>
-      </van-tabs>
+            <div class="mt-15 fs-12 text-gray flex justify-between items-center">
+              <p>{{ $t('transactionOrder.entryPrice') }}</p>
+              <p>{{ item.entryPrice }}</p>
+            </div>
+            <div class="mt-15 fs-12 text-gray flex justify-between items-center">
+              <p>{{ $t('transactionOrder.liquidationPrice') }}</p>
+              <p>{{ item.liquidationPrice }}</p>
+            </div>
+            <div class="mt-15 fs-12 text-gray flex justify-between items-center">
+              <p>{{ $t('noun.quantity') }}</p>
+              <p>{{ item.quantity }}</p>
+            </div>
+            <div class="mt-15 fs-12 text-gray flex justify-between items-center">
+              <p>{{ $t('transactionOrder.status') }}</p>
+              <p>{{ formatStatus(item.status) }}</p>
+            </div>
+          </div>
+              </div>
+        <div v-else class="defaultTemp">
+          <dataDefault></dataDefault>
+        </div>
+            </div>
+          </van-tab>
+        </van-tabs>
+      </van-config-provider>
     </div>
   </div>
 </template>
@@ -96,6 +101,8 @@ import { useI18n } from 'vue-i18n';
 import {formatISODate} from '@/utils/util'
 
 const { t } = useI18n();
+const themeVal = uni.getStorageSync('APP_THEME') || 'light'
+
 const active = ref(0)
 const status = ref('') //查询状态
 const accountType = ref('FUTURES')
@@ -230,39 +237,41 @@ const goDetail = () => {
 }
 // #endif
 .transactionOrder-index {
-  .orderList {
-    // height: 100%;
-    min-height: calc(100vh - 95px);
-    background-color: #f6f8fc;
-    .orderBox {
-      box-shadow: 0px 0px 6px 1px rgba(0,8,242,0.08);
-      border-radius: 16px;
-      padding: 14px 20px;
-      .header {
-        border-bottom: 2px solid #f6f7fb;
-        .top {
-          .orderTypeTemp {
-            height: 16px;
-            line-height: 16px;
-            padding-left: 2px;
-            padding-right: 2px;
-            background: #FFD3D9;
-            border-radius: 3px 3px 3px 3px;
+  .transactionOrderBox {
+    .orderList {
+      // height: 100%;
+      min-height: calc(100vh - 95px);
+      background-color: var(--color-background-2);
+      .orderBox {
+        box-shadow: 0px 0px 6px 1px rgba(0,8,242,0.08);
+        border-radius: 16px;
+        padding: 14px 20px;
+        .header {
+          border-bottom: 2px solid var(--color-background-box);
+          .top {
+            .orderTypeTemp {
+              height: 16px;
+              line-height: 16px;
+              padding-left: 2px;
+              padding-right: 2px;
+              background: #FFD3D9;
+              border-radius: 3px 3px 3px 3px;
+            }
           }
-        }
-        .bottom {
-          .rightTemp {
-            .copyImg {
-              image {
-                width: 10px;
-                height: 10px;
+          .bottom {
+            .rightTemp {
+              .copyImg {
+                image {
+                  width: 10px;
+                  height: 10px;
+                }
               }
             }
           }
         }
-      }
-      .content {
-
+        .content {
+  
+        }
       }
     }
   }

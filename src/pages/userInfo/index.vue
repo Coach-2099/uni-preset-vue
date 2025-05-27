@@ -468,7 +468,7 @@ const loginOut = () => {
         left: 50%;
         border-left: 7px solid transparent;
         border-right: 7px solid transparent;
-        border-bottom: 9px solid #F6F7FB;
+        border-bottom: 9px solid var(--color-background-box);
       }
     }
     .infoBox {

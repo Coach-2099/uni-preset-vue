@@ -172,11 +172,11 @@ const confirm = async () => {
     .baseInput {
       .myInput {
         min-height: 45px;
-        background: #F6F7FB;
+        background: var(--color-background-box);
         border-radius: 8px 8px 8px 8px;
       }
       .rightText {
-        background: #F6F7FB;
+        background: var(--color-background-box);
         min-height: 52px;
         line-height: 52px;
         margin-left: -5px;
@@ -185,7 +185,7 @@ const confirm = async () => {
       .right-icon {
         min-height: 52px;
         margin-left: -5px;
-        background: #F6F7FB;
+        background: var(--color-background-box);
       }
     }
   }
@@ -195,7 +195,7 @@ const confirm = async () => {
     bottom: 35px;
     .confirmBtn {
       height: 54px;
-      background: #1777FF;
+      background: var(--color-light-primary);
       border-radius: 6px 6px 6px 6px;
     }
   }

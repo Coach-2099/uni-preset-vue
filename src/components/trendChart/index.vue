@@ -94,6 +94,8 @@ const chartRef: any = ref(null)
 const appplusKlinechartsRef: any = ref(null)
 const floatingPanelPropsRef: any = ref(null) //行情列表引用
 
+const themeVal = uni.getStorageSync('APP_THEME') || 'light'
+
 const theme = ref<'light' | 'dark'>('light')
 const currentInterval = ref(300) // 间隔多少时间的图表数据
 
@@ -318,6 +320,7 @@ onMounted(() => {
 })
 
 onShow(() => {
+  theme.value = themeVal
   if (controlStore.getQuotesData(props.type)?.symbol) symbolInfo.value = controlStore.getQuotesData(props.type)?.symbol
   // loadData()
 })

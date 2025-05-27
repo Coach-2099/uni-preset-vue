@@ -107,7 +107,7 @@ onLoad((option:any) =>{
 
 <style lang="scss">
 .assetDetail-index {
-  background: #F6F7FB;
+  background: var(--color-background-box);
   .successTemp {
     .successIcon {
       width: 8.54px;

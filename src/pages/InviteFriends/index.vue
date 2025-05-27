@@ -68,7 +68,8 @@ const banners = async()=>{
 
 <style lang="scss" scoped>
 .InviteFriends-index {
-  height: 100%;
+  height: 100vh;
+  background: var(--color-background);
   .content {
     padding: 0 18px;
     .bannerBox {
@@ -93,7 +94,7 @@ const banners = async()=>{
         word-break: break-all;
       }
       .copyBtn {
-        background: #1777FF;
+        background: var(--color-light-primary);
         border-radius: 8px 8px 8px 8px;
       }
     }

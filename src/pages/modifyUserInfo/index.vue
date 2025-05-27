@@ -103,7 +103,7 @@ const confirmFun = async () => {
     .base-input {
       line-height: 42px;
       height: 42px;
-      background: #F6F7FB;
+      background: var(--color-background-box);
       border-radius: 8px;
     }
     .input-placeholder {
@@ -113,7 +113,7 @@ const confirmFun = async () => {
   }
   .upuloadTemp {
     border: 1px dashed #237eff;
-    background: #f6f7fb;
+    background: var(--color-background-box);
     padding: 2.2rem 1.19rem;
     image {
       width: 3.49rem;
@@ -140,7 +140,7 @@ const confirmFun = async () => {
       padding: 0 20% 18px 20%;
     }
     .uploadBtn {
-      background: #1777ff;
+      background: var(--color-light-primary);
     }
   }
 }

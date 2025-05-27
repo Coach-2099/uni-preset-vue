@@ -26,7 +26,7 @@
           <div class="flex">
             <div class="flex">
               <div class="countryBox mr-10">
-                <van-button type="default" style="width: 90px;background-color: #F6F7FB;border: none;" @click="checkCountryFun">
+                <van-button type="default" style="width: 90px;background-color: var(--color-background-box);border: none;" @click="checkCountryFun">
                   <template #default>
                     <div class="flex items-center inputTemp">
                       <image
@@ -242,11 +242,11 @@ const onConfirm = ({ selectedValues, selectedOptions }: PickerConfirmEvent) => {
     .baseInput {
       .myInput {
         min-height: 45px;
-        background: #F6F7FB;
+        background: var(--color-background-box);
         border-radius: 8px 8px 8px 8px;
       }
       .rightText {
-        background: #F6F7FB;
+        background: var(--color-background-box);
         min-height: 45px;
         line-height: 45px;
         margin-left: -5px;
@@ -255,7 +255,7 @@ const onConfirm = ({ selectedValues, selectedOptions }: PickerConfirmEvent) => {
       .right-icon {
         min-height: 45px;
         margin-left: -5px;
-        background: #F6F7FB;
+        background: var(--color-background-box);
       }
     }
     .countryBox {
@@ -277,7 +277,7 @@ const onConfirm = ({ selectedValues, selectedOptions }: PickerConfirmEvent) => {
     bottom: 35px;
     .confirmBtn {
       height: 54px;
-      background: #1777FF;
+      background: var(--color-light-primary);
       border-radius: 6px 6px 6px 6px;
     }
   }

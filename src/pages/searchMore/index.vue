@@ -120,7 +120,7 @@ const cancel = () => {
 <style lang="scss" scoped>
 .searchMore-index {
   min-height: 100vh;
-  background: #F6F7FB;
+  background: var(--color-background-box);
   .back-arrow {
     .triangle-facing-left {
       display: inline-block;

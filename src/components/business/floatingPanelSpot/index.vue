@@ -25,6 +25,9 @@
         v-model:active="active"
         shrink
         ref="tabsRefs"
+        background="var(--color-background-1)"
+        title-active-color="var(--color-tab-text)"
+        title-inactive-color="#B0B0B0"
         @click-tab="onClickTab"
       >
         <van-tab :title="$t('noun.spotGoods')">

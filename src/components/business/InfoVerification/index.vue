@@ -23,7 +23,7 @@
                 class="flex-1 base-input"
                 style="
                 border: none;
-                background-color: #F6F7FB;"
+                background-color: var(--color-background-box);"
                 :placeholder="$t('tips.enterVCode')"
                 placeholder-class="input-placeholder"
               />
@@ -44,7 +44,7 @@
                 class="flex-1 base-input"
                 style="
                 border: none;
-                background-color: #F6F7FB;"
+                background-color: var(--color-background-box);"
                 :placeholder="$t('tips.enterVCode')"
                 placeholder-class="input-placeholder"
               />
@@ -66,7 +66,7 @@
             padding-left: 10px;
             border: 0px;
             border-radius: 5px;
-            background-color: #F6F7FB;"
+            background-color: var(--color-background-box);"
             class="flex-1 base-input"
             :placeholder="$t('tips.enterFundPassword')"
             :password="showPassword"
@@ -175,7 +175,7 @@ defineExpose({
 <style lang="scss" scoped>
 .contentTemp {
   .inputTemp {
-    background: #F6F7FB;
+    background: var(--color-background-box);
     border-radius: 5px;
     .leftIcon {
       width: 12.7px;
@@ -183,7 +183,7 @@ defineExpose({
     }
   }
   .right-icon {
-    background: #F6F7FB;
+    background: var(--color-background-box);
   }
 }
 </style>

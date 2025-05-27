@@ -3,7 +3,8 @@
     <navigationBar :title="$t('navBar.assetRecord')"></navigationBar>
     <div class="mt-20 pl-">
       <van-tabs
-        title-active-color="#333333"
+        background="var(--color-background-1)"
+        title-active-color="var(--color-tab-text)"
         title-inactive-color="#B0B0B0"
         v-model:active="active"
         ref="tabsRefs"

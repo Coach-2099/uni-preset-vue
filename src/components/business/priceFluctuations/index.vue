@@ -355,7 +355,7 @@ defineExpose({
       border-radius: 6px;
       height: 22px;
       line-height: 22px;
-      background: #F6F7FB;
+      background: var(--color-background-box);
       .downIcon {
         image {
           width: 5px;

@@ -146,7 +146,7 @@ onUnmounted(() => {
         .myBtn {
           height: 28px;
           border-radius: 6px;
-          background: #F6F7FB;
+          background: var(--color-background-box);
         }
       }
     }

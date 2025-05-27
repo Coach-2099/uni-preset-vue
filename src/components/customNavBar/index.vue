@@ -101,7 +101,7 @@ const routeConfig = computed(() => ({
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26">
       <defs>
         <clipPath id="a">
-          <path style="fill:var(--color-text)" d="M0 0h26v26H0z" style="#1777ff"/>
+          <path style="fill:var(--color-text)" d="M0 0h26v26H0z"/>
         </clipPath>
       </defs>
       <g style="clip-path:url(#a)">
@@ -269,7 +269,7 @@ const switchTab = (path: string) => {
   will-change: transform; /* 预声明动画属性 */
   /* background: rgba(255, 255, 255, 0.97); */
   background: var(color-background-1);
-  backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(60px);
 }
 
 .tabbar-content {

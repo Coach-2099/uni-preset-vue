@@ -15,7 +15,15 @@
       <!-- @click="goSearchMore" -->
     </div>
     <div class="quotesList">
-      <van-tabs v-model:active="active" @click-tab="onClickTab" sticky shrink>
+      <van-tabs
+        v-model:active="active"
+        @click-tab="onClickTab"
+        background="var(--color-background-1)"
+        title-active-color="var(--color-tab-text)"
+        title-inactive-color="#B0B0B0"
+        sticky
+        shrink
+      >
         <van-tab :title="$t('noun.spotGoods')">
           <quoteList
             ref="spotQuoteListRefs"

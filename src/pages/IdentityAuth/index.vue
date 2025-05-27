@@ -197,7 +197,7 @@ const uploadFun = async () => {
     .base-input {
       line-height: 42px;
       height: 42px;
-      background: #F6F7FB;
+      background: var(--color-background-box);
       border-radius: 8px;
     }
     .input-placeholder {
@@ -209,7 +209,7 @@ const uploadFun = async () => {
     margin-top: 35px;
     .upuloadTemp {
       border: 1px dashed #237eff;
-      background: #f6f7fb;
+      background: var(--color-background-box);
       height: 9.22rem;
       width: 9.77rem;
       padding-top: 2.4rem;
@@ -248,7 +248,7 @@ const uploadFun = async () => {
       padding: 0 10% 18px 10%;
     }
     .uploadBtn {
-      background: #1777ff;
+      background: var(--color-light-primary);
     }
   }
 }

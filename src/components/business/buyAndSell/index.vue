@@ -373,7 +373,7 @@ defineExpose({
 <style lang="scss" scoped>
 .buyAndSellMoudle-index {
   .btnBox {
-    background: #F6F7FB;
+    background: var(--color-background-box);
     border-radius: 6px 6px 6px 6px;
     height: 28px;
     line-height: 28px;
@@ -397,7 +397,7 @@ defineExpose({
   }
   .inputBox {
     .baseSelect {
-      background: #F6F7FB;
+      background: var(--color-background-box);
       border-radius: 8px 8px 8px 8px;
       height: 28px;
       .leftBox {
@@ -414,7 +414,7 @@ defineExpose({
       }
     }
     .baseInput-Special {
-      background: #F6F7FB;
+      background: var(--color-background-box);
       border-radius: 8px 8px 8px 8px;
       height: 48px;
       .price-label {
@@ -451,7 +451,7 @@ defineExpose({
       }
     }
     .baseText {
-      background: #F6F7FB;
+      background: var(--color-background-box);
       border-radius: 8px 8px 8px 8px;
       height: 28px;
     }

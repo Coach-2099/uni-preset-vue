@@ -1,56 +1,67 @@
 <template>
   <div class="trade-index">
-    <div class="top bg-white pos-relative">
-      <div class="switch-container-box bg-white pos-fixed w-100 flex justify-between">
-        <div class="w-100 pos-relative switch-container flex justify-between">
-          <div 
-            class="switch-item fs-14" 
-            :class="{ active: activeTab === 'left' }"
-            @click="switchTab('left')"
-          >{{ $t('noun.trendChart') }}</div>
-          <div 
-            class="switch-item fs-14" 
-            :class="{ active: activeTab === 'right' }"
-            @click="switchTab('right')"
-          >{{ $t('noun.trade') }}</div>
-          <div 
-            class="slider"
-            :style="sliderStyle"
-          ></div>
+    <van-config-provider :theme="themeVal">
+      <div class="top bg-white pos-relative">
+        <div class="switch-container-box bg-white pos-fixed w-100 flex justify-between">
+          <div class="w-100 pos-relative switch-container flex justify-between">
+            <div 
+              class="switch-item fs-14" 
+              :class="{ active: activeTab === 'left' }"
+              @click="switchTab('left')"
+            >{{ $t('noun.trendChart') }}</div>
+            <div 
+              class="switch-item fs-14" 
+              :class="{ active: activeTab === 'right' }"
+              @click="switchTab('right')"
+            >{{ $t('noun.trade') }}</div>
+            <div 
+              class="slider"
+              :style="sliderStyle"
+            ></div>
+          </div>
+        </div>
+        <div class="tabBox">
+          <div v-if="activeTab === 'left'">
+            <trendChart type="SPOT"></trendChart>
+          </div>
+          <div v-if="activeTab === 'right'">
+            <tradingFunArea type="SPOT" :symbol="symbol"></tradingFunArea>
+          </div>
         </div>
       </div>
-      <div class="tabBox">
-        <div v-if="activeTab === 'left'">
-          <trendChart type="SPOT"></trendChart>
-        </div>
-        <div v-if="activeTab === 'right'">
-          <tradingFunArea type="SPOT" :symbol="symbol"></tradingFunArea>
+      <div class="bottom pos-relative bg-white mt-5 px-10">
+        <van-tabs
+          v-model:active="active"
+          offset-top="74"
+          @click-tab="onClickTab"
+          background="var(--color-background-1)"
+          title-active-color="var(--color-tab-text)"
+          title-inactive-color="#B0B0B0"
+          shrink
+          sticky
+        >
+          <van-tab v-if="activeTab === 'left'" :title="$t('contract.orderBook')">
+            <realTimeTransactions ref="realTimeTransactionsRef" type="SPOT"></realTimeTransactions>
+          </van-tab>
+          <van-tab v-if="activeTab === 'left'" :title="$t('contract.transactions')">
+            <transactionOrder ref="transactionOrderRef" type="SPOT"></transactionOrder>
+          </van-tab>
+          <van-tab v-if="activeTab === 'right'" :title="$t('contract.order')">
+            <tradeOrder ref="tradeOrderRef"></tradeOrder>
+          </van-tab>
+        </van-tabs>
+        <div v-if="activeTab === 'right'" class="orderIconBox pos-absolute" @click="goOrder">
+          <image
+            src="/static/images/checkBit.png"
+            mode="scaleToFill"
+          />
         </div>
       </div>
-    </div>
-    <div class="bottom pos-relative bg-white mt-5 px-10">
-      <van-tabs v-model:active="active" offset-top="74" @click-tab="onClickTab" shrink sticky>
-        <van-tab v-if="activeTab === 'left'" :title="$t('contract.orderBook')">
-          <realTimeTransactions ref="realTimeTransactionsRef" type="SPOT"></realTimeTransactions>
-        </van-tab>
-        <van-tab v-if="activeTab === 'left'" :title="$t('contract.transactions')">
-          <transactionOrder ref="transactionOrderRef" type="SPOT"></transactionOrder>
-        </van-tab>
-        <van-tab v-if="activeTab === 'right'" :title="$t('contract.order')">
-          <tradeOrder ref="tradeOrderRef"></tradeOrder>
-        </van-tab>
-      </van-tabs>
-      <div v-if="activeTab === 'right'" class="orderIconBox pos-absolute" @click="goOrder">
-        <image
-          src="/static/images/checkBit.png"
-          mode="scaleToFill"
-        />
+      <div v-if="activeTab === 'left'" class="btnBox pos-fixed w-100 flex">
+        <van-button class="buyBtn flex-1" type="success" @click="switchTab('right')">{{ $t('operation.buy') }}</van-button>
+        <van-button class="sellBtn flex-1" type="danger" @click="switchTab('right')">{{ $t('operation.sell') }}</van-button>
       </div>
-    </div>
-    <div v-if="activeTab === 'left'" class="btnBox pos-fixed w-100 flex">
-      <van-button class="buyBtn flex-1" type="success" @click="switchTab('right')">{{ $t('operation.buy') }}</van-button>
-      <van-button class="sellBtn flex-1" type="danger" @click="switchTab('right')">{{ $t('operation.sell') }}</van-button>
-    </div>
+    </van-config-provider>
     <CustomNavBar></CustomNavBar>
   </div>
 </template>
@@ -72,6 +83,7 @@ const controlStore = useControlStore();
 const active = ref(0)
 
 const activeTab = ref<'left' | 'right'>('left')
+const themeVal = uni.getStorageSync('APP_THEME') || 'light'
 
 const realTimeTransactionsRef: any = ref(null)
 const transactionOrderRef: any = ref(null)
@@ -159,7 +171,7 @@ const switchTab = (tab: 'left' | 'right') => {
 
 const sliderStyle = computed(() => ({
   transform: `translateX(${activeTab.value === 'left' ? '0' : '100%'})`,
-  width: '50%' // 与switch-item宽度匹配
+  // width: '50%' // 与switch-item宽度匹配
 }))
 
 const goOrder = () => {
@@ -204,8 +216,8 @@ const onClickTab = (e: any) => {
 }
 // #endif
 .trade-index {
-  background: #F6F7FB;
-  height: 100%;
+  background: var(--color-background-2);
+  height: 100vh;
   .top {
     padding: 20rpx;
     .switch-container-box {
@@ -231,11 +243,11 @@ const onClickTab = (e: any) => {
           position: relative;
           z-index: 1;
           border-radius: 6px  6px  6px  6px;
-          background: #F6F7FB;
+          background: var(--color-background-box);
           color: #B0B0B0;
           &.active {
             color: #FFFFFF;
-            background-color: #1777FF;
+            background-color: var(--color-light-primary);
           }
         }
   
@@ -244,7 +256,7 @@ const onClickTab = (e: any) => {
           left: 0;
           top: 0;
           height: 100%;
-          background: #fff;
+          background: var(--color-background-box);
           // box-shadow: 0 2px 4px rgba(0,0,0,0.1);
           transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           border-radius: 6px;
@@ -272,7 +284,7 @@ const onClickTab = (e: any) => {
     right:0px;
     gap: 7px;
     height: 50px;
-    background: #fff;
+    background: var(--color-background);
     z-index: 99;
     .van-button {
       border-radius: 6px;
@@ -289,7 +301,7 @@ const onClickTab = (e: any) => {
 :deep(.van-tabs) {
   .van-sticky {
     .van-tabs__wrap {
-      border-bottom: 2px solid #f6f7fb !important;
+      border-bottom: 2px solid var(--color-background-box) !important;
     }
   }
 }

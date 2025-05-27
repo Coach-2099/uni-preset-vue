@@ -3,72 +3,50 @@
     <navigationBar :title="$t('transfer.title')">
       <template #right>
         <div class="headerRightIcon" @click="goAssetRecord">
-          <image
+          <!-- <image
             class="rechargeImg"
             src="/static/svg/tools/rechargeLog.svg"
             mode="scaleToFill"
-          />
+          /> -->
+          <svg
+            class="rechargeImg"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 21.605 22"
+          >
+            <defs>
+              <clipPath id="a">
+                <path d="M0 0h21.605v22H0z" style="fill:none"/>
+              </clipPath>
+            </defs>
+            <g style="fill:none">
+              <path style="fill: var(--color-text)" d="M9.9 22H4.6A4.608 4.608 0 0 1 0 17.4V4.6A4.608 4.608 0 0 1 4.6 0h9.9a4.608 4.608 0 0 1 4.6 4.6v3.969a.789.789 0 0 1-1.577 0V4.6a3.029 3.029 0 0 0-3.026-3.026H4.6A3.029 3.029 0 0 0 1.577 4.6v12.8A3.029 3.029 0 0 0 4.6 20.423h5.3A.789.789 0 1 1 9.9 22"/>
+              <path style="fill: var(--color-text)" d="M13.877 5.629h-8.65a.789.789 0 1 1 0-1.577h8.65a.789.789 0 1 1 0 1.577M8.364 10.099H5.23a.789.789 0 1 1 0-1.577h3.135a.789.789 0 1 1 0 1.577"/>
+              <path style="fill: var(--color-light-primary)" d="M17.46 16.543h-2.1a.789.789 0 0 1 0-1.577h2.1a.789.789 0 0 1 0 1.577"/>
+              <path style="fill: var(--color-light-primary)" d="M15.36 16.543a.789.789 0 0 1-.789-.789v-2.452a.789.789 0 0 1 1.577 0v2.453a.789.789 0 0 1-.789.789"/>
+              <path style="fill: var(--color-light-primary)" d="M15.359 22a6.246 6.246 0 1 1 6.246-6.246A6.253 6.253 0 0 1 15.359 22m0-10.914a4.668 4.668 0 1 0 4.668 4.668 4.674 4.674 0 0 0-4.668-4.663"/>
+            </g>
+          </svg>
         </div>
       </template>
     </navigationBar>
-    <div class="accountTemp pt-25 pb-25 px-25 bg-white">
-      <transition-group name="flip" tag="div" class="account-container">
-        <div key="from" class="flex justify-between items-center">
-          <div class="flex justify-between items-center w-100">
-          <div class="flex justify-start items-center w-100">
-            <p class="text-gray fs-14 mr-25">{{ $t('transfer.from') }}</p>
-            <van-popover
-              placement="bottom-start"
-              :actions="actionsAccountType"
-              @select="onSelectFromAccountType"
-              style="--van-popover-action-width: 138px"
-              :teleport="null"
-            >
-              <template #reference>
-                <div class="baseSelect w-100 py-5 flex justify-between items-center">
-                  <div class="leftBox flex items-center w-100">
-                    <p class="fs-14 text-black">{{ fromAccount?.text }}</p>
-                  </div>
-                  <div class="rightBox flex items-center">
-                    <image
-                      class="downIcon"
-                      src="/static/images/down.png"
-                      mode="scaleToFill"
-                    />
-                  </div>
-                </div>
-              </template>
-            </van-popover>
-          </div>
-        </div>
-        </div>
-
-        <div class="divLine mt-25 mb-25 bg-white pos-relative">
-          <van-divider>
-            <image
-              @click="exchange"
-              class="pos-absolute exchangeIcon"
-              src="/static/svg/tools/exchange.svg"
-              mode="scaleToFill"
-            />
-          </van-divider>
-        </div>
-
-        <div key="to" class="flex justify-between items-center">
-          <div class="flex justify-between items-center w-100">
+    <van-config-provider :theme="themeVal">
+      <div class="accountTemp pt-25 pb-25 px-25 bg-white">
+        <transition-group name="flip" tag="div" class="account-container">
+          <div key="from" class="flex justify-between items-center">
             <div class="flex justify-between items-center w-100">
-              <p class="text-gray fs-14 mr-25">{{ $t('transfer.to') }}</p>
+            <div class="flex justify-start items-center w-100">
+              <p class="text-gray fs-14 mr-25">{{ $t('transfer.from') }}</p>
               <van-popover
                 placement="bottom-start"
-                :actions="toAccountType"
-                @select="onSelectToAccountType"
+                :actions="actionsAccountType"
+                @select="onSelectFromAccountType"
                 style="--van-popover-action-width: 138px"
                 :teleport="null"
               >
                 <template #reference>
                   <div class="baseSelect w-100 py-5 flex justify-between items-center">
-                    <div class="leftBox flex items-center">
-                      <p class="fs-14 text-black">{{ toAccount?.text }}</p>
+                    <div class="leftBox flex items-center w-100">
+                      <p class="fs-14 text-black">{{ fromAccount?.text }}</p>
                     </div>
                     <div class="rightBox flex items-center">
                       <image
@@ -81,80 +59,122 @@
                 </template>
               </van-popover>
             </div>
-            <!-- <image
-              class="downIcon"
-              src="/static/images/downGray.png"
-              mode="scaleToFill"
-            /> -->
           </div>
-        </div>
-      </transition-group>
-    </div>
-    <div class="inputBox mt-5 bg-white">
-      <div class="pt-20 mb-20">
-        <p class="fs-16 text-black">{{ $t('noun.currency') }}</p>
-        <div class="baseSelect w-100 mt-10 pl-15 pr-25 flex justify-between items-cneter">
-			<van-popover
-			  placement="bottom-end"
-			  :actions="transferData"
-			  @select="onSelectTransferToken"
-        style="--van-popover-action-width: 138px"
-        :teleport="null"
-			>
-			  <template #reference>
-			    <div class="baseSelect w-100 py-5 flex justify-between items-center">
-			      <div class="leftBox flex items-center">
-					<p class="fs-14 fw-b ml-5 mr-5 text-black">{{transferToken?.text}}</p>
-			      </div>
-			      <div class="rightBox flex items-center">
-			        <image
-			          class="downIcon"
-			          src="/static/images/down.png"
-			          mode="scaleToFill"
-			        />
-			      </div>
-			    </div>
-			  </template>
-			</van-popover>
-        </div>
-      </div>
-      <div class="mt-25">
-        <div class="flex justify-between items-center">
-          <p class="fs-16 text-black">{{ $t('withdrawal.amount') }}</p>
-          <!-- <div class="flex items-end">
-            <p class="fs-16 text-black mr-5">0</p>
-            <div class="rightImg">
+          </div>
+
+          <div class="divLine mt-25 mb-25 bg-white pos-relative">
+            <van-divider>
               <image
-                src="/static/svg/tools/add_Circle.svg"
+                @click="exchange"
+                class="pos-absolute exchangeIcon"
+                src="/static/svg/tools/exchange.svg"
                 mode="scaleToFill"
               />
+            </van-divider>
+          </div>
+
+          <div key="to" class="flex justify-between items-center">
+            <div class="flex justify-between items-center w-100">
+              <div class="flex justify-between items-center w-100">
+                <p class="text-gray fs-14 mr-25">{{ $t('transfer.to') }}</p>
+                <van-popover
+                  placement="bottom-start"
+                  :actions="toAccountType"
+                  @select="onSelectToAccountType"
+                  style="--van-popover-action-width: 138px"
+                  :teleport="null"
+                >
+                  <template #reference>
+                    <div class="baseSelect w-100 py-5 flex justify-between items-center">
+                      <div class="leftBox flex items-center">
+                        <p class="fs-14 text-black">{{ toAccount?.text }}</p>
+                      </div>
+                      <div class="rightBox flex items-center">
+                        <image
+                          class="downIcon"
+                          src="/static/images/down.png"
+                          mode="scaleToFill"
+                        />
+                      </div>
+                    </div>
+                  </template>
+                </van-popover>
+              </div>
+              <!-- <image
+                class="downIcon"
+                src="/static/images/downGray.png"
+                mode="scaleToFill"
+              /> -->
             </div>
-          </div> -->
+          </div>
+        </transition-group>
+      </div>
+      <div class="inputBox mt-5 bg-white">
+        <div class="pt-20 mb-20">
+          <p class="fs-16 text-black">{{ $t('noun.currency') }}</p>
+          <div class="baseSelect w-100 mt-10 pl-15 pr-25 flex justify-between items-cneter">
+        <van-popover
+          placement="bottom-end"
+          :actions="transferData"
+          @select="onSelectTransferToken"
+          style="--van-popover-action-width: 138px"
+          :teleport="null"
+        >
+          <template #reference>
+            <div class="baseSelect w-100 py-5 flex justify-between items-center">
+              <div class="leftBox flex items-center">
+            <p class="fs-14 fw-b ml-5 mr-5 text-black">{{transferToken?.text}}</p>
+              </div>
+              <div class="rightBox flex items-center">
+                <image
+                  class="downIcon"
+                  src="/static/images/down.png"
+                  mode="scaleToFill"
+                />
+              </div>
+            </div>
+          </template>
+        </van-popover>
+          </div>
         </div>
-        <div class="baseInput mt-10 flex justify-between items-center">
-          <input
-            v-model="amount"
-            class="myInput flex-1 px-10 py-10 w-100"
-            :placeholder="$t('transfer.enterTransferAmount')"
-            placeholder-class="input-placeholder"
-          />
-          <text class="fs-16 px-10 rightText">
-            <text class="text-light-blue" @click="transferMax">{{ $t('withdrawal.max') }}</text> |
-            <text class="text-black">{{transferToken?.text}}</text>
-          </text>
+        <div class="mt-25">
+          <div class="flex justify-between items-center">
+            <p class="fs-16 text-black">{{ $t('withdrawal.amount') }}</p>
+            <!-- <div class="flex items-end">
+              <p class="fs-16 text-black mr-5">0</p>
+              <div class="rightImg">
+                <image
+                  src="/static/svg/tools/add_Circle.svg"
+                  mode="scaleToFill"
+                />
+              </div>
+            </div> -->
+          </div>
+          <div class="baseInput mt-10 flex justify-between items-center">
+            <input
+              v-model="amount"
+              class="myInput flex-1 px-10 py-10 w-100"
+              :placeholder="$t('transfer.enterTransferAmount')"
+              placeholder-class="input-placeholder"
+            />
+            <text class="fs-16 px-10 rightText">
+              <text class="text-light-blue" @click="transferMax">{{ $t('withdrawal.max') }}</text> |
+              <text class="text-black">{{transferToken?.text}}</text>
+            </text>
+          </div>
+        </div>
+        <div class="mt-25 flex justify-between items-center">
+          <p class="text-gray fs-16">{{ $t('transfer.availableAmount') }}</p>
+          <p class="text-black fs-16">{{tokenBalance}} {{transferToken?.text}}</p>
         </div>
       </div>
-      <div class="mt-25 flex justify-between items-center">
-        <p class="text-gray fs-16">{{ $t('transfer.availableAmount') }}</p>
-        <p class="text-black fs-16">{{tokenBalance}} {{transferToken?.text}}</p>
+      <div class="btnBox bg-white w-100 pos-fixed">
+        <van-button
+          class="confirmBtn w-100 fw-b fs-20"
+          type="primary" @click="transfer"
+        >{{ $t('common.confirm') }}</van-button>
       </div>
-    </div>
-    <div class="btnBox bg-white w-100 pos-fixed">
-      <van-button
-        class="confirmBtn w-100 fw-b fs-20"
-        type="primary" @click="transfer"
-      >{{ $t('common.confirm') }}</van-button>
-    </div>
+    </van-config-provider>
   </div>
 </template>
 
@@ -165,6 +185,8 @@ import { getTrasferCoins, getBalance, postTransfer } from '@/api/asset'
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+const themeVal = uni.getStorageSync('APP_THEME') || 'light'
+
 const amount = ref(''); //转账金额
 const fromAccount = ref<AccountType>(
 	{ text: t('transfer.accounts.wallet'), value: 'WALLET' }
@@ -306,7 +328,8 @@ const goAssetRecord = () => {
 
 <style lang="scss" scoped>
 .transfer-index {
-  background: #F6F7FB;
+  background: var(--color-background);
+  height: 100vh;
   .headerRightIcon {
     .rechargeImg {
       width: 22px;
@@ -335,7 +358,7 @@ const goAssetRecord = () => {
     padding-right: 18px;
     padding-bottom: 100px;
     .baseSelect {
-      background: #F6F7FB;
+      background: var(--color-background-box);
       border-radius: 8px 8px 8px 8px;
       height: 42px;
       .leftBox {
@@ -354,11 +377,11 @@ const goAssetRecord = () => {
     .baseInput {
       .myInput {
         min-height: 52px;
-        background: #F6F7FB;
+        background: var(--color-background-box);
         border-radius: 8px 8px 8px 8px;
       }
       .rightText {
-        background: #F6F7FB;
+        background: var(--color-background-box);
         min-height: 52px;
         line-height: 52px;
         margin-left: -5px;
@@ -372,7 +395,7 @@ const goAssetRecord = () => {
     bottom: 35px;
     .confirmBtn {
       height: 54px;
-      background: #1777FF;
+      background: var(--color-light-primary);
       border-radius: 6px 6px 6px 6px;
     }
   }

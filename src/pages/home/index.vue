@@ -203,9 +203,6 @@
                 <clipPath id="a">
                   <path d="M0 0h29.32v26H0z" style="fill:none"/>
                 </clipPath>
-                <!-- <style>
-                  .a{fill:none}.c{fill:#1777ff}
-                </style> -->
               </defs>
               <g style="clip-path:url(#a)" transform="translate(4 4.999)">
                 <path style="fill:var(--color-light-primary)" d="M28.212 22.673h-6.654a1.107 1.107 0 0 1 0-2.215h6.654a1.107 1.107 0 1 1 0 2.215"/>
@@ -760,7 +757,7 @@ const getCustomer =async() =>{
       .Dot {
         width: 8px;
         height: 8px;
-        background: #1777FF;
+        background: var(--color-light-primary);
         border-radius: 50%;
       }
     }

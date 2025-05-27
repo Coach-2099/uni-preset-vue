@@ -1,27 +1,29 @@
 <template>
-  <van-popup
-    v-model:show="showBottom"
-    position="bottom"
-    round
-    lock-scroll
-    lazy-render
-    :style="{ height: '90%', display: 'flex', flexDirection: 'column'}"
-  >
-    <div class="searchModule bg-white pt-15 pos-fixed w-100">
-      <van-search v-model="searchVal" :placeholder="$t('common.enterDepositCurrency')" @update:model-value="onSearch" />
-    </div>
-    <div class="currencyList" style="flex: 1; overflow-y: auto;">
-      <div v-for="(item,index) in searchItems" :key=index class="currencyBox flex justify-start items-center px-20 py-5 mt-5 mb-10" @click="chooseToken(item)">
-        <image
-          class="currencyImg"
-          :src="item.img"
-          mode="scaleToFill"
-        ></image>
-        <p class="fw-b fs-14 mx-5 text-black">{{item.token}}</p>
-        <!-- <p class="fs-10 text-gray">Bitcoin</p> -->
+  <van-config-provider :theme="themeVal">
+    <van-popup
+      v-model:show="showBottom"
+      position="bottom"
+      round
+      lock-scroll
+      lazy-render
+      :style="{ height: '90%', display: 'flex', flexDirection: 'column'}"
+    >
+      <div class="searchModule bg-white pt-15 pos-fixed w-100">
+        <van-search v-model="searchVal" :placeholder="$t('common.enterDepositCurrency')" @update:model-value="onSearch" />
       </div>
-    </div>
-  </van-popup>
+      <div class="currencyList" style="flex: 1; overflow-y: auto;">
+        <div v-for="(item,index) in searchItems" :key=index class="currencyBox flex justify-start items-center px-20 py-5 mt-5 mb-10" @click="chooseToken(item)">
+          <image
+            class="currencyImg"
+            :src="item.img"
+            mode="scaleToFill"
+          ></image>
+          <p class="fw-b fs-14 mx-5 text-black">{{item.token}}</p>
+          <!-- <p class="fs-10 text-gray">Bitcoin</p> -->
+        </div>
+      </div>
+    </van-popup>
+  </van-config-provider>
 </template>
 
 <script setup lang="ts">
@@ -33,6 +35,7 @@ const searchVal = ref('')
 const showBottom = ref(false)
 const coinItems = ref([])
 let searchItems =ref([])
+const themeVal = uni.getStorageSync('APP_THEME') || 'light'
 
 const  showFLoatingPanel = (type: string) => {
   showBottom.value = !showBottom.value

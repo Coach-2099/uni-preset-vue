@@ -137,7 +137,7 @@ const changePassword = () => {
       border: none;
       border-radius: 5px;
       .right-icon {
-        background: #F6F7FB;
+        background: var(--color-background-box);
       }
     }
   }
@@ -145,7 +145,7 @@ const changePassword = () => {
     margin-top: 20%;
   }
   .base-input {
-    background: #F6F7FB;
+    background: var(--color-background-box);
   }
   .notes {
     margin-top: 30px;

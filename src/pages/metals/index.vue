@@ -34,6 +34,9 @@
         offset-top="74"
         @click-tab="onClickTab"
         ref="tabsRefs"
+        background="var(--color-background-1)"
+        title-active-color="var(--color-tab-text)"
+        title-inactive-color="#B0B0B0"
         shrink
         sticky
       >
@@ -195,8 +198,8 @@ const sliderStyle = computed(() => ({
 }
 // #endif
 .contract-index {
-  background: #F6F7FB;
-  height: 100%;
+  background: var(--color-background-box);
+  height: 100vh;
   .top {
     padding: 20rpx;
     .switch-container-box {
@@ -222,11 +225,11 @@ const sliderStyle = computed(() => ({
           position: relative;
           z-index: 1;
           border-radius: 6px  6px  6px  6px;
-          background: #F6F7FB;
+          background: var(--color-background-box);
           color: #B0B0B0;
           &.active {
             color: #FFFFFF;
-            background-color: #1777FF;
+            background-color: var(--color-light-primary);
           }
         }
   
@@ -265,7 +268,7 @@ const sliderStyle = computed(() => ({
     right:0px;
     gap: 7px;
     height: 50px;
-    background: #fff;
+    background: var(--color-background);
     z-index: 99;
     .van-button {
       border-radius: 6px;
@@ -283,7 +286,7 @@ const sliderStyle = computed(() => ({
 :deep(.van-tabs) {
   .van-sticky {
     .van-tabs__wrap {
-      border-bottom: 2px solid #f6f7fb !important;
+      border-bottom: 2px solid var(--color-background-box) !important;
     }
   }
 }

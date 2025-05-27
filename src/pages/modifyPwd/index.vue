@@ -134,18 +134,18 @@ const confirmFun = async () => {
     .baseInput {
       .myInput {
         min-height: 45px;
-        background: #F6F7FB;
+        background: var(--color-background-box);
         border-radius: 8px 8px 8px 8px;
       }
       .readOnly {
         .uni-input-wrapper {
           .uni-input-input:disabled {
-            color: #1777FF !important; // 字体颜色
+            color: var(--color-light-primary) !important; // 字体颜色
           }
         }
       }
       .rightText {
-        background: #F6F7FB;
+        background: var(--color-background-box);
         min-height: 52px;
         line-height: 52px;
         margin-left: -5px;
@@ -154,7 +154,7 @@ const confirmFun = async () => {
       .right-icon {
         min-height: 46px;
         margin-left: -5px;
-        background: #F6F7FB;
+        background: var(--color-background-box);
       }
     }
   }
@@ -164,7 +164,7 @@ const confirmFun = async () => {
     bottom: 35px;
     .confirmBtn {
       height: 54px;
-      background: #1777FF;
+      background: var(--color-light-primary);
       border-radius: 6px 6px 6px 6px;
     }
   }

@@ -161,11 +161,11 @@ const changePassword = () => {
     .baseInput {
       .myInput {
         min-height: 45px;
-        background: #F6F7FB;
+        background: var(--color-background-box);
         border-radius: 8px 8px 8px 8px;
       }
       .rightText {
-        background: #F6F7FB;
+        background: var(--color-background-box);
         min-height: 52px;
         line-height: 52px;
         margin-left: -5px;
@@ -174,7 +174,7 @@ const changePassword = () => {
       .right-icon {
         min-height: 46px;
         margin-left: -5px;
-        background: #F6F7FB;
+        background: var(--color-background-box);
         border-radius: 0px 8px 8px 0px;
       }
     }
@@ -185,9 +185,9 @@ const changePassword = () => {
     bottom: 35px;
     .confirmBtn {
       height: 54px;
-      background: #1777FF;
+      background: var(--color-light-primary);
       border-radius: 6px 6px 6px 6px;
-      border: 1px solid #1777FF;
+      border: 1px solid var(--color-light-primary);
     }
   }
 }

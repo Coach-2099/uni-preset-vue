@@ -375,7 +375,8 @@ const openContractAddress = () => {
 
 <style lang="scss" scoped>
 .withdrawal-index {
-  background: #F6F7FB;
+  background: var(--color-background-box);
+  height: 100vh;
   .headerRightIcon {
     .rechargeImg {
       width: 22px;
@@ -386,7 +387,7 @@ const openContractAddress = () => {
     padding-left: 18px;
     padding-right: 18px;
     .baseSelect {
-      background: #F6F7FB;
+      background: var(--color-background-box);
       border-radius: 8px 8px 8px 8px;
       height: 42px;
       .leftBox {
@@ -405,12 +406,12 @@ const openContractAddress = () => {
     .baseInput {
       .myInput {
         min-height: 52px;
-        background: #F6F7FB;
+        background: var(--color-background-box);
         border-radius: 8px 8px 8px 8px;
       }
       .rightText {
-        background: #F6F7FB;
-        color: #1777FF;
+        background: var(--color-background-box);
+        color: var(--color-light-primary);
         min-height: 52px;
         line-height: 52px;
         margin-left: -5px;
@@ -431,7 +432,7 @@ const openContractAddress = () => {
     .withdrawBtn {
       width: 40vw;
       height: 54px;
-      background: #1777FF;
+      background: var(--color-light-primary);
       border-radius: 6px 6px 6px 6px;
     }
   }

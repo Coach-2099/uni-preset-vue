@@ -11,6 +11,9 @@
     <div class="register-form">
       <van-tabs
         v-moiphonedel:active="active"
+        background="var(--color-background-1)"
+        title-active-color="var(--color-tab-text)"
+        title-inactive-color="#B0B0B0"
         shrink
         @click-tab="onClickTab"
       >
@@ -26,7 +29,7 @@
                 class="flex-1 base-input"
                 style="
                   border:none;
-                  background-color: #F6F7FB;"
+                  background-color: var(--color-background-box);"
                 placeholder="eg: xxxx@gmail.com"
                 placeholder-class="input-placeholder"
                 @input="inputPhone"
@@ -39,7 +42,7 @@
             <!-- <div class="inputTitle fw-b mb-5">{{ $t('common.phone') }}</div> -->
             <div class="flex">
               <div class="countryBox mr-10">
-                <van-button type="default" style="width: 90px;background-color: #F6F7FB;border: none;" @click="checkCountryFun">
+                <van-button type="default" style="width: 90px;background-color: var(--color-background-box);border: none;" @click="checkCountryFun">
                   <template #default>
                     <div class="flex items-center inputTemp">
                       <image
@@ -76,7 +79,7 @@
               <input
                 v-model="userName"
                 class="flex-1 base-input"
-                style="background-color: #F6F7FB;border: none;"
+                style="background-color: var(--color-background-box);border: none;"
                 :placeholder="$t('tips.enterPhone')"
                 placeholder-class="input-placeholder"
               />
@@ -97,7 +100,7 @@
               class="flex-1 base-input"
               style="
               border: none;
-              background-color: #F6F7FB;"
+              background-color: var(--color-background-box);"
               :placeholder="$t('tips.enterVCode')"
               placeholder-class="input-placeholder"
               @input="inputPhoneCode"
@@ -125,7 +128,7 @@
               border: none;
               padding-left: 10px;
               border-radius: 5px;
-              background-color: #F6F7FB;"
+              background-color: var(--color-background-box);"
               class="flex-1"
               :placeholder="$t('tips.enterPassword')"
               :password="showPassword"
@@ -149,7 +152,7 @@
           <input
             v-model="InvitationCode"
             style="
-              background-color: #F6F7FB;
+              background-color: var(--color-background-box);
               border: none;"
             class="flex-1 base-input"
             placeholder-style="color: #FF3E47" 
@@ -378,7 +381,7 @@ const signUp = async () => {
         border: none;
         border-radius: 8px;
         .right-icon {
-          background: #F6F7FB;
+          background: var(--color-background-box);
         }
       }
       .countryBox {
@@ -391,7 +394,7 @@ const signUp = async () => {
       }
       .inputTemp {
         // border: 1px solid #d5d5d5;
-        background: #F6F7FB;
+        background: var(--color-background-box);
         border-radius: 5px;
         .leftIcon {
           width: 12.7px;

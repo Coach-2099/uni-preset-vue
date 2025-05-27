@@ -637,7 +637,7 @@ defineExpose({
     width: 100%;
     padding-left: 15px;
     padding-right: 10px;
-    background: #F6F7FB;
+    background: var(--color-background-box);
     border-radius: 8px;
   }
   .dropDownBox {
@@ -652,7 +652,7 @@ defineExpose({
   }
   .inputBox {
     .baseSelect {
-      background: #F6F7FB;
+      background: var(--color-background-box);
       border-radius: 8px 8px 8px 8px;
       height: 28px;
       .leftBox {
@@ -669,7 +669,7 @@ defineExpose({
       }
     }
     .baseInput-Special {
-      background: #F6F7FB;
+      background: var(--color-background-box);
       border-radius: 8px 8px 8px 8px;
       height: 58px;
       // line-height: 58px;
@@ -714,7 +714,7 @@ defineExpose({
     }
     .baseBox {
       border-radius: 8px;
-      background: #F6F7FB;
+      background: var(--color-background-box);
     }
     .stopTemp {
       .imgBox {
@@ -727,7 +727,7 @@ defineExpose({
         }
       }
       .baseInput {
-        background: #F6F7FB;
+        background: var(--color-background-box);
         border-radius: 8px 8px 8px 8px;
         height: 42px;
         .rightBox {
@@ -762,7 +762,7 @@ defineExpose({
 }
 .popupBtnBox {
   .myBtn {
-    background: #1777FF;
+    background: var(--color-light-primary);
     border-radius: 6px;
   }
 }

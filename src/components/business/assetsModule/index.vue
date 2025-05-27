@@ -195,6 +195,7 @@ onShow(()=>{
   }
   :deep(.van-search) {
     padding-right: 0px !important;
+    background: var(--color-background) !important;
   }
   .defaultTemp {
     margin-top: 90px;

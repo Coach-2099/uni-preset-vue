@@ -1,6 +1,7 @@
 @font-face {
   font-family: 'biance-PLEX';
-  src: url('@/static/fonts/Binance-PLEX.ttf') format('truetype');
+  /* src: url('@/static/fonts/Binance-PLEX.ttf') format('truetype'); */
+  src: url('@/static/fonts/SourceHanSansSC-Normal.otf') format('truetype');
   font-weight: normal;
   font-style: normal;
 };
@@ -32,7 +33,8 @@
   --color-danger: #ff4444;
   --color-text: #e0e0e0;
   --color-navBar-text: #fbfcff;
-  --color-by-black: #fcfeff;
+  /* --color-by-black: #fcfeff; */
+  --color-by-black: #fdffff;
   --color-background: #0f1112;
   /* 黑色带有一点透明度 */
   --color-background-1: #15161a;

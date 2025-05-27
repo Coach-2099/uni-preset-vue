@@ -10,7 +10,7 @@
             class="flex-1 base-input"
             style="
                 border:none;
-                background-color: #F6F7FB;"
+                background-color: var(--color-background-box);"
             :placeholder="$t('homeIndex.login.emailOrPhone')"
             placeholder-class="input-placeholder"
           />
@@ -30,7 +30,7 @@
               class="flex-1 base-input"
               style="
               border: none;
-              background-color: #F6F7FB;"
+              background-color: var(--color-background-box);"
               :placeholder="$t('tips.enterVCode')"
               placeholder-class="input-placeholder"
             />
@@ -58,7 +58,7 @@
               background: #fff;
               padding-left: 10px;
               border-radius: 5px;
-              background-color: #F6F7FB;
+              background-color: var(--color-background-box);
               border: none;"
               class="flex-1"
               :placeholder="$t('tips.enterPassword')"
@@ -178,12 +178,12 @@ const goLogin = () => {
         // border: 1px solid #d5d5d5;
         border-radius: 5px;
         .right-icon {
-          background: #F6F7FB;
+          background: var(--color-background-box);
         }
       }
     }
     .inputTemp {
-      background: #F6F7FB;
+      background: var(--color-background-box);
       border-radius: 5px;
       .leftPwdIcon {
         width: 13.5px;

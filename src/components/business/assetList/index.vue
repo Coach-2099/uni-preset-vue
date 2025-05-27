@@ -174,7 +174,7 @@ const goAssetDetail = (item: any) => {
       border-radius: 16px;
       padding: 14px 20px;
       .header {
-        border-bottom: 2px solid #f6f7fb;
+        border-bottom: 2px solid var(--color-background-box);
         .top {
           .orderTypeTemp {
             height: 16px;

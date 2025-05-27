@@ -273,14 +273,14 @@ onUnmounted(() => {
         .myBtn {
           height: 28px;
           border-radius: 6px;
-          background: #F6F7FB;
+          background: var(--color-background-box);
         }
       }
     }
   }
   .myDialog {
     .baseInput {
-      background: #F6F7FB;
+      background: var(--color-background-box);
       border-radius: 8px 8px 8px 8px;
       height: 42px;
       .myInput {
