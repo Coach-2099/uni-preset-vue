@@ -14,6 +14,7 @@
   --color-warning: #ff976a;
   --color-danger: #ee0a24;
   --color-text: #333;
+  --color-text-1: #333;
   --color-navBar-text: #666;
   --color-by-black: #121214;
   --color-background: #ffffff;
@@ -32,6 +33,7 @@
   --color-warning: #ff8f4a;
   --color-danger: #ff4444;
   --color-text: #e0e0e0;
+  --color-text-1: #fff;
   --color-navBar-text: #fbfcff;
   /* --color-by-black: #fcfeff; */
   --color-by-black: #fdffff;
@@ -306,6 +308,8 @@ body {
 
 /* 文本颜色类 */
 .text-black { color: var(--color-text); }
+/* 暗黑状态下更亮的文本 */
+.text-black-1 { color: var(--color-text-1); }
 .text-white { color: #FFFFFF; }
 .text-by-black { color: var(--color-by-black); }
 .text-gray { color: #B0B7C1; }

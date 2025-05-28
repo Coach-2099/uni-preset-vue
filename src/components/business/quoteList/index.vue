@@ -158,7 +158,7 @@
             class="mt-5 ml-15 mr-15 pb-5 flex ff-biance fw-b justify-between items-center"
           >
             <div class="flex-1">
-              <text class="fs-16 text-by-black">{{ v.tradeToken }}</text>
+              <text class="fs-16 text-black-1">{{ v.tradeToken }}</text>
               <text class="fs-12 text-gray">/ {{ v.basicToken }}</text>
               <div>
                 <text class="fs-12 text-gray">{{ formatVolume(v.vol) + ' ' + v.basicToken }}</text>
