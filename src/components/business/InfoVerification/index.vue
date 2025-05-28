@@ -10,7 +10,7 @@
     <div class="contentTemp pt-15 px-25">
       <div v-if="showVerifyTemp">
         <p class="fw-b fs-16">{{ $t('verification.identityVerification') }}:</p>
-        <div class="inputBox mt-20">
+        <!-- <div class="inputBox mt-20">
           <p class="mt-5 mb-5 fw-b fs-14">{{ $t('verification.phoneVerificationCode') }}:</p>
           <div class="flex items-center">
             <div class="flex items-center inputTemp mr-10">
@@ -30,7 +30,7 @@
             </div>
             <baseVCodeButton ref="vcodeRef" @get-code="getPhoneCode"/>
           </div>
-        </div>
+        </div> -->
         <div class="inputBox mt-20">
           <p class="mt-5 mb-5 fw-b fs-14">{{ $t('verification.emailVerificationCode') }}:</p>
           <div class="flex items-center">

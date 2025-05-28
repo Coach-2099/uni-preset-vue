@@ -126,7 +126,7 @@ const getCode = async () => {
   // }else if (phone) {
   //   accountNumber.value = phone;
   // } 
-  
+  vcodeRef.value.startCountdown()
   accountNumber.value = userStore.userInfo.username
   const params = {
     userName: accountNumber.value,

@@ -110,7 +110,7 @@ const hasMore = ref(true) //是否已读完K线全部数据
 const chartReady = ref(false)
 
 // 默认socket 时间间隔为5m
-const defaultSocketVal = ref('5m'); // 5m
+const defaultSocketVal = ref('15m'); // 5m
 
 // 新增时间间隔映射
 const intervalMap:any = {
