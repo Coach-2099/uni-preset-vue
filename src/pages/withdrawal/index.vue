@@ -248,6 +248,16 @@ const getUser = async () => {
 	      url: '/pages/certification/index'
 	    })
 	  })
+  }else if (userInfo.value.hasTradePwd) {
+    // 认证中页面跳转
+    showConfirmDialog({
+	    showCancelButton: false,
+	    message: t('tips.bindTradepwd'),
+	  }).then(() => {
+	    uni.navigateTo({
+	      url: '/pages/modifyFundPassword/index'
+	    })
+	  })
   } else {
     // 手机号和邮箱都绑定了再进行选择
     currentSelectRef.value?.showFLoatingPanel('withdraw')
@@ -269,7 +279,7 @@ const maxVal =()=>{
 const calculateFee =()=>{
 	if(tokenFee.value){
 		if(tokenFee.value.feeType === 1){ //按比例
-			processingFee.value = roundDown(amount.value * tokenFee.value.val,2)
+			processingFee.value = roundDown(amount.value * tokenFee.value.val,8)
 		}else{ //固定
 			processingFee.value = tokenFee.value.val
 		}
@@ -299,8 +309,16 @@ const checkAddressRight = async() => {
   if(!symbol.value){
 	  return uni.showToast({title: t('withdrawal.selectCurrencyFirst'), icon: 'none'})
   }
+  let checkSymbol = symbol.value
+  if(symbol.value === 'USDT' && protocolType.value){
+	  if(protocolType.value === 'ERC20'){
+		  checkSymbol = 'ETH'
+	  }else if (protocolType.value === 'TRC20'){
+		  checkSymbol = 'TRX'
+	  }
+  }
   const params ={
-	  coin:symbol.value,
+	  coin:checkSymbol,
 	  address: address.value
   }
   const data = await checkAddress(params)
@@ -350,17 +368,19 @@ const goWithdraw = async () => {
 }
 
 const isWithdraw = async (Object: any) => {
+	console.log('obj =',Object)
   const params = {
     address: address.value,
     amount: amount.value,
     symbol: symbol.value,
     protocolType: protocolType.value,
     tradePwd: Object.password, // 交易密码
-    smsCode: Object.phonevCode, // 短信验证码
-    emailCode: Object.emailvCode // 邮箱验证码
+    // smsCode: Object.phonevCode, // 短信验证码
+    emailCode: Object.emailVCode // 邮箱验证码
   }
   const data = await withdraw(params)
  if(!data || !data.errMsg){
+	 InfoVerificationRef.value?.showFLoatingPanel(true)
   	uni.showToast({title: t('withdrawal.withdrawalSubmitted'), icon: 'success'})
 	balance(symbol.value) //查询余额
   }

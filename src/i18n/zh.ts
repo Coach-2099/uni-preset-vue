@@ -144,7 +144,8 @@ export default {
 		modifySuccess: '修改成功,請重新登錄',
 		registerSuccess: '註冊成功',
 		copySuccess: '複製成功',
-		refreshRechargeRecord: '重新整理充值記錄'
+		refreshRechargeRecord: '重新整理充值記錄',
+		bindTradepwd:'請先設定資金密碼'
 	},
 	navigationBarTitle: {
 		bindPhone: '綁定手機',

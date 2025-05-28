@@ -288,7 +288,6 @@ watch(
         symbolInfo.value = newSymbol
         // 这里可以添加symbol变化后的处理逻辑
         handleIntervalChange(currentInterval.value, defaultSocketVal.value)
-        subScribe(newSymbol)
       }
     }
   },
@@ -437,7 +436,7 @@ const handleIntervalChange = async (interval: number, socketVal: string) => {
   // 强制更新图表
   nextTick(() => {
     loadData(endTime, currentTime, true) //初次加载
-    
+    subScribe(symbolInfo.value)
     // 确保触发 App 端的更新
     // #ifdef APP-PLUS
     updateTrigger.value = Date.now()

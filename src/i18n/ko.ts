@@ -144,7 +144,8 @@ export default {
 		modifySuccess: '수정 성공, 다시 로그인해 주세요',
 		registerSuccess: '등록 성공',
 		copySuccess: '복사 성공',
-		refreshRechargeRecord: '입금 기록 새로고침'
+		refreshRechargeRecord: '입금 기록 새로고침',
+		bindTradepwd:'먼저 펀드 비밀번호를 설정해주세요.'
 	},
 	navigationBarTitle: {
 		bindPhone: '전화번호 연결',

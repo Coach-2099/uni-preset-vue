@@ -24,7 +24,7 @@
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
 		    <p>{{ $t('assetRecord.depositAddress') }}</p>
-		    <p>{{ item.userAddress }}</p>
+		    <p class="w-75 text-wrap text-right">{{ item.userAddress }}</p>
 		  </div>
 		  <div v-if="item.protocolType" class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
 		    <p>{{ $t('assetRecord.blockchain') }}</p>
@@ -50,7 +50,7 @@
 		  </div>
 		  <div class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
 		    <p>{{ $t('assetRecord.withdrawalAddress') }}</p>
-		    <p>{{ item.userAddress }}</p>
+		    <p class="w-75 text-wrap text-right">{{ item.userAddress }}</p>
 		  </div>
 		  <div v-if="item.protocolType" class="mt-15 fs-14 fw-600 text-black flex justify-between items-center">
 		    <p>{{ $t('assetRecord.blockchain') }}</p>

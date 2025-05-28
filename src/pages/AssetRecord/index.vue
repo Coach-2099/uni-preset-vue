@@ -86,7 +86,7 @@ const loadData = async () => {
       break
   }
   const data = await loadFun(params)
-  dataList.value = [...data.records, ...data.records]
+  dataList.value = [...data.records]
   console.log('dataList', dataList.value)
 }
 

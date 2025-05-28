@@ -144,7 +144,8 @@ export default {
 		modifySuccess: '変更に成功しました。再ログインしてください',
 		registerSuccess: '登録に成功しました',
 		copySuccess: 'コピーに成功しました',
-		refreshRechargeRecord: '入金記録を更新'
+		refreshRechargeRecord: '入金記録を更新',
+		bindTradepwd:'まずファンドのパスワードを設定してください'
 	},
 	navigationBarTitle: {
 		bindPhone: '電話番号を紐付け',

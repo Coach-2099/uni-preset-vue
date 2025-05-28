@@ -34,7 +34,7 @@ export default {
 		forgetPassword: 'Forgot Password',
 		confirmPassword: 'Confirm Password',
 		getVCode: 'Get Code',
-		tryAgain: 'Retry after {second} seconds',
+		tryAgain: '{second} s',
 		noData: 'No data',
 		succeeded: 'Succeeded',
 		enterDepositCurrency: 'Please enter the deposit currency you want to search for',
@@ -144,7 +144,8 @@ export default {
 		modifySuccess: 'Modification successful, please login again',
 		registerSuccess: 'Registration successful',
 		copySuccess: 'Copy successful',
-		refreshRechargeRecord: 'Refresh Deposits'
+		refreshRechargeRecord: 'Refresh Deposits',
+		bindTradepwd:'Please set the fund password first'
 	},
 	navigationBarTitle: {
 		bindPhone: 'Bind Phone',
